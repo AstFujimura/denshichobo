@@ -1,0 +1,13 @@
+.canvascontainer{
+    max-width: 1000px;
+}
+.navbar{
+    display: flex;
+}
+
+@media (max-width:480px) {
+    .canvascontainer{
+        max-width: 400px;
+    }
+}
+
