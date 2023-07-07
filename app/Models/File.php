@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
-class Mater extends Model
+class File extends Model
 {
     use HasFactory;
+    public function users() {
+        return $this->belongsTo(User::class,'保存者ID','id');
+    }
 }

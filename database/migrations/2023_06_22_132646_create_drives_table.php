@@ -13,12 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('drives', function (Blueprint $table) {
+        Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->integer('着メーター');
-            $table->string('運転者');
-            $table->datetime('出発時刻');
-            $table->datetime('到着時刻');
+            $table->integer('日付');
+            $table->string('取引先');
+            $table->string('金額');
+            $table->string('書類');
+            $table->unsignedBigInteger('保存者ID');
+            $table->string('ファイルパス');
+            $table->foreign('保存者ID')->references('id')->on('users');
             $table->timestamp('updated_at')->useCurrent()->nullable();
             $table->timestamp('created_at')->useCurrent()->nullable();
         });
@@ -31,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('drives');
+        Schema::dropIfExists('files');
     }
 };

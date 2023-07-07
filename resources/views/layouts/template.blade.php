@@ -1,6 +1,6 @@
 
 <html lang="ja">
- @if (Auth::check())
+
 <head>
     <meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +20,7 @@
         <div class="sidebar01">
             <div class="logo01">
                 <a href="{{route('topGet')}}" class="logoelement01">
-                    車両管理システム
+                    電子帳簿保存システム
                 </a>
                  <div class="sidebarbatsu01">
                     <img src="{{ asset('img/close_line.svg') }}">
@@ -39,13 +39,13 @@
 
             </div>
             <div class="sidebarcontent01">
-                <a href="{{route('topGet')}}" class="button1_01">
+            <a href="{{route('topGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                        <img src="{{ asset('img/steering_wheel_fill.svg') }}" class="icon">
+                        <img src="{{ asset('img/pencil_2_line.svg') }}">
                         </div>
                         <div class="button1name01">
-                          運転日報
+                          帳簿一覧
                         </div>
 
                     </div>
@@ -57,52 +57,12 @@
                         <img src="{{ asset('img/pencil_2_line.svg') }}">
                         </div>
                         <div class="button1name01">
-                          日報登録
+                          帳簿保存
                         </div>
 
                     </div>
 
                 </a>
-                <a href="{{route('distanceGet')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                        <img src="{{ asset('img/car_line.svg') }}">
-                        </div>
-                        <div class="button1name01">
-                          走行距離
-                        </div>
-
-                    </div>
-
-                </a>
-                <a href="{{route('registGet')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                        <img src="{{ asset('img/settings_4_line.svg') }}">
-                        </div>
-                        <div class="button1name01">
-                          車両情報
-                        </div>
-
-                    </div>
-
-                </a>
-                @if (Auth::user()->管理者権限 == "あり")
-                  <div class="button1_01 accordion1_01">
-                      <div class="button1element01">
-                          <div class="button1logo01">
-                              <img src="{{ asset('img/laptop_line.svg') }}">
-                          </div>
-                          <div class="button1name01">
-                              管理画面
-                          </div>
-                          <div class="allow01">
-                              <img src="{{ asset('img/left_line.svg') }}">
-                          </div>
-
-                      </div>
-                  </div>
-                @endif
 
 
                 <a class="accordion1content01">
@@ -168,8 +128,5 @@
     <script src="{{ asset('js/admin01.js') }}"></script>
 </footer>
 
-@else
-<p>※ログインしていません<a href="{{route('loginGet')}}">ログイン</a>
-@endif
  
 </html>

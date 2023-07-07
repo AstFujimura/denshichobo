@@ -1,13 +1,17 @@
-.canvascontainer{
-    max-width: 1000px;
+.top_table {
+    border-collapse: collapse;
 }
-.navbar{
-    display: flex;
+.top_table td{
+    padding: 5px;
 }
-
-@media (max-width:480px) {
-    .canvascontainer{
-        max-width: 400px;
-    }
+.top_table tr{
+    border: solid 1px black;
 }
 
+.top_table tbody tr {
+    cursor: pointer;
+}
+.top_table tbody tr:hover {
+    background: rgb(210, 241, 247);
+    color: blue;
+}

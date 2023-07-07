@@ -1,16 +1,10 @@
 @extends('layouts.template')
 
 @section('title')
-名刺管理システム
+電子帳簿保存システム
 @endsection 
 
 @section('menuebar')
-<div>
-    {{$year}}年
-</div>
-<div>
-{{$month}}月
-</div>
 
 @endsection 
 
@@ -21,48 +15,22 @@
 
 
 @section('main')
-
-
-
-        <table>
+        <table class="top_table">
             <thead>
                 <tr>
-                    <td>日</td>
-                    <td>曜</td>
-                    <td>使用者</td>
-                    <td>訪問先</td>
-                    <td>高速</td>
-                    <td>出発時</td>
-                    <td></td>
-                    <td>帰着時</td>
-                    <td></td>
-                    <td>着メーター</td>
-                    <td>給油</td>
-                    <td>SS名</td>
+                    <td>ファイル名</td>
+                    <td>保存日</td>
                 </tr>
             </thead>
+        @foreach ($files as $file)
             <tbody>
-                @foreach ($data as $d)
-                <tr class="top-list">
-                    <td>{{$d['日']}}</td>
-                    <td>{{$d['曜']}}</td>
-                    <td>{{$d['使用者']}}</td>
-                    <td>{{$d['訪問先']}}</td>
-                    <td>{{$d['高速']}}</td>
-                    <td>{{$d['出発時']}}</td>
-                    <td>{{$d['出発分']}}</td>
-                    <td>{{$d['到着時']}}</td>
-                    <td>{{$d['到着分']}}</td>
-                    <td>{{$d['着メーター']}}</td>
-                    <td>{{$d['給油']}}</td>
-                    <td>{{$d['SS']}}</td>
-
+                <tr onclick="location.href='/download/{{$file->id}}';">
+                    <td>{{$file->ファイルパス}}</td>
+                    <td>{{$file->created_at}}</td>
                 </tr>
-                @endforeach
-
             </tbody>
-        </table>
-
+        @endforeach
+        </table>    
         
 @endsection 
     @section('footer')

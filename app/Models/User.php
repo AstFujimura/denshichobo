@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Drive;
+use App\Models\File;
 
 
 class User extends Authenticatable
@@ -45,7 +45,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function drives() {
-        return $this->hasMany(Drive::class,'運転者コード');
+    public function files() {
+        return $this->hasMany(File::class,'運転者コード');
     }
 }

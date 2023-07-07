@@ -31,7 +31,7 @@
                         <img src="{{ asset('img/user_1_line.svg') }}" class="usericon01">
                     </div>
                     <div class="username01">
-                        {{Auth::user()->name}}
+                        ゲスト
                     </div>
 
                 </div>
