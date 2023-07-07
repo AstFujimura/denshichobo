@@ -1,48 +1,83 @@
 $(document).ready(function() {
-  $.ajax({
-    url: '/drive/public/graph', // Laravelのルートに合わせて変更してください
-    type: 'GET',
-    dataType: 'json',
-    success: function(response) {
-      var labels = [];
-      var values = [];
-      
-      // 取得したJSONデータからラベルと値を抽出します
-      response.forEach(function(item) {
-        labels.push(item.年月);
-        values.push(item.走行距離);
-      });
-      
-      // グラフの作成と描画
-      createChart(labels, values);
-    },
-    error: function(xhr, status, error) {
-      console.error(error);
-    }
-  });
-});
-
-function createChart(labels, values) {
-  var ctx = document.getElementById('myChart').getContext('2d');
-  var chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Distance',
-        data: values,
-        backgroundColor: 'rgba(0, 123, 255, 0.6)',
-        borderColor: 'rgba(0, 123, 255, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      // responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
-        }
+  $('.input-field').keydown(function(event) {
+    if (event.keyCode === 13) { // エンターキーのキーコードは 13
+      event.preventDefault(); // デフォルトのエンターキーの動作を無効化
+  
+      var currentIndex = $('.input-field').index(this);
+      var nextInput = $('.input-field').eq(currentIndex + 1);
+  
+      if (nextInput.length === 0) {
+        $('.form').submit(); // 最後の入力欄でエンターキーを押すとフォームが送信される
+      } else {
+        nextInput.focus(); // 次の入力欄にフォーカスを移動
       }
     }
   });
-}
+  $('.form').submit(function(event) {
+    event.preventDefault();
+    var alert = false;
+
+    // 必須項目が空欄の場合のエラーメッセージ
+ 
+      
+      //空白になっているidを格納する
+      var inv = []
+      var invmessage = []
+
+      //入力されているidを格納する
+      var vali = []
+      var valimessage = []
+
+      if ($('#torihikisaki').val() == ''){
+        inv.push('#torihikisaki');
+        invmessage.push('#required1');
+        alert = true
+      }
+      else{
+          vali.push('#torihikisaki')
+          valimessage.push('#required1');
+      }
+      if ($('#kinngaku').val() == ''){
+        inv.push('#kinngaku')
+        invmessage.push('#required2');
+        alert = true
+      }
+      else{
+          vali.push('#kinngaku')
+          valimessage.push('#required2');
+      }
+
+      if ($('#syorui').val() == ''){
+          inv.push('#syorui');
+          invmessage.push('#required3');
+          alert = true
+      }
+      else{
+          vali.push('#syorui')
+          valimessage.push('#required3');
+      }
+
+        $(inv.join(",")).addClass("invalid");
+        $(vali.join(",")).removeClass("invalid");
+        $(invmessage.join(",")).addClass("errorsentence");
+        $(valimessage.join(",")).removeClass("errorsentence");
+
+
+    //登録(変更)画面におけるフォームの確認
+  if(alert == false) {
+    var title = $('#registbutton').val();
+    
+        if (title.trim() == '登録'){
+          
+        if (confirm("本当に登録しますか？")) {
+          this.submit(); // フォームの送信を実行
+        }
+      }
+      else {
+        if (confirm("本当に変更しますか？")) {
+          this.submit(); // フォームの送信を実行
+      }
+        }
+  }
+  });
+});

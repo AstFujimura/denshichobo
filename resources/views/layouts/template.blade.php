@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/admin01.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/regist.css') }}">
+    <script src="{{asset('jquery/jquery-3.7.0.min')}}"></script>
     
 
  
@@ -122,8 +123,6 @@
 <footer >
     @yield('footer')
     </footer>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ asset('js/all.js') }}"></script>
     <script src="{{ asset('js/admin01.js') }}"></script>
 </footer>

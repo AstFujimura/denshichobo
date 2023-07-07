@@ -22,7 +22,8 @@ class RegistController extends Controller
         }
     public function registPost(Request $request)
         {
-            $date = $request->input('date');
+            
+            $date = $request->input('year') . $this->convert($request->input('month')) . $this->convert($request->input('day'));
             $torihikisaki = $request->input('torihikisaki');
             $kinngaku = $request->input('kinngaku');
             $syorui = $request->input('syorui');
@@ -41,6 +42,13 @@ class RegistController extends Controller
             $file->ファイルパス = $filepath;
             $file->save();
             return redirect()->route('topGet');
+        }
+    public function convert($int)
+        {
+            if (strlen($int) == 1) {
+                $int = '0' . $int;
+            }
+            return $int;
         }
 
 

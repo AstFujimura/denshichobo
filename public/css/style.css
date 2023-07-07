@@ -15,3 +15,22 @@
     background: rgb(210, 241, 247);
     color: blue;
 }
+
+.dateform{
+    display: flex;
+}
+
+.invalid{
+    border-color: red !important;
+    background-color: rgb(250 238 245);
+  }
+.errorelement{
+    display: none;
+    }
+.errorsentence{
+    color: red;
+    font-size: 13px;
+    display: block;
+    text-align: start;
+    margin-left: 10px;
+    }
