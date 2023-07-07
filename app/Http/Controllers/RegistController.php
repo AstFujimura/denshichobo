@@ -22,6 +22,8 @@ class RegistController extends Controller
         }
     public function registPost(Request $request)
         {
+            $now = Carbon::now();
+            $currentTime = $now->format('YmdHis');
             
             $date = $request->input('year') . $this->convert($request->input('month')) . $this->convert($request->input('day'));
             $torihikisaki = $request->input('torihikisaki');
@@ -30,8 +32,8 @@ class RegistController extends Controller
             $file = $request->file('file');
             $extension = $file->getClientOriginalExtension();
             $filename = Config::get('custom.file_upload_path');
-            $filepath = $date . '_' . $syorui . '_' . $torihikisaki . "." . $extension  ;
-            copy($file->getRealPath(),$filename . "\\" .$filepath);
+            $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
+            copy($file->getRealPath(),$filename . "\\" .$filepath .'_1' . '.' .$extension);
             
             $file = new File();
             $file->日付 = $date;
@@ -40,6 +42,7 @@ class RegistController extends Controller
             $file->書類 = $syorui;
             $file->保存者ID = Auth::user()->id;
             $file->ファイルパス = $filepath;
+            $file->ファイル形式 = $extension;
             $file->save();
             return redirect()->route('topGet');
         }
@@ -50,6 +53,7 @@ class RegistController extends Controller
             }
             return $int;
         }
+
 
 
 

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TopController;
 use App\Http\Controllers\RegistController;
+use App\Http\Controllers\EditController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 
@@ -34,11 +35,18 @@ Route::get('/search',[TopController::class,'search'])->name('searchGet');
 
 Route::get('/download/{id}',[TopController::class,'download'])->name('download');
 
+Route::get('/detail/{id}',[TopController::class,'detail'])->name('detail');
+
 
 // 新規登録ページ
 Route::get('regist',[RegistController::class,'registGet'])->name('registGet');
 // 新規登録ページにポストで情報を投げた時
 Route::post('regist',[RegistController::class,'registPost'])->name('registPost');
+
+// 変更ページ
+Route::get('edit/{path}',[EditController::class,'editGet'])->name('editGet');
+// 変更ページにポストで情報を投げた時
+Route::post('edit/{path}',[EditController::class,'editPost'])->name('editPost');
 
 
 

@@ -15,15 +15,25 @@
 
 
 @section('main')
-        <table class="top_table">
+<h2>変更履歴</h2>
+    <a href="/edit/{{$file->ファイルパス}}" class="addbutton">
+        <div class="addbuttonelement01">
+            <div class="button1logo01">
+                <img src="{{ asset('img/user_edit_line.svg') }}">
+            </div>
+            <div class="accordion1name01">
+            変更
+            </div>
+
+        </div>
+    </a>
+        <table class="detail_table">
             <thead>
                 <tr>
                     <td>日付</td>
                     <td>金額</td>
                     <td>取引先</td>
                     <td>備考</td>
-                    <td>訂正歴</td>
-                    <td></td>
                     <td></td>
                 </tr>
             </thead>
@@ -34,19 +44,12 @@
                     <td>{{$file->金額}}</td>
                     <td>{{$file->取引先}}</td>
                     <td>{{$file->備考}}</td>
-                    <td>@if ($file->バージョン != 1)
-                        あり
+                    <td>
+                        @if ($file->ファイル変更 == 'あり')
+                            <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
                         @else
-                        なし
                         @endif
                     </td>
-                    <td>
-                        <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
-                    </td>
-                    <td onclick="location.href='/detail/{{$file->ファイルパス}}';" class="detail">
-                        詳細
-                    </td>
-                    <td><input type="checkbox"></td>
                 </tr>
             </tbody>
         @endforeach

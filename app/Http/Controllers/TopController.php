@@ -29,19 +29,28 @@ class TopController extends Controller
 
                      
 
-    public function search(Request $request)
+    public function search()
     {
         return view('information.search');
         
     }
 
-    public function download(Request $request,$id)
+    public function download($id)
     {
         $file = File::where('id',$id)->first();
-        $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス;
+        $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス.'_'.$file->バージョン .'.' . $file->ファイル形式;
 
         // ファイルのダウンロード
         return response()->download($filepath);
+        
+    }
+
+    public function detail($id)
+    {
+        $files = File::where('ファイルパス','like',$id.'%' )->get();
+        $count = $files->count();  
+        // ファイルのダウンロード
+        return view('information.detailpage',['files' => $files,'count' => $count]);
         
     }
 

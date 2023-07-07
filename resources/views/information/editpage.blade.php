@@ -16,7 +16,7 @@
 
 
 
-        <form class="form" action="{{route('registPost')}}" method="post" enctype="multipart/form-data">
+        <form class="form" action="{{route('editPost')}}" method="post" enctype="multipart/form-data">
                 @csrf
 
                 @php

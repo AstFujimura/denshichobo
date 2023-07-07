@@ -8,13 +8,6 @@
     border: solid 1px black;
 }
 
-.top_table tbody tr {
-    cursor: pointer;
-}
-.top_table tbody tr:hover {
-    background: rgb(210, 241, 247);
-    color: blue;
-}
 
 .dateform{
     display: flex;
@@ -34,3 +27,40 @@
     text-align: start;
     margin-left: 10px;
     }
+
+.download{
+    padding: 2px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.download:hover{
+    background: rgb(201, 201, 201);
+}
+
+.detail{
+    cursor: pointer;
+}
+.detail:hover{
+    background: gray;
+    color: white;
+}
+
+.button1logo01{
+    margin-right: 1rem;
+}
+
+.addbuttonelement01{
+    display: flex;
+    width: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .addbuttonelement01:hover{
+    background: gray;
+    color: white;
+  }

@@ -61,7 +61,16 @@ $(document).ready(function() {
         $(vali.join(",")).removeClass("invalid");
         $(invmessage.join(",")).addClass("errorsentence");
         $(valimessage.join(",")).removeClass("errorsentence");
-
+      
+      if($('#file').val() == ''){
+        $('#file').addClass("invalid")
+        $('.errorelement').addClass("errorsentence");
+        alert = true
+      }
+      else{
+        $('#file').removeClass("invalid")
+        $('.errorelement').removeClass("errorsentence");
+      }
 
     //登録(変更)画面におけるフォームの確認
   if(alert == false) {
