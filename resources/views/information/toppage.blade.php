@@ -43,7 +43,7 @@
                     <td>
                         <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
                     </td>
-                    <td onclick="location.href='/detail/{{$file->ファイルパス}}';" class="detail">
+                    <td onclick="location.href='/detail/{{$file->過去データID}}';" class="detail">
                         詳細
                     </td>
                     <td><input type="checkbox"></td>

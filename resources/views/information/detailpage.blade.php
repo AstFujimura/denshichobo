@@ -16,7 +16,7 @@
 
 @section('main')
 <h2>変更履歴</h2>
-    <a href="/edit/{{$file->ファイルパス}}" class="addbutton">
+    <a href="/edit/{{$file->過去データID}}" class="addbutton">
         <div class="addbuttonelement01">
             <div class="button1logo01">
                 <img src="{{ asset('img/user_edit_line.svg') }}">
@@ -35,6 +35,8 @@
                     <td>取引先</td>
                     <td>備考</td>
                     <td></td>
+                    <td>ファイル変更</td>
+                    <td>更新日</td>
                 </tr>
             </thead>
         @foreach ($files as $file)
@@ -50,6 +52,9 @@
                         @else
                         @endif
                     </td>
+                    <td>{{$file->ファイル変更}}</td>
+                    <td>{{$file->created_at}}</td>
+
                 </tr>
             </tbody>
         @endforeach

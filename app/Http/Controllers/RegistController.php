@@ -33,7 +33,7 @@ class RegistController extends Controller
             $extension = $file->getClientOriginalExtension();
             $filename = Config::get('custom.file_upload_path');
             $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
-            copy($file->getRealPath(),$filename . "\\" .$filepath .'_1' . '.' .$extension);
+            copy($file->getRealPath(),$filename . "\\" .$filepath. '.' .$extension);
             
             $file = new File();
             $file->日付 = $date;
@@ -42,7 +42,9 @@ class RegistController extends Controller
             $file->書類 = $syorui;
             $file->保存者ID = Auth::user()->id;
             $file->ファイルパス = $filepath;
+            $file->過去データID = $this->generateRandomCode();
             $file->ファイル形式 = $extension;
+            //バージョンはデフォルトで1になるのでここでは記載しない変更の時には記述
             $file->save();
             return redirect()->route('topGet');
         }
@@ -53,6 +55,22 @@ class RegistController extends Controller
             }
             return $int;
         }
+
+            //ランダムな6桁のstring型の数値を出力
+            private function generateRandomCode()
+            {
+                $code = mt_rand(100000, 999999);
+                
+                while($this->isCompanyCodeExists($code)){
+                    $code = mt_rand(100000, 999999);
+                }
+                return $code;
+    
+            }
+            private function isCompanyCodeExists($code)
+            {
+                return File::where('過去データID', $code)->exists();
+            }
 
 
 

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('バージョン')->default(1);
             $table->string('ファイル形式')->default('.pdf');
             $table->string('ファイル変更')->default('あり');
+            $table->string('過去データID');
             
 
         });
@@ -37,6 +38,7 @@ return new class extends Migration
             $table->dropColumn('バージョン');
             $table->dropColumn('ファイル形式');
             $table->dropColumn('ファイル変更');
+            $table->dropColumn('過去データID');
         
         });
     }

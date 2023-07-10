@@ -16,7 +16,7 @@
 
 
 
-        <form class="form" action="{{route('editPost')}}" method="post" enctype="multipart/form-data">
+        <form class="form" action="{{route('editPost',['path'=>$file->ファイルパス])}}" method="post" enctype="multipart/form-data">
                 @csrf
 
                 @php
@@ -27,6 +27,9 @@
                     $currentMinute = date('i');
                     $startYear = $currentYear - 5;
                     $endYear = $currentYear;
+                    $selectedYear = $year_data;
+                    $selectedMonth = $month_data;
+                    $selectedDate = $date_data;
                 @endphp
                 <div>
                     <input type="file" name="file" id="file">
@@ -37,19 +40,19 @@
                     <div class="dateform">
                         <select name="year" class="input-field">
                             @for ($year = $startYear; $year <= $endYear; $year++)
-                                <option value="{{ $year }}" {{ $year == $currentYear ? 'selected' : '' }}>{{ $year }}</option>
+                                <option value="{{ $year }}" {{ $year == $selectedYear ? 'selected' : '' }}>{{ $year }}</option>
                             @endfor
                         </select>
                         <div>年</div>
                         <select name="month" class="input-field">
                             @for ($month = 1; $month <= 12; $month++)
-                                <option value="{{ $month }}" {{ $month == $currentMonth ? 'selected' : '' }}>{{ $month }}</option>
+                                <option value="{{ $month }}" {{ $month == $selectedMonth ? 'selected' : '' }}>{{ $month }}</option>
                             @endfor
                         </select>
                         <div>月</div>
                         <select name="day" class="input-field">
                             @for ($day = 1; $day <= 31; $day++)
-                                <option value="{{ $day }}" {{ $day == $currentDate ? 'selected' : '' }}>{{ $day }}</option>
+                                <option value="{{ $day }}" {{ $day == $selectedDate ? 'selected' : '' }}>{{ $day }}</option>
                             @endfor
                         </select>
                         <div>日</div>
@@ -58,7 +61,7 @@
                 <div>
                 <label>取引先</label>
                     <div>
-                        <input type="text" name="torihikisaki" class="input-field" id="torihikisaki">
+                        <input type="text" name="torihikisaki" class="input-field" id="torihikisaki" value="{{$file->取引先}}">
                         <span class="errorelement" id="required1">必須項目です</span>
                     </div>
                     
@@ -66,7 +69,7 @@
                 <div>
                 <label>金額</label>
                     <div>
-                        <input type="text" name="kinngaku" class="input-field" id="kinngaku">
+                        <input type="text" name="kinngaku" class="input-field" id="kinngaku" value="{{$file->金額}}">
                         <span class="errorelement" id="required1">必須項目です</span>
                     </div>
                     
@@ -74,14 +77,14 @@
                 <div>
                 <label>書類区分</label>
                     <div>
-                        <input type="text" name="syorui" class="input-field" id="syorui">
+                        <input type="text" name="syorui" class="input-field" id="syorui" value="{{$file->書類}}">
                         <span class="errorelement" id="required1">必須項目です</span>
                     </div>
                     
                 </div>
 
 
-                <input type="submit" value="登録" id="registbutton">
+                <input type="submit" value="変更" id="registbutton">
         </form>
         @endsection 
         @section('footer')

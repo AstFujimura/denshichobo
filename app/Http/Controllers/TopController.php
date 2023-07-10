@@ -47,10 +47,11 @@ class TopController extends Controller
 
     public function detail($id)
     {
-        $files = File::where('ファイルパス','like',$id.'%' )->get();
+        $files = File::where('過去データID',$id)->orderby('バージョン')->get();
+        $file = File::where('過去データID',$id )->first();
         $count = $files->count();  
         // ファイルのダウンロード
-        return view('information.detailpage',['files' => $files,'count' => $count]);
+        return view('information.detailpage',['files' => $files,'file' => $file,'count' => $count]);
         
     }
 
