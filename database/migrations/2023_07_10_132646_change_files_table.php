@@ -15,11 +15,7 @@ return new class extends Migration
     {
         Schema::table('files', function (Blueprint $table) {
             // カラムの追加
-            $table->string('備考')->nullable();
-            $table->integer('バージョン')->default(1);
-            $table->string('ファイル形式')->default('.pdf');
-            $table->string('ファイル変更')->default('');
-            $table->string('過去データID');
+            $table->integer('金額')->change();
             
 
         });
@@ -34,11 +30,7 @@ return new class extends Migration
     {
         Schema::table('files', function (Blueprint $table) {
             // カラムの追加のロールバック
-            $table->dropColumn('備考');
-            $table->dropColumn('バージョン');
-            $table->dropColumn('ファイル形式');
-            $table->dropColumn('ファイル変更');
-            $table->dropColumn('過去データID');
+            $table->string('金額')->change();
         
         });
     }
