@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class TopController extends Controller
 {
@@ -18,7 +19,16 @@ class TopController extends Controller
      */
     public function index()
     {
-    $files = File::orderby('日付')->get();     
+        $files = DB::table('files')
+        ->select('files.*')
+        ->leftJoin('files as t2', function ($join) {
+            $join->on('files.過去データID', '=', 't2.過去データID')
+                 ->whereRaw('files.バージョン < t2.バージョン');
+        })
+        ->whereNull('t2.バージョン')
+        ->orderBy('files.日付', 'desc')
+        ->get();
+
     $count = $files->count();  
 
         // 取得したデータをビューに渡すなどの処理

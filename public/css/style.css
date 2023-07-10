@@ -20,10 +20,13 @@
 .errorelement{
     display: none;
     }
+.fileerrorelement{
+    display: none;
+}
 .errorsentence{
     color: red;
     font-size: 13px;
-    display: block;
+    display: block !important;
     text-align: start;
     margin-left: 10px;
     }

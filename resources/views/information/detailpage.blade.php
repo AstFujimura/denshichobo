@@ -33,9 +33,9 @@
                     <td>日付</td>
                     <td>金額</td>
                     <td>取引先</td>
+                    <td>ファイル変更</td>
                     <td>備考</td>
                     <td></td>
-                    <td>ファイル変更</td>
                     <td>更新日</td>
                 </tr>
             </thead>
@@ -45,14 +45,11 @@
                     <td>{{$file->日付}}</td>
                     <td>{{$file->金額}}</td>
                     <td>{{$file->取引先}}</td>
+                    <td>{{$file->ファイル変更}}</td>
                     <td>{{$file->備考}}</td>
                     <td>
-                        @if ($file->ファイル変更 == 'あり')
-                            <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
-                        @else
-                        @endif
+                        <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
                     </td>
-                    <td>{{$file->ファイル変更}}</td>
                     <td>{{$file->created_at}}</td>
 
                 </tr>

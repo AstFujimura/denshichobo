@@ -38,32 +38,56 @@ class EditController extends Controller
     {
         $now = Carbon::now();
         $currentTime = $now->format('YmdHis');
+        //過去データIDが一致するファイルが何件あるかを格納
         $historycount = Filemodel::where('過去データID',$path)->get()->count();
-        
+
+        //ファイルをインスタンス化
+        $newfile = new Filemodel();
+
+
         
         $date = $request->input('year') . $this->convert($request->input('month')) . $this->convert($request->input('day'));
         $torihikisaki = $request->input('torihikisaki');
         $kinngaku = $request->input('kinngaku');
         $syorui = $request->input('syorui');
-        $file = $request->file('file');
-        $extension = $file->getClientOriginalExtension();
-        $filename = Config::get('custom.file_upload_path');
         $version = $historycount + 1;
-        $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
-        copy($file->getRealPath(),$filename . "\\" .$filepath .'_' . $version. '.' .$extension);
+
+        //ファイルに変更がある場合とない場合でわける
+        if (!empty($request ->file('file'))){
+            $file = $request->file('file');
+            //ファイル形式を取得
+            $extension = $file->getClientOriginalExtension();
+            //既定のフォルダのパスを取得
+            $filename = Config::get('custom.file_upload_path');
+            //拡張子を除くファイル名
+            $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
+            //ファイルを保存
+            copy($file->getRealPath(),$filename . "\\" .$filepath. '.' .$extension);
+
+            $newfile->ファイル形式 = $extension;
+            $newfile->ファイルパス = $filepath;
+            $newfile->ファイル変更 = "あり";
+
+        }
+        else{
+            //最新のデータからファイルパスを取得して格納する
+            $latestdata = Filemodel::where('過去データID',$path)
+                                ->where('バージョン',$historycount)
+                                ->first();
+            $newfile->ファイルパス = $latestdata->ファイルパス;
+            $newfile->ファイル形式 = $latestdata->ファイル形式;
+        }
+
         
-        $file = new Filemodel();
-        $file->日付 = $date;
-        $file->取引先 = $torihikisaki;
-        $file->金額 = $kinngaku;
-        $file->書類 = $syorui;
-        $file->保存者ID = Auth::user()->id;
-        $file->ファイルパス = $filepath;
-        $file->ファイル形式 = $extension;
-        $file->バージョン = $version;
-        $file->過去データID = $path;
-        $file->save();
-        return redirect()->route('detail',['id'=>$file->過去データID]);
+        $newfile->日付 = $date;
+        $newfile->取引先 = $torihikisaki;
+        $newfile->金額 = $kinngaku;
+        $newfile->書類 = $syorui;
+        $newfile->保存者ID = Auth::user()->id;
+        $newfile->バージョン = $version;
+        $newfile->過去データID = $path;
+        $newfile->save();
+        return redirect()->route('detail',['id'=>$newfile->過去データID]);
 
     }
     public function convert($int)

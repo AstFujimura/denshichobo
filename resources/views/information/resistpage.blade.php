@@ -30,7 +30,7 @@
                 @endphp
                 <div>
                     <input type="file" name="file" id="file">
-                    <span class="errorelement">ファイルを選択してください</span>
+                    <span class="fileerrorelement">ファイルを選択してください</span>
                 </div>
                 <div>
                     <label>書類作成（受領）日</label>
@@ -67,7 +67,7 @@
                 <label>金額</label>
                     <div>
                         <input type="text" name="kinngaku" class="input-field" id="kinngaku">
-                        <span class="errorelement" id="required1">必須項目です</span>
+                        <span class="errorelement" id="required2">必須項目です</span>
                     </div>
                     
                 </div>
@@ -75,7 +75,7 @@
                 <label>書類区分</label>
                     <div>
                         <input type="text" name="syorui" class="input-field" id="syorui">
-                        <span class="errorelement" id="required1">必須項目です</span>
+                        <span class="errorelement" id="required3">必須項目です</span>
                     </div>
                     
                 </div>

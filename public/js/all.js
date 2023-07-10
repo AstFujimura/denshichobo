@@ -13,6 +13,10 @@ $(document).ready(function() {
       }
     }
   });
+
+
+
+
   $('.form').submit(function(event) {
     event.preventDefault();
     var alert = false;
@@ -64,12 +68,12 @@ $(document).ready(function() {
       
       if($('#file').val() == ''){
         $('#file').addClass("invalid")
-        $('.errorelement').addClass("errorsentence");
+        $('.fileerrorelement').addClass("errorsentence");
         alert = true
       }
       else{
         $('#file').removeClass("invalid")
-        $('.errorelement').removeClass("errorsentence");
+        $('.fileerrorelement').removeClass("errorsentence");
       }
 
     //登録(変更)画面におけるフォームの確認
