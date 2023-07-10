@@ -15,6 +15,18 @@
 
 
 @section('main')
+<div class="searchbox">
+    <div class="searchelement">
+        <div class="searchlabel">日付:</div><input type="text" id="startdate" class="searchinputtext dateinput">~<input type="text" id="enddate" class="searchinputtext dateinput">
+    </div>
+    <div class="searchelement">
+        <div class="searchlabel">金額:</div><input type="text" id="startkinngaku" class="searchinputtext kinngakuinput">~<input type="text" id="endkinngaku" class="searchinputtext kinngakuinput">
+    </div>
+    <div class="searchelement">
+        <div class="searchlabel">取引先:</div><input type="text" id="torihikisaki" class="searchinputtext">
+    </div>
+    <a class="searchbutton">検索</a>
+</div>
         <table class="top_table">
             <thead>
                 <tr>
