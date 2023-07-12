@@ -34,21 +34,71 @@ class TopController extends Controller
         // 取得したデータをビューに渡すなどの処理
     return view('information.toppage',['files' => $files,'count' => $count]);
 
-}
+    }
 
 
                      
 
-    public function search()
+    public function search(Request $request)
     {
-        return view('information.search');
+
+        $allfiles = DB::table('files')
+        ->select('files.*')
+        ->leftJoin('files as t2', function ($join) {
+            $join->on('files.過去データID', '=', 't2.過去データID')
+                 ->whereRaw('files.バージョン < t2.バージョン');
+        })
+        ->whereNull('t2.バージョン')
+        ->orderBy('files.日付', 'desc');
+
+    $startDateStr = $request->input('starthiduke');
+    $endDateStr = $request->input('endhiduke');
+
+
+    //値が空の場合は最小値と最大値を格納する。検索後にもう一度空に戻す
+    if (empty($startDateStr)){
+        $startDateStr = "00000000";        
+    }
+    
+    if (empty($endDateStr)){
+        $endDateStr = "99999999";        
+    }
+    
+
+
+    //検索クエリ
+    $files = $allfiles->where('files.日付', '>=', $startDateStr)
+    ->where('files.日付', '<=', $endDateStr)
+    ->get();
+
+
+    $count = $files->count();
+
+    //検索結果に初期値として渡すときに値を空欄にしておくため
+    if ($startDateStr == "00000000"){
+        $startDateStr = "";
+    }
+    if ($endDateStr == "99999999"){
+        $endDateStr = "";    
+    }
+
+
+    $data = [
+    'files' => $files,
+    'count' => $count,
+    'starthiduke' => $startDateStr,
+    'endhiduke' => $endDateStr
+    ];
+
+        // 取得したデータをビューに渡すなどの処理
+    return view('information.search',$data);
         
     }
 
     public function download($id)
     {
         $file = File::where('id',$id)->first();
-        $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス.'_'.$file->バージョン .'.' . $file->ファイル形式;
+        $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス .'.' . $file->ファイル形式;
 
         // ファイルのダウンロード
         return response()->download($filepath);
@@ -57,11 +107,23 @@ class TopController extends Controller
 
     public function detail($id)
     {
-        $files = File::where('過去データID',$id)->orderby('バージョン')->get();
+        $file = File::with('users')
+                ->where('過去データID',$id )
+                ->orderby('バージョン','desc')
+                ->first();
+        // ファイルのダウンロード
+        return view('information.detailpage',['file' => $file]);
+        
+    }
+    public function history($id)
+    {
+        $files = File::with('users')
+                ->where('過去データID',$id)
+                ->orderby('バージョン')->get();
         $file = File::where('過去データID',$id )->first();
         $count = $files->count();  
         // ファイルのダウンロード
-        return view('information.detailpage',['files' => $files,'file' => $file,'count' => $count]);
+        return view('information.historypage',['files' => $files,'file' => $file,'count' => $count]);
         
     }
 

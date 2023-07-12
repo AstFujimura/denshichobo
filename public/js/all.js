@@ -1,4 +1,21 @@
 $(document).ready(function() {
+  $('.kinngakuTd').each(function() {
+  $kinngaku =$(this).text()
+  $result = $kinngaku.replace(/(\d)(?=(\d\d\d)+$)/g, "$1,");
+  console.log($kinngaku)
+  $(this).text($result);
+  });
+  $('.hidukeTd').each(function() {
+    $kinngaku =$(this).text()
+    $result = $kinngaku.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3');
+    console.log($kinngaku)
+    $(this).text($result);
+    });
+
+
+
+
+
   $('.input-field').keydown(function(event) {
     if (event.keyCode === 13) { // エンターキーのキーコードは 13
       event.preventDefault(); // デフォルトのエンターキーの動作を無効化
@@ -12,6 +29,39 @@ $(document).ready(function() {
         nextInput.focus(); // 次の入力欄にフォーカスを移動
       }
     }
+  });
+
+  $('.searchinputtext').keydown(function(event) {
+    if (event.keyCode === 13) { // エンターキーのキーコードは 13
+      event.preventDefault(); // デフォルトのエンターキーの動作を無効化
+
+  
+      var currentIndex = $('.searchinputtext').index(this);
+      var nextInput = $('.searchinputtext').eq(currentIndex + 1);
+  
+      if (nextInput.length === 0) {
+        $('.searchform').submit(); // 最後の入力欄でエンターキーを押すとフォームが送信される
+      } else {
+        nextInput.focus(); // 次の入力欄にフォーカスを移動
+      }
+    }
+  });
+
+  $('.searchinputtext').blur(function() {
+    var inputDate = $(this).val().trim();
+    
+    // 日付の形式が「x/x」または「xx/xx」の場合、現在の年を追加する
+    if (/\d{1,2}\/\d{1,2}/.test(inputDate)) {
+      var currentDate = new Date();
+      var currentYear = currentDate.getFullYear();
+      inputDate = currentYear + '/' + inputDate;
+    }
+    
+    // 入力された日付を指定の形式に変換する
+    var formattedDate = inputDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3');
+    
+    // 変換後の日付を入力フィールドに設定する
+    $(this).val(formattedDate);
   });
 
 
@@ -93,4 +143,18 @@ $(document).ready(function() {
         }
   }
   });
+
+  $('.droparea').on('dragover', function(event) {
+    event.preventDefault();
+    $(this).addClass("dragover");
+  });
+  $('.droparea').on('drop', function(event) {
+    event.preventDefault();
+    $(this).removeClass("dragover");
+    var File = event.originalEvent.dataTransfer.files[0];
+    $('#file').prop("files", event.originalEvent.dataTransfer.files);
+  });
+
+
+
 });

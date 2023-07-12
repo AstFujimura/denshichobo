@@ -1,11 +1,19 @@
+a {
+    text-decoration: none;
+}
 .top_table {
     border-collapse: collapse;
 }
 .top_table td{
     padding: 5px;
+    border: solid 1px;
 }
 .top_table tr{
     border: solid 1px black;
+}
+
+.top_table thead tr{
+    background: rgb(223, 251, 252);
 }
 
 
@@ -72,22 +80,23 @@
   .searchbox{
     padding: 20px;
     background: rgb(231 231 231);
-    display: flex;
   }
 
   .searchelement{
     padding-inline: 10px;
+    margin-block: 5px;
   }
 
   .searchlabel{
     display: inline-block;
+    width: 80px;
   }
 
   .searchbutton{
     background: rgb(182, 233, 182);
     padding: 5px;
     border: green solid 2px;
-    border-radius: 2px;
+    border-radius: 5px;
     cursor: pointer;
   }
 
@@ -100,5 +109,93 @@
     height: 30px;
   }
 
-  .dateinput,.kinngakuinput{
+  .dateinput{
+    width: 50px;
   }
+
+  .kinngakuTd{
+    text-align: right;
+  }
+
+  .kinngakuinput{
+    text-align: right;
+    width: 100px;
+  }
+
+  .detail_table td{
+    border: solid 1px black;
+    border-collapse: collapse;
+    padding: 5px;
+  }
+
+  .detail_table{
+    border-collapse: collapse;
+
+  }
+
+  .menubar{
+    display: flex;
+    margin-block: 10px;
+  }
+
+  .detail_download{
+    padding: 10px;
+  }
+
+  .history_table td{
+    border: solid 1px black;
+    border-collapse: collapse;
+    padding: 5px;
+  }
+
+  .history_table{
+    border-collapse: collapse;
+
+  }
+
+  .history_table thead tr{
+    background: rgb(223, 251, 252);
+}
+
+.droparea{
+    height: 100px;
+    width: 300px;
+    border: solid 3px rgb(187, 187, 187);
+    color: rgb(187, 187, 187);
+    text-align: center;
+    line-height: 100px;
+    margin-bottom: 10px;
+}
+.dragover{
+    border: solid 3px rgb(216, 214, 114);
+}
+
+.input-field{
+    height: 30px;
+}
+
+.form{
+    padding: 30px;
+}
+
+.registbutton{
+    padding: 5px;
+    background: rgb(220, 247, 145);
+    border: solid 2px rgb(123, 197, 101);
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.input-container{
+    display: flex;
+    margin-top: 20px;
+}
+.label{
+    width: 150px;
+}
+
+.red{
+    color: red;
+    font-size: 12px;
+}

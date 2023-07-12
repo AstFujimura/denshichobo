@@ -31,11 +31,13 @@ Route::get('logout',[LogoutController::class,'Logout'])->name('logout');
 // トップページ
 Route::get('/',[TopController::class,'index'])->name('topGet');
 // トップページ
-Route::get('/search',[TopController::class,'search'])->name('searchGet');
+Route::get('/search',[TopController::class,'search'])->name('searchPost');
 
 Route::get('/download/{id}',[TopController::class,'download'])->name('download');
 
 Route::get('/detail/{id}',[TopController::class,'detail'])->name('detail');
+
+Route::get('/history/{id}',[TopController::class,'history'])->name('history');
 
 
 // 新規登録ページ

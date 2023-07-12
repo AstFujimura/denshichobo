@@ -14,7 +14,7 @@
 
 @section('main')
 
-
+<h2>帳簿保存</h2>
 
         <form class="form" action="{{route('registPost')}}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -28,12 +28,15 @@
                     $startYear = $currentYear - 5;
                     $endYear = $currentYear;
                 @endphp
+                <div class="droparea">
+                    ここにドラッグ＆ドロップ
+                </div>
                 <div>
                     <input type="file" name="file" id="file">
                     <span class="fileerrorelement">ファイルを選択してください</span>
                 </div>
-                <div>
-                    <label>書類作成（受領）日</label>
+                <div class="input-container">
+                    <label class="label">書類作成（受領）日</label>
                     <div class="dateform">
                         <select name="year" class="input-field">
                             @for ($year = $startYear; $year <= $endYear; $year++)
@@ -55,33 +58,38 @@
                         <div>日</div>
                     </div>
                 </div>
-                <div>
-                <label>取引先</label>
-                    <div>
-                        <input type="text" name="torihikisaki" class="input-field" id="torihikisaki">
-                        <span class="errorelement" id="required1">必須項目です</span>
-                    </div>
-                    
-                </div>
-                <div>
-                <label>金額</label>
+                <div class="input-container">
+                    <label  class="label">金額</label>
                     <div>
                         <input type="text" name="kinngaku" class="input-field" id="kinngaku">
                         <span class="errorelement" id="required2">必須項目です</span>
                     </div>
                     
                 </div>
-                <div>
-                <label>書類区分</label>
+                <div class="input-container">
+                    <label  class="label">取引先</label>
                     <div>
-                        <input type="text" name="syorui" class="input-field" id="syorui">
+                        <input type="text" name="torihikisaki" class="input-field" id="torihikisaki">
+                        <span class="errorelement" id="required1">必須項目です</span>
+                    </div>
+                    
+                </div>
+
+                <div class="input-container">
+                    <label  class="label">書類区分</label>
+                    <div>
+                        <select name="syorui" class="input-field">
+                            <option>請求書</option>
+                            <option>納品書</option>
+                            <option>契約書</option>
+                        </select>
                         <span class="errorelement" id="required3">必須項目です</span>
                     </div>
                     
                 </div>
 
 
-                <input type="submit" value="登録" id="registbutton">
+                <input type="submit" value="登録" id="registbutton" class="registbutton">
         </form>
         @endsection 
         @section('footer')
