@@ -28,24 +28,26 @@
                 </div>
                 <div class="red">※ファイル自体に変更がない場合はファイルを選択しないでください</div>
                 <div class="input-container">
-                    <label class="label">書類作成（受領）日</label>
+                    <label class="label">書類作成（受領）日<span class ="requirered">*</span></label>
                     <div class="dateform">
                         <input type="text" name="hiduke" class="input-field dateinputtext" value="{{$hiduke}}" id="hiduke">
                         <span class="errorelement" id="required4">必須項目です</span>
+                        <span class="errorelement" id="dateformat">形式が不正です</span>
                     </div>
                 </div>
 
                 <div class="input-container">
-                <label class="label">金額</label>
+                <label class="label">金額<span class ="requirered">*</span></label>
                     <div>
-                        <input type="text" name="kinngaku" class="input-field kinngakuinput-field" id="kinngakuedit" value="{{$file->金額}}">
+                        <input type="text" name="kinngaku" class="input-field kinngakuinput-field kinngakuedit" id="kinngaku" value="{{$file->金額}}">
                         <span class="errorelement" id="required2">必須項目です</span>
+                        <span class="errorelement" id="kinngakuformat">形式が不正です</span>
                     </div>
                     
                 </div>
 
                 <div class="input-container">
-                <label class="label">取引先</label>
+                <label class="label">取引先<span class ="requirered">*</span></label>
                     <div>
                         <input type="text" name="torihikisaki" class="input-field" id="torihikisaki" value="{{$file->取引先}}">
                         <span class="errorelement" id="required1">必須項目です</span>
@@ -62,6 +64,16 @@
                             <option {{$nohinnsyo}}>納品書</option>
                             <option {{$keiyakusyo}}>契約書</option>
                             <option {{$mitumorisyo}}>見積書</option>
+                        </select>
+                    </div>
+                    
+                </div>
+                <div class="input-container">
+                    <label  class="label">保存方法<span class ="requirered">*</span></label>
+                    <div>
+                        <select name="hozonn" class="input-field">
+                            <option {{$dennshi}}>電子保存</option>
+                            <option {{$scan}}>スキャナ保存</option>
                         </select>
                     </div>
                     

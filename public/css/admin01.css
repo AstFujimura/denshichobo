@@ -97,6 +97,7 @@
     width: 2rem;
     cursor: pointer;
     border-radius: 30%;
+    margin-left: 30px;
 }
 .menuicon01:hover{
     background: rgb(34, 33, 33);
@@ -129,7 +130,7 @@
     
     .sidebar01{
         background: rgb(255, 255, 255);
-        box-shadow: 4px 3px 6px 0px #ddd;
+        box-shadow: -2px 1px 6px 0px #ddd;
         z-index: 1;
         position: fixed;
         top: 112px;

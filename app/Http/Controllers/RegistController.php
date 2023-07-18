@@ -32,6 +32,7 @@ class RegistController extends Controller
             $kinngaku = str_replace(',','',$kinngaku);
             $syorui = $request->input('syorui');
             $file = $request->file('file');
+            $hozonn = $request->input('hozonn');
             $extension = $file->getClientOriginalExtension();
             $filename = Config::get('custom.file_upload_path');
             $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
@@ -46,6 +47,7 @@ class RegistController extends Controller
             $file->ファイルパス = $filepath;
             $file->過去データID = $this->generateRandomCode();
             $file->ファイル形式 = $extension;
+            $file->保存 = $hozonn;
             //バージョンはデフォルトで1になるのでここでは記載しない変更の時には記述
             $file->save();
             return redirect()->route('topGet');

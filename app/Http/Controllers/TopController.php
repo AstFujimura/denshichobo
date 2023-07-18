@@ -66,6 +66,7 @@ class TopController extends Controller
     $torihikisaki = $request->input('torihikisaki');
     $syoruikubunn = $request->input('syoruikubunn');
     $kennsakuword = $request->input('kennsakuword');
+    $hozonn = $request->input('hozonn');
 
 
 
@@ -84,7 +85,7 @@ class TopController extends Controller
     }
     
     if (empty($endKinngakuStr)){
-        $endKinngakuStr = "99999999";        
+        $endKinngakuStr = "2100000000";        
     }
     
 
@@ -96,6 +97,7 @@ class TopController extends Controller
     ->where('files.金額', '<=', $endKinngakuStr)
     ->where('files.取引先','like',"%". $torihikisaki ."%")
     ->where('files.書類','like',"%". $syoruikubunn ."%")
+    ->where('files.保存','like',"%". $hozonn ."%")
     ->where('files.備考','like',"%". $kennsakuword ."%")
     ->get();
 
@@ -124,7 +126,7 @@ class TopController extends Controller
     else{
         $startKinngakuStr = number_format(floatval($startKinngakuStr));
     }
-    if ($endKinngakuStr == "99999999"){
+    if ($endKinngakuStr == "2100000000"){
         $endKinngakuStr = "";    
     }
     else{
@@ -147,7 +149,10 @@ class TopController extends Controller
     'seikyusyo' => "",
     'nohinnsyo' => "",
     'keiyakusyo' => "",
-    'mitumorisyo' => ""
+    'mitumorisyo' => "",
+    'dennshinone' => "",
+    'dennshi' => "",
+    'scan' => "",
     ];
 
     if ($syoruikubunn == ""){
@@ -164,6 +169,16 @@ class TopController extends Controller
     }
     else if ($syoruikubunn == "見積書"){
         $data['mitumorisyo'] = "selected";
+    }
+    
+    if ($hozonn == ""){
+        $data['dennshinone'] = "selected";
+    }
+    else if ($hozonn == "電子保存"){
+        $data['dennshi'] = "selected";
+    }
+    else if ($hozonn == "スキャナ保存"){
+        $data['scan'] = "selected";
     }
 
         // 取得したデータをビューに渡すなどの処理

@@ -1,6 +1,6 @@
 $(document).ready(function() {
-  if ($('#kinngakuedit').length != 0){
-    kinngakucheck_change("kinngakuedit");   
+  if ($('.kinngakuedit').length != 0){
+    kinngakucheck_change("kinngaku");   
   }
   //検索項目のalert
   $('.kinngakuTd').each(function() {
@@ -21,6 +21,7 @@ $(document).ready(function() {
   $('.input-field').keydown(function(event) {
     if (event.keyCode === 13) { // エンターキーのキーコードは 13
       event.preventDefault(); // デフォルトのエンターキーの動作を無効化
+
   
       var currentIndex = $('.input-field').index(this);
       var nextInput = $('.input-field').eq(currentIndex + 1);
@@ -37,6 +38,7 @@ $(document).ready(function() {
     if (event.keyCode === 13) { // エンターキーのキーコードは 13
       event.preventDefault(); // デフォルトのエンターキーの動作を無効化
 
+      
   
       var currentIndex = $('.searchinputtext').index(this);
       var nextInput = $('.searchinputtext').eq(currentIndex + 1);
@@ -182,7 +184,7 @@ $(document).ready(function() {
       }
 
     //登録(変更)画面におけるフォームの確認
-  if(alert == false) {
+  if(alert == false && datacheck("hiduke","dateformat","kinngaku","kinngakuformat")) {
     var title = $('#registbutton').val();
     
         if (title.trim() == '登録'){
@@ -397,4 +399,38 @@ function kinngakucheck_change(id) {
       $("#" + id).addClass("searcherror")
     }
     }
+}
+
+function datacheck(date,errordate,kinngaku,errorkinngaku){
+  var dateval = $("#" + date).val();
+  var datecheck = /^\d{4}\/\d{2}\/\d{2}$/.test(dateval)
+  if (datecheck){
+    $("#" + errordate).removeClass('errorsentence')
+  }
+  else{
+    $("#" + errordate).addClass('errorsentence')
+  }
+
+  var kinngakuval = $("#" + kinngaku).val();
+  kinngakuval = kinngakuval.replace(/,/g,"")
+  var kinngakucheck = isPositiveNumber(kinngakuval)
+  if (kinngakucheck){
+    $("#" + errorkinngaku).removeClass('errorsentence')
+  }
+  else{
+    $("#" + errorkinngaku).addClass('errorsentence')
+  }
+  if (datecheck && kinngakucheck){
+    return true
+  }
+  else{
+    return false
+  }
+  
+}
+
+function isPositiveNumber(value) {
+  // 入力値が数値であり、1以上2100000000の値かどうかを判定する
+  var parsedValue = parseFloat(value);
+  return !isNaN(parsedValue) && parsedValue >= 1 && parsedValue<= 2100000000;
 }

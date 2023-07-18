@@ -49,6 +49,14 @@
                     <option>見積書</option>
                 </select>
             </div>
+            <div class="searchelement">
+                <div class="searchlabel">保存方法:</div>
+                <select id="hozonn" name="hozonn" class="searchinputtext input-field">
+                    <option></option>
+                    <option>電子保存</option>
+                    <option>スキャナ保存</option>
+                </select>
+            </div>
 
             <div class="searchelement">
                 <div class="searchlabel">検索ワード:</div>
@@ -72,6 +80,7 @@
                     <td class="syoruikubunn">書類区分</td>
                     <td class="bikou">検索ワード</td>
                     <td class="teisei">訂正歴</td>
+                    <td class="hozonn">保存方法</td>
                     <td class="downloadTd"></td>
                     <td class="hennkou"></td>
                 </tr>
@@ -90,6 +99,7 @@
                         
                         @endif
                     </td>
+                    <td class="hozonn">{{$file->保存}}</td>
                     <td class="downloadTd">
                         <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
                     </td class="syousai">

@@ -239,30 +239,32 @@ a {
 
 .hiduke,.kinngaku{
   width: 130px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
 }
 .hidukeTd{
   text-align: center;
 }
 .torihikisaki{
   width: 200px;
-  /* white-space: nowrap; */
-  overflow: hidden;
-  text-overflow: ellipsis;
+
 }
-.syoruikubunn,.bikou,.teisei,.hennkou,.rireki{
+.bikou{
+  width: 130px;
+}
+
+.teisei,.hennkou,.rireki{
   width: 75px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+.syoruikubunn{
+  width: 75px;
+  text-align: center;
+}
+.hozonn{
+  width: 100px;
 }
 .downloadTd{
-  width: 40px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  width: 40px
+
 }
 
 .maru{

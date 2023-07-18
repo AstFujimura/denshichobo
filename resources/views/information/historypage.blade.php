@@ -37,6 +37,7 @@
                     <td>ファイル変更</td>
                     <td>更新者</td>
                     <td>検索ワード</td>
+                    <td>保存方法</td>
                     <td></td>
                     <td>更新日時
                     </td>
@@ -52,8 +53,10 @@
                     <td>{{$file->ファイル変更}}</td>
                     <td>{{$file->users->name}}</td>
                     <td>{{$file->備考}}</td>
+                    <td>{{$file->保存}}</td>
                     <td>
                         <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
+            
                     </td>
                     <td>{{$file->created_at}}</td>
 

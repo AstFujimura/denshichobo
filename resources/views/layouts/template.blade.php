@@ -58,7 +58,7 @@
             <a href="{{route('topGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                        <img src="{{ asset('img/pencil_2_line.svg') }}">
+                        <img src="{{ asset('img/home_3_line.svg') }}">
                         </div>
                         <div class="button1name01">
                           帳簿一覧

@@ -67,7 +67,10 @@
                     <td>変更履歴</td><td>{{$file->ファイル変更}}</td>
                 </tr>
                 <tr>
-                    <td>備考</td><td>{{$file->備考}}</td>
+                    <td>検索ワード</td><td>{{$file->備考}}</td>
+                </tr>
+                <tr>
+                    <td>保存方法</td><td>{{$file->保存}}</td>
                 </tr>
                 <tr>
                     <td>最終更新日時</td><td>{{$file->created_at}}</td>

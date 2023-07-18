@@ -28,13 +28,16 @@ class EditController extends Controller
         $hiduke = substr_replace($hiduke,'/',4,0);
         $hiduke = substr_replace($hiduke,'/',7,0);
         $syoruikubunn =$file->書類;
+        $hozonn =$file->保存;
         $data = [
             'file' => $file,
             'hiduke'=>$hiduke ,
             'seikyusyo' => "",
             'nohinnsyo' => "",
             'keiyakusyo' => "",
-            'mitumorisyo' => ""
+            'mitumorisyo' => "",
+            'dennshi' => "",
+            'scan' => "",
         ];
 
         if ($syoruikubunn == "請求書"){
@@ -48,7 +51,14 @@ class EditController extends Controller
         }
         else if ($syoruikubunn == "見積書"){
             $data['mitumorisyo'] = "selected";
+        };
+
+        if ($hozonn == "電子保存"){
+            $data['dennshi'] = "selected";
         }
+        else if ($hozonn == "スキャナ保存"){
+            $data['scan'] = "selected";
+        };
 
 
         
@@ -74,6 +84,7 @@ class EditController extends Controller
         $kinngaku = $request->input('kinngaku');
         $kinngaku = str_replace(',','',$kinngaku);
         $syorui = $request->input('syorui');
+        $hozonn = $request->input('hozonn');
         $kennsakuword = $request->input('kennsakuword');
         $version = $historycount + 1;
 
@@ -112,9 +123,10 @@ class EditController extends Controller
         $newfile->バージョン = $version;
         $newfile->過去データID = $path;
         $newfile->備考 = $kennsakuword;
+        $newfile->保存 = $hozonn;
         $newfile->save();
         
-        return redirect()->route('detail',['id'=>$newfile->過去データID]);
+        return redirect()->route('topGet');
 
     }
     public function convert($int)
