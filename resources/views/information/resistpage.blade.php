@@ -19,15 +19,6 @@
         <form class="form" action="{{route('registPost')}}" method="post" enctype="multipart/form-data">
                 @csrf
 
-                @php
-                    $currentYear = date('Y');
-                    $currentMonth = date('m');
-                    $currentDate = date('d');
-                    $currentHour = date('H');
-                    $currentMinute = date('i');
-                    $startYear = $currentYear - 5;
-                    $endYear = $currentYear;
-                @endphp
                 <div class="droparea">
                     ここにドラッグ＆ドロップ
                 </div>
@@ -36,38 +27,22 @@
                     <span class="fileerrorelement">ファイルを選択してください</span>
                 </div>
                 <div class="input-container">
-                    <label class="label">書類作成（受領）日</label>
+                    <label class="label">書類作成（受領）日<span class ="requirered">*</span> </label>
                     <div class="dateform">
-                        <select name="year" class="input-field">
-                            @for ($year = $startYear; $year <= $endYear; $year++)
-                                <option value="{{ $year }}" {{ $year == $currentYear ? 'selected' : '' }}>{{ $year }}</option>
-                            @endfor
-                        </select>
-                        <div>年</div>
-                        <select name="month" class="input-field">
-                            @for ($month = 1; $month <= 12; $month++)
-                                <option value="{{ $month }}" {{ $month == $currentMonth ? 'selected' : '' }}>{{ $month }}</option>
-                            @endfor
-                        </select>
-                        <div>月</div>
-                        <select name="day" class="input-field">
-                            @for ($day = 1; $day <= 31; $day++)
-                                <option value="{{ $day }}" {{ $day == $currentDate ? 'selected' : '' }}>{{ $day }}</option>
-                            @endfor
-                        </select>
-                        <div>日</div>
+                        <input type="text" name="hiduke" class="input-field dateinputtext" id="hiduke" placeholder="2023/01/01">
+                        <span class="errorelement" id="required4">必須項目です</span>
                     </div>
                 </div>
                 <div class="input-container">
-                    <label  class="label">金額</label>
+                    <label  class="label">金額<span class ="requirered">*</span></label>
                     <div>
-                        <input type="text" name="kinngaku" class="input-field" id="kinngaku">
+                        <input type="text" name="kinngaku" class="input-field kinngakuinput-field" id="kinngaku" placeholder="3,000">
                         <span class="errorelement" id="required2">必須項目です</span>
                     </div>
                     
                 </div>
                 <div class="input-container">
-                    <label  class="label">取引先</label>
+                    <label  class="label">取引先<span class ="requirered">*</span></label>
                     <div>
                         <input type="text" name="torihikisaki" class="input-field" id="torihikisaki">
                         <span class="errorelement" id="required1">必須項目です</span>
@@ -76,17 +51,26 @@
                 </div>
 
                 <div class="input-container">
-                    <label  class="label">書類区分</label>
+                    <label  class="label">書類区分<span class ="requirered">*</span></label>
                     <div>
                         <select name="syorui" class="input-field">
                             <option>請求書</option>
                             <option>納品書</option>
                             <option>契約書</option>
+                            <option>見積書</option>
                         </select>
                         <span class="errorelement" id="required3">必須項目です</span>
                     </div>
                     
                 </div>
+                <div class="input-container">
+                    <label  class="label">検索ワード</label>
+                    <div>
+                        <input type="text" name="kennsaku" class="input-field" id="kennsaku">
+                    </div>
+                    
+                </div>
+
 
 
                 <input type="submit" value="登録" id="registbutton" class="registbutton">

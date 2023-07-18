@@ -1,0 +1,31 @@
+body{
+    margin: 0;
+}
+.header001{
+    height: 64px;
+    background: rgb(155, 204, 96);
+    margin: none;
+    display: flex;
+}
+
+.headerIcon001{
+    margin-block: auto;
+}
+.menu001{
+    height: 48px;
+    background: rgb(75, 75, 75);
+    display: flex;
+    padding-inline: 30px;
+}
+
+.menu001fixed{
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left:0;
+    z-index: 10;
+}
+
+.menue001{
+    margin-left: auto;
+}

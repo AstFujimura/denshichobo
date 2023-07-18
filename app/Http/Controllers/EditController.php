@@ -24,14 +24,36 @@ class EditController extends Controller
                 ->first();
                 
 
-        $dateString = $file->日付;
+        $hiduke = $file->日付;
+        $hiduke = substr_replace($hiduke,'/',4,0);
+        $hiduke = substr_replace($hiduke,'/',7,0);
+        $syoruikubunn =$file->書類;
+        $data = [
+            'file' => $file,
+            'hiduke'=>$hiduke ,
+            'seikyusyo' => "",
+            'nohinnsyo' => "",
+            'keiyakusyo' => "",
+            'mitumorisyo' => ""
+        ];
 
-        $year_data = substr($dateString, 0, 4);
-        $month_data = ltrim(substr($dateString, 4, 2), '0');
-        $date_data = ltrim(substr($dateString, 6, 2), '0');
+        if ($syoruikubunn == "請求書"){
+            $data['seikyusyo'] = "selected";
+        }
+        else if ($syoruikubunn == "納品書"){
+            $data['nohinnsyo'] = "selected";
+        }
+        else if ($syoruikubunn == "契約書"){
+            $data['keiyakusyo'] = "selected";
+        }
+        else if ($syoruikubunn == "見積書"){
+            $data['mitumorisyo'] = "selected";
+        }
+
+
         
 
-        return view('information.editpage',['file' => $file,'year_data' =>$year_data,'month_data' =>$month_data,'date_data' =>$date_data]);
+        return view('information.editpage',$data);
     }
 
     public function editPost(Request $request,$path)
@@ -46,10 +68,13 @@ class EditController extends Controller
 
 
         
-        $date = $request->input('year') . $this->convert($request->input('month')) . $this->convert($request->input('day'));
+        $date = $request->input('hiduke');
+        $date = str_replace('/','',$date);
         $torihikisaki = $request->input('torihikisaki');
         $kinngaku = $request->input('kinngaku');
+        $kinngaku = str_replace(',','',$kinngaku);
         $syorui = $request->input('syorui');
+        $kennsakuword = $request->input('kennsakuword');
         $version = $historycount + 1;
 
         //ファイルに変更がある場合とない場合でわける
@@ -86,7 +111,9 @@ class EditController extends Controller
         $newfile->保存者ID = Auth::user()->id;
         $newfile->バージョン = $version;
         $newfile->過去データID = $path;
+        $newfile->備考 = $kennsakuword;
         $newfile->save();
+        
         return redirect()->route('detail',['id'=>$newfile->過去データID]);
 
     }

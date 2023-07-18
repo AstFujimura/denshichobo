@@ -25,9 +25,11 @@ class RegistController extends Controller
             $now = Carbon::now();
             $currentTime = $now->format('YmdHis');
             
-            $date = $request->input('year') . $this->convert($request->input('month')) . $this->convert($request->input('day'));
+            $date = $request->input('hiduke');
+            $date = str_replace('/','',$date);
             $torihikisaki = $request->input('torihikisaki');
             $kinngaku = $request->input('kinngaku');
+            $kinngaku = str_replace(',','',$kinngaku);
             $syorui = $request->input('syorui');
             $file = $request->file('file');
             $extension = $file->getClientOriginalExtension();

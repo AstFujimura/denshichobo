@@ -6,23 +6,29 @@ a {
 }
 .top_table td{
     padding: 5px;
-    border: solid 1px;
+    
 }
-.top_table tr{
-    border: solid 1px black;
+
+.top_table_body td{
+  border-right: solid 1px transparent;
 }
+
+.top_table_body{
+  border-bottom: solid 1px rgb(176, 176, 235);
+}
+
 
 .top_table thead tr{
     background: rgb(223, 251, 252);
+    margin-left: -0.5px;
+    text-align: center;
+    border-right: solid 1px white;
 }
 
 
-.dateform{
-    display: flex;
-}
 
 .invalid{
-    border-color: red !important;
+  border: rgb(252, 86, 86) solid 2px;
     background-color: rgb(250 238 245);
   }
 .errorelement{
@@ -49,13 +55,7 @@ a {
     background: rgb(201, 201, 201);
 }
 
-.detail{
-    cursor: pointer;
-}
-.detail:hover{
-    background: gray;
-    color: white;
-}
+
 
 .button1logo01{
     margin-right: 1rem;
@@ -80,16 +80,18 @@ a {
   .searchbox{
     padding: 20px;
     background: rgb(231 231 231);
+    display: flex;
   }
 
   .searchelement{
+    display: flex;
     padding-inline: 10px;
     margin-block: 5px;
   }
 
   .searchlabel{
     display: inline-block;
-    width: 80px;
+    width: 95px;
   }
 
   .searchbutton{
@@ -121,6 +123,9 @@ a {
     text-align: right;
     width: 100px;
   }
+  .buttonarea{
+    align-self: flex-end;
+  }
 
   .detail_table td{
     border: solid 1px black;
@@ -141,12 +146,21 @@ a {
   .detail_download{
     padding: 10px;
   }
-
+  .history_table body td{
+    border-right: solid 1px transparent;
+  }
+  .history_table body{
+    border-bottom: solid 1px rgb(176, 176, 235);
+  }
   .history_table td{
-    border: solid 1px black;
+    border-bottom: solid 1px rgb(176, 176, 235);
     border-collapse: collapse;
     padding: 5px;
   }
+  .history_table_column td{
+    border-right: solid 1px white;
+  }
+
 
   .history_table{
     border-collapse: collapse;
@@ -155,6 +169,9 @@ a {
 
   .history_table thead tr{
     background: rgb(223, 251, 252);
+    margin-left: -0.5px;
+    text-align: center;
+    border-right: solid 1px white;
 }
 
 .droparea{
@@ -172,6 +189,9 @@ a {
 
 .input-field{
     height: 30px;
+}
+.kinngakuinput-field{
+  text-align: right;
 }
 
 .form{
@@ -192,10 +212,86 @@ a {
     margin-top: 20px;
 }
 .label{
-    width: 150px;
+    width: 200px;
 }
 
 .red{
     color: red;
     font-size: 12px;
+}
+.top_table_column td{
+  border-right: solid 1px white;
+}
+.top_table_column_fixed{
+  position: fixed;
+  top: 48px;
+}
+
+.top_table_margin{
+  margin-top: 50px;
+}
+.pagetitle{
+  margin-top: 20px;
+}
+.h2_margin{
+  margin-top: 70px;
+}
+
+.hiduke,.kinngaku{
+  width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hidukeTd{
+  text-align: center;
+}
+.torihikisaki{
+  width: 200px;
+  /* white-space: nowrap; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.syoruikubunn,.bikou,.teisei,.hennkou,.rireki{
+  width: 75px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.downloadTd{
+  width: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.maru{
+  text-align: center;
+  cursor:pointer;
+  padding: 5px;
+  border-radius: 3px;
+}
+.maru:hover{
+  background: gray;
+  color: white;
+}
+
+.detail{
+  text-align: center;
+  cursor:pointer;
+  padding: 5px;
+  border-radius: 3px;
+}
+.detail:hover{
+  background: gray;
+  color: white;
+}
+
+.searcherror{
+  border: rgb(252, 86, 86) solid 2px;
+  background: rgb(240, 221, 221);
+}
+
+.requirered{
+  color: red;
 }

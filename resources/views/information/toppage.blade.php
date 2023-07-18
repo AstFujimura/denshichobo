@@ -15,64 +15,88 @@
 
 
 @section('main')
-<h2>帳簿一覧</h2>
+<h2 class="pagetitle">帳簿一覧</h2>
 <form class="searchform" action="{{route('searchPost')}}" method="get" enctype="multipart/form-data">
 
     <div class="searchbox">
-        <div class="searchelement">
-            <div class="searchlabel">日付:</div>
-            <input type="text" id="startyear" name="starthiduke" class="searchinputtext ">
-            ~
-            <input type="text" id="endyear" name="endhiduke" class="searchinputtext ">
+        <div class="searcharea">
+            <div class="searchelement">
+                <div class="searchlabel">日付:</div>
+                <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext" placeholder="2023/07/07">
+                ~
+                <input type="text" id="endyear" name="endhiduke" class="searchinputtext dateinputtext" placeholder="2023/07/07">
+            </div>
+
+            <div class="searchelement">
+                <div class="searchlabel">金額:</div>
+                <input type="text" id="startkinngaku" name="startkinngaku"  class="searchinputtext kinngakuinput" placeholder="1,500">円
+                ~<input type="text" id="endkinngaku" name="endkinngaku"  class="searchinputtext kinngakuinput" placeholder="200,000,000">円
+            </div>
+
+            <div class="searchelement">
+                <div class="searchlabel">取引先:</div>
+                <input type="text" id="torihikisaki" name="torihikisaki" class="searchinputtext torihikisakiinput">
+                <div>(部分一致)</div>
+            </div>
+
+            <div class="searchelement">
+                <div class="searchlabel">書類区分:</div>
+                <select id="syoruikubunn" name="syoruikubunn" class="searchinputtext input-field">
+                    <option></option>
+                    <option>請求書</option>
+                    <option>納品書</option>
+                    <option>契約書</option>
+                    <option>見積書</option>
+                </select>
+            </div>
+
+            <div class="searchelement">
+                <div class="searchlabel">検索ワード:</div>
+                <input type="text" id="kennsakuword" name="kennsakuword" class="searchinputtext kensakuwordinput">
+                <div>(部分一致)</div>
+            </div>
+
         </div>
-        <div class="searchelement">
-            <div class="searchlabel">金額:</div>
-            <input type="text" id="startkinngaku" class="searchinputtext kinngakuinput">円
-            ~<input type="text" id="endkinngaku" class="searchinputtext kinngakuinput">円
+        <div class="buttonarea">
+            <input type="submit" value="検索" class="searchbutton">
         </div>
-        <div class="searchelement">
-            <div class="searchlabel">取引先:</div>
-            <input type="text" id="torihikisaki" class="searchinputtext torihikisakiinput">
-        </div>
-        <div class="searchelement">
-            <div class="searchlabel">書類区分:</div>
-            <input type="text" id="syoruikubunn" class="searchinputtext syoruikubunninput">
-        </div>
-        <input type="submit" value="検索" class="searchbutton">
+
     </div>
 </form>
         <table class="top_table">
             <thead>
-                <tr>
-                    <td>日付</td>
-                    <td>金額</td>
-                    <td>取引先</td>
-                    <td>書類区分</td>
-                    <td>備考</td>
-                    <td>訂正歴</td>
-                    <td></td>
-                    <td></td>
+                <tr class="top_table_column">
+                    <td class="hiduke">日付</td>
+                    <td class="kinngaku">金額</td>
+                    <td class="torihikisaki">取引先</td>
+                    <td class="syoruikubunn">書類区分</td>
+                    <td class="bikou">検索ワード</td>
+                    <td class="teisei">訂正歴</td>
+                    <td class="downloadTd"></td>
+                    <td class="hennkou"></td>
                 </tr>
             </thead>
         @foreach ($files as $file)
             <tbody>
-                <tr>
-                    <td class="hidukeTd">{{$file->日付}}</td>
-                    <td class="kinngakuTd">{{$file->金額}}</td>
-                    <td>{{$file->取引先}}</td>
-                    <td>{{$file->書類}}</td>
-                    <td>{{$file->備考}}</td>
-                    <td>@if ($file->バージョン != 1)
-                        あり
+                <tr class="top_table_body">
+                    <td class="hidukeTd hiduke">{{$file->日付}}</td>
+                    <td class="kinngakuTd kinngaku">{{$file->金額}}</td>
+                    <td class="torihikisaki">{{$file->取引先}}</td>
+                    <td class="syoruikubunn">{{$file->書類}}</td>
+                    <td class="bikou">{{$file->備考}}</td>
+                    <td class="teisei">@if ($file->バージョン != 1)
+                        <div class="maru" onclick="location.href='/history/{{$file->過去データID}}';">〇</div>
                         @else
-                        なし
+                        
                         @endif
                     </td>
-                    <td>
+                    <td class="downloadTd">
                         <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
-                    </td>
-                    <td onclick="location.href='/detail/{{$file->過去データID}}';" class="detail">
-                        詳細
+                    </td class="syousai">
+                    <td class="hennkou">
+                        <div class="detail"  onclick="location.href='/edit/{{$file->過去データID}}';">
+                            変更
+                        </div>
                     </td>
                 </tr>
             </tbody>

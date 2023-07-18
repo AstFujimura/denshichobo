@@ -19,18 +19,6 @@
         <form class="form" action="{{route('editPost',['path'=>$file->過去データID])}}" method="post" enctype="multipart/form-data">
                 @csrf
 
-                @php
-                    $currentYear = date('Y');
-                    $currentMonth = date('m');
-                    $currentDate = date('d');
-                    $currentHour = date('H');
-                    $currentMinute = date('i');
-                    $startYear = $currentYear - 5;
-                    $endYear = $currentYear;
-                    $selectedYear = $year_data;
-                    $selectedMonth = $month_data;
-                    $selectedDate = $date_data;
-                @endphp
                 <div class="droparea">
                     ここにドラッグ＆ドロップ
                 </div>
@@ -42,26 +30,20 @@
                 <div class="input-container">
                     <label class="label">書類作成（受領）日</label>
                     <div class="dateform">
-                        <select name="year" class="input-field">
-                            @for ($year = $startYear; $year <= $endYear; $year++)
-                                <option value="{{ $year }}" {{ $year == $selectedYear ? 'selected' : '' }}>{{ $year }}</option>
-                            @endfor
-                        </select>
-                        <div>年</div>
-                        <select name="month" class="input-field">
-                            @for ($month = 1; $month <= 12; $month++)
-                                <option value="{{ $month }}" {{ $month == $selectedMonth ? 'selected' : '' }}>{{ $month }}</option>
-                            @endfor
-                        </select>
-                        <div>月</div>
-                        <select name="day" class="input-field">
-                            @for ($day = 1; $day <= 31; $day++)
-                                <option value="{{ $day }}" {{ $day == $selectedDate ? 'selected' : '' }}>{{ $day }}</option>
-                            @endfor
-                        </select>
-                        <div>日</div>
+                        <input type="text" name="hiduke" class="input-field dateinputtext" value="{{$hiduke}}" id="hiduke">
+                        <span class="errorelement" id="required4">必須項目です</span>
                     </div>
                 </div>
+
+                <div class="input-container">
+                <label class="label">金額</label>
+                    <div>
+                        <input type="text" name="kinngaku" class="input-field kinngakuinput-field" id="kinngakuedit" value="{{$file->金額}}">
+                        <span class="errorelement" id="required2">必須項目です</span>
+                    </div>
+                    
+                </div>
+
                 <div class="input-container">
                 <label class="label">取引先</label>
                     <div>
@@ -70,19 +52,24 @@
                     </div>
                     
                 </div>
+
+      
                 <div class="input-container">
-                <label class="label">金額</label>
+                    <label  class="label">書類区分<span class ="requirered">*</span></label>
                     <div>
-                        <input type="text" name="kinngaku" class="input-field" id="kinngaku" value="{{$file->金額}}">
-                        <span class="errorelement" id="required2">必須項目です</span>
+                        <select name="syorui" class="input-field">
+                            <option {{$seikyusyo}}>請求書</option>
+                            <option {{$nohinnsyo}}>納品書</option>
+                            <option {{$keiyakusyo}}>契約書</option>
+                            <option {{$mitumorisyo}}>見積書</option>
+                        </select>
                     </div>
                     
                 </div>
                 <div class="input-container">
-                <label class="label">書類区分</label>
+                    <label  class="label">検索ワード</label>
                     <div>
-                        <input type="text" name="syorui" class="input-field" id="syorui" value="{{$file->書類}}">
-                        <span class="errorelement" id="required3">必須項目です</span>
+                        <input type="text" name="kennsakuword" class="input-field" value="{{$file->備考}}" id="kennsakuword">
                     </div>
                     
                 </div>

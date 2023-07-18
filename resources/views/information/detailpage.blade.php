@@ -15,7 +15,7 @@
 
 
 @section('main')
-<h2>詳細</h2>
+<h2>変更結果</h2>
     <div class="menubar">
             <a href="/edit/{{$file->過去データID}}" class="addbutton">
                 <div class="addbuttonelement01">

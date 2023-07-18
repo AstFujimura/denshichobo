@@ -7,6 +7,7 @@
 
     <title>@yield('title')</title>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/admin01.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/admin001.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/regist.css') }}">
     <script src="{{asset('jquery/jquery-3.7.0.min')}}"></script>
@@ -15,18 +16,32 @@
  
 </head>
  
-
-<body>
-    <div class="page-container01">
-        <div class="sidebar01">
+<header class="header001">
             <div class="logo01">
                 <a href="{{route('topGet')}}" class="logoelement01">
                     電子帳簿保存システム
                 </a>
-                 <div class="sidebarbatsu01">
-                    <img src="{{ asset('img/close_line.svg') }}">
-                </div>
             </div>
+                
+
+</header>
+<div class="menu001">
+
+        <div class="headerIcon001" onclick="location.href='{{route('topGet')}}';">
+            <img src="{{ asset('img/home_3_line.svg') }}" class="menuicon01">
+        </div>
+        <div class="headerIcon001" onclick="location.href='{{route('registGet')}}';">
+            <img src="{{ asset('img/pencil_2_line_gray.svg') }}" class="menuicon01">
+        </div>
+        <div class="headerIcon001 menue001">
+            <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01">
+        </div>
+
+</div>
+<body>
+    <div class="page-container01">
+        <div class="sidebar01">
+
             <div class="icon01">
                 <div class="user01">
                     <div class="usericon01">
@@ -94,13 +109,7 @@
 
         </div>
         <main class="main01">
-            <header class="header01">
-                <div class="headerIcon01">
-                    <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01">
-                </div>
-                
 
-            </header>
             
             <div class="maincontent01">
                 <nav class="navbar">
@@ -125,6 +134,7 @@
     </footer>
     <script src="{{ asset('js/all.js') }}"></script>
     <script src="{{ asset('js/admin01.js') }}"></script>
+    <script src="{{ asset('js/admin001.js') }}"></script>
 </footer>
 
  

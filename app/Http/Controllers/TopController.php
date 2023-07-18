@@ -52,7 +52,21 @@ class TopController extends Controller
         ->orderBy('files.日付', 'desc');
 
     $startDateStr = $request->input('starthiduke');
+    $startDateStr = str_replace('/', '', $startDateStr);
+
     $endDateStr = $request->input('endhiduke');
+    $endDateStr = str_replace('/', '', $endDateStr);
+
+    $startKinngakuStr = $request->input('startkinngaku');
+    $startKinngakuStr = str_replace(',', '', $startKinngakuStr);
+
+    $endKinngakuStr = $request->input('endkinngaku');
+    $endKinngakuStr = str_replace(',', '', $endKinngakuStr);
+
+    $torihikisaki = $request->input('torihikisaki');
+    $syoruikubunn = $request->input('syoruikubunn');
+    $kennsakuword = $request->input('kennsakuword');
+
 
 
     //値が空の場合は最小値と最大値を格納する。検索後にもう一度空に戻す
@@ -63,12 +77,26 @@ class TopController extends Controller
     if (empty($endDateStr)){
         $endDateStr = "99999999";        
     }
+
+    if (empty($startKinngakuStr)){
+        //入力した値が0である場合と区別するためにあえて00としておく
+        $startKinngakuStr = "00";        
+    }
+    
+    if (empty($endKinngakuStr)){
+        $endKinngakuStr = "99999999";        
+    }
     
 
 
     //検索クエリ
     $files = $allfiles->where('files.日付', '>=', $startDateStr)
     ->where('files.日付', '<=', $endDateStr)
+    ->where('files.金額', '>=', $startKinngakuStr)
+    ->where('files.金額', '<=', $endKinngakuStr)
+    ->where('files.取引先','like',"%". $torihikisaki ."%")
+    ->where('files.書類','like',"%". $syoruikubunn ."%")
+    ->where('files.備考','like',"%". $kennsakuword ."%")
     ->get();
 
 
@@ -78,17 +106,65 @@ class TopController extends Controller
     if ($startDateStr == "00000000"){
         $startDateStr = "";
     }
+    else{
+        $startDateStr = substr_replace($startDateStr,'/',4,0);
+        $startDateStr = substr_replace($startDateStr,'/',7,0);
+    }
     if ($endDateStr == "99999999"){
         $endDateStr = "";    
     }
+    else{
+        $endDateStr = substr_replace($endDateStr,'/',4,0);
+        $endDateStr = substr_replace($endDateStr,'/',7,0);
+    }
+
+    if ($startKinngakuStr == "00"){
+        $startKinngakuStr = "";
+    }
+    else{
+        $startKinngakuStr = number_format(floatval($startKinngakuStr));
+    }
+    if ($endKinngakuStr == "99999999"){
+        $endKinngakuStr = "";    
+    }
+    else{
+        $endKinngakuStr = number_format(floatval($endKinngakuStr));
+    }
+
+    
 
 
     $data = [
     'files' => $files,
     'count' => $count,
     'starthiduke' => $startDateStr,
-    'endhiduke' => $endDateStr
+    'endhiduke' => $endDateStr,
+    'startkinngaku' => $startKinngakuStr,
+    'endkinngaku' => $endKinngakuStr,
+    'torihikisaki' => $torihikisaki,
+    'kennsakuword' => $kennsakuword,
+    'none' => "",
+    'seikyusyo' => "",
+    'nohinnsyo' => "",
+    'keiyakusyo' => "",
+    'mitumorisyo' => ""
     ];
+
+    if ($syoruikubunn == ""){
+        $data['none'] = "selected";
+    }
+    else if ($syoruikubunn == "請求書"){
+        $data['seikyusyo'] = "selected";
+    }
+    else if ($syoruikubunn == "納品書"){
+        $data['nohinnsyo'] = "selected";
+    }
+    else if ($syoruikubunn == "契約書"){
+        $data['keiyakusyo'] = "selected";
+    }
+    else if ($syoruikubunn == "見積書"){
+        $data['mitumorisyo'] = "selected";
+    }
 
         // 取得したデータをビューに渡すなどの処理
     return view('information.search',$data);
