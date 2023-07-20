@@ -136,6 +136,15 @@ class EditController extends Controller
         }
         return $int;
     }
+    public function deleteGet($path)
+    {
+        $deletedata = Filemodel::where('id',$path)->get();
+        foreach($deletedata as $data){
+            $data->削除フラグ = "済";
+            $data->save();
+        }
+        return redirect()->route("topGet");
+    }
 
 
 }

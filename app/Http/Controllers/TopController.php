@@ -29,10 +29,15 @@ class TopController extends Controller
         ->orderBy('files.日付', 'desc')
         ->get();
 
-    $count = $files->count();  
+        
+        
+
+    $count = $files->count();
+    $deletecount = $files->where('削除フラグ','済')->count();
+    $notdeletecount = $count - $deletecount;
 
         // 取得したデータをビューに渡すなどの処理
-    return view('information.toppage',['files' => $files,'count' => $count]);
+    return view('information.toppage',['files' => $files,'count' => $count,'deletecount' => $deletecount,'notdeletecount' => $notdeletecount]);
 
     }
 
@@ -59,6 +64,7 @@ class TopController extends Controller
 
     $startKinngakuStr = $request->input('startkinngaku');
     $startKinngakuStr = str_replace(',', '', $startKinngakuStr);
+    // dd($startKinngakuStr);
 
     $endKinngakuStr = $request->input('endkinngaku');
     $endKinngakuStr = str_replace(',', '', $endKinngakuStr);
@@ -103,6 +109,8 @@ class TopController extends Controller
 
 
     $count = $files->count();
+    $deletecount = $files->where('削除フラグ','済')->count();
+    $notdeletecount = $count - $deletecount;
 
     //検索結果に初期値として渡すときに値を空欄にしておくため
     if ($startDateStr == "00000000"){
@@ -139,6 +147,8 @@ class TopController extends Controller
     $data = [
     'files' => $files,
     'count' => $count,
+    'deletecount' => $deletecount,
+    'notdeletecount' => $notdeletecount,
     'starthiduke' => $startDateStr,
     'endhiduke' => $endDateStr,
     'startkinngaku' => $startKinngakuStr,

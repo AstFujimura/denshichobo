@@ -87,7 +87,9 @@
                 </div>
 
 
+                <input type="hidden" value="{{$file->id}}" id="id">
                 <input type="submit" value="変更" id="registbutton"  class="registbutton">
+                <div class="deletebutton">削除</div>
         </form>
         @endsection 
         @section('footer')

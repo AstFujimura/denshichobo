@@ -41,14 +41,17 @@ Route::get('/history/{id}',[TopController::class,'history'])->name('history');
 
 
 // 新規登録ページ
-Route::get('regist',[RegistController::class,'registGet'])->name('registGet');
+Route::get('/regist',[RegistController::class,'registGet'])->name('registGet');
 // 新規登録ページにポストで情報を投げた時
-Route::post('regist',[RegistController::class,'registPost'])->name('registPost');
+Route::post('/regist',[RegistController::class,'registPost'])->name('registPost');
 
 // 変更ページ
-Route::get('edit/{path}',[EditController::class,'editGet'])->name('editGet');
+Route::get('/edit/{path}',[EditController::class,'editGet'])->name('editGet');
 // 変更ページにポストで情報を投げた時
-Route::post('edit/{path}',[EditController::class,'editPost'])->name('editPost');
+Route::post('/edit/{path}',[EditController::class,'editPost'])->name('editPost');
+
+// 変更ページにポストで情報を投げた時
+Route::get('/delete/{path}',[EditController::class,'deleteGet'])->name('deleteGet');
 
 
 

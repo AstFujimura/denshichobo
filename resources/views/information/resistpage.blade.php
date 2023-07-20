@@ -68,7 +68,7 @@
                 <div class="input-container">
                     <label  class="label">保存方法<span class ="requirered">*</span></label>
                     <div>
-                        <select name="syorui" class="input-field">
+                        <select name="hozonn" class="input-field">
                             <option>電子保存</option>
                             <option>スキャナ保存</option>
                         </select>
@@ -78,7 +78,7 @@
                 <div class="input-container">
                     <label  class="label">検索ワード</label>
                     <div>
-                        <input type="text" name="kennsaku" class="input-field" id="kennsaku">
+                        <input type="text" name="kennsakuword" class="input-field" id="kennsakuword">
                     </div>
                     
                 </div>

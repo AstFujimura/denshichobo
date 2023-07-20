@@ -66,47 +66,71 @@
         </div>
     </div>
 </form>
-        <table class="top_table">
-            <thead>
-                <tr class="top_table_column">
-                    <td class="hiduke">日付</td>
-                    <td class="kinngaku">金額</td>
-                    <td class="torihikisaki">取引先</td>
-                    <td class="syoruikubunn">書類区分</td>
-                    <td class="bikou">検索ワード</td>
-                    <td class="teisei">訂正歴</td>
-                    <td class="hozonn">保存方法</td>
-                    <td class="downloadTd"></td>
-                    <td class="hennkou"></td>
-                </tr>
-            </thead>
-        @foreach ($files as $file)
-            <tbody>
-                <tr class="top_table_body">
-                    <td class="hidukeTd hiduke">{{$file->日付}}</td>
-                    <td class="kinngakuTd kinngaku">{{$file->金額}}</td>
-                    <td class="torihikisaki">{{$file->取引先}}</td>
-                    <td class="syoruikubunn">{{$file->書類}}</td>
-                    <td class="bikou">{{$file->備考}}</td>
-                    <td class="teisei">@if ($file->バージョン != 1)
+<div class="info">
+            <div class="count">
+                {{$count}}件 表示
+            </div>
+            <div class="deletecount">
+                {{$deletecount}}件 表示
+            </div>
+            <div class="notdeletecount selected">
+                {{$notdeletecount}}件 表示
+            </div>
+            <div class="select">
+                <select id="select">
+                    <option>削除データを除く</option>
+                    <option>削除データのみ表示</option>
+                    <option>全データ表示</option>
+                </select>
+            </div>
+            
+        </div>
+        <div class="top_table_div">
+            <div class="hiduke">日付</div>
+            <div class="kinngaku">金額</div>
+            <div class="torihikisaki">取引先</div>
+            <div class="syoruikubunn">書類区分</div>
+            <div class="bikou">検索ワード</div>
+            <div class="teisei">訂正歴</div>
+            <div class="hozonn">保存方法</div>
+            <div class="downloadTd"></div>
+            <div class="hennkou"></div>
+            <div class="delete">削除</div>
+        </div>
+
+        <div class="top_table_element">
+            @foreach ($files as $file)
+                @if ($file->削除フラグ != "済")
+                <div class="top_table_body table_selected">    
+                @else
+                <div class="delete_table">
+                @endif
+                    <div class="hidukeTd hiduke">{{$file->日付}}</div>
+                    <div class="kinngakuTd kinngaku">{{$file->金額}}</div>
+                    <div class="torihikisaki">{{$file->取引先}}</div>
+                    <div class="syoruikubunn">{{$file->書類}}</div>
+                    <div class="bikou">{{$file->備考}}</div>
+                    <div class="teisei">@if ($file->バージョン != 1)
                         <div class="maru" onclick="location.href='/history/{{$file->過去データID}}';">〇</div>
                         @else
                         
                         @endif
-                    </td>
-                    <td class="hozonn">{{$file->保存}}</td>
-                    <td class="downloadTd">
+                    </div>
+                    <div class="hozonn">{{$file->保存}}</div>
+                    <div class="downloadTd">
                         <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
-                    </td class="syousai">
-                    <td class="hennkou">
-                        <div class="detail"  onclick="location.href='/edit/{{$file->過去データID}}';">
-                            変更
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        @endforeach
-        </table>    
+                    </div class="syousai">
+                    <div class="hennkou">
+                        @if ($file->削除フラグ != "済")
+                            <div class="detail"  onclick="location.href='/edit/{{$file->過去データID}}';">
+                                変更
+                            </div>
+                        @endif
+                    </div>
+                    <div class="delete">{{$file->削除フラグ}}</div>
+                </div>
+            @endforeach
+        </div>
         
 @endsection 
     @section('footer')

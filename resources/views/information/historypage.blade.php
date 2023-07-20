@@ -16,17 +16,6 @@
 
 @section('main')
 <h2>変更履歴</h2>
-    <a href="/edit/{{$file->過去データID}}" class="addbutton">
-        <div class="addbuttonelement01">
-            <div class="button1logo01">
-                <img src="{{ asset('img/user_edit_line.svg') }}">
-            </div>
-            <div class="accordion1name01">
-            変更
-            </div>
-
-        </div>
-    </a>
         <table class="history_table">
             <thead>
                 <tr class="history_table_column">

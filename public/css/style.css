@@ -1,31 +1,86 @@
 a {
     text-decoration: none;
 }
-.top_table {
-    border-collapse: collapse;
+
+
+.info{
+  height: 30px;
+  margin-bottom: 10px;
+  background: rgb(248, 248, 232);
+  display: flex;
 }
-.top_table td{
-    padding: 5px;
-    
+.count{
+  margin-inline: 30px;
+  line-height: 30px;
+  display: none;
+}
+.deletecount{
+  margin-inline: 30px;
+  line-height: 30px;
+  display: none;
+}
+.notdeletecount{
+  margin-inline: 30px;
+  line-height: 30px;
+  display: none;
+}
+.selected{
+  display: block;
+}
+.top_table_div{
+  display: flex;
+}
+.top_table_div div{
+  background: rgb(181, 228, 240);
+  text-align: center;
+  border-right: solid 1px white;
+  padding: 5px;
 }
 
-.top_table_body td{
-  border-right: solid 1px transparent;
-}
+
+
 
 .top_table_body{
-  border-bottom: solid 1px rgb(176, 176, 235);
+  display: none;
+  
 }
-
-
-.top_table thead tr{
-    background: rgb(223, 251, 252);
-    margin-left: -0.5px;
-    text-align: center;
+.top_table_body > div{
+    padding: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     border-right: solid 1px white;
+    border-bottom: solid 1px rgb(127, 127, 207);
+    height: 30px;
+    line-height: 30px;
+}
+
+.delete_table{
+  display: none;
+}
+.delete_table > div{
+  padding: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right: solid 1px white;
+  border-bottom: solid 1px rgb(127, 127, 207);
+  height: 30px;
+  line-height: 30px;
+}
+.table_selected{
+  display: flex !important;
 }
 
 
+.top_table_margin{
+  margin-top: 48px;
+}
+.top_table_column_fixed{
+  position: fixed;
+  top: 48px;
+  left: 35px;
+}
 
 .invalid{
   border: rgb(252, 86, 86) solid 2px;
@@ -198,14 +253,7 @@ a {
     padding: 30px;
 }
 
-.registbutton{
-    padding: 5px;
-    background: rgb(220, 247, 145);
-    border: solid 2px rgb(123, 197, 101);
-    border-radius: 5px;
-    margin-top: 10px;
-    cursor: pointer;
-}
+
 
 .input-container{
     display: flex;
@@ -219,17 +267,9 @@ a {
     color: red;
     font-size: 12px;
 }
-.top_table_column td{
-  border-right: solid 1px white;
-}
-.top_table_column_fixed{
-  position: fixed;
-  top: 48px;
-}
 
-.top_table_margin{
-  margin-top: 50px;
-}
+
+
 .pagetitle{
   margin-top: 20px;
 }
@@ -255,7 +295,7 @@ a {
 .teisei,.hennkou,.rireki{
   width: 75px;
 }
-.syoruikubunn{
+.syoruikubunn,.delete{
   width: 75px;
   text-align: center;
 }
@@ -270,7 +310,6 @@ a {
 .maru{
   text-align: center;
   cursor:pointer;
-  padding: 5px;
   border-radius: 3px;
 }
 .maru:hover{
@@ -281,7 +320,6 @@ a {
 .detail{
   text-align: center;
   cursor:pointer;
-  padding: 5px;
   border-radius: 3px;
 }
 .detail:hover{
@@ -297,3 +335,38 @@ a {
 .requirered{
   color: red;
 }
+.registbutton{
+  padding: 5px;
+  background: rgb(220, 247, 145);
+  border: solid 2px rgb(123, 197, 101);
+  border-radius: 5px;
+  margin-top: 10px;
+  cursor: pointer;
+  width: 100px;
+  font-size: 15px;
+}
+.registbutton:hover{
+  background: rgb(120, 155, 26);
+  color: white;
+}
+.deletebutton{
+  cursor: pointer;
+  margin-top: 20px;
+  background: pink;
+    border: solid 2px red;
+    padding-block: 5px;
+    width: 96px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 15px;
+}
+.deletebutton:hover{
+  background: rgb(243, 82, 109);
+  color: white;
+}
+
+.delete_table div{
+  background: rgb(238, 197, 197);
+  border-right: solid 1px rgb(238, 197, 197);
+}
+

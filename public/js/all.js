@@ -213,6 +213,16 @@ $(document).ready(function() {
   });
 
 
+  $('.deletebutton').on('click',function(){
+    $id = $("#id").val();
+    if (confirm("本当に削除しますか?")){
+      window.location.href = '/delete/'+$id;
+    }
+    
+
+  });
+
+
 
 });
 
@@ -373,6 +383,7 @@ function kinngakucheck_change(id) {
 
     //数値でなかった場合エラー
     if (!isNumeric){
+      console.log("error")
       $("#" + id).addClass("searcherror")
     }
     //0から始まる数値の時にエラー,ただし0は許容
@@ -385,19 +396,20 @@ function kinngakucheck_change(id) {
       $("#" + id).val(result);
       $("#" + id).removeClass("searcherror")
     }
-    //カンマが入っておりかつ適切な位置にある場合は許容
-    else if(isValidFormat){
-      var result = inputDate
-      $("#" + id).val(result);
-      $("#" + id).removeClass("searcherror")
-    }
+    // //カンマが入っておりかつ適切な位置にある場合は許容
+    // else if(isValidFormat){
+    //   var result = inputDate
+    //   $("#" + id).val(result);
+    //   $("#" + id).removeClass("searcherror")
+    // }
     
 
     
-    //カンマが入っているが適切な位置にない場合はエラー
-    else{
-      $("#" + id).addClass("searcherror")
-    }
+    // //カンマが入っているが適切な位置にない場合はエラー
+    // else{
+    //   console.log("エラー")
+    //   $("#" + id).addClass("searcherror")
+    // }
     }
 }
 
@@ -432,5 +444,5 @@ function datacheck(date,errordate,kinngaku,errorkinngaku){
 function isPositiveNumber(value) {
   // 入力値が数値であり、1以上2100000000の値かどうかを判定する
   var parsedValue = parseFloat(value);
-  return !isNaN(parsedValue) && parsedValue >= 1 && parsedValue<= 2100000000;
+  return !isNaN(parsedValue) && parsedValue >= -2100000000 && parsedValue<= 2100000000;
 }
