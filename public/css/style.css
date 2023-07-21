@@ -27,6 +27,9 @@ a {
 .selected{
   display: block;
 }
+.dataselect{
+  height: 100%;
+}
 .top_table_div{
   display: flex;
 }
@@ -107,6 +110,7 @@ a {
     padding: 2px;
     border-radius: 2px;
     cursor: pointer;
+    margin: auto;
 }
 
 .download:hover{
@@ -150,6 +154,12 @@ a {
   .searchlabel{
     display: inline-block;
     width: 95px;
+  }
+  .requirelabel{
+    width: 70px;
+  }
+  .searchselect{
+    width: 100px;
   }
 
   .searchbutton{
@@ -306,8 +316,8 @@ a {
   width: 100px;
 }
 .downloadTd{
-  width: 40px
-
+  width: 40px;
+  display: flex
 }
 
 .maru{

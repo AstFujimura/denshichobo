@@ -240,6 +240,7 @@ function datecheck_change(id){
 
 
     if (inputDate == ""){
+      $("#" + id).removeClass("searcherror")
     }
     // else if (/[^0-9/]/.test(inputDate)) {
     //   searchalert = true
@@ -255,8 +256,6 @@ function datecheck_change(id){
         var month = parts[0];
         var day = parts[1];
 
-
-        
         // 1桁の月と日には0を追加する
         if (month.length === 1) {
           month = '0' + month;
@@ -264,14 +263,7 @@ function datecheck_change(id){
         if (day.length === 1) {
           day = '0' + day;
         }
-        
-        if (month >=1 && month <= 12 && day >=1 && day <= 31){
-          inputDate = currentYear + '/' + month + '/' + day;
-          $("#" + id).removeClass("searcherror")
-        }
-        else{
-          $("#" + id).addClass("searcherror")
-        }
+        inputDate = currentYear + '/' + month + '/' + day;  
       }
       
       // 「yyyymmdd」形式の場合、指定の形式に変換する
@@ -279,14 +271,8 @@ function datecheck_change(id){
         var year = inputDate.substr(0, 4);
         var month = inputDate.substr(4, 2);
         var day = inputDate.substr(6, 2);
-        if (month >=1 && month <= 12 && day >=1 && day <= 31){
-          inputDate = year + '/' + month + '/' + day;
-          $("#" + id).removeClass("searcherror")
-        }
-        else{
-          $("#" + id).addClass("searcherror")
-        }
         
+        inputDate = year + '/' + month + '/' + day;    
       }
       //「yyyy/m/d」形式などの場合、「yyyy/mm/dd」形式に変換する
       else if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(inputDate)) {
@@ -301,47 +287,65 @@ function datecheck_change(id){
           if (day.length === 1) {
             day = '0' + day;
           }
-          if (month >=1 && month <= 12 && day >=1 && day <= 31){
-            inputDate = year + '/' + month + '/' + day;
-            $("#" + id).removeClass("searcherror")
-          }
-          else{
-            $("#" + id).addClass("searcherror")
-          }
-      }
-      else if(!inputDate){
+          inputDate = year + '/' + month + '/' + day;
       }
 
-      else{
-        $("#" + id).addClass("searcherror")
-      }
-
-      var parts = inputDate.split('/');
-      var year = parseInt(parts[0]);
-      var month = parseInt(parts[1]);
-      var day = parseInt(parts[2]);
-  
-  
-  
-      if (year >= 1980 && year <= 2030 && month >=1 && month <= 12 && day >=1 && day <= 31){
-        var hyphenDate =inputDate.replace(/\//g,"-");
-        var dateObject = new Date(hyphenDate);
-        var formattedDate = dateObject.toISOString().split('T')[0];
-  
-        if (hyphenDate == formattedDate){
-          $("#" + id).removeClass("searcherror")
-        }
-        else{
-          $("#" + id).addClass("searcherror")
-        }
+      if (exist_date(inputDate,1980,2030)){
+        $("#" + id).removeClass("searcherror")
+        // 変換後の日付を入力フィールドに設定する
+        $("#" + id).val(inputDate);
       }
       else{
         $("#" + id).addClass("searcherror")
       }
-          // 変換後の日付を入力フィールドに設定する
-          $("#" + id).val(inputDate);
     }
+
+    //入力された値がyyyy/mm/ddであるとき
+    else{
+      if (exist_date(inputDate,1980,2030)){
+        $("#" + id).removeClass("searcherror")
+      }
+      else{
+        $("#" + id).addClass("searcherror")
+      }
+    }
+
+    
+    
 }
+//yyyy/mm/ddの形式が本当に存在するか確かめる。(例)2023/02/29はfalseを返す
+//第二,三引数には指定する範囲の年を入れる。
+function exist_date(date,startyear,endyear){
+  //yyyy/mm/dd形式になっている場合
+  if(/^\d{4}\/\d{2}\/\d{2}$/.test(date)){
+    var parts = date.split('/');
+    var year = parseInt(parts[0]);
+    var month = parseInt(parts[1]);
+    var day = parseInt(parts[2]);
+    
+    if (year >= startyear && year <= endyear && month >=1 && month <= 12 && day >=1 && day <= 31){
+      var hyphenDate =date.replace(/\//g,"-");
+      var dateObject = new Date(hyphenDate);
+      var formattedDate = dateObject.toISOString().split('T')[0];
+  
+      if (hyphenDate == formattedDate){
+        return true
+      }
+      else{
+        return false
+      }
+    }
+    else{
+      return false
+    }
+  }
+  //yyyy/mm/dd形式になっていない場合
+  else {
+    return false
+  }
+
+}
+
 
 function kinngaku_comma(id){
   var inputDate = $("#" + id).val().trim();

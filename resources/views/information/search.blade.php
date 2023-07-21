@@ -19,23 +19,25 @@
 <form class="searchform" action="{{route('searchPost')}}" method="get" enctype="multipart/form-data">
 
     <div class="searchbox">
-        <div class="searcharea">
+        <div class="requirearea">
             <div class="searchelement">
-                <div class="searchlabel">日付:</div>
+                <div class="searchlabel requirelabel">日付:</div>
                 <input type="text" id="startyear" name="starthiduke" value="{{$starthiduke}}" class="searchinputtext dateinputtext">
                 ~
                 <input type="text" id="endyear" name="endhiduke" value="{{$endhiduke}}" class="searchinputtext dateinputtext">
             </div>
             <div class="searchelement">
-                <div class="searchlabel">金額:</div>
+                <div class="searchlabel requirelabel">金額:</div>
                 <input type="text" id="startkinngaku" name="startkinngaku" value="{{$startkinngaku}}" class="searchinputtext kinngakuinput">円
                 ~<input type="text" id="endkinngaku" name="endkinngaku" value="{{$endkinngaku}}" class="searchinputtext kinngakuinput">円
             </div>
             <div class="searchelement">
-            <div class="searchlabel">取引先:</div>
+            <div class="searchlabel requirelabel">取引先:</div>
                 <input type="text" id="torihikisaki" name="torihikisaki" value="{{$torihikisaki}}" class="searchinputtext torihikisakiinput">
                 <div>(部分一致)</div>
             </div>
+        </div>
+        <div class="nonerequirearea">
             <div class="searchelement">
                 <div class="searchlabel">書類区分:</div>
                 <select id="syoruikubunn" name="syoruikubunn"class="searchinputtext input-field">
@@ -77,7 +79,7 @@
                 {{$notdeletecount}}件 表示
             </div>
             <div class="select">
-                <select id="select">
+                <select id="select" class="dataselect">
                     <option>有効データ</option>
                     <option>削除データ</option>
                     <option>全件データ</option>

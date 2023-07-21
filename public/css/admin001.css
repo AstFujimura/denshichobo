@@ -29,6 +29,12 @@ body{
     margin-left: auto;
     margin-right: 100px;
 }
-/* .hamburger01{
-    position: absolute;
-} */
+.hamburger01{
+    position: relative;
+}
+
+.hamburger01close{
+    opacity: 0;
+    display: none;
+}
+

@@ -63,7 +63,13 @@ class EditController extends Controller
 
         
 
-        return view('information.editpage',$data);
+        if ($file->削除フラグ == "済"){
+            return redirect()->route("topGet");
+        }
+        else {
+            return view('information.editpage',$data);
+        }
+        
     }
 
     public function editPost(Request $request,$path)

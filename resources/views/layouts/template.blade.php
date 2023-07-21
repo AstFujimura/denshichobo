@@ -35,7 +35,7 @@
         </div>
         <div class="headerIcon001 menue001">
             <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
-            <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01">
+            <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
         </div>
 
 
