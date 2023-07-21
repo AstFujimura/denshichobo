@@ -36,6 +36,9 @@ a {
   border-right: solid 1px white;
   padding: 5px;
 }
+.pale{
+  background: rgb(229, 248, 253) !important
+}
 
 
 

@@ -44,7 +44,7 @@ $('#select').on('change', function() {
   // 選択されたオプションの値を取得
   var selectedOption = $(this).val();
 
-  if (selectedOption == "削除データを除く"){
+  if (selectedOption == "有効データ"){
     $(".notdeletecount").addClass("selected");
     $(".count").removeClass("selected");
     $(".deletecount").removeClass("selected");
@@ -52,7 +52,7 @@ $('#select').on('change', function() {
     $(".delete_table").removeClass("table_selected")
     $(".top_table_body").addClass("table_selected")
   }
-  else if (selectedOption == "削除データのみ表示"){
+  else if (selectedOption == "削除データ"){
     $(".notdeletecount").removeClass("selected");
     $(".count").removeClass("selected");
     $(".deletecount").addClass("selected");
@@ -60,7 +60,7 @@ $('#select').on('change', function() {
     $(".delete_table").addClass("table_selected")
     $(".top_table_body").removeClass("table_selected")
   }
-  else if (selectedOption == "全データ表示"){
+  else if (selectedOption == "全件データ"){
     $(".notdeletecount").removeClass("selected");
     $(".count").addClass("selected");
     $(".deletecount").removeClass("selected");

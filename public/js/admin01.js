@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $('.menuicon01').click(function() {
+  $('.hamburger01').click(function() {
     $('.sidebar01').toggleClass('sidebar01open'); // サイドバーの表示/非表示を切り替える
     $('.sidebarbatsu01').toggleClass('sidebarbatsuopen01'); // サイドバーの表示/非表示を切り替える
     // $('.main01').toggleClass('main01margin'); // サイドバーの表示/非表示を切り替える

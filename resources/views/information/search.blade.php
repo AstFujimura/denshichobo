@@ -78,9 +78,9 @@
             </div>
             <div class="select">
                 <select id="select">
-                    <option>削除データを除く</option>
-                    <option>削除データのみ表示</option>
-                    <option>全データ表示</option>
+                    <option>有効データ</option>
+                    <option>削除データ</option>
+                    <option>全件データ</option>
                 </select>
             </div>
             

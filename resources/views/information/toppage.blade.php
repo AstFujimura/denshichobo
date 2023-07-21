@@ -83,9 +83,9 @@
             </div>
             <div class="select">
                 <select id="select">
-                    <option>削除データを除く</option>
-                    <option>削除データのみ表示</option>
-                    <option>全データ表示</option>
+                    <option>有効データ</option>
+                    <option>削除データ</option>
+                    <option>全件データ</option>
                 </select>
             </div>
             
@@ -94,13 +94,13 @@
             <div class="hiduke">日付</div>
             <div class="kinngaku">金額</div>
             <div class="torihikisaki">取引先</div>
-            <div class="syoruikubunn">書類区分</div>
-            <div class="bikou">検索ワード</div>
-            <div class="teisei">訂正歴</div>
-            <div class="hozonn">保存方法</div>
-            <div class="downloadTd"></div>
-            <div class="hennkou"></div>
-            <div class="delete">削除</div>
+            <div class="syoruikubunn pale">書類区分</div>
+            <div class="bikou pale">検索ワード</div>
+            <div class="teisei pale">訂正歴</div>
+            <div class="hozonn pale">保存方法</div>
+            <div class="downloadTd pale"></div>
+            <div class="hennkou pale"></div>
+            <div class="delete pale">削除</div>
         </div>
 
         <div class="top_table_element">
