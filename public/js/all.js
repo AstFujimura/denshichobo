@@ -1,4 +1,52 @@
 $(document).ready(function() {
+  $('.wholecontainer').on('click',function(){
+    $(this).fadeOut();
+    $('.previewcontainer').fadeOut();
+  });
+
+  $('.previewbutton').on('click',function(){
+    $('.wholecontainer').fadeIn();
+    $('.previewcontainer').fadeIn();
+    // containerクラス内の要素を削除
+    $(".previewcontainer").empty();
+    var ID = $(this).attr("id");
+    $.ajax({
+      url: '/img/'+ID, // データを取得するURLを指定
+      method: 'GET',
+      success: function(response) {
+          // 取得したファイルデータを使ってPDFを表示
+          var Data = response.fileData;
+          var Extension = response.extension;
+          if (Extension == "pdf"){
+            var Url = 'data:application/pdf;base64,' + Data;
+            var iframe = $('<iframe>');
+            iframe.attr('src', Url);
+            iframe.attr('width', '100%');
+            iframe.attr('height', '100%');
+            iframe.addClass('imgset');
+  
+            $('.previewcontainer').append(iframe);
+          }
+          else {
+            var Url = 'data:image/'+ Extension + ';base64,' + Data;
+            var img = $('<img>');
+            img.attr('src', Url);
+            img.attr('width', '100%');
+            img.attr('height', '100%');
+            img.addClass('imgset');
+  
+            $('.previewcontainer').append(img);
+          }
+          
+
+      },
+      error: function(xhr, status, error) {
+          console.error(error); // エラー処理
+      }
+  });
+});
+
+
   if ($('.kinngakuedit').length != 0){
     kinngakucheck_change("kinngaku");   
   }
@@ -221,6 +269,8 @@ $(document).ready(function() {
     
 
   });
+
+
 
 
 

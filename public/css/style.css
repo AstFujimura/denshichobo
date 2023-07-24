@@ -113,6 +113,7 @@ a {
     margin: auto;
 }
 
+
 .download:hover{
     background: rgb(201, 201, 201);
 }
@@ -308,6 +309,9 @@ a {
 .teisei,.hennkou,.rireki{
   width: 75px;
 }
+.extension{
+  width: 45px;
+}
 .syoruikubunn,.delete{
   width: 75px;
   text-align: center;
@@ -316,6 +320,10 @@ a {
   width: 100px;
 }
 .downloadTd{
+  width: 40px;
+  display: flex
+}
+.preview{
   width: 40px;
   display: flex
 }
@@ -383,3 +391,28 @@ a {
   border-right: solid 1px rgb(238, 197, 197);
 }
 
+.previewcontainer{
+  width: 400px;
+  height: 600px;
+  z-index: 100;
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  background: white;
+  display: none;
+  
+}
+.wholecontainer{
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: rgb(0, 0, 0);
+  opacity: 0.5;
+  display: none;
+  z-index: 50;
+}
+.imgset{
+  object-fit: contain;
+}

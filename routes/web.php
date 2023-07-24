@@ -39,6 +39,8 @@ Route::get('/detail/{id}',[TopController::class,'detail'])->name('detail');
 
 Route::get('/history/{id}',[TopController::class,'history'])->name('history');
 
+Route::get('/img/{id}',[TopController::class,'imgget'])->name('imgget');
+
 
 // 新規登録ページ
 Route::get('/regist',[RegistController::class,'registGet'])->name('registGet');

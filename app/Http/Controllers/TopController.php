@@ -87,7 +87,7 @@ class TopController extends Controller
 
     if (empty($startKinngakuStr)){
         //入力した値が0である場合と区別するためにあえて00としておく
-        $startKinngakuStr = "00";        
+        $startKinngakuStr = "-2100000000";        
     }
     
     if (empty($endKinngakuStr)){
@@ -128,7 +128,7 @@ class TopController extends Controller
         $endDateStr = substr_replace($endDateStr,'/',7,0);
     }
 
-    if ($startKinngakuStr == "00"){
+    if ($startKinngakuStr == "-2100000000"){
         $startKinngakuStr = "";
     }
     else{
@@ -226,6 +226,22 @@ class TopController extends Controller
         // ファイルのダウンロード
         return view('information.historypage',['files' => $files,'file' => $file,'count' => $count]);
         
+    }
+    
+    public function imgget($id)
+    {
+        $img = File::where('id',$id)->first();
+
+
+        $filepath = $img->ファイルパス;
+        $extension = $img->ファイル形式;
+        $path = Config::get('custom.file_upload_path') . "\\" .$filepath. '.' .$extension;
+        // ファイルデータを読み込む
+        $fileData = file_get_contents($path);
+
+            return response()->json(['fileData' => base64_encode($fileData),'extension' => $extension]);
+    
+
     }
 
 

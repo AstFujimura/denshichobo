@@ -68,6 +68,12 @@
         </div>
     </div>
 </form>
+<div class="wholecontainer">
+
+</div>
+<div class="previewcontainer">
+
+</div>
 <div class="info">
             <div class="count">
                 {{$count}}件 表示
@@ -91,13 +97,15 @@
             <div class="hiduke">日付</div>
             <div class="kinngaku">金額</div>
             <div class="torihikisaki">取引先</div>
-            <div class="syoruikubunn">書類区分</div>
-            <div class="bikou">検索ワード</div>
-            <div class="teisei">訂正歴</div>
-            <div class="hozonn">保存方法</div>
-            <div class="downloadTd"></div>
-            <div class="hennkou"></div>
-            <div class="delete">削除</div>
+            <div class="syoruikubunn pale">書類区分</div>
+            <div class="bikou pale">検索ワード</div>
+            <div class="teisei pale">訂正歴</div>
+            <div class="hozonn pale">保存方法</div>
+            <div class="extension pale">形式</div>
+            <div class="downloadTd pale"></div>
+            <div class="preview pale"></div>
+            <div class="hennkou pale"></div>
+            <div class="delete pale">削除</div>
         </div>
 
         <div class="top_table_element">
@@ -119,9 +127,15 @@
                         @endif
                     </div>
                     <div class="hozonn">{{$file->保存}}</div>
+                    <div class="extension">{{$file->ファイル形式}}</div>
                     <div class="downloadTd">
                         <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
-                    </div class="syousai">
+                    </div>
+                    <div class="preview">
+                        @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "pdf")
+                            <img src="{{asset('img/file_search_line.svg')}}" class="download previewbutton" id="{{$file->id}}">
+                        @endif
+                    </div>
                     <div class="hennkou">
                         @if ($file->削除フラグ != "済")
                             <div class="detail"  onclick="location.href='/edit/{{$file->過去データID}}';">
