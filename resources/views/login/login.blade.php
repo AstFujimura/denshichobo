@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>ログインページ</title>
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/detail.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/regist.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/company.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/login.css') }}">
 
 
  
@@ -37,7 +34,7 @@
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Login</button>
+                            <button type="submit" class="btn btn-primary">ログイン</button>
                         </div>
                     </form>
                 </div>

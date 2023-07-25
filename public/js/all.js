@@ -142,8 +142,11 @@ $(document).ready(function() {
     datecheck_change('endyear')
     kinngakucheck_change("startkinngaku");
     kinngakucheck_change("endkinngaku");
+    date_start_end('startyear','endyear');
+    kinngaku_start_end("startkinngaku","endkinngaku");
 
-      if(!$(".searcherror").length){
+    //金額や日付のフォーマットガ誤っている場合はsearcherror値の大証
+      if(!$(".searcherror").length && !$(".invalid").length){
         this.submit(); // フォームの送信を実行
       }
   });
@@ -231,8 +234,10 @@ $(document).ready(function() {
         $('.fileerrorelement').removeClass("errorsentence");
       }
 
+      datacheck("hiduke","dateformat","kinngaku","kinngakuformat")
+
     //登録(変更)画面におけるフォームの確認
-  if(alert == false && datacheck("hiduke","dateformat","kinngaku","kinngakuformat")) {
+  if(!$('.errorsentence').length) {
     var title = $('#registbutton').val();
     
         if (title.trim() == '登録'){
@@ -469,12 +474,21 @@ function kinngakucheck_change(id) {
 
 function datacheck(date,errordate,kinngaku,errorkinngaku){
   var dateval = $("#" + date).val();
-  var datecheck = /^\d{4}\/\d{2}\/\d{2}$/.test(dateval)
+  //値が入っていない場合はほかのエラーチェックがあるためtrueを返す
+  if (!dateval){
+    datecheck = true
+  }
+  else {
+    var datecheck = /^\d{4}\/\d{2}\/\d{2}$/.test(dateval)
+  }
+
   if (datecheck){
     $("#" + errordate).removeClass('errorsentence')
+    // $("#" + date).removeClass('invalid')
   }
   else{
     $("#" + errordate).addClass('errorsentence')
+    $("#" + date).addClass('invalid')
   }
 
   var kinngakuval = $("#" + kinngaku).val();
@@ -482,9 +496,11 @@ function datacheck(date,errordate,kinngaku,errorkinngaku){
   var kinngakucheck = isPositiveNumber(kinngakuval)
   if (kinngakucheck){
     $("#" + errorkinngaku).removeClass('errorsentence')
+    // $("#" + kinngaku).removeClass('invalid')
   }
   else{
     $("#" + errorkinngaku).addClass('errorsentence')
+    $("#" + kinngaku).addClass('invalid')
   }
   if (datecheck && kinngakucheck){
     return true
@@ -496,7 +512,64 @@ function datacheck(date,errordate,kinngaku,errorkinngaku){
 }
 
 function isPositiveNumber(value) {
-  // 入力値が数値であり、1以上2100000000の値かどうかを判定する
+  //値が入っていない場合はほかのエラーチェックがあるためtrueを返す
+  if (!value){
+    return true
+  }
+  else{
+      // 入力値が数値であり、1以上2100000000の値かどうかを判定する
   var parsedValue = parseFloat(value);
   return !isNaN(parsedValue) && parsedValue >= -2100000000 && parsedValue<= 2100000000;
+  }
+
+}
+
+//日付の前後が正しいかを判定し不正の場合はエラーを出す
+function date_start_end(start,end){
+  if($('#'+ start).val()||$('#'+ end).val()){
+    var startdate = parseInt($('#'+ start).val().replace(/\//g,""))
+    var enddate = parseInt($('#'+ end).val().replace(/\//g,""))
+   console.log( $('#'+ start).val())
+    if (startdate <= enddate){
+      $('#'+start).removeClass('invalid')
+      $('#'+end).removeClass('invalid')
+      return true
+    }
+    else {
+      $('#'+start).addClass('invalid')
+      $('#'+end).addClass('invalid')
+      alert("日付の範囲を確認してください")
+      return false
+    }
+  }
+  else{
+    $('#'+start).removeClass('invalid')
+    $('#'+end).removeClass('invalid')
+    return true
+  }
+}
+
+  //金額の前後が正しいかを判定し不正の場合はエラーを出す
+function kinngaku_start_end(start,end){
+  if($('#'+ start).val()||$('#'+ end).val()){
+    var startdate = parseInt($('#'+ start).val().replace(/,/g,""))
+    var enddate = parseInt($('#'+ end).val().replace(/,/g,""))
+   console.log( $('#'+ start).val())
+    if (startdate <= enddate){
+      $('#'+start).removeClass('invalid')
+      $('#'+end).removeClass('invalid')
+      return true
+    }
+    else {
+      $('#'+start).addClass('invalid')
+      $('#'+end).addClass('invalid')
+      alert("金額の範囲を確認してください")
+      return false
+    }
+  }
+  else{
+    $('#'+start).removeClass('invalid')
+    $('#'+end).removeClass('invalid')
+    return true
+  }
 }

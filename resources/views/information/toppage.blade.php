@@ -22,15 +22,15 @@
             <div class="requirearea">
                 <div class="searchelement">
                     <div class="searchlabel requirelabel">日付:</div>
-                    <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext" placeholder="2023/07/07">
+                    <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext">
                     ~
-                    <input type="text" id="endyear" name="endhiduke" class="searchinputtext dateinputtext" placeholder="2023/07/07">
+                    <input type="text" id="endyear" name="endhiduke" class="searchinputtext dateinputtext">
                 </div>
 
                 <div class="searchelement">
                     <div class="searchlabel requirelabel">金額:</div>
-                    <input type="text" id="startkinngaku" name="startkinngaku"  class="searchinputtext kinngakuinput" placeholder="1,500">円
-                    ~<input type="text" id="endkinngaku" name="endkinngaku"  class="searchinputtext kinngakuinput" placeholder="200,000,000">円
+                    <input type="text" id="startkinngaku" name="startkinngaku"  class="searchinputtext kinngakuinput">円
+                    ~<input type="text" id="endkinngaku" name="endkinngaku"  class="searchinputtext kinngakuinput">円
                 </div>
 
                 <div class="searchelement">
@@ -105,14 +105,13 @@
             <div class="kinngaku">金額</div>
             <div class="torihikisaki">取引先</div>
             <div class="syoruikubunn pale">書類区分</div>
+            <div class="hozonn pale">保存方法</div>
             <div class="bikou pale">検索ワード</div>
             <div class="teisei pale">訂正歴</div>
-            <div class="hozonn pale">保存方法</div>
+            <div class="downloadTd pale">DL.</div>
             <div class="extension pale">形式</div>
-            <div class="downloadTd pale"></div>
-            <div class="preview pale"></div>
+            <div class="preview pale">PV.</div>
             <div class="hennkou pale"></div>
-            <div class="delete pale">削除</div>
         </div>
 
         <div class="top_table_element">
@@ -126,6 +125,7 @@
                     <div class="kinngakuTd kinngaku">{{$file->金額}}</div>
                     <div class="torihikisaki">{{$file->取引先}}</div>
                     <div class="syoruikubunn">{{$file->書類}}</div>
+                    <div class="hozonn">{{$file->保存}}</div>
                     <div class="bikou">{{$file->備考}}</div>
                     <div class="teisei">@if ($file->バージョン != 1)
                         <div class="maru" onclick="location.href='/history/{{$file->過去データID}}';">〇</div>
@@ -133,11 +133,10 @@
                         
                         @endif
                     </div>
-                    <div class="hozonn">{{$file->保存}}</div>
-                    <div class="extension">{{$file->ファイル形式}}</div>
                     <div class="downloadTd">
                         <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
                     </div>
+                    <div class="extension">{{$file->ファイル形式}}</div>
                     <div class="preview">
                         @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "pdf")
                             <img src="{{asset('img/file_search_line.svg')}}" class="download previewbutton" id="{{$file->id}}">
@@ -150,7 +149,6 @@
                         </div>
                         @endif
                     </div>
-                    <div class="delete">{{$file->削除フラグ}}</div>
                 </div>
             @endforeach
         </div>

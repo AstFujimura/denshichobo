@@ -39,8 +39,18 @@ a {
   border-right: solid 1px white;
   padding: 5px;
 }
+.history_table_div{
+  display: flex;
+}
+.history_table_div div{
+  background: rgb(181, 228, 240);
+  text-align: center;
+  border-right: solid 1px white;
+  padding: 5px;
+}
 .pale{
-  background: rgb(229, 248, 253) !important
+  background: rgb(229, 248, 253) !important;
+  justify-content: center;
 }
 
 
@@ -59,6 +69,15 @@ a {
     border-bottom: solid 1px rgb(127, 127, 207);
     height: 30px;
     line-height: 30px;
+}
+.history_table_body {
+  display: flex;
+}
+.history_table_body > div{
+  padding: 5px;
+  border-right: solid 1px white;
+  border-bottom: solid 1px rgb(127, 127, 207);
+  line-height: 30px;
 }
 
 .delete_table{
@@ -83,6 +102,11 @@ a {
   margin-top: 48px;
 }
 .top_table_column_fixed{
+  position: fixed;
+  top: 48px;
+  left: 35px;
+}
+.history_table_column_fixed{
   position: fixed;
   top: 48px;
   left: 35px;
@@ -306,8 +330,17 @@ a {
   width: 130px;
 }
 
-.teisei,.hennkou,.rireki{
+.teisei,.rireki{
   width: 75px;
+}
+.hennkou{
+  width: 120px;
+}
+.koushinn{
+  width: 200px;
+}
+.koushinnsya{
+  width: 120px;
 }
 .extension{
   width: 45px;

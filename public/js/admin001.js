@@ -6,11 +6,11 @@ $(window).scroll(function () {
 //スクロールすると上部に固定させるための設定を関数でまとめる
 function FixedAnime() {
 	var headerH = $('.header001').outerHeight(true);
-  var menubarH = $('.menu001').outerHeight(true);
   var pageTitleH = $('.pagetitle').outerHeight(true);
   var serachBoxH = $('.searchBox').outerHeight(true);
   var infoH = $('.info').outerHeight(true);
   var tablecolumnH = $('.top_table_div').outerHeight(true);
+  var historytablecolumnH = $('.history_table_div').outerHeight(true);
 
 
 	var scroll = $(window).scrollTop();
@@ -32,6 +32,15 @@ function FixedAnime() {
     $('.top_table_div').removeClass('top_table_column_fixed');//fixedというクラス名を除去
     $('.top_table_element').removeClass('top_table_margin');
   }
+  if (scroll >= headerH+pageTitleH-historytablecolumnH){//headerの高さ以上になったら
+    $('.history_table_div').addClass('history_table_column_fixed');//fixedというクラス名を付与
+    $('.history_table_element').addClass('history_table_margin');
+
+  }else{//それ以外は
+    $('.history_table_div').removeClass('history_table_column_fixed');//fixedというクラス名を除去
+    $('.history_table_element').removeClass('history_table_margin');
+  }
+
 }
 
 

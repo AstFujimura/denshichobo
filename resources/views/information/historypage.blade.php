@@ -15,44 +15,59 @@
 
 
 @section('main')
-<h2>変更履歴</h2>
-        <table class="history_table">
-            <thead>
-                <tr class="history_table_column">
-                    <td>日付</td>
-                    <td>金額</td>
-                    <td>取引先</td>
-                    <td>書類区分</td>
-                    <td>ファイル変更</td>
-                    <td>更新者</td>
-                    <td>検索ワード</td>
-                    <td>保存方法</td>
-                    <td></td>
-                    <td>更新日時
-                    </td>
-                </tr>
-            </thead>
-        @foreach ($files as $file)
-            <tbody>
-                <tr>
-                    <td class="hidukeTd">{{$file->日付}}</td>
-                    <td class="kinngakuTd">{{$file->金額}}</td>
-                    <td>{{$file->取引先}}</td>
-                    <td>{{$file->書類区分}}</td>
-                    <td>{{$file->ファイル変更}}</td>
-                    <td>{{$file->users->name}}</td>
-                    <td>{{$file->備考}}</td>
-                    <td>{{$file->保存}}</td>
-                    <td>
-                        <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
-            
-                    </td>
-                    <td>{{$file->created_at}}</td>
+<h2 class="pagetitle">変更履歴</h2>
+<div class="wholecontainer">
 
-                </tr>
-            </tbody>
-        @endforeach
-        </table>    
+</div>
+<div class="previewcontainer">
+
+</div>
+        <div class="history_table_div">
+            <div class="hiduke">日付</div>
+            <div class="kinngaku">金額</div>
+            <div class="torihikisaki">取引先</div>
+            <div class="syoruikubunn pale">書類区分</div>
+            <div class="hozonn pale">保存方法</div>
+            <div class="bikou pale">検索ワード</div>
+            <div class="hennkou pale">ファイル変更</div>
+            <div class="downloadTd pale"></div>
+            <div class="extension pale">形式</div>
+            <div class="preview pale"></div>
+            <div class="koushinn pale">更新日時</div>
+            <div class="koushinnsya pale">更新者</div>
+        </div>
+
+        <div class="top_table_element">
+            @foreach ($files as $file)
+
+                <div class="history_table_body">    
+
+                    <div class="hidukeTd hiduke">{{$file->日付}}</div>
+                    <div class="kinngakuTd kinngaku">{{$file->金額}}</div>
+                    <div class="torihikisaki">{{$file->取引先}}</div>
+                    <div class="syoruikubunn">{{$file->書類}}</div>
+                    <div class="hozonn">{{$file->保存}}</div>
+                    <div class="bikou">{{$file->備考}}</div>
+                    <div class="hennkou">{{$file->ファイル変更}}</div>
+                    <div class="downloadTd">
+                        <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
+                    </div>
+                    <div class="extension">{{$file->ファイル形式}}</div>
+                    <div class="preview">
+                        @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "pdf")
+                            <img src="{{asset('img/file_search_line.svg')}}" class="download previewbutton" id="{{$file->id}}">
+                        @endif
+                    </div>
+                    <div class="koushinn">
+                        {{$file->created_at}}
+                    </div>
+                    <div class="koushinnsya">
+                        {{$file->users->name}}
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
         
 @endsection 
     @section('footer')

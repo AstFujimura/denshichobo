@@ -29,7 +29,7 @@
                 <div class="input-container">
                     <label class="label">書類作成（受領）日<span class ="requirered">*</span> </label>
                     <div class="dateform">
-                        <input type="text" name="hiduke" class="input-field dateinputtext" id="hiduke" placeholder="2023/01/01">
+                        <input type="text" name="hiduke" class="input-field dateinputtext" id="hiduke">
                         <span class="errorelement" id="required4">必須項目です</span>
                         <span class="errorelement" id="dateformat">形式が不正です</span>
                     </div>
@@ -37,7 +37,7 @@
                 <div class="input-container">
                     <label  class="label">金額<span class ="requirered">*</span></label>
                     <div>
-                        <input type="text" name="kinngaku" class="input-field kinngakuinput-field" id="kinngaku" placeholder="3,000">
+                        <input type="text" name="kinngaku" class="input-field kinngakuinput-field" id="kinngaku">
                         <span class="errorelement" id="required2">必須項目です</span>
                         <span class="errorelement" id="kinngakuformat">形式が不正です</span>
                     </div>

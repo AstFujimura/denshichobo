@@ -23,7 +23,7 @@
                     ここにドラッグ＆ドロップ
                 </div>
                 <div>
-                    <input type="file" name="file" id="editfile">
+                    <input type="file" name="file" id="file">
                     <span class="fileerrorelement">ファイルを選択してください</span>
                 </div>
                 <div class="red">※ファイル自体に変更がない場合はファイルを選択しないでください</div>
