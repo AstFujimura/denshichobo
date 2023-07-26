@@ -6,6 +6,7 @@ use App\Http\Controllers\RegistController;
 use App\Http\Controllers\EditController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\TestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,9 @@ Route::post('/edit/{path}',[EditController::class,'editPost'])->name('editPost')
 
 // 変更ページにポストで情報を投げた時
 Route::get('/delete/{path}',[EditController::class,'deleteGet'])->name('deleteGet');
+
+// 変更ページにポストで情報を投げた時
+Route::get('/test/{num}',[TestController::class,'testGet'])->name('testGet');
 
 
 

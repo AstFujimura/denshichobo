@@ -280,6 +280,30 @@ a {
     border: solid 3px rgb(216, 214, 114);
 }
 
+.droppreview{
+  display: flex;
+}
+.previewarea{
+  height: 450px;
+  width: 300px;
+  text-align: center;
+  line-height: 100px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+.previewopen{
+  display: block;
+}
+.previewImg{
+  object-fit: contain;
+  object-position: center;
+  width: 100%;
+}
+
+
+
+
 .input-field{
     height: 30px;
 }

@@ -16,12 +16,14 @@
 
 <h2>帳簿変更</h2>
 
+    <div class="droppreview">
         <form class="form" action="{{route('editPost',['path'=>$file->過去データID])}}" method="post" enctype="multipart/form-data">
                 @csrf
 
                 <div class="droparea">
                     ここにドラッグ＆ドロップ
                 </div>
+
                 <div>
                     <input type="file" name="file" id="file">
                     <span class="fileerrorelement">ファイルを選択してください</span>
@@ -91,6 +93,12 @@
                 <input type="submit" value="変更" id="registbutton"  class="registbutton">
                 <div class="deletebutton">削除</div>
         </form>
+
+        <div class="previewarea">
+            プレビュー
+        </div>
+
+    </div>
         @endsection 
         @section('footer')
     @endsection 

@@ -77,20 +77,20 @@ class TopController extends Controller
 
 
     //値が空の場合は最小値と最大値を格納する。検索後にもう一度空に戻す
-    if (empty($startDateStr)){
+    if ($startDateStr == ""){
         $startDateStr = "00000000";        
     }
     
-    if (empty($endDateStr)){
+    
+    if ($endDateStr == ""){
         $endDateStr = "99999999";        
     }
 
-    if (empty($startKinngakuStr)){
-        //入力した値が0である場合と区別するためにあえて00としておく
+    if ($startKinngakuStr == ""){
+        //入力した値が入っていない場合
         $startKinngakuStr = "-2100000000";        
     }
-    
-    if (empty($endKinngakuStr)){
+    if ($endKinngakuStr == ""){
         $endKinngakuStr = "2100000000";        
     }
     
@@ -236,11 +236,12 @@ class TopController extends Controller
         $filepath = $img->ファイルパス;
         $extension = $img->ファイル形式;
         $path = Config::get('custom.file_upload_path') . "\\" .$filepath. '.' .$extension;
-        // ファイルデータを読み込む
-        $fileData = file_get_contents($path);
 
-            return response()->json(['fileData' => base64_encode($fileData),'extension' => $extension]);
-    
+            // 画像形式の場合は画像を表示
+        if (in_array($extension, ['jpeg', 'jpg', 'png', 'gif'])) {
+            return response()->file($path, ['Content-Type' => 'image/' . $extension]);
+        }
+            return response()->file($path, ['Content-Type' => 'application/pdf']);
 
     }
 

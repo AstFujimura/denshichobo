@@ -13,22 +13,25 @@ $(document).ready(function() {
     $.ajax({
       url: '/img/'+ID, // データを取得するURLを指定
       method: 'GET',
+      xhrFields: {
+        responseType: 'blob' // ファイルをBlobとして受け取る
+      },
       success: function(response) {
           // 取得したファイルデータを使ってPDFを表示
           var Data = response.fileData;
           var Extension = response.extension;
-          if (Extension == "pdf"){
-            var Url = 'data:application/pdf;base64,' + Data;
-            var iframe = $('<iframe>');
-            iframe.attr('src', Url);
-            iframe.attr('width', '100%');
-            iframe.attr('height', '100%');
-            iframe.addClass('imgset');
+          var Url = URL.createObjectURL(response);
+          if (response.type === 'application/pdf'){
+            var embed  = $('<embed>');
+            embed.attr('src', Url);
+            embed.attr('width', '100%');
+            embed.attr('height', '100%');
+            embed.attr('type', 'application/pdf');
+            embed.addClass('imgset');
   
-            $('.previewcontainer').append(iframe);
+            $('.previewcontainer').append(embed);
           }
-          else {
-            var Url = 'data:image/'+ Extension + ';base64,' + Data;
+          else if(response.type.startsWith('image/')) {
             var img = $('<img>');
             img.attr('src', Url);
             img.attr('width', '100%');
@@ -44,6 +47,7 @@ $(document).ready(function() {
           console.error(error); // エラー処理
       }
   });
+
 });
 
 
@@ -258,12 +262,74 @@ $(document).ready(function() {
     event.preventDefault();
     $(this).addClass("dragover");
   });
+
   $('.droparea').on('drop', function(event) {
     event.preventDefault();
     $(this).removeClass("dragover");
     var File = event.originalEvent.dataTransfer.files[0];
     $('#file').prop("files", event.originalEvent.dataTransfer.files);
+    // ファイルのタイプを取得
+    var fileType = File.type;
+
+    // 画像をプレビューとして表示する
+    if (fileType.startsWith("image/")) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          $('.previewarea').html('<img src="' + e.target.result + '" class="previewImg">');
+          $('.previewarea').addClass("previewopen");
+        };
+        reader.readAsDataURL(File);
+      }
+          // PDFをプレビューとして表示する
+    else if (fileType === "application/pdf") {
+      var pdfUrl = URL.createObjectURL(File);
+      var embed = $('<embed>');
+      embed.attr('src', pdfUrl);
+      embed.attr('width', '100%');
+      embed.attr('height', '600px'); // 適切な高さを指定
+
+      $('.previewarea').html(embed);
+      $('.previewarea').addClass("previewopen");
+    }
   });
+    
+  $('#file').change(function() {
+    var input = this;
+    
+    if (input.files && input.files[0]) {
+      if (this.files[0].type.startsWith("image/")){
+        var reader = new FileReader();
+  
+        reader.onload = function(e) {
+          $('.previewarea').html('<img src="' + e.target.result + '" class="previewImage">');
+          $('.previewarea').addClass("previewopen");
+        };
+        
+  
+      reader.readAsDataURL(this.files[0]);
+
+      }
+      // PDFをプレビューとして表示する
+      else if (this.files[0].type === "application/pdf") {
+        var pdfUrl = URL.createObjectURL(this.files[0]);
+        var embed = $('<embed>');
+        embed.attr('src', pdfUrl);
+        embed.attr('width', '100%');
+        embed.attr('height', '600px'); // 適切な高さを指定
+
+        $('.previewarea').html(embed);
+        $('.previewarea').addClass("previewopen");
+      }
+
+  
+    }
+  
+
+
+
+
+
+
 
 
   $('.deletebutton').on('click',function(){
@@ -526,7 +592,7 @@ function isPositiveNumber(value) {
 
 //日付の前後が正しいかを判定し不正の場合はエラーを出す
 function date_start_end(start,end){
-  if($('#'+ start).val()||$('#'+ end).val()){
+  if($('#'+ start).val() && $('#'+ end).val()){
     var startdate = parseInt($('#'+ start).val().replace(/\//g,""))
     var enddate = parseInt($('#'+ end).val().replace(/\//g,""))
    console.log( $('#'+ start).val())
@@ -551,7 +617,7 @@ function date_start_end(start,end){
 
   //金額の前後が正しいかを判定し不正の場合はエラーを出す
 function kinngaku_start_end(start,end){
-  if($('#'+ start).val()||$('#'+ end).val()){
+  if($('#'+ start).val() && $('#'+ end).val()){
     var startdate = parseInt($('#'+ start).val().replace(/,/g,""))
     var enddate = parseInt($('#'+ end).val().replace(/,/g,""))
    console.log( $('#'+ start).val())
@@ -573,3 +639,4 @@ function kinngaku_start_end(start,end){
     return true
   }
 }
+});
