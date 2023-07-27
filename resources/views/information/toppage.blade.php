@@ -83,13 +83,13 @@
 
         <div class="info">
             <div class="count">
-                {{$count}}件 表示
+                {{$count}}件 
             </div>
             <div class="deletecount">
-                {{$deletecount}}件 表示
+                {{$deletecount}}件 
             </div>
             <div class="notdeletecount selected">
-                {{$notdeletecount}}件 表示
+                {{$notdeletecount}}件 
             </div>
             <div class="select">
                 <select id="select" class="dataselect">
@@ -98,6 +98,10 @@
                     <option>全件データ</option>
                 </select>
             </div>
+            <div class="pagination">
+                {{ $files->links() }}
+            </div>
+
             
         </div>
         <div class="top_table_div">
@@ -151,6 +155,9 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+        <div class="pagination">
+            {{ $files->links() }}
         </div>
         
 @endsection 

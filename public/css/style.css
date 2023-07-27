@@ -473,3 +473,22 @@ a {
 .imgset{
   object-fit: contain;
 }
+
+.pagination{
+  display: flex;
+  margin-left: 50px;
+}
+.pagination svg{
+  width: 15px;
+}
+.pagination span{
+  font-size: 20px;
+}
+.pagination p{
+  display: none;
+
+}
+.pagination .flex-1{
+  display: none;
+}
+

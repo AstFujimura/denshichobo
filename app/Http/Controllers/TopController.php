@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Pagination\Paginator;
+
 class TopController extends Controller
 {
     /**
@@ -27,17 +29,14 @@ class TopController extends Controller
         })
         ->whereNull('t2.バージョン')
         ->orderBy('files.日付', 'desc')
-        ->get();
+        ->paginate(1000);
 
-        
-        
-
-    $count = $files->count();
+    $count = $files->total();
     $deletecount = $files->where('削除フラグ','済')->count();
     $notdeletecount = $count - $deletecount;
 
         // 取得したデータをビューに渡すなどの処理
-    return view('information.toppage',['files' => $files,'count' => $count,'deletecount' => $deletecount,'notdeletecount' => $notdeletecount]);
+    return view('information.toppage',compact('files', 'count', 'deletecount', 'notdeletecount'));
 
     }
 
