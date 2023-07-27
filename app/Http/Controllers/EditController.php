@@ -74,6 +74,15 @@ class EditController extends Controller
 
     public function editPost(Request $request,$path)
     {
+        $request->validate([
+            'torihikisaki' => 'string|not_four_byte_chars',
+            'kennsakuword' => 'not_four_byte_chars',
+        ], [
+
+            'torihikisaki.not_four_byte_chars' => '環境依存文字は使用しないでください。',
+
+            'kennsakuword.not_four_byte_chars' => '環境依存文字は使用しないでください。',
+        ]);
         $now = Carbon::now();
         $currentTime = $now->format('YmdHis');
         //過去データIDが一致するファイルが何件あるかを格納

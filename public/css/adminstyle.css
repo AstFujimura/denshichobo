@@ -1,0 +1,37 @@
+.header001{
+    background: rgb(216, 142, 142) !important;
+}
+
+.admin_top_table_div{
+    display: flex;
+}
+.admin_top_table_div div{
+    background:rgb(245, 227, 217);
+    text-align: center;
+    border-right: solid 1px white;
+    padding: 5px;
+}
+
+.admin_top_table_body{
+    display: flex;
+}
+
+.admin_top_table_body > div{
+    padding: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: solid 1px white;
+    border-bottom: solid 1px rgb(127, 127, 207);
+    height: 30px;
+    line-height: 30px;
+}
+.name{
+    width: 200px;
+}
+.email{
+    width: 200px;
+}
+.status{
+    width: 100px;
+}

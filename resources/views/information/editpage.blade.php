@@ -53,6 +53,9 @@
                     <div>
                         <input type="text" name="torihikisaki" class="input-field" id="torihikisaki" value="{{$file->取引先}}">
                         <span class="errorelement" id="required1">必須項目です</span>
+                        @error('torihikisaki')
+                        <span class="errorsentence">{{ $message }}</span>
+                        @enderror
                     </div>
                     
                 </div>
@@ -84,6 +87,9 @@
                     <label  class="label">検索ワード</label>
                     <div>
                         <input type="text" name="kennsakuword" class="input-field" value="{{$file->備考}}" id="kennsakuword">
+                        @error('kennsakuword')
+                            <span class="errorsentence">{{ $message }}</span>
+                        @enderror
                     </div>
                     
                 </div>

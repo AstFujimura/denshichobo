@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\App; 
 use Illuminate\Support\Facades\URL;
 
+use Illuminate\Support\Facades\Validator;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -27,7 +29,10 @@ class AppServiceProvider extends ServiceProvider
     {
         if (App::environment('production','staging')) {
             URL::forceScheme('https');
-            
     }
+                // 4バイト文字のバリデーションルールを追加
+                Validator::extend('not_four_byte_chars', function ($attribute, $value, $parameters, $validator) {
+                    return !preg_match('/[\x{10000}-\x{10FFFF}]/u', $value);
+                });
 }
 }

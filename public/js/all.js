@@ -229,9 +229,13 @@ $(document).ready(function() {
         $(valimessage.join(",")).removeClass("errorsentence");
       
       if($('#file').val() == ''){
-        $('#file').addClass("invalid")
-        $('.fileerrorelement').addClass("errorsentence");
-        alert = true
+        //登録ページの場合は必須条件
+        //ただし、編集ページは任意のため
+        if($('#regist').length){
+          $('#file').addClass("invalid")
+          $('.fileerrorelement').addClass("errorsentence");
+          alert = true
+        }
       }
       else{
         $('#file').removeClass("invalid")

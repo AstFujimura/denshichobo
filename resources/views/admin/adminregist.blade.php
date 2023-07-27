@@ -1,11 +1,11 @@
 @extends('layouts.admintemplate')
 
 @section('title')
-名刺管理システム
+管理画面
 @endsection 
 
 @section('menuebar')
-<a href="{{route('adminpageGet')}}" class="nav">ユーザー一覧</a> > ユーザー登録
+
 @endsection 
 
 @section('menue')
@@ -13,37 +13,56 @@
 @endsection
 
 @section('main')
+<h2>ユーザー登録</h2>
 
-<form action="{{route('adminPost')}}" method="post" enctype="multipart/form-data" id="myForm">
-        @csrf
-    <div class="admin-form-container">
-        <div class="input-container">
-            <div class="registform">
-            <div class="label"> ユーザー名<div class="ast">*</div></div>
-            <div><input type="text" name="name" id="company" class="admin-input-field"></div>
-            </div>
-            <div class="registform">
-            <div class="label">メールアドレス <div class="ast" >*</div></div>
-            <div><input type="text" name="email" id="companyKana" class="admin-input-field"></div>
-            </div>
-            <div class="registform">
-            <div class="label">パスワード <div class="ast" >*</div></div>
-            <div><input type="password" name="password" id="Name" class="admin-input-field"></div>
-            </div>
-            <input type="checkbox" name="adminCheck" id="adminCheck" class="adminCheck">
-            <label type="checkbox" name="adminCheck" for="adminCheck" class="adminCheck">管理者権限を付与する</label>
-
-
-            <div class="redmessage" id="error-message">
-                必須項目が入力されていません
-            </div>
+<form action="{{route('adminregistPost')}}" method="post" enctype="multipart/form-data" id="myForm">
+    @csrf
+    <div class="input-container">
+        <label class="label">
+            ユーザー名
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <input type="text" name="name" class="input-field dateinputtext" id="name">
+            <span class="errorelement" id="required4">必須項目です</span>
         </div>
-        <!-- input-container終わり -->
-        <input type="submit" value="登録" class="admin-registbutton" id="registbutton">
-
+    </div>
+    <div class="input-container">
+        <label class="label">
+            メールアドレス
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <input type="text" name="email" class="input-field dateinputtext" id="email">
+            <span class="errorelement" id="required4">必須項目です</span>
+        </div>
+    </div>
+    <div class="input-container">
+        <label class="label">
+            パスワード
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <input type="password" name="password" class="input-field dateinputtext" id="password">
+            <span class="errorelement" id="required4">必須項目です</span>
+        </div>
+    </div>
+    <div class="input-container">
+        <label class="label">
+            アクセス権限
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <select name="admin" class="input-field">
+                <option>管理</option>
+                <option>一般</option>
+            </select>
+        </div>
     </div>
 
-       </form>
+    <button>登録</button>
+
+</form>
 
 @endsection 
     @section('footer')

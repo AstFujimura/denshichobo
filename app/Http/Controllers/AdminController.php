@@ -11,11 +11,12 @@ class AdminController extends Controller
 {
 
     //管理者画面に進む時
-    public function adminpage()
+    public function adminGet()
     {
         //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
-        if (Auth::user()->管理者権限 == "あり"){
-            $users = User::where('id', '>=', 2)->get();
+        if (Auth::user()->管理 == "管理"){
+            //astecユーザーを表示しないため
+            $users = User::where('id', '>=', 1)->get();
             return view('admin.adminpage',['users' => $users]);
         } else {
             return redirect()->route('topGet');
@@ -27,59 +28,54 @@ class AdminController extends Controller
     //     return redirect()->route('topGet');
     // }
 
-    public function adminregist()
+    public function adminregistGet()
     {
-        if (Auth::user()->管理者権限 == "あり"){
+        if (Auth::user()->管理 == "管理"){
             return view('admin.adminregist');
         } else {
             return redirect()->route('topGet');
         }
     }
     
-    public function admindetail($id)
-    {
-        if (Auth::user()->管理者権限 == "あり"){
-            $user = User::where('id', '=', $id) ->first();
-            if (!$user) {
-                return response()->json(['message' => 'ユーザーが見つかりません'], 404);
-            }
+    // public function admindetail($id)
+    // {
+    //     if (Auth::user()->管理 == "管理"){
+    //         $user = User::where('id', '=', $id) ->first();
+    //         if (!$user) {
+    //             return response()->json(['message' => 'ユーザーが見つかりません'], 404);
+    //         }
 
     
-            // 取得したユーザー情報を利用する処理
+    //         // 取得したユーザー情報を利用する処理
     
-            return view('admin.admindetail',['user' => $user]);
-        } else {
-            return redirect()->route('topGet');
-        }
-    }
+    //         return view('admin.admindetail',['user' => $user]);
+    //     } else {
+    //         return redirect()->route('topGet');
+    //     }
+    // }
 
-    public function usercreate(Request $request)
+    public function adminregistPost(Request $request)
     {
-        if (Auth::user()->管理者権限 == "あり"){
+        if (Auth::user()->管理 == "管理"){
+            $admin = $request->input('admin');
 
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required|unique:users,email|string|email|max:255',
+                'email' => 'required|string|email|max:255',
                 'password' => 'required|string|min:8',
             ]);
-            if ($request->has('adminCheck')) {
-                // チェックボックスが選択されている場合の処理
-                $admin = "あり";
-            } else {
-                // チェックボックスが選択されていない場合の処理
-                $admin = "なし";
-            }
+            
+
     
             // ユーザーの作成
             $user = User::create([
                 'name' => $validatedData['name'],
                 'email' => $validatedData['email'],
                 'password' => Hash::make($validatedData['password']),
-                '管理者権限' => $admin
+                '管理' => $admin
             ]);
 
-
-            return redirect()->route('adminpageGet');
+            return redirect()->route('adminGet');
         } else {
             return redirect()->route('topGet');
         }
@@ -96,9 +92,9 @@ class AdminController extends Controller
         return redirect()->route('adminpageGet');
     }
 
-        public function usereditGet($id)
+        public function admineditGet($id)
     {
-        if (Auth::user()->管理者権限 == "あり"){
+        if (Auth::user()->管理 == "管理"){
             $user = User::where('id', '=', $id) ->first();
             if (!$user) {
                 return response()->json(['message' => 'ユーザーが見つかりません'], 404);
@@ -114,9 +110,9 @@ class AdminController extends Controller
         }
     }
 
-    public function useredit(Request $request)
+    public function admineditPut(Request $request)
     {
-        if (Auth::user()->管理者権限 == "あり"){
+        if (Auth::user()->管理 == "管理"){
             $id = $request->input('id');
             $record = User::find($id);
             if (!$record) {

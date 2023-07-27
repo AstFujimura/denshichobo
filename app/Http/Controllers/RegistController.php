@@ -22,6 +22,15 @@ class RegistController extends Controller
         }
     public function registPost(Request $request)
         {
+            $request->validate([
+                'torihikisaki' => 'string|not_four_byte_chars',
+                'kennsakuword' => 'not_four_byte_chars',
+            ], [
+
+                'torihikisaki.not_four_byte_chars' => '環境依存文字は使用しないでください。',
+
+                'kennsakuword.not_four_byte_chars' => '環境依存文字は使用しないでください。',
+            ]);
             $now = Carbon::now();
             $currentTime = $now->format('YmdHis');
             

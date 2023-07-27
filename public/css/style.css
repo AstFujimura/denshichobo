@@ -285,7 +285,7 @@ a {
 }
 .previewarea{
   height: 450px;
-  width: 300px;
+  width: 425px;
   text-align: center;
   line-height: 100px;
   margin-bottom: 10px;
@@ -358,7 +358,7 @@ a {
   width: 75px;
 }
 .hennkou{
-  width: 120px;
+  width: 80px;
 }
 .koushinn{
   width: 200px;
@@ -449,7 +449,7 @@ a {
 }
 
 .previewcontainer{
-  width: 400px;
+  width: 500px;
   height: 600px;
   z-index: 100;
   position: fixed;

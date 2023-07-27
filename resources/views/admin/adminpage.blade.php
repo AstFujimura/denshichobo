@@ -1,50 +1,46 @@
 @extends('layouts.admintemplate')
 
 @section('title')
-名刺管理システム
+電子帳簿保存システム　管理画面
 @endsection 
 
 @section('menuebar')
-<a href="{{route('adminpageGet')}}">ユーザー一覧</a>
+
 @endsection 
 
+@section('menue')
 
 
+@endsection
 
-@section('main')              
 
-                <a href="{{route('adminregistGet')}}" class="addbutton">
-                    <div class="addbuttonelement01">
-                        <div class="button1logo01">
-                        <img src="{{ asset('img/user_add_2_fill.svg') }}">
-                        </div>
-                        <div class="accordion1name01">
-                          ユーザー登録
-                        </div>
+@section('main')
+<h2>ユーザー一覧</h2>              
+    <div class="admin_top_table_div">
+        <div class="name">ユーザー名</div>
+        <div class="email">email</div>
+        <div class="status">アクセス権限</div>
+        <div class="hennkou">
 
+        </div>
+    </div>
+    <div class="admin_top_table_element">
+        @foreach ($users as $user)
+            <div class="admin_top_table_body">    
+
+                <div class="name">{{$user->name}}</div>
+                <div class="email">{{$user->email}}</div>
+                <div class="status">{{$user->管理}}</div>
+                <div class="hennkou">
+                    <div class="detail"  onclick="location.href='/admin/edit/{{Auth::id()}}';">
+                        変更
                     </div>
-                </a>
-                    <table class="admintable">
-                        <thead class="adminthead">
-                            <tr class="admintr">
-                                <td>ユーザー名</td>
-                                <td>メールアドレス</td>
-                                <td>管理者権限</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($users as $user)
-                            <tr onclick="location.href='/admin/{{$user->id}}';" class="admintr">
-                                <td>{{$user->name}}</td>
-                                <td>{{$user->email}}</td>
-                                <td>{{$user->管理者権限}}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
+                </div>
 
 
-                    </table>
-                    
+            </div>
+        @endforeach
+    </div>
                     
                     
 @endsection 

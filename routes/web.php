@@ -7,6 +7,7 @@ use App\Http\Controllers\EditController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,20 @@ Route::get('/delete/{path}',[EditController::class,'deleteGet'])->name('deleteGe
 // 変更ページにポストで情報を投げた時
 Route::get('/test/{num}',[TestController::class,'testGet'])->name('testGet');
 
+// 変更ページにポストで情報を投げた時
+Route::get('/admin',[AdminController::class,'adminGet'])->name('adminGet');
+
+// 変更ページにポストで情報を投げた時
+Route::get('/admin/edit/{id}',[AdminController::class,'admineditGet'])->name('admineditGet');
+
+// 変更ページにポストで情報を投げた時
+Route::get('/admin/regist',[AdminController::class,'adminregistGet'])->name('adminregistGet');
+
+// 変更ページにポストで情報を投げた時
+Route::post('/admin/regist',[AdminController::class,'adminregistPost'])->name('adminregistPost');
+
+// 変更ページにポストで情報を投げた時
+Route::put('/admin/edit/{id}',[AdminController::class,'admineditPut'])->name('admineditPut');
 
 
 });
