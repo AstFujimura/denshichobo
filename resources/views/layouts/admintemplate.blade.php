@@ -19,7 +19,7 @@
  
 <header class="header001">
             <div class="logo01">
-                <a href="{{route('adminGet')}}" class="logoelement01">
+                <a href="{{route('topGet')}}" class="logoelement01">
                     管理画面
                 </a>
             </div>
@@ -28,12 +28,13 @@
 </header>
 <div class="menu001">
 
-        <div class="headerIcon001" onclick="location.href='{{route('topGet')}}';">
-            <img src="{{ asset('img/home_3_line.svg') }}" class="menuicon01">
+        <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
+            <img src="{{ asset('img/edit_fill.svg') }}" class="menuicon01">
         </div>
         <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
             <img src="{{ asset('img/user_add_2_fill.svg') }}" class="menuicon01">
         </div>
+        
         <div class="headerIcon001 menue001">
             <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
             <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
@@ -58,13 +59,13 @@
 
             </div>
             <div class="sidebarcontent01">
-            <a href="{{route('topGet')}}" class="button1_01">
+                <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                        <img src="{{ asset('img/home_3_line.svg') }}">
+                        <img src="{{ asset('img/edit_fill.svg') }}">
                         </div>
                         <div class="button1name01">
-                          電子帳簿システム
+                          ユーザー一覧
                         </div>
 
                     </div>
@@ -94,6 +95,18 @@
                         </div>
 
                     </div>
+                </a>
+                <a href="{{route('topGet')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                        <img src="{{ asset('img/home_3_line.svg') }}">
+                        </div>
+                        <div class="button1name01">
+                          電子帳簿システム
+                        </div>
+
+                    </div>
+
                 </a>
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
@@ -136,6 +149,7 @@
     @yield('footer')
     </footer>
     <script src="{{ asset('js/all.js') }}"></script>
+    <script src="{{ asset('js/admin.js') }}"></script>
     <script src="{{ asset('js/admin01.js') }}"></script>
     <script src="{{ asset('js/admin001.js') }}"></script>
 </footer>

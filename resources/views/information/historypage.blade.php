@@ -29,7 +29,7 @@
             <div class="syoruikubunn pale">書類区分</div>
             <div class="hozonn pale">保存方法</div>
             <div class="bikou pale">検索ワード</div>
-            <div class="hennkou pale">ファイル変更</div>
+            <div class="filehennkou pale">ファイル変更</div>
             <div class="downloadTd pale"></div>
             <div class="extension pale">形式</div>
             <div class="preview pale"></div>
@@ -48,7 +48,7 @@
                     <div class="syoruikubunn">{{$file->書類}}</div>
                     <div class="hozonn">{{$file->保存}}</div>
                     <div class="bikou">{{$file->備考}}</div>
-                    <div class="hennkou">{{$file->ファイル変更}}</div>
+                    <div class="filehennkou">{{$file->ファイル変更}}</div>
                     <div class="downloadTd">
                         <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
                     </div>

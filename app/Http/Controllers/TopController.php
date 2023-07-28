@@ -104,7 +104,7 @@ class TopController extends Controller
     ->where('files.書類','like',"%". $syoruikubunn ."%")
     ->where('files.保存','like',"%". $hozonn ."%")
     ->where('files.備考','like',"%". $kennsakuword ."%")
-    ->get();
+    ->paginate(1000);
 
 
     $count = $files->count();

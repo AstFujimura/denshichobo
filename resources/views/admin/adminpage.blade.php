@@ -20,9 +20,7 @@
         <div class="name">ユーザー名</div>
         <div class="email">email</div>
         <div class="status">アクセス権限</div>
-        <div class="hennkou">
-
-        </div>
+        <div class="hennkou"></div>
     </div>
     <div class="admin_top_table_element">
         @foreach ($users as $user)
@@ -32,12 +30,10 @@
                 <div class="email">{{$user->email}}</div>
                 <div class="status">{{$user->管理}}</div>
                 <div class="hennkou">
-                    <div class="detail"  onclick="location.href='/admin/edit/{{Auth::id()}}';">
+                    <div class="detail"  onclick="location.href='/admin/edit/{{$user->id}}';">
                         変更
                     </div>
                 </div>
-
-
             </div>
         @endforeach
     </div>

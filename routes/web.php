@@ -8,6 +8,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ErrorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,5 +76,12 @@ Route::post('/admin/regist',[AdminController::class,'adminregistPost'])->name('a
 // 変更ページにポストで情報を投げた時
 Route::put('/admin/edit/{id}',[AdminController::class,'admineditPut'])->name('admineditPut');
 
+// 変更ページにポストで情報を投げた時
+Route::delete('/admin/delete/{id}',[AdminController::class,'adminDelete'])->name('adminDelete');
 
+// 変更ページにポストで情報を投げた時
+Route::post('/admin/reset/{id}',[AdminController::class,'adminresetPost'])->name('adminresetPost');
+
+Route::get('error/{code}',[ErrorController::class,'errorGet'])->name('errorGet');
 });
+

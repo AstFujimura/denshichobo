@@ -327,7 +327,6 @@ $(document).ready(function() {
 
   
     }
-  
 
 
 
@@ -349,6 +348,11 @@ $(document).ready(function() {
 
 
 
+});
+
+$('.important_title').on('click',function(){
+  $('.important_title').toggleClass('close')
+  $('.importantelement').toggleClass('open')
 });
 
 

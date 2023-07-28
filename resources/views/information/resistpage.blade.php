@@ -89,6 +89,23 @@
                     </div>
 
                 </div>
+                <div class="important">
+                    <div class="important_title">その他詳細設定
+                    </div>
+                    <div class="importantelement">
+                        <div class="settingcheckbox">
+                            <input type="checkbox" value="有効" name="openvalid"  checked><span>公開を許可する</span>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="有効" name="editvalid" checked><span>他ユーザーの訂正を許可する</span> 
+                        </div>
+                        <div>
+                            <input type="checkbox" value="有効" name="deletevalid" checked><span>他ユーザーの削除を許可する</span>                     
+                        </div>
+
+
+                    </div>
+                </div>
 
 
 

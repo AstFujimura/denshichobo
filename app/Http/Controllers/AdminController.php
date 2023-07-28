@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -16,7 +17,9 @@ class AdminController extends Controller
         //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
         if (Auth::user()->管理 == "管理"){
             //astecユーザーを表示しないため
-            $users = User::where('id', '>=', 1)->get();
+            $users = User::where('id', '>=', 1)
+            ->where('削除','')
+            ->get();
             return view('admin.adminpage',['users' => $users]);
         } else {
             return redirect()->route('topGet');
@@ -37,27 +40,10 @@ class AdminController extends Controller
         }
     }
     
-    // public function admindetail($id)
-    // {
-    //     if (Auth::user()->管理 == "管理"){
-    //         $user = User::where('id', '=', $id) ->first();
-    //         if (!$user) {
-    //             return response()->json(['message' => 'ユーザーが見つかりません'], 404);
-    //         }
-
-    
-    //         // 取得したユーザー情報を利用する処理
-    
-    //         return view('admin.admindetail',['user' => $user]);
-    //     } else {
-    //         return redirect()->route('topGet');
-    //     }
-    // }
 
     public function adminregistPost(Request $request)
     {
         if (Auth::user()->管理 == "管理"){
-            $admin = $request->input('admin');
 
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
@@ -67,13 +53,14 @@ class AdminController extends Controller
             
 
     
-            // ユーザーの作成
-            $user = User::create([
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'password' => Hash::make($validatedData['password']),
-                '管理' => $admin
-            ]);
+            $user = new User();
+            $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            $user->password = Hash::make($validatedData['password']);
+            $user->管理 = $request->input('admin');
+            $user->save();
+
+       
 
             return redirect()->route('adminGet');
         } else {
@@ -81,16 +68,6 @@ class AdminController extends Controller
         }
     }
 
-    public function userdelete(Request $request)
-    {
-        $id = $request->input('id');
-        $record = User::find($id);
-        if (!$record) {
-            return response()->json(['message' => 'ユーザーが見つかりません'], 404);
-        }
-        User::where('id' ,'=', $id) ->delete();
-        return redirect()->route('adminpageGet');
-    }
 
         public function admineditGet($id)
     {
@@ -99,45 +76,76 @@ class AdminController extends Controller
             if (!$user) {
                 return response()->json(['message' => 'ユーザーが見つかりません'], 404);
             }
-            $check = "";
-            if ($user->管理者権限 == "あり"){
-                $check = "checked";
-            }
     
-            return view('admin.adminedit',['user' => $user, 'check' => $check]);
+            return view('admin.adminedit',['user' => $user]);
         } else {
             return redirect()->route('topGet');
         }
     }
 
-    public function admineditPut(Request $request)
+    public function admineditPut(Request $request,$id)
     {
         if (Auth::user()->管理 == "管理"){
-            $id = $request->input('id');
-            $record = User::find($id);
-            if (!$record) {
+            $user = User::find($id);
+            if (!$user) {
                 return response()->json(['message' => 'ユーザーが見つかりません'], 404);
             }
 
-            if ($request->has('adminCheck')) {
-                // チェックボックスが選択されている場合の処理
-                $admin = "あり";
-            } else {
-                // チェックボックスが選択されていない場合の処理
-                $admin = "なし";
-            }
     
             // 取得したユーザー情報を利用する処理
-            $record->name = $request->input('name');
-            $record->email = $request->input('email');
-            $record->password = Hash::make($request->input('password'));
-            $record->管理者権限 = $admin;
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            $user->管理 = $request->input('admin');
 
-            $record->save();
+            $user->save();
     
-            return redirect()->route('admindetailGet', ['id' => $id]);
+            return redirect()->route('adminGet');
         } else {
             return redirect()->route('topGet');
         }
+    }
+    
+    public function adminresetPost($id)
+    {
+
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'ユーザーが見つかりません'], 404);
+        }
+        // 更新時にはパスワードをリセットしない
+        if ($user->updated_at->diffInMinutes(now()) > 1) {
+            $password = $this->generateRandomStr(8);
+            $user->password = Hash::make($password);
+            $user->save();
+            return view('admin.adminreset',['password'=>$password]);
+        }
+        else{
+            return redirect()->route("errorGet",['code'=>'P127262']);
+        }
+
+        
+    }
+
+    public function adminDelete($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'ユーザーが見つかりません'], 404);
+        }
+        else if (User::where('管理','管理')->get()->count() == 1 && $user->管理 = "管理"){
+            abort(404);
+        }
+        $user->削除 = "削除";
+        $user->password = Hash::make($this->generateRandomStr(16));
+        $user->save();
+        return redirect()->route('adminGet');
+    }
+
+    //ランダムな6桁のstring型の数値を出力
+    private function generateRandomStr($digit)
+    {
+        $randomString = Str::random($digit); // 10文字のランダムな文字列を生成
+        return $randomString;
+
     }
 }

@@ -1,7 +1,7 @@
 @extends('layouts.admintemplate')
 
 @section('title')
-名刺管理システム　管理者ページ
+管理者ページ
 @endsection 
 
 @section('menuebar')
@@ -15,9 +15,70 @@
 @section('main')
 <h2>ユーザー変更画面</h2>
 
-<form action="{{route('admineditPut',['id' => 2])}}" method="post" enctype="multipart/form-data" id="admin-myForm">
+<form action="{{route('admineditPut',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="admin-myForm">
         @csrf
+        @method('PUT')
+        <div class="input-container">
+        <label class="label">
+            ユーザー名
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <input type="text" name="name" class="input-field dateinputtext" id="name" value="{{$user->name}}">
+            <span class="errorelement" id="required4">必須項目です</span>
+        </div>
+    </div>
+    <div class="input-container">
+        <label class="label">
+            メールアドレス
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <input type="text" name="email" class="input-field dateinputtext" id="email" value="{{$user->email}}">
+            <span class="errorelement" id="required4">必須項目です</span>
+        </div>
+    </div>
+    <div class="input-container">
+        <label class="label">
+            アクセス権限
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <select name="admin" class="input-field">
+                <option>管理</option>
+                <option>一般</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="admineditbutton">変更</button>
 </form>
+<div class="important">
+        <div class="title">重要設定
+        </div>
+        <div class="importantelement">
+
+                
+                <form class="adminreset" action="{{route('adminresetPost',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="adminreset">
+                        @csrf
+                        <input type="submit" class="adminresetbutton" value="パスワードリセット">
+                            
+                </form>
+
+
+                <form class="adminDelete" action="{{route('adminDelete',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="admindelete">
+                        @csrf
+                        @method('DELETE')
+                        <input type="submit" class="admindeletebutton" value="削除">
+                </form>
+
+
+        </div>
+</div>
+
+
+
+
 
 @endsection 
     @section('footer')

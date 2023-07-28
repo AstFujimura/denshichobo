@@ -33,6 +33,7 @@
         <div class="headerIcon001" onclick="location.href='{{route('registGet')}}';">
             <img src="{{ asset('img/pencil_2_line_gray.svg') }}" class="menuicon01">
         </div>
+
         <div class="headerIcon001 menue001">
             <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
             <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
@@ -81,18 +82,17 @@
                     </div>
 
                 </a>
-
-
-                <a class="accordion1content01">
+                <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                        <img src="{{ asset('img/user_add_2_fill.svg') }}">
+                        <img src="{{ asset('img/edit_fill.svg') }}">
                         </div>
-                        <div class="accordion1name01">
-                          ユーザー登録
+                        <div class="button1name01">
+                          管理画面
                         </div>
 
                     </div>
+
                 </a>
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
