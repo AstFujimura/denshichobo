@@ -331,22 +331,13 @@ $(document).ready(function() {
 
 
 
-
-
-
-
-  $('.deletebutton').on('click',function(){
-    $id = $("#id").val();
-    if (confirm("本当に削除しますか?")){
-      window.location.href = '/delete/'+$id;
-    }
-    
-
-  });
-
-
-
-
+});
+$('.deletebutton').on('click',function(){
+  $id = $("#id").val();
+  if (confirm("本当に削除しますか?")){
+    window.location.href = '/delete/'+$id;
+  }
+  
 
 });
 
@@ -516,7 +507,6 @@ function kinngakucheck_change(id) {
 
     //数値でなかった場合エラー
     if (!isNumeric){
-      console.log("error")
       $("#" + id).addClass("searcherror")
     }
     //0から始まる数値の時にエラー,ただし0は許容
@@ -603,7 +593,7 @@ function date_start_end(start,end){
   if($('#'+ start).val() && $('#'+ end).val()){
     var startdate = parseInt($('#'+ start).val().replace(/\//g,""))
     var enddate = parseInt($('#'+ end).val().replace(/\//g,""))
-   console.log( $('#'+ start).val())
+
     if (startdate <= enddate){
       $('#'+start).removeClass('invalid')
       $('#'+end).removeClass('invalid')
@@ -628,7 +618,6 @@ function kinngaku_start_end(start,end){
   if($('#'+ start).val() && $('#'+ end).val()){
     var startdate = parseInt($('#'+ start).val().replace(/,/g,""))
     var enddate = parseInt($('#'+ end).val().replace(/,/g,""))
-   console.log( $('#'+ start).val())
     if (startdate <= enddate){
       $('#'+start).removeClass('invalid')
       $('#'+end).removeClass('invalid')

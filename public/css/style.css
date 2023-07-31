@@ -450,6 +450,10 @@ a {
   background: rgb(238, 197, 197);
   border-right: solid 1px rgb(238, 197, 197);
 }
+.nonopen div{
+  background: rgb(152, 200, 245);
+  border-right: solid 1px rgb(152, 200, 245);
+}
 
 .previewcontainer{
   width: 500px;
@@ -546,9 +550,33 @@ a {
 }
 .open{
     opacity: 1;
-    height: 80px;
+    height: 45px;
     padding: 20px;
 }
 .settingcheckbox{
   display: block;
+}
+.nonopencolor{
+  display: inline-block;
+  background: rgb(152, 200, 245);
+  width: 10px;
+  height: 10px;
+
+}
+.deletecolor{
+  display: inline-block;
+  background: rgb(238, 197, 197);
+  width: 10px;
+  height: 10px;
+}
+.fontsize12{
+  font-size: 12px;
+}
+.nonopencontainer{
+  margin-block: auto;
+  margin-left: 50px;
+}
+.deletecontainer{
+  margin-block: auto;
+  margin-left: 50px;
 }

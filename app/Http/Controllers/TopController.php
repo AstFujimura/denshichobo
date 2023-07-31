@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\File;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,15 +22,41 @@ class TopController extends Controller
      */
     public function index()
     {
-        $files = DB::table('files')
-        ->select('files.*')
-        ->leftJoin('files as t2', function ($join) {
-            $join->on('files.過去データID', '=', 't2.過去データID')
-                 ->whereRaw('files.バージョン < t2.バージョン');
-        })
-        ->whereNull('t2.バージョン')
-        ->orderBy('files.日付', 'desc')
-        ->paginate(1000);
+        $userId = Auth::id(); // ログインしているユーザーのIDを取得
+        $admin = User::find($userId)->管理;
+        $today = Carbon::today(); // 今日の日付を取得
+
+        if ($admin == "一般"){
+            $files = DB::table('files')
+            ->select('files.*')
+            ->leftJoin('files as t2', function ($join) {
+                $join->on('files.過去データID', '=', 't2.過去データID')
+                     ->whereRaw('files.バージョン < t2.バージョン');
+            })
+            ->whereNull('t2.バージョン')
+            ->whereDate('files.updated_at', $today)
+            ->where(function ($query) use ($userId) {
+                $query->where('files.公開', '!=', '非公開')
+                      ->orWhere(function ($subQuery) use ($userId) {
+                          $subQuery->where('files.保存者ID', $userId);
+                      });
+            })
+            ->orderBy('files.日付', 'desc')
+            ->paginate(1000);
+        }
+        else if ($admin == "管理"){
+            $files = DB::table('files')
+            ->select('files.*')
+            ->leftJoin('files as t2', function ($join) {
+                $join->on('files.過去データID', '=', 't2.過去データID')
+                     ->whereRaw('files.バージョン < t2.バージョン');
+            })
+            ->whereNull('t2.バージョン')
+            ->whereDate('files.updated_at', $today)
+            ->orderBy('files.日付', 'desc')
+            ->paginate(1000);
+        }
+
 
     $count = $files->total();
     $deletecount = $files->where('削除フラグ','済')->count();

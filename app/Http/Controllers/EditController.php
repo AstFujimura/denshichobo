@@ -29,6 +29,8 @@ class EditController extends Controller
         $hiduke = substr_replace($hiduke,'/',7,0);
         $syoruikubunn =$file->書類;
         $hozonn =$file->保存;
+        $openvalid =$file->公開;
+        $editvalid =$file->訂正許可;
         $data = [
             'file' => $file,
             'hiduke'=>$hiduke ,
@@ -38,6 +40,8 @@ class EditController extends Controller
             'mitumorisyo' => "",
             'dennshi' => "",
             'scan' => "",
+            'openvalid' => "",
+            'editvalid' => "",
         ];
 
         if ($syoruikubunn == "請求書"){
@@ -59,6 +63,15 @@ class EditController extends Controller
         else if ($hozonn == "スキャナ保存"){
             $data['scan'] = "selected";
         };
+
+        if ($openvalid == "公開"){
+            $data['openvalid'] = "checked";
+        }
+        if ($editvalid == "有効"){
+            $data['editvalid'] = "checked";
+        }
+        
+
 
 
         
@@ -85,6 +98,10 @@ class EditController extends Controller
         ]);
         $now = Carbon::now();
         $currentTime = $now->format('YmdHis');
+        
+
+
+
         //過去データIDが一致するファイルが何件あるかを格納
         $historycount = Filemodel::where('過去データID',$path)->get()->count();
 
@@ -92,7 +109,19 @@ class EditController extends Controller
         $newfile = new Filemodel();
 
 
-        
+        //公開、訂正許可の値をチェック
+        if ($request->input('openvalid')){
+            $openvalid = "公開";
+        }
+        else{
+            $openvalid = "非公開";
+        }
+        if ($request->input('editvalid')){
+            $editvalid = "有効";
+        }
+        else{
+            $editvalid = "無効";
+        }
         $date = $request->input('hiduke');
         $date = str_replace('/','',$date);
         $torihikisaki = $request->input('torihikisaki');

@@ -15,7 +15,7 @@
 
 
 @section('main')
-<h2 class="pagetitle">帳簿一覧</h2>
+<h2 class="pagetitle">{{ date('Y年m月d日') }}登録データ</h2>
 <form class="searchform" action="{{route('searchPost')}}" method="get" enctype="multipart/form-data">
 
     <div class="searchbox">
@@ -101,6 +101,12 @@
             <div class="pagination">
                 {{ $files->links() }}
             </div>
+            <div class="nonopencontainer">
+                <span class="nonopencolor"></span><span class="fontsize12">非公開データ</span>
+            </div>
+            <div class="deletecontainer">
+                <span class="deletecolor"></span><span class="fontsize12">削除データ</span>
+            </div>
 
             
         </div>
@@ -120,10 +126,12 @@
 
         <div class="top_table_element">
             @foreach ($files as $file)
-                @if ($file->削除フラグ != "済")
-                <div class="top_table_body table_selected">    
-                @else
+                @if ($file->削除フラグ == "済")
                 <div class="delete_table">
+                @elseif ($file->公開 == "非公開")
+                <div class="top_table_body nonopen table_selected">    
+                @else
+                <div class="top_table_body table_selected">  
                 @endif
                     <div class="hidukeTd hiduke">{{$file->日付}}</div>
                     <div class="kinngakuTd kinngaku">{{$file->金額}}</div>
@@ -147,7 +155,7 @@
                         @endif
                     </div>
                     <div class="hennkou">
-                        @if ($file->削除フラグ != "済")
+                        @if ($file->削除フラグ != "済" && ($file->訂正許可 == "有効" || $file->保存者ID == Auth::id() || Auth::user()->管理 == "管理"))
                         <div class="detail"  onclick="location.href='/edit/{{$file->過去データID}}';">
                             変更
                         </div>

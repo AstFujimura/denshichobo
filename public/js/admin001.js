@@ -77,6 +77,6 @@ $('#select').on('change', function() {
     $(".delete_table").addClass("table_selected")
     $(".top_table_body").addClass("table_selected")
   }
-  console.log('選択されたオプション:', selectedOption);
+
 });
 });
