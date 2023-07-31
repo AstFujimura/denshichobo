@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\Paginator;
 
 class TopController extends Controller
@@ -285,6 +285,35 @@ class TopController extends Controller
     {
         $user = Auth::user();
         return view('information.usersetting',['user' => $user]);
+
+
+    }
+    public function usersettingPost(Request $request)
+    {
+        $user = Auth::user();
+        if(!$request->input('name')||!$request->input('email')){
+            return "必須";
+        }
+        //パスワード設定変更
+        else if($request->input('oldpass')){
+            if (Hash::check($request->input('oldpass'),$user->password)){
+                $user->name = $request->input('name');
+                $user->email = $request->input('email');
+                $user->password = Hash::make($request->input('newpass'));
+                $user->save();
+                return "成功";
+            }
+            else{
+                return "パスワードが違います";
+            }
+        }
+        else {
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            $user->save();
+            return "成功";
+        }
+
 
 
     }

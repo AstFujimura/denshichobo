@@ -46,7 +46,7 @@
         <div class="sidebar01">
 
             <div class="icon01">
-                <div class="user01">
+                <div class="user01" onclick="location.href='{{route('usersettingGet')}}';">
                     <div class="usericon01">
                         <img src="{{ asset('img/user_1_line.svg') }}" class="usericon01">
                     </div>
@@ -82,6 +82,7 @@
                     </div>
 
                 </a>
+                @if (Auth::user()->管理 == "管理")
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
@@ -94,6 +95,7 @@
                     </div>
 
                 </a>
+                @endif
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
@@ -135,6 +137,7 @@
     @yield('footer')
     </footer>
     <script src="{{ asset('js/all.js') }}"></script>
+    <script src="{{ asset('js/usersetting.js') }}"></script>
     <script src="{{ asset('js/admin01.js') }}"></script>
     <script src="{{ asset('js/admin001.js') }}"></script>
 </footer>

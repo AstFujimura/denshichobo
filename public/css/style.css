@@ -550,7 +550,7 @@ a {
 }
 .open{
     opacity: 1;
-    height: 45px;
+    height: 215px;
     padding: 20px;
 }
 .settingcheckbox{
@@ -579,4 +579,21 @@ a {
 .deletecontainer{
   margin-block: auto;
   margin-left: 50px;
+}
+
+
+
+.usersettingbutton{
+  border: solid #2978a6 2px;
+  background: rgb(196, 243, 255);
+  padding: 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  height: 32px;
+  width: 100px;
+}
+
+.usersettingbutton:hover{
+  background: rgb(24, 115, 189);
+  color: white;
 }

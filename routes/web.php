@@ -46,6 +46,8 @@ Route::get('/img/{id}',[TopController::class,'imgget'])->name('imgget');
 
 Route::get('/usersetting',[TopController::class,'usersettingGet'])->name('usersettingGet');
 
+Route::post('/usersetting',[TopController::class,'usersettingPost'])->name('usersettingPost');
+
 
 // 新規登録ページ
 Route::get('/regist',[RegistController::class,'registGet'])->name('registGet');
