@@ -101,12 +101,7 @@
             <div class="pagination">
                 {{ $files->links() }}
             </div>
-            <div class="nonopencontainer">
-                <span class="nonopencolor"></span><span class="fontsize12">非公開データ</span>
-            </div>
-            <div class="deletecontainer">
-                <span class="deletecolor"></span><span class="fontsize12">削除データ</span>
-            </div>
+
 
             
         </div>
@@ -127,9 +122,7 @@
         <div class="top_table_element">
             @foreach ($files as $file)
                 @if ($file->削除フラグ == "済")
-                <div class="delete_table">
-                @elseif ($file->公開 == "非公開")
-                <div class="top_table_body nonopen table_selected">    
+                <div class="delete_table">   
                 @else
                 <div class="top_table_body table_selected">  
                 @endif

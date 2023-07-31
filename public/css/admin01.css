@@ -14,7 +14,13 @@
 }
 
 .user01{
-
+    padding: 10px;
+    cursor: pointer;
+}
+.user01:hover .username01{
+    color: white;
+    background: rgb(177, 177, 177);
+    
 }
 .usericon01{
 
@@ -31,7 +37,8 @@
 }
 .username01{
     text-align: center;
-    font-size: 1.25rem
+    font-size: 1.25rem;
+    padding: 5px;
 }
 .sidebarcontent01{
     height: 48rem;

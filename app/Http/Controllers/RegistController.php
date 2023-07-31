@@ -35,19 +35,7 @@ class RegistController extends Controller
             $currentTime = $now->format('YmdHis');
             
 
-            //公開、訂正許可の値をチェック
-            if ($request->input('openvalid')){
-                $openvalid = "公開";
-            }
-            else{
-                $openvalid = "非公開";
-            }
-            if ($request->input('editvalid')){
-                $editvalid = "有効";
-            }
-            else{
-                $editvalid = "無効";
-            }
+
             
             $date = $request->input('hiduke');
             $date = str_replace('/','',$date);
@@ -74,8 +62,6 @@ class RegistController extends Controller
             $file->ファイル形式 = $extension;
             $file->保存 = $hozonn;
             $file->備考 = $kennsaku;
-            $file->公開 = $openvalid;
-            $file->訂正許可 = $editvalid;
             //バージョンはデフォルトで1になるのでここでは記載しない変更の時には記述
             $file->save();
             return redirect()->route('topGet');

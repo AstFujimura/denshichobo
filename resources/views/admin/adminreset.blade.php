@@ -15,10 +15,14 @@
 
 
 @section('main')
-<h2>パスワードリセット</h2>              
-    <div class="resetpassword">
-        {{$password}}
-    </div>                  
+<h2>パスワードリセット</h2>
+    <div class="resetmessage">新しいパスワードはこれ以降確認できないため保存してください。</div>              
+    <div class="resetcontainer">
+        <div class="resetpassword">
+            {{$password}}
+        </div>   
+    </div>
+               
                     
 @endsection 
     @section('footer')

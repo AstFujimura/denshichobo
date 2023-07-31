@@ -121,21 +121,22 @@ $(document).ready(function() {
     kinngakucheck_change("endkinngaku");
 
   });
-
-  //金額のフォームはインプットするたびにカンマが入るようにする
-  $('#startkinngaku').on('input',function() {
-   $(this).val(kinngaku_comma("startkinngaku"));
-  });
-  $('#endkinngaku').on('input',function() {
-    $(this).val(kinngaku_comma("endkinngaku"));
-   });
-
-  $('#kinngaku').on('input',function() {
+    $('#kinngaku').blur(function() {
     $(this).val(kinngaku_comma("kinngaku"));
   });
-  $('#kinngakuedit').on('input',function() {
+  $('#kinngakuedit').blur(function() {
     $(this).val(kinngaku_comma("kinngakuedit"));
   });
+
+  //金額のフォームはインプットするたびにカンマが入るようにする
+  // $('#startkinngaku').on('input',function() {
+  //  $(this).val(kinngaku_comma("startkinngaku"));
+  // });
+  // $('#endkinngaku').on('input',function() {
+  //   $(this).val(kinngaku_comma("endkinngaku"));
+  //  });
+
+
   
 
   

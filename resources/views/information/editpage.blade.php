@@ -93,19 +93,6 @@
                     </div>
                     
                 </div>
-                <div class="important">
-                    <div class="important_title">その他詳細設定
-                    </div>
-                    <div class="importantelement">
-                        <div class="settingcheckbox">
-                            <input type="checkbox" value="有効" name="openvalid"  {{$openvalid}}><span>公開を許可する</span>
-                        </div>
-                        <div>
-                            <input type="checkbox" value="有効" name="editvalid" {{$editvalid}}><span>他ユーザーの訂正・削除を許可する</span> 
-                        </div>
-
-                    </div>
-                </div>
 
 
                 <input type="hidden" value="{{$file->id}}" id="id">

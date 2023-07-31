@@ -35,12 +35,7 @@ class TopController extends Controller
             })
             ->whereNull('t2.バージョン')
             ->whereDate('files.updated_at', $today)
-            ->where(function ($query) use ($userId) {
-                $query->where('files.公開', '!=', '非公開')
-                      ->orWhere(function ($subQuery) use ($userId) {
-                          $subQuery->where('files.保存者ID', $userId);
-                      });
-            })
+            ->where('files.保存者ID',$userId)
             ->orderBy('files.日付', 'desc')
             ->paginate(1000);
         }
@@ -72,15 +67,30 @@ class TopController extends Controller
 
     public function search(Request $request)
     {
+        $userId = Auth::id(); // ログインしているユーザーのIDを取得
+        $admin = User::find($userId)->管理;
+        if ($admin == "一般"){
+            $allfiles = DB::table('files')
+            ->select('files.*')
+            ->leftJoin('files as t2', function ($join) {
+                $join->on('files.過去データID', '=', 't2.過去データID')
+                     ->whereRaw('files.バージョン < t2.バージョン');
+            })
+            ->whereNull('t2.バージョン')
+            ->where('files.保存者ID',$userId)
+            ->orderBy('files.日付', 'desc');
+        }
+        else if ($admin == "管理"){
+            $allfiles = DB::table('files')
+            ->select('files.*')
+            ->leftJoin('files as t2', function ($join) {
+                $join->on('files.過去データID', '=', 't2.過去データID')
+                     ->whereRaw('files.バージョン < t2.バージョン');
+            })
+            ->whereNull('t2.バージョン')
+            ->orderBy('files.日付', 'desc');
+        }
 
-        $allfiles = DB::table('files')
-        ->select('files.*')
-        ->leftJoin('files as t2', function ($join) {
-            $join->on('files.過去データID', '=', 't2.過去データID')
-                 ->whereRaw('files.バージョン < t2.バージョン');
-        })
-        ->whereNull('t2.バージョン')
-        ->orderBy('files.日付', 'desc');
 
     $startDateStr = $request->input('starthiduke');
     $startDateStr = str_replace('/', '', $startDateStr);
@@ -268,6 +278,14 @@ class TopController extends Controller
             return response()->file($path, ['Content-Type' => 'image/' . $extension]);
         }
             return response()->file($path, ['Content-Type' => 'application/pdf']);
+
+    }
+
+    public function usersettingGet()
+    {
+        $user = Auth::user();
+        return view('information.usersetting',['user' => $user]);
+
 
     }
 
