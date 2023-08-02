@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <button>登録</button>
+    <button class="adminregistbutton">登録</button>
 
 </form>
 

@@ -25,6 +25,7 @@ class TopController extends Controller
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
         $today = Carbon::today(); // 今日の日付を取得
+        $oneMonthAgo = Carbon::now()->subMonth()->format('Ymd');//一か月前の日付を取得
 
         if ($admin == "一般"){
             $files = DB::table('files')
@@ -34,7 +35,7 @@ class TopController extends Controller
                      ->whereRaw('files.バージョン < t2.バージョン');
             })
             ->whereNull('t2.バージョン')
-            ->whereDate('files.updated_at', $today)
+            ->where('files.日付','>=', $oneMonthAgo)
             ->where('files.保存者ID',$userId)
             ->orderBy('files.日付', 'desc')
             ->paginate(1000);
@@ -47,7 +48,7 @@ class TopController extends Controller
                      ->whereRaw('files.バージョン < t2.バージョン');
             })
             ->whereNull('t2.バージョン')
-            ->whereDate('files.updated_at', $today)
+            ->where('files.日付','>=', $oneMonthAgo)
             ->orderBy('files.日付', 'desc')
             ->paginate(1000);
         }
@@ -61,8 +62,6 @@ class TopController extends Controller
     return view('information.toppage',compact('files', 'count', 'deletecount', 'notdeletecount'));
 
     }
-
-
                      
 
     public function search(Request $request)
@@ -109,6 +108,8 @@ class TopController extends Controller
     $syoruikubunn = $request->input('syoruikubunn');
     $kennsakuword = $request->input('kennsakuword');
     $hozonn = $request->input('hozonn');
+    $deleteOrzenken = $request->input('deleteOrzenken');
+
 
 
 
@@ -199,6 +200,10 @@ class TopController extends Controller
     'dennshinone' => "",
     'dennshi' => "",
     'scan' => "",
+    'deleteOrzenken' => $deleteOrzenken,
+    'yukou' => "",
+    'delete' => "",
+    'zenken' => "",
     ];
 
     if ($syoruikubunn == ""){
@@ -225,6 +230,16 @@ class TopController extends Controller
     }
     else if ($hozonn == "スキャナ保存"){
         $data['scan'] = "selected";
+    }
+
+    if ($deleteOrzenken == "yukou"){
+        $data['yukou'] = "selected";
+    }
+    else if ($deleteOrzenken == "delete"){
+        $data['delete'] = "selected";
+    }
+    else if ($deleteOrzenken == "zenken"){
+        $data['zenken'] = "selected";
     }
 
         // 取得したデータをビューに渡すなどの処理
@@ -274,7 +289,7 @@ class TopController extends Controller
         $path = Config::get('custom.file_upload_path') . "\\" .$filepath. '.' .$extension;
 
             // 画像形式の場合は画像を表示
-        if (in_array($extension, ['jpeg', 'jpg', 'png', 'gif'])) {
+        if (in_array($extension, ['jpeg', 'jpg', 'jpeg', 'png', 'gif','bmp'])) {
             return response()->file($path, ['Content-Type' => 'image/' . $extension]);
         }
             return response()->file($path, ['Content-Type' => 'application/pdf']);

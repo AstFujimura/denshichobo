@@ -50,6 +50,7 @@
             <div class="dateform">
                 <input type="password" name="oldpass" class="input-field" id="oldpass">
                 <span class="errorelement" id="required3">必須項目です</span>
+                <span class="errorelement differencepass">パスワードが違います</span>
             </div>
             <label class="label">
                 新パスワード
@@ -58,7 +59,7 @@
             <div class="dateform">
                 <input type="password" name="newpass" class="input-field" id="newpass">
                 <span class="errorelement" id="required4">必須項目です</span>
-                <span class="errorelement passcheck">パスワードが異なっています</span>
+                <span class="errorelement passcheck">同じパスワードを入力してください</span>
             </div>
             <label class="label">
                 新パスワード確認
@@ -67,7 +68,7 @@
             <div class="dateform">
                 <input type="password" name="newpass" class="input-field" id="newpasscheck">
                 <span class="errorelement" id="required5">必須項目です</span>
-                <span class="errorelement passcheck">パスワードが異なっています</span>
+                <span class="errorelement passcheck">同じパスワードを入力してください</span>
             </div>
 
         </div>

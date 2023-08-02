@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -48,7 +49,7 @@ class AdminController extends Controller
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255',
-                'password' => 'required|string|min:8',
+                'password' => 'required|string',
             ]);
             
 
@@ -113,9 +114,10 @@ class AdminController extends Controller
             return response()->json(['message' => 'ユーザーが見つかりません'], 404);
         }
         // 更新時にはパスワードをリセットしない
-        if ($user->updated_at->diffInMinutes(now()) > 1) {
+        if ($user->パスワードリセット時->diffInMinutes(now()) > 1) {
             $password = $this->generateRandomStr(8);
             $user->password = Hash::make($password);
+            $user->パスワードリセット時 = Carbon::now();
             $user->save();
             return view('admin.adminreset',['password'=>$password]);
         }

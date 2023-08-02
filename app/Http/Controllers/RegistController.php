@@ -51,6 +51,7 @@ class RegistController extends Controller
             $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
             copy($file->getRealPath(),$filename . "\\" .$filepath. '.' .$extension);
             
+
             $file = new File();
             $file->日付 = $date;
             $file->取引先 = $torihikisaki;
@@ -65,6 +66,8 @@ class RegistController extends Controller
             //バージョンはデフォルトで1になるのでここでは記載しない変更の時には記述
             $file->save();
             return redirect()->route('topGet');
+
+
         }
     public function convert($int)
         {

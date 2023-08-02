@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function() { 
   $('.wholecontainer').on('click',function(){
     $(this).fadeOut();
     $('.previewcontainer').fadeOut();
@@ -247,16 +247,19 @@ $(document).ready(function() {
 
     //登録(変更)画面におけるフォームの確認
   if(!$('.errorsentence').length) {
+    
     var title = $('#registbutton').val();
     
         if (title.trim() == '登録'){
           
         if (confirm("本当に登録しますか？")) {
+          history.pushState(null, null, '/error/K183623');
           this.submit(); // フォームの送信を実行
         }
       }
       else {
         if (confirm("本当に変更しますか？")) {
+          history.pushState(null, null, '/error/K183623');
           this.submit(); // フォームの送信を実行
       }
         }
@@ -638,3 +641,4 @@ function kinngaku_start_end(start,end){
   }
 }
 });
+

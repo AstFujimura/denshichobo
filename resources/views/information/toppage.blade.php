@@ -15,22 +15,26 @@
 
 
 @section('main')
-<h2 class="pagetitle">{{ date('Y年m月d日') }}登録データ</h2>
+@php
+    use Carbon\Carbon;
+    $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
+@endphp
+<h2 class="pagetitle">帳簿一覧</h2>
 <form class="searchform" action="{{route('searchPost')}}" method="get" enctype="multipart/form-data">
 
     <div class="searchbox">
             <div class="requirearea">
                 <div class="searchelement">
                     <div class="searchlabel requirelabel">日付:</div>
-                    <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext">
-                    ~
+                    <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext" value="{{$oneMonthAgo}}">
+                    ～
                     <input type="text" id="endyear" name="endhiduke" class="searchinputtext dateinputtext">
                 </div>
 
                 <div class="searchelement">
                     <div class="searchlabel requirelabel">金額:</div>
                     <input type="text" id="startkinngaku" name="startkinngaku"  class="searchinputtext kinngakuinput">円
-                    ~<input type="text" id="endkinngaku" name="endkinngaku"  class="searchinputtext kinngakuinput">円
+                    ～<input type="text" id="endkinngaku" name="endkinngaku"  class="searchinputtext kinngakuinput">円
                 </div>
 
                 <div class="searchelement">
@@ -67,6 +71,7 @@
                 </div>
 
             </div>
+            <input type="hidden" id="deleteOrzenken" name="deleteOrzenken" value="yukou">
 
         <div class="buttonarea">
             <input type="submit" value="検索" class="searchbutton">
@@ -83,7 +88,7 @@
 
         <div class="info">
             <div class="count">
-                {{$count}}件 
+                {{$count}}件
             </div>
             <div class="deletecount">
                 {{$deletecount}}件 
@@ -143,7 +148,7 @@
                     </div>
                     <div class="extension">{{$file->ファイル形式}}</div>
                     <div class="preview">
-                        @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "pdf")
+                        @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "jpeg"||$file->ファイル形式 == "bmp"||$file->ファイル形式 == "gif"||$file->ファイル形式 == "pdf")
                             <img src="{{asset('img/file_search_line.svg')}}" class="download previewbutton" id="{{$file->id}}">
                         @endif
                     </div>
@@ -160,6 +165,7 @@
         <div class="pagination">
             {{ $files->links() }}
         </div>
+
         
 @endsection 
     @section('footer')

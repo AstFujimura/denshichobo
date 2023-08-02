@@ -45,7 +45,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function files() {
-        return $this->hasMany(File::class,'運転者コード');
-    }
+    protected $dates = ['created_at', 'updated_at', 'パスワードリセット時'];
+
+
 }

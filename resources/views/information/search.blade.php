@@ -15,7 +15,7 @@
 
 
 @section('main')
-<h2 class="pagetitle">検索結果</h2>
+<h2 class="pagetitle">帳簿一覧</h2>
 <form class="searchform" action="{{route('searchPost')}}" method="get" enctype="multipart/form-data">
 
     <div class="searchbox">
@@ -23,13 +23,13 @@
             <div class="searchelement">
                 <div class="searchlabel requirelabel">日付:</div>
                 <input type="text" id="startyear" name="starthiduke" value="{{$starthiduke}}" class="searchinputtext dateinputtext">
-                ~
+                ～
                 <input type="text" id="endyear" name="endhiduke" value="{{$endhiduke}}" class="searchinputtext dateinputtext">
             </div>
             <div class="searchelement">
                 <div class="searchlabel requirelabel">金額:</div>
                 <input type="text" id="startkinngaku" name="startkinngaku" value="{{$startkinngaku}}" class="searchinputtext kinngakuinput">円
-                ~<input type="text" id="endkinngaku" name="endkinngaku" value="{{$endkinngaku}}" class="searchinputtext kinngakuinput">円
+                ～<input type="text" id="endkinngaku" name="endkinngaku" value="{{$endkinngaku}}" class="searchinputtext kinngakuinput">円
             </div>
             <div class="searchelement">
             <div class="searchlabel requirelabel">取引先:</div>
@@ -62,7 +62,7 @@
                 <div>(部分一致)</div>
             </div>
         </div>
-
+        <input type="hidden" id="deleteOrzenken" name="deleteOrzenken" value={{$deleteOrzenken}}>
         <div class="buttonarea">
             <input type="submit" value="検索" class="searchbutton">
         </div>
@@ -76,19 +76,19 @@
 </div>
 <div class="info">
             <div class="count">
-                {{$count}}件 表示
+                {{$count}}件
             </div>
             <div class="deletecount">
-                {{$deletecount}}件 表示
+                {{$deletecount}}件
             </div>
             <div class="notdeletecount selected">
-                {{$notdeletecount}}件 表示
+                {{$notdeletecount}}件
             </div>
             <div class="select">
                 <select id="select" class="dataselect">
-                    <option>有効データ</option>
-                    <option>削除データ</option>
-                    <option>全件データ</option>
+                    <option {{$yukou}}>有効データ</option>
+                    <option {{$delete}}>削除データ</option>
+                    <option {{$zenken}}>全件データ</option>
                 </select>
             </div>
             
@@ -131,7 +131,7 @@
                     </div>
                     <div class="extension">{{$file->ファイル形式}}</div>
                     <div class="preview">
-                        @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "pdf")
+                    @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "jpeg"||$file->ファイル形式 == "bmp"||$file->ファイル形式 == "gif"||$file->ファイル形式 == "pdf")
                             <img src="{{asset('img/file_search_line.svg')}}" class="download previewbutton" id="{{$file->id}}">
                         @endif
                     </div>

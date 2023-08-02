@@ -70,6 +70,8 @@ $(document).ready(function() {
       else{
         $('.passcheck').removeClass("errorsentence");
       }
+      //送信時には一旦「パスワードが違います」の文言を消す
+      $('.differencepass').removeClass("errorsentence");
 
       formData.append('oldpass',oldpass);
       formData.append('newpass',newpass);
@@ -77,26 +79,30 @@ $(document).ready(function() {
 
 
     if (!$('.invalid').length){
-      $.ajax({
-        url: '/usersetting',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        headers: {
-          'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-         },
-         success: function(response){
-          if (response == "成功"){
-            window.location.href = "/"
-          }
-          
-          else {
-            console.log(response);
-         }
-  
+      if (confirm("情報を変更しますよろしいですか")){
+        $.ajax({
+          url: '/usersetting',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: {
+            'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+           },
+           success: function(response){
+            if (response == "成功"){
+              window.location.href = "/"
+            }
+            
+            else if(response == "パスワードが違います") {
+              $('#oldpass').addClass("invalid");
+              $('.differencepass').addClass("errorsentence");
+           }
+    
+        }
+      });
       }
-    });
+
 
     }
 
