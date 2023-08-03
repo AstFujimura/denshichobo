@@ -47,7 +47,7 @@
         <div class="sidebar01">
 
             <div class="icon01">
-                <div class="user01">
+                <div class="user01" onclick="location.href='{{route('usersettingGet')}}';">
                     <div class="usericon01">
                         <img src="{{ asset('img/user_1_line.svg') }}" class="usericon01">
                     </div>

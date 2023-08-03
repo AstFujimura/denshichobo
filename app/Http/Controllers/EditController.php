@@ -108,6 +108,10 @@ class EditController extends Controller
         $syorui = $request->input('syorui');
         $hozonn = $request->input('hozonn');
         $kennsakuword = $request->input('kennsakuword');
+        //値が入っていないときはnullを入れない
+        if(!$kennsakuword){
+            $kennsakuword = "";
+        }
         $version = $historycount + 1;
 
         //ファイルに変更がある場合とない場合でわける

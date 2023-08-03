@@ -71,8 +71,20 @@
                 </div>
 
             </div>
+            @if (Auth::user()->管理 == "管理")
+                <div class="searchelement">
+                    <div class="searchlabel">ユーザー:</div>
+                    <select name="registuser" class="userselectbox">
+                        <option></option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
             <input type="hidden" id="deleteOrzenken" name="deleteOrzenken" value="yukou">
 
+            
         <div class="buttonarea">
             <input type="submit" value="検索" class="searchbutton">
         </div>
@@ -121,7 +133,7 @@
             <div class="downloadTd pale">DL.</div>
             <div class="extension pale">形式</div>
             <div class="preview pale">PV.</div>
-            <div class="hennkou pale"></div>
+            <div class="hennkou pale">変更</div>
         </div>
 
         <div class="top_table_element">
@@ -154,9 +166,8 @@
                     </div>
                     <div class="hennkou">
                         @if ($file->削除フラグ != "済" && ($file->訂正許可 == "有効" || $file->保存者ID == Auth::id() || Auth::user()->管理 == "管理"))
-                        <div class="detail"  onclick="location.href='/edit/{{$file->過去データID}}';">
-                            変更
-                        </div>
+                        <img src="{{asset('img/transfer_3_fill.svg')}}"  class="download"  onclick="location.href='/edit/{{$file->過去データID}}';">
+
                         @endif
                     </div>
                 </div>

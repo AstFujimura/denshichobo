@@ -46,6 +46,10 @@ class RegistController extends Controller
             $file = $request->file('file');
             $hozonn = $request->input('hozonn');
             $kennsaku = $request->input('kennsakuword');
+            //値が入っていないときはnullを入れない
+            if(!$kennsaku){
+                $kennsaku = "";
+            }
             $extension = $file->getClientOriginalExtension();
             $filename = Config::get('custom.file_upload_path');
             $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
