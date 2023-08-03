@@ -128,17 +128,6 @@ $(document).ready(function() {
     $(this).val(kinngaku_comma("kinngakuedit"));
   });
 
-  //金額のフォームはインプットするたびにカンマが入るようにする
-  // $('#startkinngaku').on('input',function() {
-  //  $(this).val(kinngaku_comma("startkinngaku"));
-  // });
-  // $('#endkinngaku').on('input',function() {
-  //   $(this).val(kinngaku_comma("endkinngaku"));
-  //  });
-
-
-  
-
   
 
   $('.searchform').submit(function(event) {
