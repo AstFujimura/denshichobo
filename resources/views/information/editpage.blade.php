@@ -30,7 +30,7 @@
                 </div>
                 <div class="red">※ファイル自体に変更がない場合はファイルを選択しないでください</div>
                 <div class="input-container">
-                    <label class="label">書類作成（受領）日<span class ="requirered">*</span></label>
+                    <label class="label">取引日<span class ="requirered">*</span></label>
                     <div class="dateform">
                         <input type="text" name="hiduke" class="input-field dateinputtext" value="{{$hiduke}}" id="hiduke">
                         <span class="errorelement" id="required4">必須項目です</span>

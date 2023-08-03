@@ -34,6 +34,9 @@
             <img src="{{ asset('img/pencil_2_line_gray.svg') }}" class="menuicon01">
         </div>
 
+        <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
+            <img src="{{ asset('img/user_edit_line.svg') }}" class="menuicon01">
+        </div>
         <div class="headerIcon001 menue001">
             <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
             <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
@@ -138,8 +141,9 @@
     </footer>
     <script src="{{ asset('js/all.js') }}"></script>
     <script src="{{ asset('js/usersetting.js') }}"></script>
-    <script src="{{ asset('js/admin01.js') }}"></script>
+    <script src="{{ asset('js/style.js') }}"></script>
     <script src="{{ asset('js/admin001.js') }}"></script>
+    <script src="{{ asset('js/datecheck.js') }}"></script>
 </footer>
 
  

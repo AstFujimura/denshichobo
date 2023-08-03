@@ -28,7 +28,7 @@
                     <span class="fileerrorelement">ファイルを選択してください</span>
                 </div>
                 <div class="input-container">
-                    <label class="label">書類作成（受領）日<span class ="requirered">*</span> </label>
+                    <label class="label">取引日<span class ="requirered">*</span> </label>
                     <div class="dateform">
                         <input type="text" name="hiduke" class="input-field dateinputtext" id="hiduke">
                         <span class="errorelement" id="required4">必須項目です</span>

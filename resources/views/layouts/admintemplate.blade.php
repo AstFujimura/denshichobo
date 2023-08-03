@@ -34,7 +34,10 @@
         <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
             <img src="{{ asset('img/user_add_2_fill.svg') }}" class="menuicon01">
         </div>
-        
+
+        <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
+            <img src="{{ asset('img/user_edit_line.svg') }}" class="menuicon01">
+        </div>
         <div class="headerIcon001 menue001">
             <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
             <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
@@ -149,8 +152,8 @@
     @yield('footer')
     </footer>
     <script src="{{ asset('js/all.js') }}"></script>
-    <script src="{{ asset('js/admin.js') }}"></script>
-    <script src="{{ asset('js/admin01.js') }}"></script>
+    <script src="{{ asset('js/datecheck.js') }}"></script>
+    <script src="{{ asset('js/style.js') }}"></script>
     <script src="{{ asset('js/admin001.js') }}"></script>
 </footer>
 

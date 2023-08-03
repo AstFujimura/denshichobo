@@ -26,8 +26,10 @@ body{
 }
 
 .menue001{
-    margin-left: auto;
     margin-right: 100px;
+}
+.rightmenue001{
+    margin-left: auto;
 }
 .hamburger01{
     position: relative;

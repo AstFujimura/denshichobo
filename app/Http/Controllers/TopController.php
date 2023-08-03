@@ -287,7 +287,7 @@ class TopController extends Controller
         $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
 
         // 画像形式の場合は画像を表示
-        if (in_array($extension, ['jpeg', 'jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
+        if (in_array($extension, ['jpeg', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'])) {
             return response()->file($path, ['Content-Type' => 'image/' . $extension]);
         }
         return response()->file($path, ['Content-Type' => 'application/pdf']);
