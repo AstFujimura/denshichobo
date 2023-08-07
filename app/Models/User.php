@@ -47,5 +47,9 @@ class User extends Authenticatable
 
     protected $dates = ['created_at', 'updated_at', 'パスワードリセット時'];
 
+    public function files() {
+        return $this->hasMany(File::class);
+    }
+
 
 }

@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('日付');
             $table->string('取引先');
             $table->string('金額');
-            $table->string('書類');
+            //2023_08/03提出カラム追加defaultをとりあえず空にしている
+            $table->string('提出')->default("");
             $table->unsignedBigInteger('保存者ID');
             $table->string('ファイルパス');
             $table->foreign('保存者ID')->references('id')->on('users');

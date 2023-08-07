@@ -60,10 +60,9 @@
                     <label  class="label">書類区分<span class ="requirered">*</span></label>
                     <div>
                         <select name="syorui" class="input-field">
-                            <option>請求書</option>
-                            <option>納品書</option>
-                            <option>契約書</option>
-                            <option>見積書</option>
+                            @foreach($documents as $document)
+                                <option value="{{ $document->id }}">{{ $document->書類 }}</option>
+                            @endforeach
                         </select>
                         <span class="errorelement" id="required3">必須項目です</span>
                     </div>

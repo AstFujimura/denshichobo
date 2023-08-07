@@ -13,12 +13,15 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Models\User;
 use App\Models\File;
+use App\Models\Document;
 
 class RegistController extends Controller
 {
     public function registGet()
         {
-            return view('information.resistpage');
+            $documents = Document::all();
+            
+            return view('information.resistpage',compact('documents'));
         }
     public function registPost(Request $request)
         {
@@ -60,7 +63,8 @@ class RegistController extends Controller
             $file->日付 = $date;
             $file->取引先 = $torihikisaki;
             $file->金額 = $kinngaku;
-            $file->書類 = $syorui;
+            $file->書類ID = $syorui;
+            $file->提出 = "";
             $file->保存者ID = Auth::user()->id;
             $file->ファイルパス = $filepath;
             $file->過去データID = $this->generateRandomCode();

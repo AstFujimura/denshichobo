@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
+use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,7 @@ class TopController extends Controller
         $today = Carbon::today(); // 今日の日付を取得
         $oneMonthAgo = Carbon::now()->subMonth()->format('Ymd'); //一か月前の日付を取得
         $users = User::all();
+        $documents = Document::all();
 
         if ($admin == "一般") {
             $files = DB::table('files')
@@ -35,6 +37,7 @@ class TopController extends Controller
                     $join->on('files.過去データID', '=', 't2.過去データID')
                         ->whereRaw('files.バージョン < t2.バージョン');
                 })
+                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->whereNull('t2.バージョン')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where('files.保存者ID', $userId)
@@ -47,6 +50,7 @@ class TopController extends Controller
                     $join->on('files.過去データID', '=', 't2.過去データID')
                         ->whereRaw('files.バージョン < t2.バージョン');
                 })
+                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->whereNull('t2.バージョン')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->orderBy('files.日付', 'desc')
@@ -57,9 +61,15 @@ class TopController extends Controller
         $count = $files->total();
         $deletecount = $files->where('削除フラグ', '済')->count();
         $notdeletecount = $count - $deletecount;
+        foreach ($files as $file) {
+
+            $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
+
+        }
+
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'count', 'deletecount', 'notdeletecount', 'users'));
+        return view('information.toppage', compact('files', 'count', 'deletecount', 'notdeletecount', 'users','documents'));
     }
 
 
@@ -68,6 +78,7 @@ class TopController extends Controller
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
         $users = User::all();
+        $documents = Document::all();
         if ($admin == "一般") {
             $allfiles = DB::table('files')
                 ->select('files.*')
@@ -75,6 +86,7 @@ class TopController extends Controller
                     $join->on('files.過去データID', '=', 't2.過去データID')
                         ->whereRaw('files.バージョン < t2.バージョン');
                 })
+                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->whereNull('t2.バージョン')
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc');
@@ -88,6 +100,8 @@ class TopController extends Controller
                 ->whereNull('t2.バージョン')
                 ->orderBy('files.日付', 'desc');
         }
+
+
 
 
         $startDateStr = $request->input('starthiduke');
@@ -121,6 +135,13 @@ class TopController extends Controller
             $user->selected = ($user->id == $registuser) ? 'selected' : '';
         }
 
+        foreach ($documents as $document) {
+
+            //新たにcheckedというカラムを追加する（一時的に）
+            //チェックされたユーザーが一致した場合値はcheckedを付与する
+            $document->selected = ($document->id == $syoruikubunn) ? 'selected' : '';
+        }
+
 
 
         //値が空の場合は最小値と最大値を格納する。検索後にもう一度空に戻す
@@ -149,15 +170,18 @@ class TopController extends Controller
             ->where('files.金額', '>=', $startKinngakuStr)
             ->where('files.金額', '<=', $endKinngakuStr)
             ->where('files.取引先', 'like', "%" . $torihikisaki . "%")
-            ->where('files.書類', 'like', "%" . $syoruikubunn . "%")
+            ->where('files.書類ID', $syoruikubunn)
             ->where('files.保存', 'like', "%" . $hozonn . "%")
             ->where('files.備考', 'like', "%" . $kennsakuword . "%")
             ->where('files.保存者ID', 'like', $registuser)
             ->paginate(1000);
 
 
+            dd($allfiles);
+
         $count = $files->count();
         $deletecount = $files->where('削除フラグ', '済')->count();
+        
         $notdeletecount = $count - $deletecount;
 
         //検索結果に初期値として渡すときに値を空欄にしておくため
@@ -185,9 +209,6 @@ class TopController extends Controller
             $endKinngakuStr = number_format(floatval($endKinngakuStr));
         }
 
-
-
-
         $data = [
             'files' => $files,
             'count' => $count,
@@ -199,11 +220,6 @@ class TopController extends Controller
             'endkinngaku' => $endKinngakuStr,
             'torihikisaki' => $torihikisaki,
             'kennsakuword' => $kennsakuword,
-            'none' => "",
-            'seikyusyo' => "",
-            'nohinnsyo' => "",
-            'keiyakusyo' => "",
-            'mitumorisyo' => "",
             'dennshinone' => "",
             'dennshi' => "",
             'scan' => "",
@@ -212,20 +228,9 @@ class TopController extends Controller
             'delete' => "",
             'zenken' => "",
             'user' => $user,
-            'users' => $users
+            'users' => $users,
+            'documents' => $documents
         ];
-
-        if ($syoruikubunn == "") {
-            $data['none'] = "selected";
-        } else if ($syoruikubunn == "請求書") {
-            $data['seikyusyo'] = "selected";
-        } else if ($syoruikubunn == "納品書") {
-            $data['nohinnsyo'] = "selected";
-        } else if ($syoruikubunn == "契約書") {
-            $data['keiyakusyo'] = "selected";
-        } else if ($syoruikubunn == "見積書") {
-            $data['mitumorisyo'] = "selected";
-        }
 
         if ($hozonn == "") {
             $data['dennshinone'] = "selected";

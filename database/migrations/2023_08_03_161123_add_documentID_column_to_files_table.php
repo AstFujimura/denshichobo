@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('files', function (Blueprint $table) {
             $table->unsignedBigInteger('書類ID');
-            $table->foreign('書類ID')->references('id')->on('users');
+            $table->foreign('書類ID')->references('id')->on('documents');
         });
     }
 
@@ -27,6 +27,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('files', function (Blueprint $table) {
+            $table->dropForeign('files_書類id_foreign'); // 制約名を指定して削除
             $table->dropColumn('書類ID');
         });
     }

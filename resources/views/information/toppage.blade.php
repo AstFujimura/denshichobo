@@ -49,10 +49,9 @@
                     <div class="searchlabel">書類区分:</div>
                     <select id="syoruikubunn" name="syoruikubunn" class="searchinputtext input-field searchselect">
                         <option></option>
-                        <option>請求書</option>
-                        <option>納品書</option>
-                        <option>契約書</option>
-                        <option>見積書</option>
+                        @foreach($documents as $document)
+                            <option value="{{ $document->id }}">{{ $document->書類 }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="searchelement">

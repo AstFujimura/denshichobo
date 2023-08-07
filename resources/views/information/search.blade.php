@@ -41,11 +41,10 @@
             <div class="searchelement">
                 <div class="searchlabel">書類区分:</div>
                 <select id="syoruikubunn" name="syoruikubunn" class="searchinputtext input-field">
-                    <option {{$none}}></option>
-                    <option {{$seikyusyo}}>請求書</option>
-                    <option {{$nohinnsyo}}>納品書</option>
-                    <option {{$keiyakusyo}}>契約書</option>
-                    <option {{$mitumorisyo}}>見積書</option>
+                        <option></option>
+                        @foreach($documents as $document)
+                            <option {{$document->selected}} value="{{ $document->id }}">{{ $document->書類 }}</option>
+                        @endforeach
                 </select>
             </div>
             <div class="searchelement">
@@ -128,7 +127,7 @@
             <div class="hidukeTd hiduke">{{$file->日付}}</div>
             <div class="kinngakuTd kinngaku">{{$file->金額}}</div>
             <div class="torihikisaki">{{$file->取引先}}</div>
-            <div class="syoruikubunn">{{$file->書類}}</div>
+            <div class="syoruikubunn">{{$file->documents->書類}}</div>
             <div class="hozonn">{{$file->保存}}</div>
             <div class="bikou">{{$file->備考}}</div>
             <div class="teisei">@if ($file->バージョン != 1)
