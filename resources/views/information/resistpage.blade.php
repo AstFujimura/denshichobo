@@ -69,6 +69,16 @@
                     
                 </div>
                 <div class="input-container">
+                    <label  class="label">受領・提出<span class ="requirered">*</span></label>
+                    <div>
+                        <select name="teisyutu" class="input-field">
+                            <option>受領</option>
+                            <option>提出</option>
+                        </select>
+                    </div>
+                    
+                </div>
+                <div class="input-container">
                     <label  class="label">保存方法<span class ="requirered">*</span></label>
                     <div>
                         <select name="hozonn" class="input-field">

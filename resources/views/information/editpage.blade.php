@@ -65,10 +65,19 @@
                     <label  class="label">書類区分<span class ="requirered">*</span></label>
                     <div>
                         <select name="syorui" class="input-field">
-                            <option {{$seikyusyo}}>請求書</option>
-                            <option {{$nohinnsyo}}>納品書</option>
-                            <option {{$keiyakusyo}}>契約書</option>
-                            <option {{$mitumorisyo}}>見積書</option>
+                            @foreach($documents as $document)
+                            <option {{$document->selected}} value="{{ $document->id }}">{{ $document->書類 }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                </div>
+                <div class="input-container">
+                    <label  class="label">受領・提出<span class ="requirered">*</span></label>
+                    <div>
+                        <select name="teisyutu" class="input-field">
+                            <option {{$jyuryo}}>受領</option>
+                            <option {{$teisyutu}}>提出</option>
                         </select>
                     </div>
                     

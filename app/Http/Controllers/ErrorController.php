@@ -20,6 +20,14 @@ class ErrorController extends Controller
             $message = "「戻る」を使用しないでください。";
             return view('error.error',["message"=>$message]);
         }
+        else if ($code == 'E183728'){
+            $message = "ファイル情報を変更する権限がありません";
+            return view('error.error',["message"=>$message]);
+        }
+        else if ($code == 'N173647'){
+            $message = "ファイルが存在しません";
+            return view('error.error',["message"=>$message]);
+        }
         else if ($code == 'E145323'){
             $message = "予期せぬエラーが発生しました";
             return view('error.error',["message"=>$message]);

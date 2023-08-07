@@ -42,7 +42,8 @@ class TopController extends Controller
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc')
-                ->paginate(1000);
+                ->take(100)
+                ->get();
         } else if ($admin == "管理") {
             $files = DB::table('files')
                 ->select('files.*')
@@ -54,11 +55,12 @@ class TopController extends Controller
                 ->whereNull('t2.バージョン')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->orderBy('files.日付', 'desc')
-                ->paginate(1000);
+                ->take(100)
+                ->get();
         }
 
 
-        $count = $files->total();
+        $count = $files->count();
         $deletecount = $files->where('削除フラグ', '済')->count();
         $notdeletecount = $count - $deletecount;
         foreach ($files as $file) {
@@ -81,18 +83,19 @@ class TopController extends Controller
         $documents = Document::all();
         if ($admin == "一般") {
             $allfiles = DB::table('files')
-                ->select('files.*')
+                ->select('files.id','files.*','documents.書類')
+                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
                 ->leftJoin('files as t2', function ($join) {
                     $join->on('files.過去データID', '=', 't2.過去データID')
                         ->whereRaw('files.バージョン < t2.バージョン');
                 })
-                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->whereNull('t2.バージョン')
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $allfiles = DB::table('files')
-                ->select('files.*')
+                ->select('files.id','files.*','documents.書類')
+                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
                 ->leftJoin('files as t2', function ($join) {
                     $join->on('files.過去データID', '=', 't2.過去データID')
                         ->whereRaw('files.バージョン < t2.バージョン');
@@ -100,6 +103,7 @@ class TopController extends Controller
                 ->whereNull('t2.バージョン')
                 ->orderBy('files.日付', 'desc');
         }
+
 
 
 
@@ -119,13 +123,23 @@ class TopController extends Controller
 
         $torihikisaki = $request->input('torihikisaki');
         $syoruikubunn = $request->input('syoruikubunn');
+        $teisyutu = $request->input('teisyutu');
         $kennsakuword = $request->input('kennsakuword');
         $hozonn = $request->input('hozonn');
         $deleteOrzenken = $request->input('deleteOrzenken');
         $registuser = $request->input('registuser');
+        $kennsu = $request->input('kennsu');
+        //値が入ってない時は%%を入れる
+        if(!$syoruikubunn){
+            $syoruikubunn = "%%";
+        }
         //値が入っていないときはすべてのユーザーにするために%%を入れる
         if (!$registuser) {
             $registuser = "%%";
+        }
+        //値が入っていないときはすべてのユーザーにするために%%を入れる
+        if (!$teisyutu) {
+            $teisyutu = "%%";
         }
 
         foreach ($users as $user) {
@@ -170,15 +184,13 @@ class TopController extends Controller
             ->where('files.金額', '>=', $startKinngakuStr)
             ->where('files.金額', '<=', $endKinngakuStr)
             ->where('files.取引先', 'like', "%" . $torihikisaki . "%")
-            ->where('files.書類ID', $syoruikubunn)
+            ->where('files.書類ID','like', $syoruikubunn)
+            ->where('files.提出','like', $teisyutu)
             ->where('files.保存', 'like', "%" . $hozonn . "%")
             ->where('files.備考', 'like', "%" . $kennsakuword . "%")
             ->where('files.保存者ID', 'like', $registuser)
-            ->paginate(1000);
-
-
-            dd($allfiles);
-
+            ->take($kennsu)
+            ->get();
         $count = $files->count();
         $deletecount = $files->where('削除フラグ', '済')->count();
         
@@ -209,6 +221,7 @@ class TopController extends Controller
             $endKinngakuStr = number_format(floatval($endKinngakuStr));
         }
 
+
         $data = [
             'files' => $files,
             'count' => $count,
@@ -229,7 +242,14 @@ class TopController extends Controller
             'zenken' => "",
             'user' => $user,
             'users' => $users,
-            'documents' => $documents
+            'documents' => $documents,
+            'teisyutu' => "",
+            'jyuryo' => "",
+            'k25' => "",
+            'k50' => "",
+            'k100' => "",
+            'k500' => "",
+            'k100000' => "",
         ];
 
         if ($hozonn == "") {
@@ -246,6 +266,24 @@ class TopController extends Controller
             $data['delete'] = "selected";
         } else if ($deleteOrzenken == "zenken") {
             $data['zenken'] = "selected";
+        }
+
+        if ($teisyutu == "提出") {
+            $data['teisyutu'] = "selected";
+        } else if ($teisyutu == "受領") {
+            $data['jyuryo'] = "selected";
+        }
+
+        if ($kennsu == "25") {
+            $data['k25'] = "selected";
+        } else if ($kennsu == "50") {
+            $data['k50'] = "selected";
+        } else if ($kennsu == "100") {
+            $data['k100'] = "selected";
+        } else if ($kennsu == "500") {
+            $data['k500'] = "selected";
+        } else if ($kennsu == "100000") {
+            $data['k100000'] = "selected";
         }
 
         // 取得したデータをビューに渡すなどの処理

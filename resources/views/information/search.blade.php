@@ -15,6 +15,12 @@
 
 
 @section('main')
+
+<div class="loader">
+    <img src="{{asset('img/loading.gif')}}">
+    <div class="searchcomment">検索中です</div>
+</div>
+
 <h2 class="pagetitle">帳簿一覧</h2>
 <form class="searchform" action="{{route('searchPost')}}" method="get" enctype="multipart/form-data">
 
@@ -40,7 +46,7 @@
         <div class="nonerequirearea">
             <div class="searchelement">
                 <div class="searchlabel">書類区分:</div>
-                <select id="syoruikubunn" name="syoruikubunn" class="searchinputtext input-field">
+                <select id="syoruikubunn" name="syoruikubunn" class="searchinputtext input-field searchselect">
                         <option></option>
                         @foreach($documents as $document)
                             <option {{$document->selected}} value="{{ $document->id }}">{{ $document->書類 }}</option>
@@ -61,17 +67,38 @@
                 <div>(部分一致)</div>
             </div>
         </div>
-        @if (Auth::user()->管理 == "管理")
+        <div class="nonerequirearea">
         <div class="searchelement">
-            <div class="searchlabel">ユーザー:</div>
-            <select name="registuser" class="userselectbox">
-                <option></option>
-                @foreach($users as $user)
-                <option {{$user->selected}} value="{{ $user->id }}">{{ $user->name }}</option>
-                @endforeach
-            </select>
+                        <div class="searchlabel">提出・受領:</div>
+                        <select id="teisyutu" name="teisyutu" class="searchinputtext input-field searchselect">
+                            <option></option>
+                            <option {{$teisyutu}}>提出</option>
+                            <option {{$jyuryo}}>受領</option>
+                        </select>
+                </div>
+            @if (Auth::user()->管理 == "管理")
+            <div class="searchelement">
+                <div class="searchlabel">ユーザー:</div>
+                <select name="registuser" class="userselectbox">
+                    <option></option>
+                    @foreach($users as $user)
+                    <option {{$user->selected}} value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
+            <div class="searchelement">
+                        <div class="searchlabel">最大件数:</div>
+                        <select id="kennsu" name="kennsu" class="searchinputtext input-field">
+                            <option {{$k25}}>25</option>
+                            <option {{$k50}}>50</option>
+                            <option {{$k100}}>100</option>
+                            <option {{$k500}}>500</option>
+                            <option {{$k100000}} value="100000">全件</option>
+                        </select>
+            </div>
         </div>
-        @endif
+
         <input type="hidden" id="deleteOrzenken" name="deleteOrzenken" value={{$deleteOrzenken}}>
         <div class="buttonarea">
             <input type="submit" value="検索" class="searchbutton">
@@ -108,6 +135,7 @@
     <div class="kinngaku">金額</div>
     <div class="torihikisaki">取引先</div>
     <div class="syoruikubunn pale">書類区分</div>
+    <div class="teisyutu pale">提出・受領</div>
     <div class="hozonn pale">保存方法</div>
     <div class="bikou pale">検索ワード</div>
     <div class="teisei pale">訂正歴</div>
@@ -118,6 +146,7 @@
 </div>
 
 <div class="top_table_element">
+
     @foreach ($files as $file)
     @if ($file->削除フラグ != "済")
     <div class="top_table_body table_selected">
@@ -127,7 +156,8 @@
             <div class="hidukeTd hiduke">{{$file->日付}}</div>
             <div class="kinngakuTd kinngaku">{{$file->金額}}</div>
             <div class="torihikisaki">{{$file->取引先}}</div>
-            <div class="syoruikubunn">{{$file->documents->書類}}</div>
+            <div class="syoruikubunn">{{$file->書類}}</div>
+            <div class="teisyutu">{{$file->提出}}</div>
             <div class="hozonn">{{$file->保存}}</div>
             <div class="bikou">{{$file->備考}}</div>
             <div class="teisei">@if ($file->バージョン != 1)

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use App\Models\Document;
 use App\Models\File as Filemodel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -22,42 +23,53 @@ class EditController extends Controller
         $file = Filemodel::where('過去データID',$path)
                 ->orderby('バージョン','desc')
                 ->first();
-                
+        if (!$file){
+            return redirect()->route("errorGet",['code'=>'N173647']);
+        }
+        if ($file->保存者ID != Auth::id()){
+            return redirect()->route("errorGet",['code'=>'E183728']);
+        }
+        $documents = Document::all();                
 
         $hiduke = $file->日付;
         $hiduke = substr_replace($hiduke,'/',4,0);
         $hiduke = substr_replace($hiduke,'/',7,0);
-        $syoruikubunn =$file->書類;
+        $syoruikubunn =$file->書類ID;
         $hozonn =$file->保存;
+        $teisyutu =$file->提出;
+
+        foreach ($documents as $document) {
+
+            //新たにcheckedというカラムを追加する（一時的に）
+            //チェックされたユーザーが一致した場合値はcheckedを付与する
+            $document->selected = ($document->id == $syoruikubunn) ? 'selected' : '';
+        }
+
         $data = [
             'file' => $file,
+            'documents' => $documents,
             'hiduke'=>$hiduke ,
-            'seikyusyo' => "",
-            'nohinnsyo' => "",
-            'keiyakusyo' => "",
-            'mitumorisyo' => "",
             'dennshi' => "",
             'scan' => "",
+            'teisyutu' => "",
+            'jyuryo' => "",
         ];
 
-        if ($syoruikubunn == "請求書"){
-            $data['seikyusyo'] = "selected";
-        }
-        else if ($syoruikubunn == "納品書"){
-            $data['nohinnsyo'] = "selected";
-        }
-        else if ($syoruikubunn == "契約書"){
-            $data['keiyakusyo'] = "selected";
-        }
-        else if ($syoruikubunn == "見積書"){
-            $data['mitumorisyo'] = "selected";
-        };
+
 
         if ($hozonn == "電子保存"){
             $data['dennshi'] = "selected";
         }
         else if ($hozonn == "スキャナ保存"){
             $data['scan'] = "selected";
+        };
+
+
+        if ($teisyutu == "提出"){
+            $data['teisyutu'] = "selected";
+        }
+        else if ($teisyutu == "受領"){
+            $data['jyuryo'] = "selected";
         };
 
 
@@ -106,6 +118,7 @@ class EditController extends Controller
         $kinngaku = $request->input('kinngaku');
         $kinngaku = str_replace(',','',$kinngaku);
         $syorui = $request->input('syorui');
+        $teisyutu = $request->input('teisyutu');
         $hozonn = $request->input('hozonn');
         $kennsakuword = $request->input('kennsakuword');
         //値が入っていないときはnullを入れない
@@ -144,7 +157,8 @@ class EditController extends Controller
         $newfile->日付 = $date;
         $newfile->取引先 = $torihikisaki;
         $newfile->金額 = $kinngaku;
-        $newfile->書類 = $syorui;
+        $newfile->書類ID = $syorui;
+        $newfile->提出 = $teisyutu;
         $newfile->保存者ID = Auth::user()->id;
         $newfile->バージョン = $version;
         $newfile->過去データID = $path;

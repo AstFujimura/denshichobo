@@ -36,7 +36,7 @@ $(document).ready(function () {
     $(this).text(result);
   });
 
-  
+
 
   //日付のフォーカスが外れた時にその中身を判定する。
   $('#startyear').blur(function () {
@@ -64,6 +64,7 @@ $(document).ready(function () {
 
 
   $('.searchform').submit(function (event) {
+
     event.preventDefault();
     datecheck_change('startyear')
     datecheck_change('endyear')
@@ -74,7 +75,13 @@ $(document).ready(function () {
 
     //金額や日付のフォーマットガ誤っている場合はsearcherror値の大証
     if (!$(".searcherror").length && !$(".invalid").length) {
-      this.submit(); // フォームの送信を実行
+      $('.loader').show();
+
+      // 1秒遅らせてフォームの送信を実行する
+      setTimeout(function () {
+        $('.searchform')[0].submit(); // フォームの送信を実行
+      }, 500);
+
     }
   });
 

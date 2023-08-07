@@ -46,6 +46,7 @@ class RegistController extends Controller
             $kinngaku = $request->input('kinngaku');
             $kinngaku = str_replace(',','',$kinngaku);
             $syorui = $request->input('syorui');
+            $teisyutu = $request->input('teisyutu');
             $file = $request->file('file');
             $hozonn = $request->input('hozonn');
             $kennsaku = $request->input('kennsakuword');
@@ -70,6 +71,7 @@ class RegistController extends Controller
             $file->過去データID = $this->generateRandomCode();
             $file->ファイル形式 = $extension;
             $file->保存 = $hozonn;
+            $file->提出 = $teisyutu;
             $file->備考 = $kennsaku;
             //バージョンはデフォルトで1になるのでここでは記載しない変更の時には記述
             $file->save();

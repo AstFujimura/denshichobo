@@ -19,6 +19,10 @@
     use Carbon\Carbon;
     $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
 @endphp
+<div class="loader">
+    <img src="{{asset('img/loading.gif')}}">
+    <div class="searchcomment">検索中です</div>
+</div>
 <h2 class="pagetitle">帳簿一覧</h2>
 <form class="searchform" action="{{route('searchPost')}}" method="get" enctype="multipart/form-data">
 
@@ -70,17 +74,38 @@
                 </div>
 
             </div>
-            @if (Auth::user()->管理 == "管理")
+            <div class="nonerequirearea">
                 <div class="searchelement">
-                    <div class="searchlabel">ユーザー:</div>
-                    <select name="registuser" class="userselectbox">
-                        <option></option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                        @endforeach
-                    </select>
+                        <div class="searchlabel">提出・受領:</div>
+                        <select id="teisyutu" name="teisyutu" class="searchinputtext input-field searchselect">
+                            <option></option>
+                            <option>提出</option>
+                            <option>受領</option>
+                        </select>
                 </div>
-            @endif
+                @if (Auth::user()->管理 == "管理")
+                    <div class="searchelement">
+                        <div class="searchlabel">ユーザー:</div>
+                        <select name="registuser" class="userselectbox">
+                            <option></option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+                <div class="searchelement">
+                        <div class="searchlabel">最大件数:</div>
+                        <select id="kennsu" name="kennsu" class="searchinputtext input-field">
+                            <option>25</option>
+                            <option>50</option>
+                            <option selected>100</option>
+                            <option>500</option>
+                            <option value="100000">全件</option>
+                        </select>
+                </div>
+            </div>
+
             <input type="hidden" id="deleteOrzenken" name="deleteOrzenken" value="yukou">
 
             
@@ -114,9 +139,6 @@
                     <option>全件データ</option>
                 </select>
             </div>
-            <div class="pagination">
-                {{ $files->links() }}
-            </div>
 
 
             
@@ -126,6 +148,7 @@
             <div class="kinngaku">金額</div>
             <div class="torihikisaki">取引先</div>
             <div class="syoruikubunn pale">書類区分</div>
+            <div class="teisyutu pale">提出・受領</div>
             <div class="hozonn pale">保存方法</div>
             <div class="bikou pale">検索ワード</div>
             <div class="teisei pale">訂正歴</div>
@@ -146,6 +169,7 @@
                     <div class="kinngakuTd kinngaku">{{$file->金額}}</div>
                     <div class="torihikisaki">{{$file->取引先}}</div>
                     <div class="syoruikubunn">{{$file->書類}}</div>
+                    <div class="teisyutu">{{$file->提出}}</div>
                     <div class="hozonn">{{$file->保存}}</div>
                     <div class="bikou">{{$file->備考}}</div>
                     <div class="teisei">@if ($file->バージョン != 1)
@@ -172,9 +196,7 @@
                 </div>
             @endforeach
         </div>
-        <div class="pagination">
-            {{ $files->links() }}
-        </div>
+
 
         
 @endsection 

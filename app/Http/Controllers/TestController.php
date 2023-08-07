@@ -24,7 +24,8 @@ class TestController extends Controller
                 $file->日付 = "19800101";
                 $file->取引先 = "ダミー";
                 $file->金額 = "999999";
-                $file->書類 = "請求書";
+                $file->書類ID = 1;
+                $file->提出 = "提出";
                 $file->保存者ID = Auth::user()->id;
                 $file->ファイルパス = "example";
                 $file->過去データID = strval(1000000 + $num);
