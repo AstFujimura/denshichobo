@@ -18,92 +18,87 @@ use App\Models\Document;
 class RegistController extends Controller
 {
     public function registGet()
-        {
-            $documents = Document::all();
-            
-            return view('information.resistpage',compact('documents'));
-        }
+    {
+        $documents = Document::all();
+
+        return view('information.resistpage', compact('documents'));
+    }
     public function registPost(Request $request)
-        {
-            $request->validate([
-                'torihikisaki' => 'string|not_four_byte_chars',
-                'kennsakuword' => 'not_four_byte_chars',
-            ], [
+    {
+        $request->validate([
+            'torihikisaki' => 'string|not_four_byte_chars',
+            'kennsakuword' => 'not_four_byte_chars',
+        ], [
 
-                'torihikisaki.not_four_byte_chars' => '環境依存文字は使用しないでください。',
+            'torihikisaki.not_four_byte_chars' => '環境依存文字は使用しないでください。',
 
-                'kennsakuword.not_four_byte_chars' => '環境依存文字は使用しないでください。',
-            ]);
-            $now = Carbon::now();
-            $currentTime = $now->format('YmdHis');
-            
-
-
-            
-            $date = $request->input('hiduke');
-            $date = str_replace('/','',$date);
-            $torihikisaki = $request->input('torihikisaki');
-            $kinngaku = $request->input('kinngaku');
-            $kinngaku = str_replace(',','',$kinngaku);
-            $syorui = $request->input('syorui');
-            $teisyutu = $request->input('teisyutu');
-            $file = $request->file('file');
-            $hozonn = $request->input('hozonn');
-            $kennsaku = $request->input('kennsakuword');
-            //値が入っていないときはnullを入れない
-            if(!$kennsaku){
-                $kennsaku = "";
-            }
-            $extension = $file->getClientOriginalExtension();
-            $filename = Config::get('custom.file_upload_path');
-            $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
-            copy($file->getRealPath(),$filename . "\\" .$filepath. '.' .$extension);
-            
-
-            $file = new File();
-            $file->日付 = $date;
-            $file->取引先 = $torihikisaki;
-            $file->金額 = $kinngaku;
-            $file->書類ID = $syorui;
-            $file->提出 = "";
-            $file->保存者ID = Auth::user()->id;
-            $file->ファイルパス = $filepath;
-            $file->過去データID = $this->generateRandomCode();
-            $file->ファイル形式 = $extension;
-            $file->保存 = $hozonn;
-            $file->提出 = $teisyutu;
-            $file->備考 = $kennsaku;
-            //バージョンはデフォルトで1になるのでここでは記載しない変更の時には記述
-            $file->save();
-            return redirect()->route('topGet');
+            'kennsakuword.not_four_byte_chars' => '環境依存文字は使用しないでください。',
+        ]);
+        $now = Carbon::now();
+        $currentTime = $now->format('YmdHis');
 
 
+
+
+        $date = $request->input('hiduke');
+        $date = str_replace('/', '', $date);
+        $torihikisaki = $request->input('torihikisaki');
+        $kinngaku = $request->input('kinngaku');
+        $kinngaku = str_replace(',', '', $kinngaku);
+        $syorui = $request->input('syorui');
+        $teisyutu = $request->input('teisyutu');
+        $file = $request->file('file');
+        $hozonn = $request->input('hozonn');
+        $kennsaku = $request->input('kennsakuword');
+        //値が入っていないときはnullを入れない
+        if (!$kennsaku) {
+            $kennsaku = "";
         }
+        $extension = $file->getClientOriginalExtension();
+        if (!$extension){
+            dd("a");
+        }
+        $filename = Config::get('custom.file_upload_path');
+        $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
+        copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+
+
+        $file = new File();
+        $file->日付 = $date;
+        $file->取引先 = $torihikisaki;
+        $file->金額 = $kinngaku;
+        $file->書類ID = $syorui;
+        $file->保存者ID = Auth::user()->id;
+        $file->ファイルパス = $filepath;
+        $file->過去データID = $this->generateRandomCode();
+        $file->ファイル形式 = $extension;
+        $file->保存 = $hozonn;
+        $file->提出 = $teisyutu;
+        $file->備考 = $kennsaku;
+        //バージョンはデフォルトで1になるのでここでは記載しない変更の時には記述
+        $file->save();
+        return redirect()->route('topGet');
+    }
     public function convert($int)
-        {
-            if (strlen($int) == 1) {
-                $int = '0' . $int;
-            }
-            return $int;
+    {
+        if (strlen($int) == 1) {
+            $int = '0' . $int;
         }
+        return $int;
+    }
 
-            //ランダムな6桁のstring型の数値を出力
-            private function generateRandomCode()
-            {
-                $code = mt_rand(100000, 999999);
-                
-                while($this->isCompanyCodeExists($code)){
-                    $code = mt_rand(100000, 999999);
-                }
-                return $code;
-    
-            }
-            private function isCompanyCodeExists($code)
-            {
-                return File::where('過去データID', $code)->exists();
-            }
+    //ランダムな6桁のstring型の数値を出力
+    private function generateRandomCode()
+    {
+        $code = mt_rand(100000, 999999);
 
-
-
-
+        while ($this->isCompanyCodeExists($code)) {
+            $code = mt_rand(100000, 999999);
+        }
+        return $code;
+    }
+    private function isCompanyCodeExists($code)
+    {
+        return File::where('過去データID', $code)->exists();
+    }
 }
