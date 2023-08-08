@@ -20,23 +20,25 @@ class EditController extends Controller
     public function editGet($path)
     {
         //過去データIDに一致する一番最新のものを取得
-        $file = Filemodel::where('過去データID',$path)
-                ->orderby('バージョン','desc')
-                ->first();
-        if (!$file){
-            return redirect()->route("errorGet",['code'=>'N173647']);
+        $file = Filemodel::where('過去データID', $path)
+            ->orderby('バージョン', 'desc')
+            ->first();
+        //ファイルがDBに存在しなければエラーページ
+        if (!$file) {
+            return redirect()->route("errorGet", ['code' => 'N173647']);
         }
-        if ($file->保存者ID != Auth::id()){
-            return redirect()->route("errorGet",['code'=>'E183728']);
+        //一般ユーザーで他のユーザーのファイルを変更しようとしたときはエラーページ
+        if ($file->保存者ID != Auth::id() && Auth::user()->管理 == "一般") {
+            return redirect()->route("errorGet", ['code' => 'E183728']);
         }
-        $documents = Document::all();                
+        $documents = Document::all();
 
         $hiduke = $file->日付;
-        $hiduke = substr_replace($hiduke,'/',4,0);
-        $hiduke = substr_replace($hiduke,'/',7,0);
-        $syoruikubunn =$file->書類ID;
-        $hozonn =$file->保存;
-        $teisyutu =$file->提出;
+        $hiduke = substr_replace($hiduke, '/', 4, 0);
+        $hiduke = substr_replace($hiduke, '/', 7, 0);
+        $syoruikubunn = $file->書類ID;
+        $hozonn = $file->保存;
+        $teisyutu = $file->提出;
 
         foreach ($documents as $document) {
 
@@ -48,7 +50,7 @@ class EditController extends Controller
         $data = [
             'file' => $file,
             'documents' => $documents,
-            'hiduke'=>$hiduke ,
+            'hiduke' => $hiduke,
             'dennshi' => "",
             'scan' => "",
             'teisyutu' => "",
@@ -57,38 +59,34 @@ class EditController extends Controller
 
 
 
-        if ($hozonn == "電子保存"){
+        if ($hozonn == "電子保存") {
             $data['dennshi'] = "selected";
-        }
-        else if ($hozonn == "スキャナ保存"){
+        } else if ($hozonn == "スキャナ保存") {
             $data['scan'] = "selected";
         };
 
 
-        if ($teisyutu == "提出"){
+        if ($teisyutu == "提出") {
             $data['teisyutu'] = "selected";
-        }
-        else if ($teisyutu == "受領"){
+        } else if ($teisyutu == "受領") {
             $data['jyuryo'] = "selected";
         };
 
 
-        
 
 
 
-        
 
-        if ($file->削除フラグ == "済"){
+
+
+        if ($file->削除フラグ == "済") {
             return redirect()->route("topGet");
+        } else {
+            return view('information.editpage', $data);
         }
-        else {
-            return view('information.editpage',$data);
-        }
-        
     }
 
-    public function editPost(Request $request,$path)
+    public function editPost(Request $request, $path)
     {
         $request->validate([
             'torihikisaki' => 'string|not_four_byte_chars',
@@ -101,59 +99,64 @@ class EditController extends Controller
         ]);
         $now = Carbon::now();
         $currentTime = $now->format('YmdHis');
-        
+
 
 
 
         //過去データIDが一致するファイルが何件あるかを格納
-        $historycount = Filemodel::where('過去データID',$path)->get()->count();
+        $historycount = Filemodel::where('過去データID', $path)->get()->count();
 
         //ファイルをインスタンス化
         $newfile = new Filemodel();
 
 
         $date = $request->input('hiduke');
-        $date = str_replace('/','',$date);
+        $date = str_replace('/', '', $date);
         $torihikisaki = $request->input('torihikisaki');
         $kinngaku = $request->input('kinngaku');
-        $kinngaku = str_replace(',','',$kinngaku);
+        $kinngaku = str_replace(',', '', $kinngaku);
         $syorui = $request->input('syorui');
         $teisyutu = $request->input('teisyutu');
         $hozonn = $request->input('hozonn');
         $kennsakuword = $request->input('kennsakuword');
         //値が入っていないときはnullを入れない
-        if(!$kennsakuword){
+        if (!$kennsakuword) {
             $kennsakuword = "";
         }
         $version = $historycount + 1;
 
         //ファイルに変更がある場合とない場合でわける
-        if (!empty($request ->file('file'))){
+        if (!empty($request->file('file'))) {
             $file = $request->file('file');
             //ファイル形式を取得
             $extension = $file->getClientOriginalExtension();
             //既定のフォルダのパスを取得
             $filename = Config::get('custom.file_upload_path');
             //拡張子を除くファイル名
-            $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
-            //ファイルを保存
-            copy($file->getRealPath(),$filename . "\\" .$filepath. '.' .$extension);
+            $filepath = $currentTime . '_' . $path;
+
+            //アップロードされたファイルに拡張子がない場合
+            if (!$extension) {
+                copy($file->getRealPath(), $filename . "\\" . $filepath);
+                $extension = "";
+            } else {
+                copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+            }
+
 
             $newfile->ファイル形式 = $extension;
             $newfile->ファイルパス = $filepath;
             $newfile->ファイル変更 = "あり";
-
-        }
-        else{
+        } else {
             //最新のデータからファイルパスを取得して格納する
-            $latestdata = Filemodel::where('過去データID',$path)
-                                ->where('バージョン',$historycount)
-                                ->first();
+            $latestdata = Filemodel::where('過去データID', $path)
+                ->where('バージョン', $historycount)
+                ->first();
             $newfile->ファイルパス = $latestdata->ファイルパス;
             $newfile->ファイル形式 = $latestdata->ファイル形式;
         }
 
-        
+
         $newfile->日付 = $date;
         $newfile->取引先 = $torihikisaki;
         $newfile->金額 = $kinngaku;
@@ -165,9 +168,8 @@ class EditController extends Controller
         $newfile->備考 = $kennsakuword;
         $newfile->保存 = $hozonn;
         $newfile->save();
-        
-        return redirect()->route('topGet');
 
+        return redirect()->route('topGet');
     }
     public function convert($int)
     {
@@ -178,13 +180,14 @@ class EditController extends Controller
     }
     public function deleteGet($path)
     {
-        $deletedata = Filemodel::where('id',$path)->get();
-        foreach($deletedata as $data){
+        $deletedata = Filemodel::where('id', $path)->get();
+        if (!$deletedata) {
+            return redirect()->route("errorGet", ['code' => 'N173647']);
+        }
+        foreach ($deletedata as $data) {
             $data->削除フラグ = "済";
             $data->save();
         }
         return redirect()->route("topGet");
     }
-
-
 }

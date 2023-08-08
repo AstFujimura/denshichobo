@@ -10,6 +10,7 @@ body{
 
 .headerIcon001{
     margin-block: auto;
+    position: relative;
 }
 .menu001{
     height: 48px;

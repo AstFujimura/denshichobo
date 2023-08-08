@@ -18,7 +18,7 @@ class AdminController extends Controller
         //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
         if (Auth::user()->管理 == "管理"){
             //astecユーザーを表示しないため
-            $users = User::where('id', '>=', 1)
+            $users = User::where('id', '>=', 2)
             ->where('削除','')
             ->get();
             return view('admin.adminpage',['users' => $users]);
@@ -77,8 +77,19 @@ class AdminController extends Controller
             if (!$user) {
                 return response()->json(['message' => 'ユーザーが見つかりません'], 404);
             }
+            $data = [
+                'user' => $user,
+                'admin' => "",
+                'normal' => ""
+            ];
+            if ($user ->管理 == "管理"){
+                $data['admin'] = "selected";
+            }
+            else if ($user ->管理 == "一般"){
+                $data['normal'] = "selected";
+            }
     
-            return view('admin.adminedit',['user' => $user]);
+            return view('admin.adminedit',$data);
         } else {
             return redirect()->route('topGet');
         }
@@ -143,6 +154,19 @@ class AdminController extends Controller
         return redirect()->route('adminGet');
     }
 
+    //$idは変更・削除しようとするuserのidであり変更するものを除いて管理ユーザーが何人いるかを返すAPI
+    //これを受けとったjs側で変更・削除をするか否かの処理を行う
+    public function admincheck($id)
+    {
+        $count = User::where("管理","管理")
+                        ->where("削除","")
+                        ->where("id","not like",$id)
+                        ->where("id","not like",1)
+                        ->get()
+                        ->count();
+        return $count;
+    }
+
     //ランダムな6桁のstring型の数値を出力
     private function generateRandomStr($digit)
     {
@@ -150,4 +174,6 @@ class AdminController extends Controller
         return $randomString;
 
     }
+
+    
 }

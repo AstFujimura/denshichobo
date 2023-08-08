@@ -44,13 +44,14 @@
             <span class="requirered">*</span>
         </label>
         <div class="dateform">
-            <select name="admin" class="input-field">
-                <option>管理</option>
-                <option>一般</option>
+            <select name="admin" class="input-field" id="admin">
+                <option {{$admin}}>管理</option>
+                <option {{$normal}}>一般</option>
             </select>
+            <div class="errorelement" id="changeerror">管理ユーザーが他にいないためこの変更はできません。</div>
         </div>
     </div>
-
+    <input type="hidden" value="{{$user->id}}" id = "userid">
     <button class="admineditbutton">変更</button>
 </form>
 <div class="important">
@@ -74,6 +75,7 @@
 
 
         </div>
+        <div class="errorelement" id="deleteerror">管理ユーザーが他にいないため削除できません。</div>
 </div>
 
 

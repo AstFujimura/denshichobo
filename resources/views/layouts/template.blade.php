@@ -29,17 +29,22 @@
 
         <div class="headerIcon001" onclick="location.href='{{route('topGet')}}';">
             <img src="{{ asset('img/home_3_line.svg') }}" class="menuicon01">
+            <div class="iconmessage">Top</div>
         </div>
         <div class="headerIcon001" onclick="location.href='{{route('registGet')}}';">
             <img src="{{ asset('img/pencil_2_line_gray.svg') }}" class="menuicon01">
+            <div class="iconmessage">帳簿保存</div>
         </div>
 
         <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
             <img src="{{ asset('img/user_edit_line.svg') }}" class="menuicon01">
+            <div class="iconmessage">ユーザー情報</div>
         </div>
         <div class="headerIcon001 menue001">
             <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
+            <div class="iconmessage">メニュー</div>
             <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
+            <div class="iconmessage">閉じる</div>
         </div>
 
 

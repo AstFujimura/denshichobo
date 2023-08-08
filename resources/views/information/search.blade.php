@@ -27,7 +27,7 @@
     <div class="searchbox">
         <div class="requirearea">
             <div class="searchelement">
-                <div class="searchlabel requirelabel">日付:</div>
+                <div class="searchlabel requirelabel">取引日:</div>
                 <input type="text" id="startyear" name="starthiduke" value="{{$starthiduke}}" class="searchinputtext dateinputtext">
                 ～
                 <input type="text" id="endyear" name="endhiduke" value="{{$endhiduke}}" class="searchinputtext dateinputtext">
@@ -47,35 +47,36 @@
             <div class="searchelement">
                 <div class="searchlabel">書類区分:</div>
                 <select id="syoruikubunn" name="syoruikubunn" class="searchinputtext input-field searchselect">
-                        <option></option>
-                        @foreach($documents as $document)
-                            <option {{$document->selected}} value="{{ $document->id }}">{{ $document->書類 }}</option>
-                        @endforeach
+                    <option></option>
+                    @foreach($documents as $document)
+                    <option {{$document->selected}} value="{{ $document->id }}">{{ $document->書類 }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="searchelement">
+                <div class="searchlabel">提出・受領:</div>
+                <select id="teisyutu" name="teisyutu" class="searchinputtext input-field searchselect">
+                    <option></option>
+                    <option {{$teisyutu}}>提出</option>
+                    <option {{$jyuryo}}>受領</option>
                 </select>
             </div>
             <div class="searchelement">
                 <div class="searchlabel">保存方法:</div>
-                <select id="hozonn" name="hozonn" class="searchinputtext input-field">
+                <select id="hozonn" name="hozonn" class="searchinputtext input-field searchselect">
                     <option {{$dennshinone}}></option>
                     <option {{$dennshi}}>電子保存</option>
                     <option {{$scan}}>スキャナ保存</option>
                 </select>
             </div>
+
+        </div>
+        <div class="nonerequirearea">
             <div class="searchelement">
                 <div class="searchlabel">検索ワード:</div>
                 <input type="text" id="kennsakuword" name="kennsakuword" value="{{$kennsakuword}}" class="searchinputtext kensakuwordinput">
                 <div>(部分一致)</div>
             </div>
-        </div>
-        <div class="nonerequirearea">
-        <div class="searchelement">
-                        <div class="searchlabel">提出・受領:</div>
-                        <select id="teisyutu" name="teisyutu" class="searchinputtext input-field searchselect">
-                            <option></option>
-                            <option {{$teisyutu}}>提出</option>
-                            <option {{$jyuryo}}>受領</option>
-                        </select>
-                </div>
             @if (Auth::user()->管理 == "管理")
             <div class="searchelement">
                 <div class="searchlabel">ユーザー:</div>
@@ -88,14 +89,14 @@
             </div>
             @endif
             <div class="searchelement">
-                        <div class="searchlabel">最大件数:</div>
-                        <select id="kennsu" name="kennsu" class="searchinputtext input-field">
-                            <option {{$k25}}>25</option>
-                            <option {{$k50}}>50</option>
-                            <option {{$k100}}>100</option>
-                            <option {{$k500}}>500</option>
-                            <option {{$k100000}} value="100000">全件</option>
-                        </select>
+                <div class="searchlabel">最大件数:</div>
+                <select id="kennsu" name="kennsu" class="searchinputtext input-field">
+                    <option {{$k25}}>25</option>
+                    <option {{$k50}}>50</option>
+                    <option {{$k100}}>100</option>
+                    <option {{$k500}}>500</option>
+                    <option {{$k100000}} value="100000">全件</option>
+                </select>
             </div>
         </div>
 
@@ -131,7 +132,7 @@
 
 </div>
 <div class="top_table_div">
-    <div class="hiduke">日付</div>
+    <div class="hiduke">取引日</div>
     <div class="kinngaku">金額</div>
     <div class="torihikisaki">取引先</div>
     <div class="syoruikubunn pale">書類区分</div>

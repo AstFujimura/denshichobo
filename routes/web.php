@@ -86,6 +86,9 @@ Route::delete('/admin/delete/{id}',[AdminController::class,'adminDelete'])->name
 // 変更ページにポストで情報を投げた時
 Route::post('/admin/reset/{id}',[AdminController::class,'adminresetPost'])->name('adminresetPost');
 
+//管理ユーザーを変更しても大丈夫か確認するとき
+Route::get('/admincheck/{id}',[AdminController::class,'admincheck'])->name('admincheck');
+
 Route::get('error/{code}',[ErrorController::class,'errorGet'])->name('errorGet');
 });
 

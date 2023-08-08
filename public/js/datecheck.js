@@ -1,22 +1,71 @@
 $(document).ready(function () {
+  $('.loader').hide();
+  $('#admin-myForm').on('submit', function (e) {
+    $("#changeerror").removeClass("errorsentence");
+    var id = $('#userid').val();
+    var admin = $('#admin').val();
+    e.preventDefault(); // フォームの送信を中止
+    
+    if (admin == "一般"){
+      $.ajax({
+        url: '/admincheck/'+ id,
+        type: 'get',
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          //残りの管理ユーザーが1人以上いる場合は続行する。
+          if (response > 0){
+            if (confirm("本当に変更しますか")){
+              this[0].submit()
+            }
+          }
+          else {
+            $("#changeerror").addClass("errorsentence");
+          }
+        }
+      });
+    }
+    else if (admin == "管理"){
+      if (confirm("本当に変更しますか")){
+        this.submit()
+      }
+    }
 
-  $('#adminedit').on('submit', function (e) {
-    e.preventDefault(); // フォームの送信を中止
-    if (confirm("本当に変更しますか")) {
-      this.submit();
-    }
+
   });
+
+
   $('#admindelete').on('submit', function (e) {
+    $("#deleteerror").removeClass("errorsentence");
     e.preventDefault(); // フォームの送信を中止
-    if (confirm("本当に削除しますか")) {
-      this.submit();
-    }
+    var id = $('#userid').val();
+    $.ajax({
+      url: '/admincheck/'+ id,
+      type: 'get',
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        //残りの管理ユーザーが1人以上いる場合は続行する。
+        if (response > 0){
+          if (confirm("本当に削除しますか")) {
+            this[0].submit();
+          }
+        }
+        else {
+          $("#deleteerror").addClass("errorsentence");
+        }
+      }
+    });
+
   });
   $('#adminreset').on('submit', function (e) {
     e.preventDefault(); // フォームの送信を中止
     if (confirm("本当にパスワードをリセットしますか。現在のパスワードは使用できなくなります。")) {
       this.submit();
     }
+  });
+  $('.title').on('click',function(){
+    $("#deleteerror").removeClass("errorsentence");
   });
 
 
@@ -73,7 +122,7 @@ $(document).ready(function () {
     date_start_end('startyear', 'endyear');
     kinngaku_start_end("startkinngaku", "endkinngaku");
 
-    //金額や日付のフォーマットガ誤っている場合はsearcherror値の大証
+    //金額や日付のフォーマットが誤っている場合はsearcherror値の対象
     if (!$(".searcherror").length && !$(".invalid").length) {
       $('.loader').show();
 
@@ -180,6 +229,7 @@ $(document).ready(function () {
       }
     }
   });
+
 
   function kinngaku_comma(id) {
     var inputDate = $("#" + id).val().trim();

@@ -65,6 +65,7 @@ $(document).ready(function() {
   
       if (nextInput.length === 0) {
         $('.form').submit(); // 最後の入力欄でエンターキーを押すとフォームが送信される
+        $('#admin-myForm').submit(); 
       } else {
         nextInput.focus(); // 次の入力欄にフォーカスを移動
       }

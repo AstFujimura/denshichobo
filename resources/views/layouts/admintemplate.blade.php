@@ -23,16 +23,16 @@
                     管理画面
                 </a>
             </div>
-                
-
 </header>
 <div class="menu001">
 
         <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
             <img src="{{ asset('img/edit_fill.svg') }}" class="menuicon01">
+            <div class="iconmessage">ユーザ一覧</div>
         </div>
         <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
             <img src="{{ asset('img/user_add_2_fill.svg') }}" class="menuicon01">
+            <div class="iconmessage">ユーザー登録</div>
         </div>
 
         <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">

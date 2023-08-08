@@ -293,8 +293,13 @@ class TopController extends Controller
     public function download($id)
     {
         $file = File::where('id', $id)->first();
-        $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
-
+        //拡張子がないファイルの場合分け
+        if ($file->ファイル形式 == ""){
+            $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス;
+        }
+        else {
+            $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
+        }
         // ファイルのダウンロード
         return response()->download($filepath);
     }

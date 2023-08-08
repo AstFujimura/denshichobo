@@ -55,7 +55,7 @@
         <div class="dateform">
             <select name="admin" class="input-field">
                 <option>管理</option>
-                <option>一般</option>
+                <option selected>一般</option>
             </select>
         </div>
     </div>

@@ -29,7 +29,7 @@
     <div class="searchbox">
             <div class="requirearea">
                 <div class="searchelement">
-                    <div class="searchlabel requirelabel">日付:</div>
+                    <div class="searchlabel requirelabel">取引日:</div>
                     <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext" value="{{$oneMonthAgo}}">
                     ～
                     <input type="text" id="endyear" name="endhiduke" class="searchinputtext dateinputtext">
@@ -59,6 +59,14 @@
                     </select>
                 </div>
                 <div class="searchelement">
+                        <div class="searchlabel">提出・受領:</div>
+                        <select id="teisyutu" name="teisyutu" class="searchinputtext input-field searchselect">
+                            <option></option>
+                            <option>提出</option>
+                            <option>受領</option>
+                        </select>
+                </div>
+                <div class="searchelement">
                     <div class="searchlabel">保存方法:</div>
                     <select id="hozonn" name="hozonn" class="searchinputtext input-field searchselect">
                         <option></option>
@@ -67,21 +75,15 @@
                     </select>
                 </div>
 
+
+
+            </div>
+            <div class="nonerequirearea">
+
                 <div class="searchelement">
                     <div class="searchlabel">検索ワード:</div>
                     <input type="text" id="kennsakuword" name="kennsakuword" class="searchinputtext kensakuwordinput">
                     <div>(部分一致)</div>
-                </div>
-
-            </div>
-            <div class="nonerequirearea">
-                <div class="searchelement">
-                        <div class="searchlabel">提出・受領:</div>
-                        <select id="teisyutu" name="teisyutu" class="searchinputtext input-field searchselect">
-                            <option></option>
-                            <option>提出</option>
-                            <option>受領</option>
-                        </select>
                 </div>
                 @if (Auth::user()->管理 == "管理")
                     <div class="searchelement">
@@ -144,7 +146,7 @@
             
         </div>
         <div class="top_table_div">
-            <div class="hiduke">日付</div>
+            <div class="hiduke">取引日</div>
             <div class="kinngaku">金額</div>
             <div class="torihikisaki">取引先</div>
             <div class="syoruikubunn pale">書類区分</div>
@@ -188,7 +190,7 @@
                         @endif
                     </div>
                     <div class="hennkou">
-                        @if ($file->削除フラグ != "済" && ($file->訂正許可 == "有効" || $file->保存者ID == Auth::id() || Auth::user()->管理 == "管理"))
+                        @if ($file->削除フラグ != "済" && ($file->保存者ID == Auth::id() || Auth::user()->管理 == "管理"))
                         <img src="{{asset('img/transfer_3_fill.svg')}}"  class="download"  onclick="location.href='/edit/{{$file->過去データID}}';">
 
                         @endif

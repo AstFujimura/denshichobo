@@ -50,19 +50,26 @@ class RegistController extends Controller
         $file = $request->file('file');
         $hozonn = $request->input('hozonn');
         $kennsaku = $request->input('kennsakuword');
+        $pastID = $this->generateRandomCode();
+
+
         //値が入っていないときはnullを入れない
         if (!$kennsaku) {
             $kennsaku = "";
         }
         $extension = $file->getClientOriginalExtension();
-        if (!$extension){
-            dd("a");
-        }
+
         $filename = Config::get('custom.file_upload_path');
-        $filepath = $currentTime . '_' . $kinngaku . '_' . $torihikisaki;
-        copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-
-
+        $filepath = $currentTime . '_' . $pastID;
+        //アップロードされたファイルに拡張子がない場合
+        if (!$extension){
+            copy($file->getRealPath(), $filename . "\\" . $filepath);
+            $extension = "";
+        }
+        else{
+            copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+        }
+        
         $file = new File();
         $file->日付 = $date;
         $file->取引先 = $torihikisaki;
@@ -70,12 +77,12 @@ class RegistController extends Controller
         $file->書類ID = $syorui;
         $file->保存者ID = Auth::user()->id;
         $file->ファイルパス = $filepath;
-        $file->過去データID = $this->generateRandomCode();
         $file->ファイル形式 = $extension;
+        $file->過去データID = $pastID;
         $file->保存 = $hozonn;
         $file->提出 = $teisyutu;
         $file->備考 = $kennsaku;
-        //バージョンはデフォルトで1になるのでここでは記載しない変更の時には記述
+        //バージョンはデフォルトで1になるのでここでは記載しない。変更の時には記述
         $file->save();
         return redirect()->route('topGet');
     }
