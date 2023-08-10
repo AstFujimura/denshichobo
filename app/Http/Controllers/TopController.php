@@ -27,7 +27,9 @@ class TopController extends Controller
         $admin = User::find($userId)->管理;
         $today = Carbon::today(); // 今日の日付を取得
         $oneMonthAgo = Carbon::now()->subMonth()->format('Ymd'); //一か月前の日付を取得
-        $users = User::all();
+        $users = User::where("id", "not like", 1)
+            ->where("削除", "")
+            ->get();
         $documents = Document::all();
 
         if ($admin == "一般") {
@@ -66,12 +68,11 @@ class TopController extends Controller
         foreach ($files as $file) {
 
             $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
-
         }
 
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'count', 'deletecount', 'notdeletecount', 'users','documents'));
+        return view('information.toppage', compact('files', 'count', 'deletecount', 'notdeletecount', 'users', 'documents'));
     }
 
 
@@ -79,11 +80,13 @@ class TopController extends Controller
     {
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
-        $users = User::all();
+        $users = User::where("id", "not like", 1)
+            ->where("削除", "")
+            ->get();
         $documents = Document::all();
         if ($admin == "一般") {
             $allfiles = DB::table('files')
-                ->select('files.id','files.*','documents.書類')
+                ->select('files.id', 'files.*', 'documents.書類')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
                 ->leftJoin('files as t2', function ($join) {
                     $join->on('files.過去データID', '=', 't2.過去データID')
@@ -94,7 +97,7 @@ class TopController extends Controller
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $allfiles = DB::table('files')
-                ->select('files.id','files.*','documents.書類')
+                ->select('files.id', 'files.*', 'documents.書類')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
                 ->leftJoin('files as t2', function ($join) {
                     $join->on('files.過去データID', '=', 't2.過去データID')
@@ -130,7 +133,7 @@ class TopController extends Controller
         $registuser = $request->input('registuser');
         $kennsu = $request->input('kennsu');
         //値が入ってない時は%%を入れる
-        if(!$syoruikubunn){
+        if (!$syoruikubunn) {
             $syoruikubunn = "%%";
         }
         //値が入っていないときはすべてのユーザーにするために%%を入れる
@@ -184,8 +187,8 @@ class TopController extends Controller
             ->where('files.金額', '>=', $startKinngakuStr)
             ->where('files.金額', '<=', $endKinngakuStr)
             ->where('files.取引先', 'like', "%" . $torihikisaki . "%")
-            ->where('files.書類ID','like', $syoruikubunn)
-            ->where('files.提出','like', $teisyutu)
+            ->where('files.書類ID', 'like', $syoruikubunn)
+            ->where('files.提出', 'like', $teisyutu)
             ->where('files.保存', 'like', "%" . $hozonn . "%")
             ->where('files.備考', 'like', "%" . $kennsakuword . "%")
             ->where('files.保存者ID', 'like', $registuser)
@@ -193,7 +196,7 @@ class TopController extends Controller
             ->get();
         $count = $files->count();
         $deletecount = $files->where('削除フラグ', '済')->count();
-        
+
         $notdeletecount = $count - $deletecount;
 
         //検索結果に初期値として渡すときに値を空欄にしておくため
@@ -294,10 +297,9 @@ class TopController extends Controller
     {
         $file = File::where('id', $id)->first();
         //拡張子がないファイルの場合分け
-        if ($file->ファイル形式 == ""){
+        if ($file->ファイル形式 == "") {
             $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス;
-        }
-        else {
+        } else {
             $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
         }
         // ファイルのダウンロード
