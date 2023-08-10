@@ -11,6 +11,7 @@ body{
 .headerIcon001{
     margin-block: auto;
     position: relative;
+    display: flex;
 }
 .menu001{
     height: 48px;

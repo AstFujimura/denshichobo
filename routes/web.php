@@ -9,6 +9,7 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ErrorController;
+use App\Http\Middleware\CheckSessionTimeout;
 
 /*
 |--------------------------------------------------------------------------

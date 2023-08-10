@@ -37,7 +37,9 @@
         </div>
 
         <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
-            <img src="{{ asset('img/user_edit_line.svg') }}" class="menuicon01">
+            <div class="usermenu01">
+                <img src="{{ asset('img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
+            </div>
             <div class="iconmessage">ユーザー情報</div>
         </div>
         <div class="headerIcon001 menue001">
@@ -54,7 +56,7 @@
         <div class="sidebar01">
 
             <div class="icon01">
-                <div class="user01" onclick="location.href='{{route('usersettingGet')}}';">
+                <div class="user01">
                     <div class="usericon01">
                         <img src="{{ asset('img/user_1_line.svg') }}" class="usericon01">
                     </div>

@@ -23,6 +23,7 @@ class TopController extends Controller
      */
     public function index()
     {
+
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
         $today = Carbon::today(); // 今日の日付を取得
@@ -44,7 +45,6 @@ class TopController extends Controller
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc')
-                ->take(100)
                 ->get();
         } else if ($admin == "管理") {
             $files = DB::table('files')
@@ -57,12 +57,24 @@ class TopController extends Controller
                 ->whereNull('t2.バージョン')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->orderBy('files.日付', 'desc')
-                ->take(100)
                 ->get();
         }
+        
 
 
-        $count = $files->count();
+        //検索条件に該当するデータの合計がallcount
+        $allcount = $files->count();
+
+        //トップではデフォルトで100件を最大表示とする
+        $files = $files->take(100);
+
+        //allcountが100を超える場合は表示される件数は100となり少なければallcountとおなじになる
+        if ($allcount > 100) {
+            $count = 100;
+        } else {
+            $count = $allcount;
+        }
+
         $deletecount = $files->where('削除フラグ', '済')->count();
         $notdeletecount = $count - $deletecount;
         foreach ($files as $file) {
@@ -72,12 +84,13 @@ class TopController extends Controller
 
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'count', 'deletecount', 'notdeletecount', 'users', 'documents'));
+        return view('information.toppage', compact('files', 'allcount', 'count', 'deletecount', 'notdeletecount', 'users', 'documents'));
     }
 
 
     public function search(Request $request)
     {
+
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
         $users = User::where("id", "not like", 1)
@@ -192,8 +205,19 @@ class TopController extends Controller
             ->where('files.保存', 'like', "%" . $hozonn . "%")
             ->where('files.備考', 'like', "%" . $kennsakuword . "%")
             ->where('files.保存者ID', 'like', $registuser)
-            ->take($kennsu)
             ->get();
+            dd("a");
+        //検索条件に該当するデータの合計がallcount
+        $allcount = $files->count();
+        //指定された最大件数だけデータを取得する
+        $files = $files->take($kennsu);
+
+        //allcountが100を超える場合は表示される件数は100となり少なければallcountとおなじになる
+        if ($allcount > $kennsu) {
+            $count = $kennsu;
+        } else {
+            $count = $allcount;
+        }
         $count = $files->count();
         $deletecount = $files->where('削除フラグ', '済')->count();
 
@@ -227,6 +251,7 @@ class TopController extends Controller
 
         $data = [
             'files' => $files,
+            'allcount' => $allcount,
             'count' => $count,
             'deletecount' => $deletecount,
             'notdeletecount' => $notdeletecount,

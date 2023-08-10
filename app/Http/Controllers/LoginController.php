@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Http\Request;
 
@@ -21,10 +23,15 @@ class LoginController extends Controller
     {
         $name = $request->name;
         $password = $request->password;
-        if (Auth::attempt(['name' => $name,'password' => $password])) {
 
-                return redirect() ->route('topGet');
-            
+
+
+        // Mysqlは標準では大文字と小文字の区別がされないため、BINARYをつけることによって区別される
+        $user = User::whereRaw('BINARY name = ?', $name)->first();
+
+        if ($user && Hash::check($password, $user->password)) {
+            Auth::login($user);
+            return redirect()->route('topGet');
         }
         else {
             // エラーメッセージをフラッシュデータに設定

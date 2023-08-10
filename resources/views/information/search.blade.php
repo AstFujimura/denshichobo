@@ -122,6 +122,9 @@
     <div class="notdeletecount selected">
         {{$notdeletecount}}件
     </div>
+    <div class="allcount">
+        / {{$allcount}}件中
+    </div>
     <div class="select">
         <select id="select" class="dataselect">
             <option {{$yukou}}>有効データ</option>
@@ -139,7 +142,7 @@
     <div class="teisyutu pale">提出・受領</div>
     <div class="hozonn pale">保存方法</div>
     <div class="bikou pale">検索ワード</div>
-    <div class="teisei pale">訂正歴</div>
+    <div class="teisei pale">変更歴</div>
     <div class="downloadTd pale">DL.</div>
     <div class="extension pale">形式</div>
     <div class="preview pale">PV.</div>
