@@ -14,7 +14,7 @@
 
 @section('main')
 
-<h2>帳簿変更</h2>
+<h2 class="pagetitle">帳簿変更</h2>
 
     <div class="droppreview">
         <form class="form" action="{{route('editPost',['path'=>$file->過去データID])}}" method="post" enctype="multipart/form-data">

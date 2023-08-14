@@ -31,7 +31,7 @@
             <img src="{{ asset('img/home_3_line.svg') }}" class="menuicon01">
             <div class="iconmessage">Top</div>
         </div>
-        <div class="headerIcon001" onclick="location.href='{{route('registGet')}}';">
+        <div class="headerIcon001" id="registpagebutton">
             <img src="{{ asset('img/pencil_2_line_gray.svg') }}" class="menuicon01">
             <div class="iconmessage">帳簿保存</div>
         </div>

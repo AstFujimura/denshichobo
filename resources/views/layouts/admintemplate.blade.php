@@ -1,8 +1,8 @@
-
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>@yield('title')</title>
@@ -12,39 +12,49 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/adminstyle.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/regist.css') }}">
     <script src="{{asset('jquery/jquery-3.7.0.min')}}"></script>
-    
 
- 
+
+
 </head>
- 
+
 <header class="header001">
-            <div class="logo01">
-                <a href="{{route('topGet')}}" class="logoelement01">
-                    管理画面
-                </a>
-            </div>
+    <div class="logo01">
+        <a href="{{route('adminGet')}}" class="logoelement01">
+            管理画面
+        </a>
+    </div>
 </header>
 <div class="menu001">
 
-        <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
-            <img src="{{ asset('img/edit_fill.svg') }}" class="menuicon01">
-            <div class="iconmessage">ユーザ一覧</div>
-        </div>
-        <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
-            <img src="{{ asset('img/user_add_2_fill.svg') }}" class="menuicon01">
-            <div class="iconmessage">ユーザー登録</div>
-        </div>
+    <div class="headerIcon001" onclick="location.href='{{route('topGet')}}';">
+        <img src="{{ asset('img/home_3_line.svg') }}" class="menuicon01">
+        <div class="iconmessage">Top</div>
+    </div>
+    <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
+        <img src="{{ asset('img/edit_fill.svg') }}" class="menuicon01">
+        <div class="iconmessage">ユーザ一覧</div>
+    </div>
+    <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
+        <img src="{{ asset('img/user_add_2_fill.svg') }}" class="menuicon01">
+        <div class="iconmessage">ユーザー登録</div>
+    </div>
 
-        <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
-            <img src="{{ asset('img/user_edit_line.svg') }}" class="menuicon01">
+    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
+        <div class="usermenu01">
+            <img src="{{ asset('img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
         </div>
-        <div class="headerIcon001 menue001">
-            <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
-            <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
-        </div>
+        <div class="iconmessage">ユーザー情報</div>
+    </div>
+    <div class="headerIcon001 menue001">
+        <img src="{{ asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
+        <div class="iconmessage">メニュー</div>
+        <img src="{{ asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
+        <div class="iconmessage">閉じる</div>
+    </div>
 
 
 </div>
+
 <body>
     <div class="page-container01">
         <div class="sidebar01">
@@ -65,10 +75,10 @@
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                        <img src="{{ asset('img/edit_fill.svg') }}">
+                            <img src="{{ asset('img/edit_fill.svg') }}">
                         </div>
                         <div class="button1name01">
-                          ユーザー一覧
+                            ユーザー一覧
                         </div>
 
                     </div>
@@ -77,10 +87,10 @@
                 <a href="{{route('adminregistGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                        <img src="{{ asset('img/user_add_2_fill.svg') }}">
+                            <img src="{{ asset('img/user_add_2_fill.svg') }}">
                         </div>
                         <div class="button1name01">
-                          ユーザー追加
+                            ユーザー追加
                         </div>
 
                     </div>
@@ -91,10 +101,10 @@
                 <a class="accordion1content01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                        <img src="{{ asset('img/user_add_2_fill.svg') }}">
+                            <img src="{{ asset('img/user_add_2_fill.svg') }}">
                         </div>
                         <div class="accordion1name01">
-                          ユーザー登録
+                            ユーザー登録
                         </div>
 
                     </div>
@@ -102,10 +112,10 @@
                 <a href="{{route('topGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                        <img src="{{ asset('img/home_3_line.svg') }}">
+                            <img src="{{ asset('img/home_3_line.svg') }}">
                         </div>
                         <div class="button1name01">
-                          電子帳簿システム
+                            電子帳簿システム
                         </div>
 
                     </div>
@@ -117,7 +127,7 @@
                             <img src="{{ asset('img/open_door_line.svg') }}">
                         </div>
                         <div class="button1name01">
-                          ログアウト
+                            ログアウト
                         </div>
 
                     </div>
@@ -129,33 +139,33 @@
         </div>
         <main class="main01">
 
-            
+
             <div class="maincontent01">
                 <nav class="navbar">
-                  @yield('menuebar')
+                    @yield('menuebar')
                 </nav>
                 <div class="MenueBar">
-                  @yield('menue')
+                    @yield('menue')
                 </div>
                 <div class="MainElement">
-                  @yield('main')
+                    @yield('main')
                 </div>
 
             </div>
         </main>
-     
+
 
     </div>
-    
+
 </body>
-<footer >
+<footer>
     @yield('footer')
-    </footer>
-    <script src="{{ asset('js/all.js') }}"></script>
-    <script src="{{ asset('js/datecheck.js') }}"></script>
-    <script src="{{ asset('js/style.js') }}"></script>
-    <script src="{{ asset('js/admin001.js') }}"></script>
+</footer>
+<script src="{{ asset('js/all.js') }}"></script>
+<script src="{{ asset('js/datecheck.js') }}"></script>
+<script src="{{ asset('js/style.js') }}"></script>
+<script src="{{ asset('js/admin001.js') }}"></script>
 </footer>
 
- 
+
 </html>

@@ -4,12 +4,83 @@ a {
 
 
 .info{
-  height: 30px;
+  height: 50px;
   margin-bottom: 10px;
-  background: rgb(248, 248, 232);
+  background: rgb(237 237 237);
   display: flex;
 }
-.count{
+.showcontainer{
+  display: flex;
+  margin-left: 50px;
+  font-size: 13px;
+}
+.showelement{
+  margin-block: auto;
+}
+.allshowelement{
+  margin-block: auto;
+  margin-left: 20px;
+}
+
+.pagecontainer{
+  display: flex;
+  margin-left: 50px;
+}
+
+.pagebutton{
+  background: white;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  margin-block: auto;
+  margin-inline: 2px;
+  text-align: center;
+  border-radius: 20px;
+  border: solid 1px #dbdada;
+  font-size: 12px;
+  color: black;
+  transition: all 0.2s;
+
+}
+.pagebutton:hover{
+  background: rgb(0, 0, 0);
+  color: white;
+  border: solid 1px black;
+
+
+}
+
+.nowpagebutton{
+  background: rgb(0, 0, 0);
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  margin-block: auto;
+  margin-inline: 2px;
+  text-align: center;
+  border-radius: 20px;
+  border: solid 1px #dbdada;
+  font-size: 12px;
+  color: rgb(255, 255, 255);
+  cursor: default;
+}
+
+.dotpagebutton{
+  background: white;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  margin-block: auto;
+  margin-inline: 2px;
+  text-align: center;
+  border-radius: 20px;
+  border: solid 1px #dbdada;
+  font-size: 10px;
+  color: black;
+  cursor: default;
+
+}
+/* .count{
   margin-inline: 30px 10px;
   line-height: 30px;
   display: none;
@@ -30,7 +101,7 @@ a {
 }
 .selected{
   display: block;
-}
+} */
 .dataselect{
   height: 100%;
 }
@@ -61,7 +132,7 @@ a {
 
 
 .top_table_body{
-  display: none;
+  display: flex;
   
 }
 .top_table_body > div{
@@ -85,7 +156,7 @@ a {
 }
 
 .delete_table{
-  display: none;
+  display: flex;
 }
 .delete_table > div{
   padding: 5px;
@@ -97,9 +168,7 @@ a {
   height: 30px;
   line-height: 30px;
 }
-.table_selected{
-  display: flex !important;
-}
+
 
 
 .top_table_margin{
@@ -189,7 +258,7 @@ a {
     width: 70px;
   }
   .searchselect{
-    width: 100px;
+    width: 110px;
   }
 
   .userselect{
@@ -218,6 +287,10 @@ a {
 
   .searchinputtext{
     height: 30px;
+  }
+
+  .dateinputtext{
+    width: 100px;
   }
 
   .dateinput{

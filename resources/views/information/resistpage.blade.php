@@ -14,7 +14,7 @@
 
 @section('main')
 
-<h2 id="regist">帳簿保存</h2>
+<h2 id="regist" class="pagetitle">帳簿保存</h2>
 
     <div class="droppreview">
         <form class="form" action="{{route('registPost')}}" method="post" enctype="multipart/form-data">
@@ -49,9 +49,7 @@
                     <div>
                         <input type="text" name="torihikisaki" class="input-field" id="torihikisaki">
                         <span class="errorelement" id="required1">必須項目です</span>
-                            @error('torihikisaki')
-                            <span class="errorsentence">{{ $message }}</span>
-                            @enderror
+                        <span class="errorelement" id="torihikiformat">形式が不正です</span>
                     </div>
 
                 </div>
@@ -92,9 +90,7 @@
                     <label  class="label">検索ワード</label>
                     <div>
                         <input type="text" name="kennsakuword" class="input-field" id="kennsakuword">
-                        @error('kennsakuword')
-                            <span class="errorsentence">{{ $message }}</span>
-                        @enderror
+                        <span class="errorelement" id="kennsakuwordformat">形式が不正です</span>
                     </div>
 
                 </div>

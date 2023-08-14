@@ -21,9 +21,17 @@ class TopController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        // dd($this->pagenatearray(5,3));
 
+        //デフォルトでは25件表示をする
+        $show = 25;
+        //現在のページ数を取得する
+        $nowpage = $request->input("page");
+        if (!$nowpage) {
+            $nowpage = 1;
+        }
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
         $today = Carbon::today(); // 今日の日付を取得
@@ -44,8 +52,7 @@ class TopController extends Controller
                 ->whereNull('t2.バージョン')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where('files.保存者ID', $userId)
-                ->orderBy('files.日付', 'desc')
-                ->get();
+                ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $files = DB::table('files')
                 ->select('files.*')
@@ -56,40 +63,92 @@ class TopController extends Controller
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->whereNull('t2.バージョン')
                 ->where('files.日付', '>=', $oneMonthAgo)
-                ->orderBy('files.日付', 'desc')
-                ->get();
+                ->where("files.削除フラグ", "")
+                ->orderBy('files.日付', 'desc');
         }
-        
+        $alldata = $files->get()->count();
+        $files = $files->paginate($show);
 
-
-        //検索条件に該当するデータの合計がallcount
-        $allcount = $files->count();
-
-        //トップではデフォルトで100件を最大表示とする
-        $files = $files->take(100);
-
-        //allcountが100を超える場合は表示される件数は100となり少なければallcountとおなじになる
-        if ($allcount > 100) {
-            $count = 100;
-        } else {
-            $count = $allcount;
-        }
-
-        $deletecount = $files->where('削除フラグ', '済')->count();
-        $notdeletecount = $count - $deletecount;
         foreach ($files as $file) {
 
             $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
         }
+        $count = $files->count();
+
+        //表示件数の最大値と最小値
+        $startdata = ($nowpage - 1) * $show + 1;
+        $enddata = ($nowpage - 1) * $show + $count;
+
+        //全データ÷最大表示件数(小数切り上げ)でページネーションの数を求める
+        //ceilは小数切り上げの関数、intvalでint型に変換
+        $max = intval(ceil($alldata / $show));
+        if ($max == 0){
+            $max = 1;
+            $startdata = 0;
+        }
+
+
+        $Parray = $this->paginatearray($max, $nowpage);
+
+
+        $paginate = [];
+
+        foreach ($Parray as $page) {
+
+            if ($page == $nowpage) {
+                $class = "nowpagebutton";
+                $a = '/?page=' . $page;
+            } else if ($page == "...") {
+                $class = "dotpagebutton";
+                $a = "";
+            } else {
+                $class = "pagebutton";
+                $a = '/?page=' . $page;
+            }
+            $value = [
+                "value" => $page,
+                "class" => $class,
+                "a" => $a,
+
+            ];
+            array_push($paginate, $value);
+        }
+        // dd($paginate);
+
 
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'allcount', 'count', 'deletecount', 'notdeletecount', 'users', 'documents'));
+        return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata'));
+    }
+
+    //表示するページネーションボタンの配列を返す
+    public function paginatearray($max, $nowpage)
+    {
+        $pagearray = [];
+        //指定したページの前後2つを配列に格納するただし、1未満やmaxを超えるものは入れない
+        for ($page = $nowpage - 2; $page <= $nowpage + 2; $page++) {
+            
+            if ($page >= 1 && $page <= $max) {
+                array_push($pagearray, $page);
+            }
+        }
+        
+        //格納された配列の初めの値が1でない場合[3,4,5,6,7]等の場合は1と...を初めに挿入する。[1,...,3,4,5,6,7]となる
+        if ($pagearray[0] != 1) {
+            array_unshift($pagearray, 1, "...");
+        }
+        //格納された配列の最後の値がmaxでない場合[1...3,4,5,6,7]かつmax=10などの場合は...とmax(例では10)を最後に挿入する。[1,...,3,4,5,6,7,...,10]となる
+        if (end($pagearray) != $max) {
+            array_push($pagearray, "...", $max);
+        }
+        return $pagearray;
     }
 
 
     public function search(Request $request)
     {
+
+
 
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
@@ -122,6 +181,15 @@ class TopController extends Controller
 
 
 
+
+        //全件表示の場合はstring型になるのでintに変換
+        $show = intval($request->input("datacount"));
+
+        //現在のページ数を取得する
+        $nowpage = $request->input("page");
+        if (!$nowpage) {
+            $nowpage = 1;
+        }
 
 
         $startDateStr = $request->input('starthiduke');
@@ -144,7 +212,9 @@ class TopController extends Controller
         $hozonn = $request->input('hozonn');
         $deleteOrzenken = $request->input('deleteOrzenken');
         $registuser = $request->input('registuser');
-        $kennsu = $request->input('kennsu');
+        $selectdata = $request->input('selectdata');
+
+
         //値が入ってない時は%%を入れる
         if (!$syoruikubunn) {
             $syoruikubunn = "%%";
@@ -192,6 +262,14 @@ class TopController extends Controller
             $endKinngakuStr = "2100000000";
         }
 
+        if ($selectdata == "有効データ") {
+            $selectdata = "";
+        } else if ($selectdata == "削除データ") {
+            $selectdata = "済";
+        } else if ($selectdata == "全件データ") {
+            $selectdata = "%%";
+        }
+
 
 
         //検索クエリ
@@ -205,23 +283,69 @@ class TopController extends Controller
             ->where('files.保存', 'like', "%" . $hozonn . "%")
             ->where('files.備考', 'like', "%" . $kennsakuword . "%")
             ->where('files.保存者ID', 'like', $registuser)
-            ->get();
-            dd("a");
-        //検索条件に該当するデータの合計がallcount
-        $allcount = $files->count();
-        //指定された最大件数だけデータを取得する
-        $files = $files->take($kennsu);
+            ->where('files.削除フラグ', 'like', $selectdata);
 
-        //allcountが100を超える場合は表示される件数は100となり少なければallcountとおなじになる
-        if ($allcount > $kennsu) {
-            $count = $kennsu;
-        } else {
-            $count = $allcount;
+        $alldata = $files->count();
+        
+        $files = $files->paginate($show);
+
+        foreach ($files as $file) {
+
+            $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
         }
         $count = $files->count();
-        $deletecount = $files->where('削除フラグ', '済')->count();
 
-        $notdeletecount = $count - $deletecount;
+        //表示件数の最大値と最小値
+        $startdata = ($nowpage - 1) * $show + 1;
+        $enddata = ($nowpage - 1) * $show + $count;
+
+        //全データ÷最大表示件数(小数切り上げ)でページネーションの数を求める
+        //ceilは小数切り上げの関数、intvalでint型に変換
+        $max = intval(ceil($alldata / $show));
+        if ($max == 0){
+            $max = 1;
+            $startdata = 0;
+        }
+
+
+        $Parray = $this->paginatearray($max, $nowpage);
+
+
+        $paginate = [];
+
+        //現在のクエリを取得
+        $currentQuery = $_SERVER['QUERY_STRING'];
+        
+        $queryParts = [];
+        //連想配列に置き換える
+        parse_str($currentQuery, $queryParts);
+        // 現在のクエリ文字列から 'page' パラメータを削除する
+        unset($queryParts['page']);
+        // 新しいクエリ文字列を生成
+        $newQuery = http_build_query($queryParts);
+
+        foreach ($Parray as $page) {
+
+            if ($page == $nowpage) {
+                $class = "nowpagebutton";
+                $a = '/search?page=' . $page."&".$newQuery;
+            } else if ($page == "...") {
+                $class = "dotpagebutton";
+                $a = '/search?'.$newQuery;
+            } else {
+                $class = "pagebutton";
+                $a = '/search?page=' . $page."&".$newQuery;
+            }
+            $value = [
+                "value" => $page,
+                "class" => $class,
+                "a" => $a,
+
+            ];
+            array_push($paginate, $value);
+        }
+
+
 
         //検索結果に初期値として渡すときに値を空欄にしておくため
         if ($startDateStr == "00000000") {
@@ -251,10 +375,6 @@ class TopController extends Controller
 
         $data = [
             'files' => $files,
-            'allcount' => $allcount,
-            'count' => $count,
-            'deletecount' => $deletecount,
-            'notdeletecount' => $notdeletecount,
             'starthiduke' => $startDateStr,
             'endhiduke' => $endDateStr,
             'startkinngaku' => $startKinngakuStr,
@@ -278,6 +398,10 @@ class TopController extends Controller
             'k100' => "",
             'k500' => "",
             'k100000' => "",
+            'paginate' => $paginate,
+            'startdata' => $startdata,
+            'enddata' => $enddata,
+            'alldata' => $alldata
         ];
 
         if ($hozonn == "") {
@@ -288,11 +412,11 @@ class TopController extends Controller
             $data['scan'] = "selected";
         }
 
-        if ($deleteOrzenken == "yukou") {
+        if ($selectdata == "") {
             $data['yukou'] = "selected";
-        } else if ($deleteOrzenken == "delete") {
+        } else if ($selectdata == "済") {
             $data['delete'] = "selected";
-        } else if ($deleteOrzenken == "zenken") {
+        } else if ($deleteOrzenken == "%%") {
             $data['zenken'] = "selected";
         }
 
@@ -302,15 +426,15 @@ class TopController extends Controller
             $data['jyuryo'] = "selected";
         }
 
-        if ($kennsu == "25") {
+        if ($show == "25") {
             $data['k25'] = "selected";
-        } else if ($kennsu == "50") {
+        } else if ($show == "50") {
             $data['k50'] = "selected";
-        } else if ($kennsu == "100") {
+        } else if ($show == "100") {
             $data['k100'] = "selected";
-        } else if ($kennsu == "500") {
+        } else if ($show == "500") {
             $data['k500'] = "selected";
-        } else if ($kennsu == "100000") {
+        } else if ($show == "100000") {
             $data['k100000'] = "selected";
         }
 
@@ -362,10 +486,11 @@ class TopController extends Controller
         $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
 
         // 画像形式の場合は画像を表示
-        if (in_array($extension, ['jpeg', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'])) {
+        if (in_array($extension, ['jpeg', 'jpg', 'JPG', 'jpeg', 'png', 'PNG', 'gif', 'bmp', 'svg'])) {
             return response()->file($path, ['Content-Type' => 'image/' . $extension]);
+        } else if ($extension == "pdf") {
+            return response()->file($path, ['Content-Type' => 'application/pdf']);
         }
-        return response()->file($path, ['Content-Type' => 'application/pdf']);
     }
 
     public function usersettingGet()

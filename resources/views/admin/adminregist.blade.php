@@ -23,7 +23,7 @@
             <span class="requirered">*</span>
         </label>
         <div class="dateform">
-            <input type="text" name="name" class="input-field dateinputtext" id="name">
+            <input type="text" name="name" class="input-field" id="name">
             <span class="errorelement" id="required4">必須項目です</span>
         </div>
     </div>
@@ -33,7 +33,7 @@
             <span class="requirered">*</span>
         </label>
         <div class="dateform">
-            <input type="text" name="email" class="input-field dateinputtext" id="email">
+            <input type="text" name="email" class="input-field" id="email">
             <span class="errorelement" id="required4">必須項目です</span>
         </div>
     </div>
@@ -43,7 +43,7 @@
             <span class="requirered">*</span>
         </label>
         <div class="dateform">
-            <input type="password" name="password" class="input-field dateinputtext" id="password">
+            <input type="password" name="password" class="input-field" id="password">
             <span class="errorelement" id="required4">必須項目です</span>
         </div>
     </div>

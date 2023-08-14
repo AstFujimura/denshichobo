@@ -77,10 +77,32 @@
                 <input type="text" id="kennsakuword" name="kennsakuword" value="{{$kennsakuword}}" class="searchinputtext kensakuwordinput">
                 <div>(部分一致)</div>
             </div>
+
+            <div class="searchelement">
+                <div class="searchlabel">データ:</div>
+                <select id="selectdata" name="selectdata" class="searchinputtext input">
+                    <option {{$yukou}}>有効データ</option>
+                    <option {{$delete}}>削除データ</option>
+                    <option {{$zenken}}>全件データ</option>
+                </select>
+            </div>
+            <div class="searchelement">
+                <div class="searchlabel">表示件数:</div>
+                <select id="datacount" name="datacount" class="searchinputtext input">
+                    <option {{$k25}}>25</option>
+                    <option {{$k50}}>50</option>
+                    <option {{$k100}}>100</option>
+                    <option {{$k500}}>500</option>
+                    <option value="100000" {{$k100000}}>全件</option>
+                </select>
+            </div>
+
+        </div>
+        <div class="nonerequirearea">
             @if (Auth::user()->管理 == "管理")
             <div class="searchelement">
                 <div class="searchlabel">ユーザー:</div>
-                <select name="registuser" class="userselectbox">
+                <select name="registuser" class="searchinputtext userselectbox">
                     <option></option>
                     @foreach($users as $user)
                     <option {{$user->selected}} value="{{ $user->id }}">{{ $user->name }}</option>
@@ -88,16 +110,6 @@
                 </select>
             </div>
             @endif
-            <div class="searchelement">
-                <div class="searchlabel">最大件数:</div>
-                <select id="kennsu" name="kennsu" class="searchinputtext input-field">
-                    <option {{$k25}}>25</option>
-                    <option {{$k50}}>50</option>
-                    <option {{$k100}}>100</option>
-                    <option {{$k500}}>500</option>
-                    <option {{$k100000}} value="100000">全件</option>
-                </select>
-            </div>
         </div>
 
         <input type="hidden" id="deleteOrzenken" name="deleteOrzenken" value={{$deleteOrzenken}}>
@@ -113,24 +125,28 @@
 
 </div>
 <div class="info">
-    <div class="count">
-        {{$count}}件
+    <div class="showcontainer">
+        <div class="showelement">
+            {{$startdata}}
+        </div>
+        <div class="showelement">
+            -
+        </div>
+        <div class="showelement">
+            {{$enddata}}件
+        </div>
+        <div class="allshowelement">
+            {{$alldata}}件中
+        </div>
+
     </div>
-    <div class="deletecount">
-        {{$deletecount}}件
-    </div>
-    <div class="notdeletecount selected">
-        {{$notdeletecount}}件
-    </div>
-    <div class="allcount">
-        / {{$allcount}}件中
-    </div>
-    <div class="select">
-        <select id="select" class="dataselect">
-            <option {{$yukou}}>有効データ</option>
-            <option {{$delete}}>削除データ</option>
-            <option {{$zenken}}>全件データ</option>
-        </select>
+
+    <div class="pagecontainer">
+        @foreach ($paginate as $pagebutton)
+        <a class={{$pagebutton["class"]}} href={{$pagebutton["a"]}}>
+            {{$pagebutton["value"]}}
+        </a>
+        @endforeach
     </div>
 
 </div>
@@ -153,7 +169,7 @@
 
     @foreach ($files as $file)
     @if ($file->削除フラグ != "済")
-    <div class="top_table_body table_selected">
+    <div class="top_table_body">
         @else
         <div class="delete_table">
             @endif
@@ -175,7 +191,7 @@
             </div>
             <div class="extension">{{$file->ファイル形式}}</div>
             <div class="preview">
-                @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "jpeg"||$file->ファイル形式 == "bmp"||$file->ファイル形式 == "gif"||$file->ファイル形式 == "pdf")
+                @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "PNG"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "jpeg"||$file->ファイル形式 == "JPG"||$file->ファイル形式 == "bmp"||$file->ファイル形式 == "gif"||$file->ファイル形式 == "pdf")
                 <img src="{{asset('img/file_search_line.svg')}}" class="download previewbutton" id="{{$file->id}}">
                 @endif
             </div>
