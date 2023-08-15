@@ -24,7 +24,8 @@
         </label>
         <div class="dateform">
             <input type="text" name="name" class="input-field" id="name">
-            <span class="errorelement" id="required4">必須項目です</span>
+            <span class="errorelement" id="required1">必須項目です</span>
+            <span class="errorelement" id="userformat">形式が不正です</span>
         </div>
     </div>
     <div class="input-container">
@@ -34,7 +35,8 @@
         </label>
         <div class="dateform">
             <input type="text" name="email" class="input-field" id="email">
-            <span class="errorelement" id="required4">必須項目です</span>
+            <span class="errorelement" id="required2">必須項目です</span>
+            <span class="errorelement" id="emailformat">形式が不正です</span>
         </div>
     </div>
     <div class="input-container">
@@ -44,7 +46,7 @@
         </label>
         <div class="dateform">
             <input type="password" name="password" class="input-field" id="password">
-            <span class="errorelement" id="required4">必須項目です</span>
+            <span class="errorelement" id="required3">必須項目です</span>
         </div>
     </div>
     <div class="input-container">

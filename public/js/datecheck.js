@@ -1,5 +1,43 @@
 $(document).ready(function () {
-  $('.loader').hide();
+
+  $('#myForm').submit(function (event) {
+    //値の入力時に不正なデータがある場合はalertがtrueになる
+    var alert = false;
+    event.preventDefault();
+
+    // 必須項目が空欄の場合のエラーメッセージ
+
+    var requiredarray = ["name","email","password"];
+
+    emptycheck(requiredarray);
+
+  
+    fourBytecheck("name","userformat")
+    fourBytecheck("email","emailformat")
+
+    
+    //登録(変更)画面におけるフォームの確認
+    if (!$('.errorsentence').length) {
+
+      var title = $('#registbutton').val();
+
+      if (title.trim() == '登録') {
+
+        if (confirm("本当に登録しますか？")) {
+          history.pushState(null, null, '/error/K183623');
+          this.submit(); // フォームの送信を実行
+        }
+      }
+      else {
+        if (confirm("本当に変更しますか？")) {
+          history.pushState(null, null, '/error/K183623');
+          this.submit(); // フォームの送信を実行
+        }
+      }
+    }
+  });
+
+  //管理者画面の編集画面において一般ユーザーに変更する際に残りの管理者の数をカウントしてエラーを出すコード
   $('#admin-myForm').on('submit', function (e) {
     $("#changeerror").removeClass("errorsentence");
     var id = $('#userid').val();
@@ -141,61 +179,15 @@ $(document).ready(function () {
 
     // 必須項目が空欄の場合のエラーメッセージ
 
+    var requiredarray = ["hiduke","kinngaku","torihikisaki"];
 
-    //空白になっているidを格納する
-    var inv = []
-    var invmessage = []
+    emptycheck(requiredarray);
 
-    //入力されているidを格納する
-    var vali = []
-    var valimessage = []
-
-    if ($('#torihikisaki').val() == '') {
-      inv.push('#torihikisaki');
-      invmessage.push('#required1');
-      alert = true
-    }
-    else {
-      vali.push('#torihikisaki')
-      valimessage.push('#required1');
-    }
-    if ($('#kinngaku').val() == '') {
-      inv.push('#kinngaku')
-      invmessage.push('#required2');
-      alert = true
-    }
-    else {
-      vali.push('#kinngaku')
-      valimessage.push('#required2');
-    }
-
-    if ($('#syorui').val() == '') {
-      inv.push('#syorui');
-      invmessage.push('#required3');
-      alert = true
-    }
-    else {
-      vali.push('#syorui')
-      valimessage.push('#required3');
-    }
-    if ($('#hiduke').val() == '') {
-      inv.push('#hiduke');
-      invmessage.push('#required4');
-      alert = true
-    }
-    else {
-      vali.push('#hiduke')
-      valimessage.push('#required4');
-    }
-
-    $(inv.join(",")).addClass("invalid");
-    $(vali.join(",")).removeClass("invalid");
-    $(invmessage.join(",")).addClass("errorsentence");
-    $(valimessage.join(",")).removeClass("errorsentence");
+    
 
     if ($('#file').val() == '') {
       //登録ページの場合は必須条件
-      //ただし、編集ページは任意のため
+      //ただし、編集ページは任意のため空白も許容する
       if ($('#regist').length) {
         $('#file').addClass("invalid")
         $('.fileerrorelement').addClass("errorsentence");
@@ -207,7 +199,11 @@ $(document).ready(function () {
       $('.fileerrorelement').removeClass("errorsentence");
     }
 
-    datacheck("hiduke", "dateformat", "kinngaku", "kinngakuformat","torihikisaki","torihikiformat","kennsakuword","kennsakuwordformat")
+    hidukecheck("hiduke", "dateformat")
+    numcheck("kinngaku", "kinngakuformat")
+    fourBytecheck("torihikisaki","torihikiformat")
+    fourBytecheck("kennsakuword","kennsakuwordformat")
+
 
     //登録(変更)画面におけるフォームの確認
     if (!$('.errorsentence').length) {
@@ -287,12 +283,44 @@ $(document).ready(function () {
     }
   }
 
+  //emptyarrayは配列であり必須項目のinputtextのid名を格納する
+  //前提としてエラーメッセージにはrequired1のようにrequiredと数字を付与する
+  function emptycheck(emptyarray){
+    //空白になっているidを格納する
+    var inv = []
+    var invmessage = []
+
+    //入力されているidを格納する
+    var vali = []
+    var valimessage = []
+
+    for(let i = 0;i < emptyarray.length;i++){
+      if ($('#'+ emptyarray[i]).val() == '') {
+        inv.push('#'+ emptyarray[i]);
+        invmessage.push('#required' + (i+1));
+        alert = true
+      }
+      else {
+        vali.push('#'+ emptyarray[i])
+        valimessage.push('#required' + (i+1));
+      }
+      console.log(invmessage);
+    }
+
+    $(inv.join(",")).addClass("invalid");
+    $(vali.join(",")).removeClass("invalid");
+    $(invmessage.join(",")).addClass("errorsentence");
+    $(valimessage.join(",")).removeClass("errorsentence");
+
+  }
+
   //不正な形式だった場合はfalse
   //date:日付のinputタグのid
   //errordate:日付のエラーメッセージのid
   //kinngaku:金額のinputタグのid
   //errorkinngaku:金額のエラーメッセージのid
-  function datacheck(date, errordate, kinngaku, errorkinngaku,torihiki,errortorihiki,kennsaku,errorkennsaku) {
+
+  function hidukecheck(date,errordate){
     var dateval = $("#" + date).val();
     //値が入っていない場合はほかのエラーチェックがあるためtrueを返す
     if (!dateval) {
@@ -310,7 +338,8 @@ $(document).ready(function () {
       $("#" + errordate).addClass('errorsentence')
       $("#" + date).addClass('invalid')
     }
-
+  }
+  function numcheck(kinngaku,errorkinngaku){
     var kinngakuval = $("#" + kinngaku).val();
     kinngakuval = kinngakuval.replace(/,/g, "")
     var kinngakucheck = isPositiveNumber(kinngakuval)
@@ -322,42 +351,23 @@ $(document).ready(function () {
       $("#" + errorkinngaku).addClass('errorsentence')
       $("#" + kinngaku).addClass('invalid')
     }
-
-    var torihikival = $("#" + torihiki).val();
-    var torihikicheck = /[\ud800-\udbff][\udc00-\udfff]/g.test(torihikival);
+  }
+  function fourBytecheck(fourBytedate,errorfourBytedate){
+    var fourByteval = $("#" + fourBytedate).val();
+    var fourBytecheck = /[\ud800-\udbff][\udc00-\udfff]/g.test(fourByteval);
     //4バイト文字が含まれていたらエラー
-    if (!torihikicheck) {
-      $("#" + errortorihiki).removeClass('errorsentence')
+    if (!fourBytecheck) {
+      $("#" + errorfourBytedate).removeClass('errorsentence')
       // $("#" + kinngaku).removeClass('invalid')
     }
     else {
-      $("#" + errortorihiki).addClass('errorsentence')
-      $("#" + torihiki).addClass('invalid')
+      $("#" + errorfourBytedate).addClass('errorsentence')
+      $("#" + fourBytedate).addClass('invalid')
     }
-
-    var kennsakuval = $("#" + kennsaku).val();
-    var kennsakucheck = /[\ud800-\udbff][\udc00-\udfff]/g.test(kennsakuval);
-    //4バイト文字が含まれていたらエラー
-    if (!kennsakucheck) {
-      $("#" + errorkennsaku).removeClass('errorsentence')
-      // $("#" + kinngaku).removeClass('invalid')
-    }
-    else {
-      $("#" + errorkennsaku).addClass('errorsentence')
-      $("#" + kennsaku).addClass('invalid')
-    }
-
-    if (datecheck && kinngakucheck) {
-      return true
-    }
-    else {
-      return false
-    }
-
-    
-
 
   }
+
+
 
   function isPositiveNumber(value) {
     //値が入っていない場合はほかのエラーチェックがあるためtrueを返す

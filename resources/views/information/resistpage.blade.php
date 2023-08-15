@@ -31,7 +31,7 @@
                     <label class="label">取引日<span class ="requirered">*</span> </label>
                     <div class="dateform">
                         <input type="text" name="hiduke" class="input-field dateinputtext" id="hiduke">
-                        <span class="errorelement" id="required4">必須項目です</span>
+                        <span class="errorelement" id="required1">必須項目です</span>
                         <span class="errorelement" id="dateformat">形式が不正です</span>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                     <label  class="label">取引先<span class ="requirered">*</span></label>
                     <div>
                         <input type="text" name="torihikisaki" class="input-field" id="torihikisaki">
-                        <span class="errorelement" id="required1">必須項目です</span>
+                        <span class="errorelement" id="required3">必須項目です</span>
                         <span class="errorelement" id="torihikiformat">形式が不正です</span>
                     </div>
 
@@ -62,7 +62,7 @@
                                 <option value="{{ $document->id }}">{{ $document->書類 }}</option>
                             @endforeach
                         </select>
-                        <span class="errorelement" id="required3">必須項目です</span>
+                        <span class="errorelement" id="required4">必須項目です</span>
                     </div>
                     
                 </div>
