@@ -7,33 +7,26 @@ $(document).ready(function () {
 
     // 必須項目が空欄の場合のエラーメッセージ
 
-    var requiredarray = ["name","email","password"];
+    var requiredarray = ["name", "email", "password"];
 
     emptycheck(requiredarray);
 
-  
-    fourBytecheck("name","userformat")
-    fourBytecheck("email","emailformat")
 
-    
-    //登録(変更)画面におけるフォームの確認
+    fourBytecheck("name", "userformat")
+    fourBytecheck("email", "emailformat")
+
+
+    //登録画面におけるフォームの確認
     if (!$('.errorsentence').length) {
 
       var title = $('#registbutton').val();
 
-      if (title.trim() == '登録') {
 
-        if (confirm("本当に登録しますか？")) {
-          history.pushState(null, null, '/error/K183623');
-          this.submit(); // フォームの送信を実行
-        }
+      if (confirm("本当に登録しますか？")) {
+        history.pushState(null, null, '/error/K183623');
+        this.submit(); // フォームの送信を実行
       }
-      else {
-        if (confirm("本当に変更しますか？")) {
-          history.pushState(null, null, '/error/K183623');
-          this.submit(); // フォームの送信を実行
-        }
-      }
+      
     }
   });
 
@@ -44,30 +37,50 @@ $(document).ready(function () {
     var admin = $('#admin').val();
     e.preventDefault(); // フォームの送信を中止
 
-    if (admin == "一般") {
-      $.ajax({
-        url: '/admincheck/' + id,
-        type: 'get',
-        processData: false,
-        contentType: false,
-        success: function (response) {
-          //残りの管理ユーザーが1人以上いる場合は続行する。
-          if (response > 0) {
-            if (confirm("本当に変更しますか")) {
-              this[0].submit()
+    //値の入力時に不正なデータがある場合はalertがtrueになる
+    var alert = false;
+
+    // 必須項目が空欄の場合のエラーメッセージ
+
+    var requiredarray = ["name", "email"];
+
+    emptycheck(requiredarray);
+
+
+    fourBytecheck("name", "userformat")
+    fourBytecheck("email", "emailformat")
+
+    //変更画面におけるフォームの確認
+    if (!$('.errorsentence').length) {
+      if (admin == "一般") {
+        $.ajax({
+          url: '/admincheck/' + id,
+          type: 'get',
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            //残りの管理ユーザーが1人以上いる場合は続行する。
+            if (response > 0) {
+              if (confirm("本当に変更しますか")) {
+                istory.pushState(null, null, '/error/K183623');
+                this[0].submit()
+              }
+            }
+            else {
+              $("#changeerror").addClass("errorsentence");
             }
           }
-          else {
-            $("#changeerror").addClass("errorsentence");
-          }
+        });
+      }
+      else if (admin == "管理") {
+        if (confirm("本当に変更しますか")) {
+          istory.pushState(null, null, '/error/K183623');
+          this.submit()
         }
-      });
-    }
-    else if (admin == "管理") {
-      if (confirm("本当に変更しますか")) {
-        this.submit()
       }
     }
+
+
 
 
   });
@@ -179,11 +192,11 @@ $(document).ready(function () {
 
     // 必須項目が空欄の場合のエラーメッセージ
 
-    var requiredarray = ["hiduke","kinngaku","torihikisaki"];
+    var requiredarray = ["hiduke", "kinngaku", "torihikisaki"];
 
     emptycheck(requiredarray);
 
-    
+
 
     if ($('#file').val() == '') {
       //登録ページの場合は必須条件
@@ -201,8 +214,8 @@ $(document).ready(function () {
 
     hidukecheck("hiduke", "dateformat")
     numcheck("kinngaku", "kinngakuformat")
-    fourBytecheck("torihikisaki","torihikiformat")
-    fourBytecheck("kennsakuword","kennsakuwordformat")
+    fourBytecheck("torihikisaki", "torihikiformat")
+    fourBytecheck("kennsakuword", "kennsakuwordformat")
 
 
     //登録(変更)画面におけるフォームの確認
@@ -285,7 +298,7 @@ $(document).ready(function () {
 
   //emptyarrayは配列であり必須項目のinputtextのid名を格納する
   //前提としてエラーメッセージにはrequired1のようにrequiredと数字を付与する
-  function emptycheck(emptyarray){
+  function emptycheck(emptyarray) {
     //空白になっているidを格納する
     var inv = []
     var invmessage = []
@@ -294,15 +307,15 @@ $(document).ready(function () {
     var vali = []
     var valimessage = []
 
-    for(let i = 0;i < emptyarray.length;i++){
-      if ($('#'+ emptyarray[i]).val() == '') {
-        inv.push('#'+ emptyarray[i]);
-        invmessage.push('#required' + (i+1));
+    for (let i = 0; i < emptyarray.length; i++) {
+      if ($('#' + emptyarray[i]).val() == '') {
+        inv.push('#' + emptyarray[i]);
+        invmessage.push('#required' + (i + 1));
         alert = true
       }
       else {
-        vali.push('#'+ emptyarray[i])
-        valimessage.push('#required' + (i+1));
+        vali.push('#' + emptyarray[i])
+        valimessage.push('#required' + (i + 1));
       }
       console.log(invmessage);
     }
@@ -320,7 +333,7 @@ $(document).ready(function () {
   //kinngaku:金額のinputタグのid
   //errorkinngaku:金額のエラーメッセージのid
 
-  function hidukecheck(date,errordate){
+  function hidukecheck(date, errordate) {
     var dateval = $("#" + date).val();
     //値が入っていない場合はほかのエラーチェックがあるためtrueを返す
     if (!dateval) {
@@ -339,7 +352,7 @@ $(document).ready(function () {
       $("#" + date).addClass('invalid')
     }
   }
-  function numcheck(kinngaku,errorkinngaku){
+  function numcheck(kinngaku, errorkinngaku) {
     var kinngakuval = $("#" + kinngaku).val();
     kinngakuval = kinngakuval.replace(/,/g, "")
     var kinngakucheck = isPositiveNumber(kinngakuval)
@@ -352,7 +365,7 @@ $(document).ready(function () {
       $("#" + kinngaku).addClass('invalid')
     }
   }
-  function fourBytecheck(fourBytedate,errorfourBytedate){
+  function fourBytecheck(fourBytedate, errorfourBytedate) {
     var fourByteval = $("#" + fourBytedate).val();
     var fourBytecheck = /[\ud800-\udbff][\udc00-\udfff]/g.test(fourByteval);
     //4バイト文字が含まれていたらエラー
