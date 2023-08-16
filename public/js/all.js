@@ -6,8 +6,9 @@ $(document).ready(function () {
     if ($pagetitle != "帳簿変更" && $pagetitle != "帳簿保存" && $pagetitle != "変更履歴" ) {
       window.location.href = "/regist"
     }
-
   });
+
+
   $('.wholecontainer').on('click', function () {
     $(this).fadeOut();
     $('.previewcontainer').fadeOut();
@@ -23,7 +24,48 @@ $(document).ready(function () {
   });
 
 
+  if ($(".pagetitle").text() == "帳簿変更"){
+    var ID = $(".pagetitle").attr("id");
+    $.ajax({
+      url: '/img/' + ID, // データを取得するURLを指定
+      method: 'GET',
+      xhrFields: {
+        responseType: 'blob' // ファイルをBlobとして受け取る
+      },
+      success: function (response) {
+        // 取得したファイルデータを使ってPDFを表示
+        var Url = URL.createObjectURL(response);
+        if (response.type === 'application/pdf') {
+          var embed = $('<embed>');
+          embed.attr('src', Url);
+          embed.attr('width', '100%');
+          embed.attr('height', '600px');
+          embed.attr('type', 'application/pdf');
+          embed.addClass('imgset');
 
+          $('.pastpreview').append(embed);
+        }
+        else if (response.type.startsWith('image/')) {
+          var img = $('<img>');
+          img.attr('src', Url);
+          img.attr('width', '100%');
+          img.attr('height', '600px');
+          img.addClass('imgset');
+
+          $('.pastpreview').html(img);
+        }
+
+
+      },
+      error: function (xhr, status, error) {
+        console.error(error); // エラー処理
+      }
+    });
+
+  }
+
+
+  //プレビューボタンを押したとき
   $('.previewbutton').on('click', function () {
     $('.wholecontainer').fadeIn();
     $('.previewcontainer').fadeIn();
@@ -57,6 +99,10 @@ $(document).ready(function () {
           img.addClass('imgset');
 
           $('.previewcontainer').append(img);
+        }
+        else {
+          $('.previewarea').text("ファイルが変更されました")
+          $
         }
 
 
@@ -133,8 +179,8 @@ $(document).ready(function () {
     if (fileType.startsWith("image/")) {
       var reader = new FileReader();
       reader.onload = function (e) {
-        $('.previewarea').html('<img src="' + e.target.result + '" class="previewImg">');
-        $('.previewarea').addClass("previewopen");
+        $('.previewarea').html('<img src="' + e.target.result + '" class="previewImage">');
+        // $('.previewarea').addClass("previewopen");
       };
       reader.readAsDataURL(File);
     }
@@ -147,7 +193,16 @@ $(document).ready(function () {
       embed.attr('height', '600px'); // 適切な高さを指定
 
       $('.previewarea').html(embed);
-      $('.previewarea').addClass("previewopen");
+      // $('.previewarea').addClass("previewopen");
+    }
+    else {
+      if ($(".pagetitle").text() == "帳簿変更"){
+        $('.previewarea').html("ファイルが変更されました")
+      }
+      else if ($(".pagetitle").text() == "帳簿保存"){
+        $('.previewarea').html("ファイルが登録されました")
+      }
+
     }
   });
 
@@ -160,7 +215,7 @@ $(document).ready(function () {
 
         reader.onload = function (e) {
           $('.previewarea').html('<img src="' + e.target.result + '" class="previewImage">');
-          $('.previewarea').addClass("previewopen");
+          // $('.previewarea').addClass("previewopen");
         };
 
 
@@ -176,7 +231,17 @@ $(document).ready(function () {
         embed.attr('height', '600px'); // 適切な高さを指定
 
         $('.previewarea').html(embed);
-        $('.previewarea').addClass("previewopen");
+        // $('.previewarea').addClass("previewopen");
+      }
+
+      else {
+        if ($(".pagetitle").text() == "帳簿変更"){
+          $('.previewarea').html("ファイルが変更されました")
+        }
+        else if ($(".pagetitle").text() == "帳簿保存"){
+          $('.previewarea').html("ファイルが登録されました")
+        }
+  
       }
 
 

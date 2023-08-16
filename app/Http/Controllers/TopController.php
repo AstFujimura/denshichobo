@@ -51,6 +51,7 @@ class TopController extends Controller
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->whereNull('t2.バージョン')
                 ->where('files.日付', '>=', $oneMonthAgo)
+                ->where("files.削除フラグ", "")
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
@@ -416,7 +417,7 @@ class TopController extends Controller
             $data['yukou'] = "selected";
         } else if ($selectdata == "済") {
             $data['delete'] = "selected";
-        } else if ($deleteOrzenken == "%%") {
+        } else if ($selectdata == "%%") {
             $data['zenken'] = "selected";
         }
 
@@ -469,6 +470,10 @@ class TopController extends Controller
         $files = File::with('users')
             ->where('過去データID', $id)
             ->orderby('バージョン')->get();
+        foreach ($files as $file) {
+
+            $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
+        }
         $file = File::where('過去データID', $id)->first();
         $count = $files->count();
         // ファイルのダウンロード
@@ -490,6 +495,9 @@ class TopController extends Controller
             return response()->file($path, ['Content-Type' => 'image/' . $extension]);
         } else if ($extension == "pdf") {
             return response()->file($path, ['Content-Type' => 'application/pdf']);
+        }
+        else {
+            return response()->file($path, ['Content-Type' => '']);
         }
     }
 

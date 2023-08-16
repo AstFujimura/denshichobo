@@ -317,7 +317,6 @@ $(document).ready(function () {
         vali.push('#' + emptyarray[i])
         valimessage.push('#required' + (i + 1));
       }
-      console.log(invmessage);
     }
 
     $(inv.join(",")).addClass("invalid");

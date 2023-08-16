@@ -26,10 +26,14 @@ use App\Http\Middleware\CheckSessionTimeout;
 Route::get('login',[LoginController::class,'loginGet'])->name('loginGet');
 // ログインページにポストで情報を投げた時
 Route::post('login',[LoginController::class,'LoginPost'])->name('loginPost');
+// javascriptが無効の場合
+Route::get('/jserror',[ErrorController::class,'jserrorGet'])->name('jserrorGet');
 
 Route::group(['middleware' => 'auth'], function () {
 // ログアウト時（すぐにリダイレクトされる）
 Route::get('logout',[LogoutController::class,'Logout'])->name('logout');
+
+
 
 
 // トップページ
@@ -60,35 +64,41 @@ Route::get('/edit/{path}',[EditController::class,'editGet'])->name('editGet');
 // 変更ページにポストで情報を投げた時
 Route::post('/edit/{path}',[EditController::class,'editPost'])->name('editPost');
 
-// 変更ページにポストで情報を投げた時
+// 削除
 Route::get('/delete/{path}',[EditController::class,'deleteGet'])->name('deleteGet');
 
-// 変更ページにポストで情報を投げた時
+// numの数だけダミーデータを登録するとき
 Route::get('/test/{num}',[TestController::class,'testGet'])->name('testGet');
 
-// 変更ページにポストで情報を投げた時
+// 管理者ページトップ（ユーザー一覧）
 Route::get('/admin',[AdminController::class,'adminGet'])->name('adminGet');
 
-// 変更ページにポストで情報を投げた時
+// ユーザー変更画面
 Route::get('/admin/edit/{id}',[AdminController::class,'admineditGet'])->name('admineditGet');
 
-// 変更ページにポストで情報を投げた時
+// ユーザー登録画面
 Route::get('/admin/regist',[AdminController::class,'adminregistGet'])->name('adminregistGet');
 
-// 変更ページにポストで情報を投げた時
+// ユーザー登録ページにポストで情報を投げた時
 Route::post('/admin/regist',[AdminController::class,'adminregistPost'])->name('adminregistPost');
 
-// 変更ページにポストで情報を投げた時
+// ユーザー変更ページにポストで情報を投げた時
 Route::put('/admin/edit/{id}',[AdminController::class,'admineditPut'])->name('admineditPut');
 
 // 変更ページにポストで情報を投げた時
 Route::delete('/admin/delete/{id}',[AdminController::class,'adminDelete'])->name('adminDelete');
 
-// 変更ページにポストで情報を投げた時
+// パスワードリセットをポストで情報を投げた時
 Route::post('/admin/reset/{id}',[AdminController::class,'adminresetPost'])->name('adminresetPost');
 
 //管理ユーザーを変更しても大丈夫か確認するとき
 Route::get('/admincheck/{id}',[AdminController::class,'admincheck'])->name('admincheck');
+
+//書類管理ページ
+Route::get('/admin/document',[AdminController::class,'admindocumentGet'])->name('admindocumentGet');
+
+// 書類管理ページに変更をポストするとき
+Route::post('/admin/document',[AdminController::class,'admindocumentPost'])->name('admindocumentPost');
 
 Route::get('error/{code}',[ErrorController::class,'errorGet'])->name('errorGet');
 });

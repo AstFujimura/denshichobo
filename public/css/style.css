@@ -1,33 +1,36 @@
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 
-.info{
+.info {
   height: 50px;
   margin-bottom: 10px;
   background: rgb(237 237 237);
   display: flex;
 }
-.showcontainer{
+
+.showcontainer {
   display: flex;
   margin-left: 50px;
   font-size: 13px;
 }
-.showelement{
+
+.showelement {
   margin-block: auto;
 }
-.allshowelement{
+
+.allshowelement {
   margin-block: auto;
   margin-left: 20px;
 }
 
-.pagecontainer{
+.pagecontainer {
   display: flex;
   margin-left: 50px;
 }
 
-.pagebutton{
+.pagebutton {
   background: white;
   width: 25px;
   height: 25px;
@@ -42,7 +45,8 @@ a {
   transition: all 0.2s;
 
 }
-.pagebutton:hover{
+
+.pagebutton:hover {
   background: rgb(0, 0, 0);
   color: white;
   border: solid 1px black;
@@ -50,7 +54,7 @@ a {
 
 }
 
-.nowpagebutton{
+.nowpagebutton {
   background: rgb(0, 0, 0);
   width: 25px;
   height: 25px;
@@ -65,7 +69,7 @@ a {
   cursor: default;
 }
 
-.dotpagebutton{
+.dotpagebutton {
   background: white;
   width: 25px;
   height: 25px;
@@ -80,6 +84,7 @@ a {
   cursor: default;
 
 }
+
 /* .count{
   margin-inline: 30px 10px;
   line-height: 30px;
@@ -102,28 +107,33 @@ a {
 .selected{
   display: block;
 } */
-.dataselect{
+.dataselect {
   height: 100%;
 }
-.top_table_div{
+
+.top_table_div {
   display: flex;
 }
-.top_table_div div{
+
+.top_table_div div {
   background: rgb(181, 228, 240);
   text-align: center;
   border-right: solid 1px white;
   padding: 5px;
 }
-.history_table_div{
+
+.history_table_div {
   display: flex;
 }
-.history_table_div div{
+
+.history_table_div div {
   background: rgb(181, 228, 240);
   text-align: center;
   border-right: solid 1px white;
   padding: 5px;
 }
-.pale{
+
+.pale {
   background: rgb(229, 248, 253) !important;
   justify-content: center;
 }
@@ -131,34 +141,54 @@ a {
 
 
 
-.top_table_body{
+.top_table_body {
   display: flex;
-  
+
 }
-.top_table_body > div{
-    padding: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-right: solid 1px white;
-    border-bottom: solid 1px rgb(127, 127, 207);
-    height: 30px;
-    line-height: 30px;
+
+.top_table_body>div {
+  padding: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right: solid 1px white;
+  border-bottom: solid 1px rgb(127, 127, 207);
+  height: 30px;
+  line-height: 30px;
 }
-.history_table_body {
+
+.delete_history_table_body {
   display: flex;
 }
-.history_table_body > div{
+
+.delete_history_table_body>div {
   padding: 5px;
   border-right: solid 1px white;
   border-bottom: solid 1px rgb(127, 127, 207);
   line-height: 30px;
 }
 
-.delete_table{
+.delete_history_table_body div {
+  background: rgb(238, 197, 197);
+  border-right: solid 1px rgb(238, 197, 197);
+}
+
+.history_table_body {
   display: flex;
 }
-.delete_table > div{
+
+.history_table_body>div {
+  padding: 5px;
+  border-right: solid 1px white;
+  border-bottom: solid 1px rgb(127, 127, 207);
+  line-height: 30px;
+}
+
+.delete_table {
+  display: flex;
+}
+
+.delete_table>div {
   padding: 5px;
   white-space: nowrap;
   overflow: hidden;
@@ -171,346 +201,408 @@ a {
 
 
 
-.top_table_margin{
+.top_table_margin {
   margin-top: 48px;
 }
-.top_table_column_fixed{
+
+.top_table_column_fixed {
   position: fixed;
   top: 48px;
   left: 35px;
   z-index: 1;
 }
-.history_table_column_fixed{
+
+.history_table_column_fixed {
   position: fixed;
   top: 48px;
   left: 35px;
 }
 
-.invalid{
+.invalid {
   border: rgb(252, 86, 86) solid 2px;
-    background-color: rgb(250 238 245);
-  }
-.errorelement{
-    display: none;
-    }
-.fileerrorelement{
-    display: none;
-}
-.errorsentence{
-    color: red;
-    font-size: 13px;
-    display: block !important;
-    text-align: start;
-    margin-left: 10px;
-    }
-
-.download{
-    padding: 2px;
-    border-radius: 2px;
-    cursor: pointer;
-    margin: auto;
+  background-color: rgb(250 238 245);
 }
 
-
-.download:hover{
-    background: rgb(201, 201, 201);
-}
-
-
-
-.button1logo01{
-    margin-right: 1rem;
-}
-
-.addbuttonelement01{
-    display: flex;
-    width: 100px;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    background: none;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  .addbuttonelement01:hover{
-    background: gray;
-    color: white;
-  }
-
-
-  .searchbox{
-    padding: 20px;
-    background: rgb(231 231 231);
-    display: flex;
-  }
-
-  .searchelement{
-    display: flex;
-    padding-inline: 10px;
-    margin-block: 5px;
-  }
-
-  .searchlabel{
-    display: inline-block;
-    width: 95px;
-  }
-  .requirelabel{
-    width: 70px;
-  }
-  .searchselect{
-    width: 110px;
-  }
-
-  .userselect{
-    align-self: flex-end;
-    margin-bottom: 6px;
-    margin-right: 30px;
-  }
-
-  .userselectbox{
-    height: 30px;
-
-  }
-
-  .searchbutton{
-    background: rgb(182, 233, 182);
-    padding: 5px;
-    border: green solid 2px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .searchbutton:hover{
-    background: rgb(69, 173, 69);
-    color: white;
-  }
-
-  .searchinputtext{
-    height: 30px;
-  }
-
-  .dateinputtext{
-    width: 100px;
-  }
-
-  .dateinput{
-    width: 50px;
-  }
-
-  .kinngakuTd{
-    text-align: right;
-  }
-
-  .kinngakuinput{
-    text-align: right;
-    width: 100px;
-  }
-  .buttonarea{
-    align-self: flex-end;
-  }
-
-  .detail_table td{
-    border: solid 1px black;
-    border-collapse: collapse;
-    padding: 5px;
-  }
-
-  .detail_table{
-    border-collapse: collapse;
-
-  }
-
-  .menubar{
-    display: flex;
-    margin-block: 10px;
-  }
-
-  .detail_download{
-    padding: 10px;
-  }
-  .history_table body td{
-    border-right: solid 1px transparent;
-  }
-  .history_table body{
-    border-bottom: solid 1px rgb(176, 176, 235);
-  }
-  .history_table td{
-    border-bottom: solid 1px rgb(176, 176, 235);
-    border-collapse: collapse;
-    padding: 5px;
-  }
-  .history_table_column td{
-    border-right: solid 1px white;
-  }
-
-
-  .history_table{
-    border-collapse: collapse;
-
-  }
-
-  .history_table thead tr{
-    background: rgb(223, 251, 252);
-    margin-left: -0.5px;
-    text-align: center;
-    border-right: solid 1px white;
-}
-
-.droparea{
-    height: 100px;
-    width: 300px;
-    border: solid 3px rgb(187, 187, 187);
-    color: rgb(187, 187, 187);
-    text-align: center;
-    line-height: 100px;
-    margin-bottom: 10px;
-}
-.dragover{
-    border: solid 3px rgb(216, 214, 114);
-}
-
-.droppreview{
-  display: flex;
-}
-.previewarea{
-  height: 450px;
-  width: 425px;
-  text-align: center;
-  line-height: 100px;
-  margin-bottom: 10px;
+.errorelement {
   display: none;
 }
 
-.previewopen{
-  display: block;
-}
-.previewImg{
-  object-fit: contain;
-  object-position: center;
-  width: 100%;
+.fileerrorelement {
+  display: none;
 }
 
-
-
-
-.input-field{
-    height: 30px;
+.errorsentence {
+  color: red;
+  font-size: 13px;
+  display: block !important;
+  text-align: start;
+  margin-left: 10px;
 }
-.kinngakuinput-field{
+
+.download {
+  padding: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+  margin: auto;
+}
+
+
+.download:hover {
+  background: rgb(201, 201, 201);
+}
+
+
+
+.button1logo01 {
+  margin-right: 1rem;
+}
+
+.addbuttonelement01 {
+  display: flex;
+  width: 100px;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.addbuttonelement01:hover {
+  background: gray;
+  color: white;
+}
+
+
+.searchbox {
+  padding: 20px;
+  background: rgb(231 231 231);
+  display: flex;
+}
+
+.searchelement {
+  display: flex;
+  padding-inline: 10px;
+  margin-block: 5px;
+}
+
+.searchlabel {
+  display: inline-block;
+  width: 95px;
+}
+
+.requirelabel {
+  width: 70px;
+}
+
+.searchselect {
+  width: 110px;
+}
+
+.userselect {
+  align-self: flex-end;
+  margin-bottom: 6px;
+  margin-right: 30px;
+}
+
+.userselectbox {
+  height: 30px;
+
+}
+
+.searchbutton {
+  background: rgb(182, 233, 182);
+  padding: 5px;
+  border: green solid 2px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.searchbutton:hover {
+  background: rgb(69, 173, 69);
+  color: white;
+}
+
+.searchinputtext {
+  height: 30px;
+}
+
+.dateinputtext {
+  width: 100px;
+}
+
+.dateinput {
+  width: 50px;
+}
+
+.kinngakuTd {
   text-align: right;
 }
 
-.form{
-    padding: 30px;
+.kinngakuinput {
+  text-align: right;
+  width: 100px;
+}
+
+.buttonarea {
+  align-self: flex-end;
+}
+
+.detail_table td {
+  border: solid 1px black;
+  border-collapse: collapse;
+  padding: 5px;
+}
+
+.detail_table {
+  border-collapse: collapse;
+
+}
+
+.menubar {
+  display: flex;
+  margin-block: 10px;
+}
+
+.detail_download {
+  padding: 10px;
+}
+
+.history_table body td {
+  border-right: solid 1px transparent;
+}
+
+.history_table body {
+  border-bottom: solid 1px rgb(176, 176, 235);
+}
+
+.history_table td {
+  border-bottom: solid 1px rgb(176, 176, 235);
+  border-collapse: collapse;
+  padding: 5px;
+}
+
+.history_table_column td {
+  border-right: solid 1px white;
+}
+
+
+.history_table {
+  border-collapse: collapse;
+
+}
+
+.history_table thead tr {
+  background: rgb(223, 251, 252);
+  margin-left: -0.5px;
+  text-align: center;
+  border-right: solid 1px white;
+}
+
+.droparea {
+  height: 100px;
+  width: 300px;
+  border: solid 3px rgb(187, 187, 187);
+  color: rgb(187, 187, 187);
+  text-align: center;
+  line-height: 100px;
+  margin-bottom: 10px;
+}
+
+.dragover {
+  border: solid 3px rgb(216, 214, 114);
+}
+
+.droppreview {
+  display: flex;
+}
+
+.previewbox {
+  display: flex;
+}
+
+.defaultpreview {
+  width: 340px;
+  line-height: 348px;
+  text-align: center;
+  border: solid 1px rgb(185, 185, 185);
+  color: #9a9a9a;
+}
+
+.rightarrow {
+  margin-block: auto;
+  margin-inline: 10px;
+}
+
+.pastpreview {
+  width: 340px;
+  margin-block: auto;
+}
+
+.previewarea {
+  width: 340px;
+  line-height: 348px;
+  text-align: center;
+  margin-block: auto;
+  border: solid 1px rgb(185, 185, 185);
+  color: #9a9a9a;
+
+}
+
+.previewopen {
+  display: flex;
+}
+
+.previewImage {
+  object-fit: contain;
+  object-position: center;
+  max-width: 100%;
+  max-height: 100%;
+  margin-block: auto;
 }
 
 
 
-.input-container{
-    display: flex;
-    margin-top: 20px;
-}
-.label{
-    width: 200px;
+
+.input-field {
+  height: 30px;
 }
 
-.red{
-    color: red;
-    font-size: 12px;
+.kinngakuinput-field {
+  text-align: right;
+}
+
+.form {
+  padding: 30px;
 }
 
 
 
-.pagetitle{
+.input-container {
+  display: flex;
   margin-top: 20px;
 }
-.h2_margin{
+
+.label {
+  width: 200px;
+}
+
+.red {
+  color: red;
+  font-size: 12px;
+}
+
+
+
+.pagetitle {
+  margin-top: 20px;
+}
+
+.h2_margin {
   margin-top: 70px;
 }
 
-.hiduke,.kinngaku{
+.hiduke,
+.kinngaku {
   width: 130px;
 
 }
-.hidukeTd{
+
+.hidukeTd {
   text-align: center;
 }
-.torihikisaki{
+
+.torihikisaki {
   width: 200px;
 
 }
-.bikou{
+
+.bikou {
   width: 130px;
 }
 
-.teisei,.rireki{
+.teisei,
+.rireki {
   width: 75px;
 }
-.hennkou{
+
+.hennkou {
   display: flex;
   width: 40px;
 }
-.filehennkou{
+
+.filehennkou {
   width: 100px;
 }
-.koushinn{
+
+.koushinn {
   width: 200px;
 }
-.koushinnsya{
+
+.koushinnsya {
   width: 120px;
 }
-.extension{
+
+.extension {
   width: 45px;
 }
-.syoruikubunn{
+
+.syoruikubunn {
   width: 75px;
   text-align: center;
 }
-.teisyutu{
+
+.teisyutu {
   width: 100px;
   text-align: center;
 }
-.hozonn{
+
+.hozonn {
   width: 100px;
 }
-.downloadTd{
-  width: 40px;
-  display: flex
-}
-.preview{
+
+.downloadTd {
   width: 40px;
   display: flex
 }
 
-.maru{
+.preview {
+  width: 40px;
+  display: flex
+}
+
+.maru {
   text-align: center;
-  cursor:pointer;
+  cursor: pointer;
   border-radius: 3px;
 }
-.maru:hover{
+
+.maru:hover {
   background: gray;
   color: white;
 }
 
-.detail{
+.detail {
   text-align: center;
-  cursor:pointer;
+  cursor: pointer;
   border-radius: 3px;
 }
-.detail:hover{
+
+.detail:hover {
   background: gray;
   color: white;
 }
 
-.searcherror{
+.searcherror {
   border: rgb(252, 86, 86) solid 2px;
   background: rgb(240, 221, 221);
 }
 
-.requirered{
+.requirered {
   color: red;
 }
-.registbutton{
+
+.registbutton {
   padding: 5px;
   background: rgb(220, 247, 145);
   border: solid 2px rgb(123, 197, 101);
@@ -520,36 +612,40 @@ a {
   width: 100px;
   font-size: 15px;
 }
-.registbutton:hover{
+
+.registbutton:hover {
   background: rgb(120, 155, 26);
   color: white;
 }
-.deletebutton{
+
+.deletebutton {
   cursor: pointer;
   margin-top: 20px;
   background: pink;
-    border: solid 2px red;
-    padding-block: 5px;
-    width: 96px;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 15px;
+  border: solid 2px red;
+  padding-block: 5px;
+  width: 96px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 15px;
 }
-.deletebutton:hover{
+
+.deletebutton:hover {
   background: rgb(243, 82, 109);
   color: white;
 }
 
-.delete_table div{
+.delete_table div {
   background: rgb(238, 197, 197);
   border-right: solid 1px rgb(238, 197, 197);
 }
-.nonopen div{
+
+.nonopen div {
   background: rgb(152, 200, 245);
   border-right: solid 1px rgb(152, 200, 245);
 }
 
-.previewcontainer{
+.previewcontainer {
   width: 500px;
   height: 600px;
   z-index: 100;
@@ -558,9 +654,10 @@ a {
   left: 100px;
   background: white;
   display: none;
-  
+
 }
-.wholecontainer{
+
+.wholecontainer {
   top: 0;
   left: 0;
   width: 100%;
@@ -571,29 +668,34 @@ a {
   display: none;
   z-index: 50;
 }
-.imgset{
+
+.imgset {
   object-fit: contain;
 }
 
-.pagination{
+.pagination {
   display: flex;
   margin-left: 50px;
 }
-.pagination svg{
+
+.pagination svg {
   width: 15px;
 }
-.pagination span{
+
+.pagination span {
   font-size: 20px;
 }
-.pagination p{
+
+.pagination p {
   display: none;
 
 }
-.pagination .flex-1{
+
+.pagination .flex-1 {
   display: none;
 }
 
-.important{
+.important {
   position: relative;
   cursor: pointer;
   font-size: 1rem;
@@ -607,77 +709,88 @@ a {
 
 /*アイコンの＋と×*/
 .important_title::before,
-.important_title::after{
-    position: absolute;
-    content:'';
-    width: 15px;
-    height: 2px;
-    background-color: #333;
-    top:20px;
-    left: 15px;
-    transition: all 0.3s ease;
-    
-}
-.important_title::before{
-    
-    transform: rotate(0deg);
-    
-}
-.important_title::after{    
-    transform: rotate(90deg);
+.important_title::after {
+  position: absolute;
+  content: '';
+  width: 15px;
+  height: 2px;
+  background-color: #333;
+  top: 20px;
+  left: 15px;
+  transition: all 0.3s ease;
 
 }
+
+.important_title::before {
+
+  transform: rotate(0deg);
+
+}
+
+.important_title::after {
+  transform: rotate(90deg);
+
+}
+
 /*　closeというクラスがついたら形状変化　*/
-.important_title.close::before{
-    transform: rotate(45deg);
-  }
-  
-  .important_title.close::after{
-    transform: rotate(135deg);
-  }
-.importantelement{
-    overflow: hidden;
-    opacity: 0;
-    height: 0;
-    transition: height .5s ease;
-    background: rgb(226, 226, 226);
+.important_title.close::before {
+  transform: rotate(45deg);
 }
-.open{
-    opacity: 1;
-    height: 215px;
-    padding: 20px;
+
+.important_title.close::after {
+  transform: rotate(135deg);
 }
-.settingcheckbox{
+
+.importantelement {
+  overflow: hidden;
+  opacity: 0;
+  height: 0;
+  transition: height .5s ease;
+  background: rgb(226, 226, 226);
+}
+
+.open {
+  opacity: 1;
+  height: 215px;
+  padding: 20px;
+}
+
+.settingcheckbox {
   display: block;
 }
-.nonopencolor{
+
+.nonopencolor {
   display: inline-block;
   background: rgb(152, 200, 245);
   width: 10px;
   height: 10px;
 
 }
-.deletecolor{
+
+.deletecolor {
   display: inline-block;
   background: rgb(238, 197, 197);
   width: 10px;
   height: 10px;
 }
-.fontsize12{
+
+.fontsize12 {
   font-size: 12px;
 }
-.nonopencontainer{
+
+.nonopencontainer {
   margin-block: auto;
   margin-left: 50px;
 }
-.deletecontainer{
+
+.deletecontainer {
   margin-block: auto;
   margin-left: 50px;
 }
 
 
 
-.usersettingbutton{
+.usersettingbutton {
   border: solid #2978a6 2px;
   background: rgb(196, 243, 255);
   padding: 5px;
@@ -687,12 +800,12 @@ a {
   width: 100px;
 }
 
-.usersettingbutton:hover{
+.usersettingbutton:hover {
   background: rgb(24, 115, 189);
   color: white;
 }
 
-.adminregistbutton{
+.adminregistbutton {
   border: solid #2978a6 2px;
   background: rgb(196, 243, 255);
   padding: 5px;
@@ -703,12 +816,12 @@ a {
   margin-top: 20px;
 }
 
-.adminregistbutton:hover{
+.adminregistbutton:hover {
   background: rgb(24, 115, 189);
   color: white;
 }
 
-.top_table_element{
+.top_table_element {
   position: relative;
 }
 
@@ -725,8 +838,92 @@ a {
   z-index: 11;
 }
 
-.searchcomment{
+.searchcomment {
   background: white;
   font-size: 20px;
   font-weight: bold;
+}
+
+.documenttable {}
+
+.documenttable_header>div {
+  background: rgb(245, 227, 217);
+  text-align: center;
+  border-right: solid 1px white;
+  padding: 5px;
+}
+
+.documenttable_body>div {
+  padding: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right: solid 1px white;
+  border-bottom: solid 1px rgb(127, 127, 207);
+  height: 30px;
+  line-height: 30px;
+
+
+}
+
+.documenttable_header {
+  display: flex;
+}
+
+.documenttable_body {
+  display: flex;
+}
+
+.admin_use {
+  width: 50px;
+  text-align: center;
+}
+
+.documenttable_body .admin_use {
+  display: flex;
+}
+
+.admin_document {
+  width: 110px;
+
+  text-align: center;
+}
+
+.admin_document_delete {
+  width: 100px;
+}
+
+.docu_check {
+  margin: auto;
+
+}
+
+.docu_delete_button {
+  margin: auto;
+  cursor: pointer;
+  background: pink;
+  border: solid 2px red;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 15px;
+  width: 44px;
+  height: 27px;
+
+}
+
+.add_document {
+  width: 100px;
+  height: 30px;
+  border-radius: 4px;
+  border: solid 1px gray;
+}
+
+.docu_addbutton{
+  margin-block: 30px;
+  background: #2ac02a;
+  width: 73px;
+  text-align: center;
+  padding: 3px;
+  border-radius: 3px;
+  color: white;
 }

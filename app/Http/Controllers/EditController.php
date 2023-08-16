@@ -180,7 +180,7 @@ class EditController extends Controller
     }
     public function deleteGet($path)
     {
-        $deletedata = Filemodel::where('id', $path)->get();
+        $deletedata = Filemodel::where('過去データID', $path)->get();
         if (!$deletedata) {
             return redirect()->route("errorGet", ['code' => 'N173647']);
         }
@@ -188,6 +188,25 @@ class EditController extends Controller
             $data->削除フラグ = "済";
             $data->save();
         }
+
+        $file = Filemodel::where('過去データID', $path)
+        ->orderby('バージョン', 'desc')
+        ->first();
+        $newdeletefile = new Filemodel();
+        $newdeletefile->日付 = $file->日付;
+        $newdeletefile->取引先 = $file->取引先;
+        $newdeletefile->金額 = $file->金額;
+        $newdeletefile->書類ID = $file->書類ID;
+        $newdeletefile->提出 = $file->提出;
+        $newdeletefile->保存者ID = Auth::user()->id;
+        $newdeletefile->バージョン = 9999;
+        $newdeletefile->過去データID = $file->過去データID;
+        $newdeletefile->備考 = $file->備考;
+        $newdeletefile->保存 = $file->保存;
+        $newdeletefile->ファイルパス = $file->ファイルパス;
+        $newdeletefile->ファイル形式 = $file->ファイル形式;
+        $newdeletefile->削除フラグ = "済";
+        $newdeletefile->save();
         return redirect()->route("topGet");
     }
 }

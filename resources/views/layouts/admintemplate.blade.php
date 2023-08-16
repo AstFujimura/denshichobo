@@ -12,6 +12,9 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/adminstyle.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/regist.css') }}">
     <script src="{{asset('jquery/jquery-3.7.0.min')}}"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;URL=/jserror" />
+    </noscript>
 
 
 
@@ -37,6 +40,10 @@
     <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
         <img src="{{ asset('img/user_add_2_fill.svg') }}" class="menuicon01">
         <div class="iconmessage">ユーザー登録</div>
+    </div>
+    <div class="headerIcon001" onclick="location.href='{{route('admindocumentGet')}}';">
+        <img src="{{ asset('img/document_2_line.svg') }}" class="menuicon01">
+        <div class="iconmessage">書類管理</div>
     </div>
 
     <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
@@ -71,6 +78,18 @@
                 </div>
 
             </div>
+            <a href="{{route('topGet')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset('img/home_3_line.svg') }}">
+                        </div>
+                        <div class="button1name01">
+                            電子帳簿システム
+                        </div>
+
+                    </div>
+
+                </a>
             <div class="sidebarcontent01">
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
@@ -98,29 +117,19 @@
                 </a>
 
 
-                <a class="accordion1content01">
+                <a href="{{route('admindocumentGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset('img/user_add_2_fill.svg') }}">
-                        </div>
-                        <div class="accordion1name01">
-                            ユーザー登録
-                        </div>
-
-                    </div>
-                </a>
-                <a href="{{route('topGet')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset('img/home_3_line.svg') }}">
+                            <img src="{{ asset('img/document_2_line.svg') }}">
                         </div>
                         <div class="button1name01">
-                            電子帳簿システム
+                            書類管理
                         </div>
 
                     </div>
 
                 </a>
+
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
@@ -164,7 +173,7 @@
 <script src="{{ asset('js/all.js') }}"></script>
 <script src="{{ asset('js/datecheck.js') }}"></script>
 <script src="{{ asset('js/style.js') }}"></script>
-<script src="{{ asset('js/admin001.js') }}"></script>
+<script src="{{ asset('js/admin.js') }}"></script>
 </footer>
 
 

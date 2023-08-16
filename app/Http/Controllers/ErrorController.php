@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 
 class ErrorController extends Controller
 {
+    public function jserrorGet()
+    {
+        return view('error.jserror');
+    }
     public function errorGet(Request $request,$code)
     {
         if ($code == 'P127262'){

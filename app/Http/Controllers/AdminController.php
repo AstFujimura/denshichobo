@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -173,6 +174,27 @@ class AdminController extends Controller
         $randomString = Str::random($digit); // 10文字のランダムな文字列を生成
         return $randomString;
 
+    }
+
+    public function admindocumentGet()
+    {
+        $documents = Document::all();
+        return view("admin.admindocument",compact("documents"));
+
+    }
+
+    public function admindocumentPost(Request $request)
+    {
+
+        $docuarray = json_decode($request->getContent());
+
+        foreach ($docuarray as $document) {
+            $pastdocument = Document::where("id",$document->id)->first();
+            $pastdocument->check = $document->check;
+            $pastdocument->書類 = $document->document;
+            $pastdocument->save();
+        }
+        return response()->json("失敗");
     }
 
     
