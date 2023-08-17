@@ -43,7 +43,7 @@ $(document).ready(function () {
           embed.attr('type', 'application/pdf');
           embed.addClass('imgset');
 
-          $('.pastpreview').append(embed);
+          $('.pastpreview').html(embed);
         }
         else if (response.type.startsWith('image/')) {
           var img = $('<img>');
@@ -102,7 +102,7 @@ $(document).ready(function () {
         }
         else {
           $('.previewarea').text("ファイルが変更されました")
-          $
+          
         }
 
 

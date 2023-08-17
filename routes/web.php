@@ -97,6 +97,9 @@ Route::get('/admincheck/{id}',[AdminController::class,'admincheck'])->name('admi
 //書類管理ページ
 Route::get('/admin/document',[AdminController::class,'admindocumentGet'])->name('admindocumentGet');
 
+//書類を削除しても大丈夫か確認するとき
+Route::get('/admin/documentcheck/{id}',[AdminController::class,'documentcheck'])->name('documentcheck');
+
 // 書類管理ページに変更をポストするとき
 Route::post('/admin/document',[AdminController::class,'admindocumentPost'])->name('admindocumentPost');
 

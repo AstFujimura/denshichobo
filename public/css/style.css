@@ -926,4 +926,26 @@ a {
   padding: 3px;
   border-radius: 3px;
   color: white;
+  cursor: pointer;
+}
+
+.docu_addbutton:hover{
+  background: #1c881c;
+}
+
+.docu_change_button{
+  margin-block: 30px;
+  background: #d4f9ff;
+  width: 120px;
+  text-align: center;
+  padding: 5px;
+  border-radius: 3px;
+  color: black;
+  border: solid 2px #66e1d6;
+  cursor: pointer;
+}
+
+.docu_change_button:hover{
+  background: #347973;
+  color: white;
 }

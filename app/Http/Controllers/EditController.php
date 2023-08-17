@@ -31,7 +31,7 @@ class EditController extends Controller
         if ($file->保存者ID != Auth::id() && Auth::user()->管理 == "一般") {
             return redirect()->route("errorGet", ['code' => 'E183728']);
         }
-        $documents = Document::all();
+        $documents = Document::where("check","check")->get();
 
         $hiduke = $file->日付;
         $hiduke = substr_replace($hiduke, '/', 4, 0);

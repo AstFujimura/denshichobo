@@ -19,7 +19,7 @@ class RegistController extends Controller
 {
     public function registGet()
     {
-        $documents = Document::all();
+        $documents = Document::where("check","check")->get();
 
         return view('information.resistpage', compact('documents'));
     }

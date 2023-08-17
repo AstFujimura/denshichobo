@@ -39,7 +39,7 @@ class TopController extends Controller
         $users = User::where("id", "not like", 1)
             ->where("削除", "")
             ->get();
-        $documents = Document::all();
+        $documents = Document::where("check", "check")->get();
 
         if ($admin == "一般") {
             $files = DB::table('files')
@@ -83,7 +83,7 @@ class TopController extends Controller
         //全データ÷最大表示件数(小数切り上げ)でページネーションの数を求める
         //ceilは小数切り上げの関数、intvalでint型に変換
         $max = intval(ceil($alldata / $show));
-        if ($max == 0){
+        if ($max == 0) {
             $max = 1;
             $startdata = 0;
         }
@@ -128,12 +128,12 @@ class TopController extends Controller
         $pagearray = [];
         //指定したページの前後2つを配列に格納するただし、1未満やmaxを超えるものは入れない
         for ($page = $nowpage - 2; $page <= $nowpage + 2; $page++) {
-            
+
             if ($page >= 1 && $page <= $max) {
                 array_push($pagearray, $page);
             }
         }
-        
+
         //格納された配列の初めの値が1でない場合[3,4,5,6,7]等の場合は1と...を初めに挿入する。[1,...,3,4,5,6,7]となる
         if ($pagearray[0] != 1) {
             array_unshift($pagearray, 1, "...");
@@ -156,7 +156,7 @@ class TopController extends Controller
         $users = User::where("id", "not like", 1)
             ->where("削除", "")
             ->get();
-        $documents = Document::all();
+        $documents = Document::where("check", "check")->get();
         if ($admin == "一般") {
             $allfiles = DB::table('files')
                 ->select('files.id', 'files.*', 'documents.書類')
@@ -287,7 +287,7 @@ class TopController extends Controller
             ->where('files.削除フラグ', 'like', $selectdata);
 
         $alldata = $files->count();
-        
+
         $files = $files->paginate($show);
 
         foreach ($files as $file) {
@@ -303,7 +303,7 @@ class TopController extends Controller
         //全データ÷最大表示件数(小数切り上げ)でページネーションの数を求める
         //ceilは小数切り上げの関数、intvalでint型に変換
         $max = intval(ceil($alldata / $show));
-        if ($max == 0){
+        if ($max == 0) {
             $max = 1;
             $startdata = 0;
         }
@@ -316,7 +316,7 @@ class TopController extends Controller
 
         //現在のクエリを取得
         $currentQuery = $_SERVER['QUERY_STRING'];
-        
+
         $queryParts = [];
         //連想配列に置き換える
         parse_str($currentQuery, $queryParts);
@@ -329,13 +329,13 @@ class TopController extends Controller
 
             if ($page == $nowpage) {
                 $class = "nowpagebutton";
-                $a = '/search?page=' . $page."&".$newQuery;
+                $a = '/search?page=' . $page . "&" . $newQuery;
             } else if ($page == "...") {
                 $class = "dotpagebutton";
-                $a = '/search?'.$newQuery;
+                $a = '/search?' . $newQuery;
             } else {
                 $class = "pagebutton";
-                $a = '/search?page=' . $page."&".$newQuery;
+                $a = '/search?page=' . $page . "&" . $newQuery;
             }
             $value = [
                 "value" => $page,
@@ -495,8 +495,7 @@ class TopController extends Controller
             return response()->file($path, ['Content-Type' => 'image/' . $extension]);
         } else if ($extension == "pdf") {
             return response()->file($path, ['Content-Type' => 'application/pdf']);
-        }
-        else {
+        } else {
             return response()->file($path, ['Content-Type' => '']);
         }
     }

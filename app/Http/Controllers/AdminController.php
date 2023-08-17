@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -17,12 +18,12 @@ class AdminController extends Controller
     public function adminGet()
     {
         //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
-        if (Auth::user()->管理 == "管理"){
+        if (Auth::user()->管理 == "管理") {
             //astecユーザーを表示しないため
             $users = User::where('id', '>=', 2)
-            ->where('削除','')
-            ->get();
-            return view('admin.adminpage',['users' => $users]);
+                ->where('削除', '')
+                ->get();
+            return view('admin.adminpage', ['users' => $users]);
         } else {
             return redirect()->route('topGet');
         }
@@ -35,26 +36,26 @@ class AdminController extends Controller
 
     public function adminregistGet()
     {
-        if (Auth::user()->管理 == "管理"){
+        if (Auth::user()->管理 == "管理") {
             return view('admin.adminregist');
         } else {
             return redirect()->route('topGet');
         }
     }
-    
+
 
     public function adminregistPost(Request $request)
     {
-        if (Auth::user()->管理 == "管理"){
+        if (Auth::user()->管理 == "管理") {
 
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255',
                 'password' => 'required|string',
             ]);
-            
 
-    
+
+
             $user = new User();
             $user->name = $validatedData['name'];
             $user->email = $validatedData['email'];
@@ -62,7 +63,7 @@ class AdminController extends Controller
             $user->管理 = $request->input('admin');
             $user->save();
 
-       
+
 
             return redirect()->route('adminGet');
         } else {
@@ -71,10 +72,10 @@ class AdminController extends Controller
     }
 
 
-        public function admineditGet($id)
+    public function admineditGet($id)
     {
-        if (Auth::user()->管理 == "管理"){
-            $user = User::where('id', '=', $id) ->first();
+        if (Auth::user()->管理 == "管理") {
+            $user = User::where('id', '=', $id)->first();
             if (!$user) {
                 return response()->json(['message' => 'ユーザーが見つかりません'], 404);
             }
@@ -83,41 +84,40 @@ class AdminController extends Controller
                 'admin' => "",
                 'normal' => ""
             ];
-            if ($user ->管理 == "管理"){
+            if ($user->管理 == "管理") {
                 $data['admin'] = "selected";
-            }
-            else if ($user ->管理 == "一般"){
+            } else if ($user->管理 == "一般") {
                 $data['normal'] = "selected";
             }
-    
-            return view('admin.adminedit',$data);
+
+            return view('admin.adminedit', $data);
         } else {
             return redirect()->route('topGet');
         }
     }
 
-    public function admineditPut(Request $request,$id)
+    public function admineditPut(Request $request, $id)
     {
-        if (Auth::user()->管理 == "管理"){
+        if (Auth::user()->管理 == "管理") {
             $user = User::find($id);
             if (!$user) {
                 return response()->json(['message' => 'ユーザーが見つかりません'], 404);
             }
 
-    
+
             // 取得したユーザー情報を利用する処理
             $user->name = $request->input('name');
             $user->email = $request->input('email');
             $user->管理 = $request->input('admin');
 
             $user->save();
-    
+
             return redirect()->route('adminGet');
         } else {
             return redirect()->route('topGet');
         }
     }
-    
+
     public function adminresetPost($id)
     {
 
@@ -131,13 +131,10 @@ class AdminController extends Controller
             $user->password = Hash::make($password);
             $user->パスワードリセット時 = Carbon::now();
             $user->save();
-            return view('admin.adminreset',['password'=>$password]);
+            return view('admin.adminreset', ['password' => $password]);
+        } else {
+            return redirect()->route("errorGet", ['code' => 'P127262']);
         }
-        else{
-            return redirect()->route("errorGet",['code'=>'P127262']);
-        }
-
-        
     }
 
     public function adminDelete($id)
@@ -145,8 +142,7 @@ class AdminController extends Controller
         $user = User::find($id);
         if (!$user) {
             return response()->json(['message' => 'ユーザーが見つかりません'], 404);
-        }
-        else if (User::where('管理','管理')->get()->count() == 1 && $user->管理 = "管理"){
+        } else if (User::where('管理', '管理')->get()->count() == 1 && $user->管理 = "管理") {
             abort(404);
         }
         $user->削除 = "削除";
@@ -159,28 +155,38 @@ class AdminController extends Controller
     //これを受けとったjs側で変更・削除をするか否かの処理を行う
     public function admincheck($id)
     {
-        $count = User::where("管理","管理")
-                        ->where("削除","")
-                        ->where("id","not like",$id)
-                        ->where("id","not like",1)
-                        ->get()
-                        ->count();
+        $count = User::where("管理", "管理")
+            ->where("削除", "")
+            ->where("id", "not like", $id)
+            ->where("id", "not like", 1)
+            ->get()
+            ->count();
         return $count;
     }
+
+    public function documentcheck($id)
+    {
+        $document = File::where("書類ID", $id)
+            ->first();
+        if(!$document){
+            $record = Document::find($id);
+            $record->delete();
+        }
+        return $document;
+    }
+
 
     //ランダムな6桁のstring型の数値を出力
     private function generateRandomStr($digit)
     {
         $randomString = Str::random($digit); // 10文字のランダムな文字列を生成
         return $randomString;
-
     }
 
     public function admindocumentGet()
     {
         $documents = Document::all();
-        return view("admin.admindocument",compact("documents"));
-
+        return view("admin.admindocument", compact("documents"));
     }
 
     public function admindocumentPost(Request $request)
@@ -189,13 +195,18 @@ class AdminController extends Controller
         $docuarray = json_decode($request->getContent());
 
         foreach ($docuarray as $document) {
-            $pastdocument = Document::where("id",$document->id)->first();
-            $pastdocument->check = $document->check;
-            $pastdocument->書類 = $document->document;
-            $pastdocument->save();
+            if ($document->past == "past") {
+                $pastdocument = Document::where("id", $document->id)->first();
+                $pastdocument->check = $document->check;
+                $pastdocument->書類 = $document->document;
+                $pastdocument->save();
+            } else if ($document->past == "new") {
+                $newdocument = new Document();
+                $newdocument->check = $document->check;
+                $newdocument->書類 = $document->document;
+                $newdocument->save();
+            }
         }
-        return response()->json("失敗");
+        return response()->json("成功");
     }
-
-    
 }
