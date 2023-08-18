@@ -19,7 +19,9 @@ class RegistController extends Controller
 {
     public function registGet()
     {
-        $documents = Document::where("check","check")->get();
+        $documents = Document::where("check", "check")
+            ->orderBy('order', 'asc')
+            ->get();
 
         return view('information.resistpage', compact('documents'));
     }
@@ -62,14 +64,24 @@ class RegistController extends Controller
         $filename = Config::get('custom.file_upload_path');
         $filepath = $currentTime . '_' . $pastID;
         //アップロードされたファイルに拡張子がない場合
-        if (!$extension){
-            copy($file->getRealPath(), $filename . "\\" . $filepath);
+        if (!$extension) {
+            if (config('app.env') == 'production') {
+                // 本番環境用の設定
+            } else {
+                // 開発環境用の設定
+                copy($file->getRealPath(), $filename . "\\" . $filepath);
+            }
+            //extensionがnullになっているためエラー回避
             $extension = "";
+        } else {
+            if (config('app.env') == 'production') {
+                // 本番環境用の設定
+            } else {
+                // 開発環境用の設定
+                copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+            }
         }
-        else{
-            copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-        }
-        
+
         $file = new File();
         $file->日付 = $date;
         $file->取引先 = $torihikisaki;
@@ -83,6 +95,7 @@ class RegistController extends Controller
         $file->提出 = $teisyutu;
         $file->備考 = $kennsaku;
         //バージョンはデフォルトで1になるのでここでは記載しない。変更の時には記述
+        //最新フラグはデフォルトで最新になるのでここでは記載しない。変更の時に過去データの最新フラグを外す
         $file->save();
         return redirect()->route('topGet');
     }

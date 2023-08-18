@@ -46,7 +46,11 @@ $(document).ready(function () {
 
   // };
   var adddocumentCount = 1000
+  $(".documenttable_body").on("drop", function (event) {
+    change_button_show()
+  });
   $('#docu_addbutton').on("click", function (event) {
+    change_button_show()
 
     $('.add').append(
       '<div class="documenttable_body new" id ="' + 'container' + adddocumentCount + '"><div class="admin_use"><input type="checkbox" class="docu_check" checked name ="' + 'addcheck' + adddocumentCount + '"></div><div class="admin_document"><input type="text" class="add_document" name="' + adddocumentCount + '"></div><div class="admin_document_delete"><div class="docu_delete_button" id ="' + adddocumentCount + '">削除</div></div></div>'
@@ -81,6 +85,9 @@ $(document).ready(function () {
 
 
   });
+  $('input').on("change", function () {
+    change_button_show()
+  });
 
   //新しく追加した書類要素を削除するとき
   $('.add').on("click", ".docu_delete_button", function () {
@@ -90,14 +97,29 @@ $(document).ready(function () {
     $('#' + deletecontainer).remove();
   });
 
+  $('.docu_change_button').on("click", function () {
+    var valueid = 'value' + $(this).attr("id").replace("change", "");
+    var textid = 'text' + $(this).attr("id").replace("change", "");
+    $('#' + valueid).addClass("document_open");
+    $('#' + valueid).focus();
+    $('#' + textid).removeClass("document_open");
+  });
+
+  $('.admin_document_value').on("blur", function () {
+    var textid = 'text' + $(this).attr("id").replace("value", "");
+    $('#' + textid).text($(this).val())
+    $(this).removeClass("document_open");
+    $('#' + textid).addClass("document_open");
+  });
+
   $('#admin_document_form').on('submit', function (event) {
     event.preventDefault()
     var docuarray = []
-
+    var order = 1
     $(".past").each(function () {
       var id = $(this).attr("id").replace("container", "");
       var check = $(this).find("input[type='checkbox']")
-      var document = $(this).find(".admin_document").text();
+      var document = $(this).find(".admin_document_value").val();
       var deleteobj = $(this).find(".docu_delete_button").text();
       var obj = {}
       obj.id = id
@@ -117,8 +139,10 @@ $(document).ready(function () {
         obj.delete = ""
       }
       obj.past = "past"
-
+      obj.order = order
+      order++
       docuarray.push(obj);
+
     });
     $(".new").each(function () {
       var id = $(this).attr("id").replace("container", "");
@@ -144,35 +168,67 @@ $(document).ready(function () {
       }
       obj.past = "new"
 
-      if (obj.document){
+      if (obj.document) {
+        obj.order = order
+        order++
         docuarray.push(obj);
       }
 
     });
     console.log(docuarray);
 
-    // FormDataをサーバーに送信
-    $.ajax({
-      url: '/admin/document',
-      type: 'POST',
-      data: JSON.stringify(docuarray),
-      contentType: "application/json",
-      dataType: "json",
-      headers: {
-        'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-      },
-      success: function (response) {
-        if (response == "成功") {
-          window.location.href = "/admin/document"
+    if (confirm("本当に変更しますか。")) {
+      // FormDataをサーバーに送信
+      $.ajax({
+        url: '/admin/document',
+        type: 'POST',
+        data: JSON.stringify(docuarray),
+        contentType: "application/json",
+        dataType: "json",
+        headers: {
+          'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+        },
+        success: function (response) {
+          if (response == "成功") {
+            $('#save').val("save");
+            window.location.href = "/admin/document"
+          }
+          else {
+            console.log(response)
+          }
         }
-        else {
-          console.log(response)
-        }
-      }
 
-    })
+      })
+    }
+
+
 
   });
+
+  $(".sortable").sortable(
+    {
+      update: function () {
+        change_button_show()
+      }
+    });
+  $(".sortable").disableSelection();
+
+
+
+  function change_button_show() {
+    $(".document_change_button").show();
+    $('#save').val("notsave");
+  }
+
+  $(window).on("beforeunload", function () {
+    if ($("#save").val() == "notsave") {
+      $('.savemessage').show();
+      return "確認"
+    }
+
+  });
+
+
 
 
 

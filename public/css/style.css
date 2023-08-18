@@ -889,13 +889,48 @@ a {
   text-align: center;
 }
 
+.admin_document_change {
+  width: 100px;
+}
+
 .admin_document_delete {
   width: 100px;
+}
+
+.admin_document_value {
+  width: 100px;
+  height: 30px;
+  border-radius: 4px;
+  border: solid 1px gray;
+  display: none;
+}
+.admin_document_text{
+  display: none;
+}
+.document_open{
+  display: block;
 }
 
 .docu_check {
   margin: auto;
 
+}
+
+.docu_change_button {
+  margin: auto;
+  cursor: pointer;
+  background: rgb(217, 255, 192);
+  border: solid 2px rgb(12, 124, 22);
+  border-radius: 5px;
+  text-align: center;
+  font-size: 15px;
+  width: 44px;
+  height: 27px;
+}
+
+.docu_change_button:hover {
+  background: rgb(12, 124, 22);
+  color: white;
 }
 
 .docu_delete_button {
@@ -911,6 +946,11 @@ a {
 
 }
 
+.docu_delete_button:hover {
+  background: red;
+  color: white;
+}
+
 .add_document {
   width: 100px;
   height: 30px;
@@ -918,7 +958,7 @@ a {
   border: solid 1px gray;
 }
 
-.docu_addbutton{
+.docu_addbutton {
   margin-block: 30px;
   background: #2ac02a;
   width: 73px;
@@ -929,23 +969,36 @@ a {
   cursor: pointer;
 }
 
-.docu_addbutton:hover{
+.docu_addbutton:hover {
   background: #1c881c;
 }
 
-.docu_change_button{
+.document_change_button {
   margin-block: 30px;
   background: #d4f9ff;
-  width: 120px;
+  width: 145px;
   text-align: center;
-  padding: 5px;
-  border-radius: 3px;
+  padding: 13px;
+  border-radius: 9px;
   color: black;
   border: solid 2px #66e1d6;
   cursor: pointer;
+  display: none;
+  font-size: 20px;
 }
 
-.docu_change_button:hover{
+.document_change_button:hover {
   background: #347973;
   color: white;
+}
+
+.past:hover>div {
+  background: rgb(192, 192, 192);
+  cursor: pointer;
+  border-right: solid 1px rgb(192, 192, 192);
+}
+
+.savemessage{
+  display: none;
+  color: red;
 }

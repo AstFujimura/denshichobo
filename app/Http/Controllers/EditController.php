@@ -31,7 +31,12 @@ class EditController extends Controller
         if ($file->保存者ID != Auth::id() && Auth::user()->管理 == "一般") {
             return redirect()->route("errorGet", ['code' => 'E183728']);
         }
-        $documents = Document::where("check","check")->get();
+        //チェックはしてないが過去のデータをいじりたい時に選択肢に既存の書類区分がないとデフォルトで違うものになってしまう。
+        //2023/08/17 芝田さん仕様
+        $documents = Document::where("check", "check")
+        ->orWhere('id', $file->書類ID)
+        ->orderBy('order', 'asc')
+        ->get();
 
         $hiduke = $file->日付;
         $hiduke = substr_replace($hiduke, '/', 4, 0);
@@ -104,7 +109,12 @@ class EditController extends Controller
 
 
         //過去データIDが一致するファイルが何件あるかを格納
-        $historycount = Filemodel::where('過去データID', $path)->get()->count();
+        $history = Filemodel::where('過去データID', $path)->get();
+        $historycount = $history->count();
+        foreach ($history as $pastdata){
+            $pastdata->最新フラグ = "";
+            $pastdata->save();
+        }
 
         //ファイルをインスタンス化
         $newfile = new Filemodel();
@@ -186,6 +196,7 @@ class EditController extends Controller
         }
         foreach ($deletedata as $data) {
             $data->削除フラグ = "済";
+            $data->最新フラグ = "";
             $data->save();
         }
 
@@ -206,6 +217,7 @@ class EditController extends Controller
         $newdeletefile->ファイルパス = $file->ファイルパス;
         $newdeletefile->ファイル形式 = $file->ファイル形式;
         $newdeletefile->削除フラグ = "済";
+        $newdeletefile->最新フラグ = "最新";
         $newdeletefile->save();
         return redirect()->route("topGet");
     }

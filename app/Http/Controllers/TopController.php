@@ -39,17 +39,15 @@ class TopController extends Controller
         $users = User::where("id", "not like", 1)
             ->where("削除", "")
             ->get();
-        $documents = Document::where("check", "check")->get();
+        $documents = Document::where("check", "check")
+            ->orderBy('order', 'asc')
+            ->get();
 
         if ($admin == "一般") {
             $files = DB::table('files')
                 ->select('files.*')
-                ->leftJoin('files as t2', function ($join) {
-                    $join->on('files.過去データID', '=', 't2.過去データID')
-                        ->whereRaw('files.バージョン < t2.バージョン');
-                })
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->whereNull('t2.バージョン')
+                ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
                 ->where('files.保存者ID', $userId)
@@ -57,12 +55,8 @@ class TopController extends Controller
         } else if ($admin == "管理") {
             $files = DB::table('files')
                 ->select('files.*')
-                ->leftJoin('files as t2', function ($join) {
-                    $join->on('files.過去データID', '=', 't2.過去データID')
-                        ->whereRaw('files.バージョン < t2.バージョン');
-                })
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->whereNull('t2.バージョン')
+                ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
                 ->orderBy('files.日付', 'desc');
@@ -156,27 +150,21 @@ class TopController extends Controller
         $users = User::where("id", "not like", 1)
             ->where("削除", "")
             ->get();
-        $documents = Document::where("check", "check")->get();
+        $documents = Document::where("check", "check")
+            ->orderBy('order', 'asc')
+            ->get();
         if ($admin == "一般") {
             $allfiles = DB::table('files')
-                ->select('files.id', 'files.*', 'documents.書類')
+                ->select('files.*', 'documents.書類')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
-                ->leftJoin('files as t2', function ($join) {
-                    $join->on('files.過去データID', '=', 't2.過去データID')
-                        ->whereRaw('files.バージョン < t2.バージョン');
-                })
-                ->whereNull('t2.バージョン')
+                ->where('files.最新フラグ', '最新')
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $allfiles = DB::table('files')
-                ->select('files.id', 'files.*', 'documents.書類')
+                ->select('files.*', 'documents.書類')
+                ->where('files.最新フラグ', '最新')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
-                ->leftJoin('files as t2', function ($join) {
-                    $join->on('files.過去データID', '=', 't2.過去データID')
-                        ->whereRaw('files.バージョン < t2.バージョン');
-                })
-                ->whereNull('t2.バージョン')
                 ->orderBy('files.日付', 'desc');
         }
 

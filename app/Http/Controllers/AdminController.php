@@ -185,7 +185,7 @@ class AdminController extends Controller
 
     public function admindocumentGet()
     {
-        $documents = Document::all();
+        $documents = Document::orderBy('order', 'asc')->get();
         return view("admin.admindocument", compact("documents"));
     }
 
@@ -199,12 +199,18 @@ class AdminController extends Controller
                 $pastdocument = Document::where("id", $document->id)->first();
                 $pastdocument->check = $document->check;
                 $pastdocument->書類 = $document->document;
+                $pastdocument->order = $document->order;
                 $pastdocument->save();
             } else if ($document->past == "new") {
-                $newdocument = new Document();
-                $newdocument->check = $document->check;
-                $newdocument->書類 = $document->document;
-                $newdocument->save();
+                $docu = Document::where("書類",$document->document)->first();
+                if (!$docu){
+                    $newdocument = new Document();
+                    $newdocument->check = $document->check;
+                    $newdocument->書類 = $document->document;
+                    $newdocument->order = $document->order;
+                    $newdocument->save();
+                }
+
             }
         }
         return response()->json("成功");

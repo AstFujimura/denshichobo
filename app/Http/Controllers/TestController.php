@@ -18,6 +18,7 @@ class TestController extends Controller
 {
     public function testGet($num)
     {
+
         if ($num > 0){
             for ($i = 0; $i < $num; $i++){
                 $file = new File();
@@ -40,6 +41,8 @@ class TestController extends Controller
             // "備考カラム"が"aaa"のデータを取得
           File::where('備考', 'DLを押さないでください')->delete();
         }
+
+
         return redirect()->route("topGet");
 
     }
