@@ -166,6 +166,7 @@ a {
   border-right: solid 1px white;
   border-bottom: solid 1px rgb(127, 127, 207);
   line-height: 30px;
+ 
 }
 
 .delete_history_table_body div {
@@ -182,6 +183,7 @@ a {
   border-right: solid 1px white;
   border-bottom: solid 1px rgb(127, 127, 207);
   line-height: 30px;
+  overflow: hidden;
 }
 
 .delete_table {

@@ -208,7 +208,7 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
                 @endif
             </div>
             <div class="hennkou">
-                @if ($file->削除フラグ != "済" && ($file->保存者ID == Auth::id() || Auth::user()->管理 == "管理"))
+                @if ($file->削除フラグ != "済")
                 <img src="{{asset('img/transfer_3_fill.svg')}}" class="download" onclick="location.href='/edit/{{$file->過去データID}}';">
 
                 @endif
