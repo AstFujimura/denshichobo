@@ -47,6 +47,7 @@
         <div class="dateform">
             <input type="password" name="password" class="input-field" id="password">
             <span class="errorelement" id="required3">必須項目です</span>
+            <span class="errorelement" id="passwordformat">大文字,小文字,数字を含めた8文字以上にしてください</span>
         </div>
     </div>
     <div class="input-container">

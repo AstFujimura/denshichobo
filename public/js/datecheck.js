@@ -14,6 +14,7 @@ $(document).ready(function () {
 
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
+    passcheck("password", "passwordformat")
 
 
     //登録画面におけるフォームの確認
@@ -26,7 +27,7 @@ $(document).ready(function () {
         history.pushState(null, null, '/error/K183623');
         this.submit(); // フォームの送信を実行
       }
-      
+
     }
   });
 
@@ -216,6 +217,7 @@ $(document).ready(function () {
     numcheck("kinngaku", "kinngakuformat")
     fourBytecheck("torihikisaki", "torihikiformat")
     fourBytecheck("kennsakuword", "kennsakuwordformat")
+    
 
 
     //登録(変更)画面におけるフォームの確認
@@ -375,6 +377,31 @@ $(document).ready(function () {
     else {
       $("#" + errorfourBytedate).addClass('errorsentence')
       $("#" + fourBytedate).addClass('invalid')
+    }
+
+  }
+
+  function passcheck(passdata, errorpassdata) {
+    console.log("aaa")
+    var passval = $("#" + passdata).val();
+    var hasUpperCase = /[A-Z]/.test(passval); // 大文字が含まれているか
+    var hasLowerCase = /[a-z]/.test(passval); // 小文字が含まれているか
+    var hasNumber = /\d/.test(passval); // 数字が含まれているか
+    var isLengthValid = passval.length >= 8 // 8文字以上かどうか
+
+
+    //値が入っていない場合はほかのエラーチェックがあるためtrueを返す
+    if (!passval) {
+      var passval = true
+    }
+    //hasRequiredCharsがtrueの場合はパスワードが有効
+    else if (!hasUpperCase ||!hasLowerCase ||!hasNumber || !isLengthValid) {
+      $("#" + errorpassdata).addClass('errorsentence')
+      $("#" + passdata).addClass('invalid')
+    }
+    else {
+      $("#" + errorpassdata).removeClass('errorsentence')
+      $("#" + passdata).removeClass('invalid')
     }
 
   }

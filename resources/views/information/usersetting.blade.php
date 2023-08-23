@@ -60,6 +60,7 @@
                 <input type="password" name="newpass" class="input-field" id="newpass">
                 <span class="errorelement" id="required4">必須項目です</span>
                 <span class="errorelement passcheck">同じパスワードを入力してください</span>
+                <span class="errorelement" id="passformat">大文字,小文字,数字を含めた8文字以上にしてください</span>
             </div>
             <label class="label">
                 新パスワード確認
@@ -69,6 +70,7 @@
                 <input type="password" name="newpass" class="input-field" id="newpasscheck">
                 <span class="errorelement" id="required5">必須項目です</span>
                 <span class="errorelement passcheck">同じパスワードを入力してください</span>
+                <span class="errorelement" id="passcheckformat">大文字,小文字,数字を含めた8文字以上にしてください</span>
             </div>
 
         </div>

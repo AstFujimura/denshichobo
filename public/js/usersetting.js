@@ -66,9 +66,14 @@ $(document).ready(function() {
         $('#required4').removeClass("errorsentence");
         $('#required5').removeClass("errorsentence");
         $('.passcheck').addClass("errorsentence");
+        $('#passformat').removeClass("errorsentence");
+        $('#passcheckformat').removeClass("errorsentence");
       }
       else{
         $('.passcheck').removeClass("errorsentence");
+
+        passcheck('newpass','passformat');
+        passcheck('newpasscheck','passcheckformat');
       }
       //送信時には一旦「パスワードが違います」の文言を消す
       $('.differencepass').removeClass("errorsentence");
@@ -107,5 +112,29 @@ $(document).ready(function() {
     }
 
 });
+function passcheck(passdata, errorpassdata) {
+  console.log("aaa")
+  var passval = $("#" + passdata).val();
+  var hasUpperCase = /[A-Z]/.test(passval); // 大文字が含まれているか
+  var hasLowerCase = /[a-z]/.test(passval); // 小文字が含まれているか
+  var hasNumber = /\d/.test(passval); // 数字が含まれているか
+  var isLengthValid = passval.length >= 8 // 8文字以上かどうか
+
+
+  //値が入っていない場合はほかのエラーチェックがあるためtrueを返す
+  if (!passval) {
+    var passval = true
+  }
+  //hasRequiredCharsがtrueの場合はパスワードが有効
+  else if (!hasUpperCase ||!hasLowerCase ||!hasNumber || !isLengthValid) {
+    $("#" + errorpassdata).addClass('errorsentence')
+    $("#" + passdata).addClass('invalid')
+  }
+  else {
+    $("#" + errorpassdata).removeClass('errorsentence')
+    $("#" + passdata).removeClass('invalid')
+  }
+
+}
 });
   
