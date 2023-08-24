@@ -63,7 +63,7 @@ $(document).ready(function () {
             //残りの管理ユーザーが1人以上いる場合は続行する。
             if (response > 0) {
               if (confirm("本当に変更しますか")) {
-                istory.pushState(null, null, '/error/K183623');
+                history.pushState(null, null, '/error/K183623');
                 this[0].submit()
               }
             }
@@ -75,7 +75,7 @@ $(document).ready(function () {
       }
       else if (admin == "管理") {
         if (confirm("本当に変更しますか")) {
-          istory.pushState(null, null, '/error/K183623');
+          history.pushState(null, null, '/error/K183623');
           this.submit()
         }
       }
@@ -91,6 +91,7 @@ $(document).ready(function () {
     $("#deleteerror").removeClass("errorsentence");
     e.preventDefault(); // フォームの送信を中止
     var id = $('#userid').val();
+    var form = this; // フォーム要素を保持
     $.ajax({
       url: '/admincheck/' + id,
       type: 'get',
@@ -100,7 +101,7 @@ $(document).ready(function () {
         //残りの管理ユーザーが1人以上いる場合は続行する。
         if (response > 0) {
           if (confirm("本当に削除しますか")) {
-            this[0].submit();
+            form.submit();
           }
         }
         else {
