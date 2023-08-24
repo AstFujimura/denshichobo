@@ -139,6 +139,7 @@ class AdminController extends Controller
 
     public function adminDelete($id)
     {
+        if (Auth::user()->管理 == "管理") {
         $user = User::find($id);
         if (!$user) {
             return response()->json(['message' => 'ユーザーが見つかりません'], 404);
@@ -146,9 +147,17 @@ class AdminController extends Controller
             abort(404);
         }
         $user->削除 = "削除";
+        $user->name = $user->name ."(削除ユーザー)"; 
         $user->password = Hash::make($this->generateRandomStr(16));
         $user->save();
+        if (Auth::user()->id == $id){
+            Auth::logout();
+        }
         return redirect()->route('adminGet');
+    }
+    else {
+        return redirect()->route('topGet');
+    }
     }
 
     //$idは変更・削除しようとするuserのidであり変更するものを除いて管理ユーザーが何人いるかを返すAPI

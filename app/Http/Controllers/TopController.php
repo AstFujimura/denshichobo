@@ -45,8 +45,9 @@ class TopController extends Controller
 
         if ($admin == "一般") {
             $files = DB::table('files')
-                ->select('files.*')
+                ->select('files.*', 'documents.*')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -54,8 +55,9 @@ class TopController extends Controller
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $files = DB::table('files')
-                ->select('files.*')
+                ->select('files.*', 'documents.*', 'clients.*')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -64,10 +66,10 @@ class TopController extends Controller
         $alldata = $files->get()->count();
         $files = $files->paginate($show);
 
-        foreach ($files as $file) {
+        // foreach ($files as $file) {
 
-            $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
-        }
+        //     $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
+        // }
         $count = $files->count();
 
         //表示件数の最大値と最小値
@@ -155,16 +157,18 @@ class TopController extends Controller
             ->get();
         if ($admin == "一般") {
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類')
-                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
+                ->select('files.*', 'documents.書類','clients.*')
+                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類')
+                ->select('files.*', 'documents.書類','clients.*')
                 ->where('files.最新フラグ', '最新')
-                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
+                ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
                 ->orderBy('files.日付', 'desc');
         }
 
@@ -515,6 +519,15 @@ class TopController extends Controller
             $user->email = $request->input('email');
             $user->save();
             return "成功";
+        }
+    }
+    public function usercheck(Request $request){
+        $username = $request->input("username");
+        if (User::where('name',$username)->first()){
+            return "重複";
+        }
+        else{
+            return "重複無し";
         }
     }
 }

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Models\User;
 use App\Models\File;
+use App\Models\Client;
+use GuzzleHttp\Client as GuzzleClient;
 
 class TestController extends Controller
 {
@@ -40,6 +42,26 @@ class TestController extends Controller
         else if($num == -999){
             // "備考カラム"が"aaa"のデータを取得
           File::where('備考', 'DLを押さないでください')->delete();
+        }
+
+        else if($num == -10){
+            $files = File::all();
+            foreach ($files as $file){
+                $client = Client::where("取引先",$file->取引先)->first();
+                if ($client){
+                    $file->取引先 = $client->id;
+                    $file->save();
+                }
+                else{
+                    if (!(Client::where("id",$file->取引先)->first())){
+                        $client = new Client();
+                        $client->取引先 = $file->取引先;
+                        $client->save();
+                        $file->取引先 = $client->id;
+                    }
+
+                }
+            }
         }
 
 

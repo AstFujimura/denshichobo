@@ -15,6 +15,7 @@ $(document).ready(function () {
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
+    usercheck("name","usercheck")
 
 
     //登録画面におけるフォームの確認
@@ -383,7 +384,6 @@ $(document).ready(function () {
   }
 
   function passcheck(passdata, errorpassdata) {
-    console.log("aaa")
     var passval = $("#" + passdata).val();
     var hasUpperCase = /[A-Z]/.test(passval); // 大文字が含まれているか
     var hasLowerCase = /[a-z]/.test(passval); // 小文字が含まれているか
@@ -405,6 +405,29 @@ $(document).ready(function () {
       $("#" + passdata).removeClass('invalid')
     }
 
+  }
+
+  function usercheck(namedata, errornamedata){
+    var nameval = $("#" + namedata).val();
+    const formData = new FormData();
+    formData.append(nameval)
+    $.ajax({
+      url: '/usercheck',
+      type: 'post',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        //ユーザー名が重複している場合
+        if (response == "重複") {
+          $("#" + errornamedata).addClass('errorsentence')
+          $("#" + namedata).addClass('invalid')
+        }
+        else {
+          $("#changeerror").addClass("errorsentence");
+        }
+      }
+    });
   }
 
 

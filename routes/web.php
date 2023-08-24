@@ -104,5 +104,7 @@ Route::get('/admin/documentcheck/{id}',[AdminController::class,'documentcheck'])
 Route::post('/admin/document',[AdminController::class,'admindocumentPost'])->name('admindocumentPost');
 
 Route::get('error/{code}',[ErrorController::class,'errorGet'])->name('errorGet');
+
+Route::post('usercheck',[TopController::class,'usercheck'])->name('usercheck');
 });
 

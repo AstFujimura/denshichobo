@@ -13,9 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('files', function (Blueprint $table) {
-            $table->dropColumn('公開');
-            $table->dropColumn('訂正許可');
+        Schema::create('clients', function (Blueprint $table) {
+            $table->id();
+            $table->string('取引先');
+            $table->string('ファイル数')->default('あり');
+            $table->timestamp('updated_at')->useCurrent()->nullable();
+            $table->timestamp('created_at')->useCurrent()->nullable();
         });
     }
 
@@ -26,10 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('files', function (Blueprint $table) {
-            $table->string('公開')->default("公開");
-            $table->string('訂正許可')->default("有効");
-
-        });
+        Schema::dropIfExists('clients');
     }
 };

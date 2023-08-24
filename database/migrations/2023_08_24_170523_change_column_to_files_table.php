@@ -14,8 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('files', function (Blueprint $table) {
-            $table->dropColumn('公開');
-            $table->dropColumn('訂正許可');
+            $table->unsignedBigInteger('取引先')->change();
+            $table->foreign('取引先')->references('id')->on('clients');
+            
         });
     }
 
@@ -27,8 +28,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('files', function (Blueprint $table) {
-            $table->string('公開')->default("公開");
-            $table->string('訂正許可')->default("有効");
+            $table->dropForeign('files_取引先_foreign');
+            $table->string('取引先')->change();
 
         });
     }
