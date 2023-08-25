@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\Client;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -123,6 +123,19 @@ class EditController extends Controller
         $date = $request->input('hiduke');
         $date = str_replace('/', '', $date);
         $torihikisaki = $request->input('torihikisaki');
+        $client = Client::where("取引先",$torihikisaki)->first();
+        
+        //取引先が存在する場合
+        if ($client){
+            $torihikisakiID = $client->id;
+        }
+        //取引先が存在しない場合
+        else{
+            $newclient = new Client();
+            $newclient->取引先 = $torihikisaki;
+            $newclient->save();
+            $torihikisakiID = $newclient->id;
+        }
         $kinngaku = $request->input('kinngaku');
         $kinngaku = str_replace(',', '', $kinngaku);
         $syorui = $request->input('syorui');
@@ -168,7 +181,7 @@ class EditController extends Controller
 
 
         $newfile->日付 = $date;
-        $newfile->取引先 = $torihikisaki;
+        $newfile->取引先ID = $torihikisakiID;
         $newfile->金額 = $kinngaku;
         $newfile->書類ID = $syorui;
         $newfile->提出 = $teisyutu;
@@ -205,7 +218,7 @@ class EditController extends Controller
         ->first();
         $newdeletefile = new Filemodel();
         $newdeletefile->日付 = $file->日付;
-        $newdeletefile->取引先 = $file->取引先;
+        $newdeletefile->取引先ID = $file->取引先ID;
         $newdeletefile->金額 = $file->金額;
         $newdeletefile->書類ID = $file->書類ID;
         $newdeletefile->提出 = $file->提出;

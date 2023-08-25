@@ -47,7 +47,7 @@ class TopController extends Controller
             $files = DB::table('files')
                 ->select('files.*', 'documents.*')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
+                ->leftJoin('clients', 'files.取引先iD', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -57,7 +57,7 @@ class TopController extends Controller
             $files = DB::table('files')
                 ->select('files.*', 'documents.*', 'clients.*')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
+                ->leftJoin('clients', 'files.取引先ID', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -159,7 +159,7 @@ class TopController extends Controller
             $allfiles = DB::table('files')
                 ->select('files.*', 'documents.書類','clients.*')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
+                ->leftJoin('clients', 'files.取引先ID', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc');
@@ -168,7 +168,7 @@ class TopController extends Controller
                 ->select('files.*', 'documents.書類','clients.*')
                 ->where('files.最新フラグ', '最新')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
+                ->leftJoin('clients', 'files.取引先ID', '=', 'clients.id') // clientsテーブルの結合
                 ->orderBy('files.日付', 'desc');
         }
 
@@ -270,7 +270,7 @@ class TopController extends Controller
             ->where('files.日付', '<=', $endDateStr)
             ->where('files.金額', '>=', $startKinngakuStr)
             ->where('files.金額', '<=', $endKinngakuStr)
-            ->where('files.取引先', 'like', "%" . $torihikisaki . "%")
+            ->where('clients.取引先', 'like', "%" . $torihikisaki . "%")
             ->where('files.書類ID', 'like', $syoruikubunn)
             ->where('files.提出', 'like', $teisyutu)
             ->where('files.保存', 'like', "%" . $hozonn . "%")

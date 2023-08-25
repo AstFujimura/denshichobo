@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,19 @@ class RegistController extends Controller
         $date = $request->input('hiduke');
         $date = str_replace('/', '', $date);
         $torihikisaki = $request->input('torihikisaki');
+        $client = Client::where("取引先",$torihikisaki)->first();
+        
+        //取引先が存在する場合
+        if ($client){
+            $torihikisakiID = $client->id;
+        }
+        //取引先が存在しない場合
+        else{
+            $newclient = new Client();
+            $newclient->取引先 = $torihikisaki;
+            $newclient->save();
+            $torihikisakiID = $newclient->id;
+        }
         $kinngaku = $request->input('kinngaku');
         $kinngaku = str_replace(',', '', $kinngaku);
         $syorui = $request->input('syorui');
@@ -84,7 +98,7 @@ class RegistController extends Controller
 
         $file = new File();
         $file->日付 = $date;
-        $file->取引先 = $torihikisaki;
+        $file->取引先ID = $torihikisakiID;
         $file->金額 = $kinngaku;
         $file->書類ID = $syorui;
         $file->保存者ID = Auth::user()->id;
