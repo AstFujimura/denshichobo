@@ -46,8 +46,9 @@
                 </div>
                 <div class="input-container">
                     <label  class="label">取引先<span class ="requirered">*</span></label>
-                    <div>
-                        <input type="text" name="torihikisaki" class="input-field" id="torihikisaki">
+                    <div class="torihikisakiinput">
+                        <input type="text" name="torihikisaki" class="input-field" id="torihikisaki" autocomplete="off">
+                        <div class="registtorihikisakiselect" id="torihikisakiselect"></div>
                         <span class="errorelement" id="required3">必須項目です</span>
                         <span class="errorelement" id="torihikiformat">形式が不正です</span>
                     </div>

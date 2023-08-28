@@ -45,9 +45,8 @@ class TopController extends Controller
 
         if ($admin == "一般") {
             $files = DB::table('files')
-                ->select('files.*', 'documents.*')
+                ->select('files.*', 'documents.書類')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -55,9 +54,8 @@ class TopController extends Controller
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $files = DB::table('files')
-                ->select('files.*', 'documents.*', 'clients.*')
+                ->select('files.*', 'documents.書類')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -157,18 +155,16 @@ class TopController extends Controller
             ->get();
         if ($admin == "一般") {
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類','clients.*')
+                ->select('files.*', 'documents.書類')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
                 ->where('files.最新フラグ', '最新')
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類','clients.*')
+                ->select('files.*', 'documents.書類')
                 ->where('files.最新フラグ', '最新')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-                ->leftJoin('clients', 'files.取引先', '=', 'clients.id') // clientsテーブルの結合
                 ->orderBy('files.日付', 'desc');
         }
 
@@ -521,13 +517,50 @@ class TopController extends Controller
             return "成功";
         }
     }
-    public function usercheck(Request $request){
+    public function usercheck(Request $request)
+    {
         $username = $request->input("username");
-        if (User::where('name',$username)->first()){
-            return "重複";
+        $change = $request->input("change");
+        $id = $request->input("id");
+        
+        if ($change == "change") {
+            $user =User::whereRaw('BINARY name = ?', $username)
+            ->whereNot('id',$id)
+            ->first();
         }
         else{
+            $user =User::whereRaw('BINARY name = ?', $username)
+            ->first();
+        }
+            // Mysqlは標準では大文字と小文字の区別がされないため、BINARYをつけることによって区別される
+            if ($user) {
+                return "重複";
+            } else {
+                return "重複無し";
+            }
+        
+        // Mysqlは標準では大文字と小文字の区別がされないため、BINARYをつけることによって区別される
+        if (User::whereRaw('BINARY name = ?', $username)->first()) {
+            return "重複";
+        } else {
             return "重複無し";
+        }
+    }
+    public function torihikisearch(Request $request)
+    {
+        $searchtext = $request->input("search");
+
+        $clients = File::where('取引先', 'like', '%' . $searchtext . '%')
+            ->groupBy('取引先')
+            ->select('取引先')
+            ->get();
+        if ($clients->isEmpty()) {
+            // 該当する結果がない場合の処理
+            $clients = "該当なし";
+            return response()->json($clients);
+        } else {
+            // 該当する結果がある場合の処理
+            return response()->json($clients);
         }
     }
 }

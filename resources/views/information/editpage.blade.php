@@ -50,8 +50,9 @@
 
         <div class="input-container">
             <label class="label">取引先<span class="requirered">*</span></label>
-            <div>
-                <input type="text" name="torihikisaki" class="input-field" id="torihikisaki" value="{{$file->取引先}}">
+            <div class="torihikisakiinput">
+                <input type="text" name="torihikisaki" class="input-field" id="torihikisaki" value="{{$file->取引先}}" autocomplete="off">
+                <div class="registtorihikisakiselect" id="torihikisakiselect"></div>
                 <span class="errorelement" id="required1">必須項目です</span>
                 @error('torihikisaki')
                 <span class="errorsentence">{{ $message }}</span>

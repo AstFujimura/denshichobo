@@ -13,7 +13,7 @@
 @endsection
 
 @section('main')
-<h2>ユーザー変更画面</h2>
+<h2 id="admineditpage">ユーザー変更画面</h2>
 
 <form action="{{route('admineditPut',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="admin-myForm">
         @csrf
@@ -27,6 +27,7 @@
             <input type="text" name="name" class="input-field" id="name" value="{{$user->name}}">
             <span class="errorelement" id="required1">必須項目です</span>
             <span class="errorelement" id="userformat">形式が不正です</span>
+            <span class="errorelement" id="usercheck">ユーザー名が重複しています</span>
         </div>
     </div>
     <div class="input-container">
@@ -79,6 +80,7 @@
         </div>
         <div class="errorelement" id="deleteerror">管理ユーザーが他にいないため削除できません。</div>
 </div>
+<input type="hidden" id="userID" value="{{$user->id}}">
 
 
 

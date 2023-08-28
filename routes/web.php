@@ -53,6 +53,7 @@ Route::get('/usersetting',[TopController::class,'usersettingGet'])->name('userse
 
 Route::post('/usersetting',[TopController::class,'usersettingPost'])->name('usersettingPost');
 
+Route::get('/torihikisaki',[TopController::class,'torihikisearch'])->name('torihikisearch');
 
 // 新規登録ページ
 Route::get('/regist',[RegistController::class,'registGet'])->name('registGet');
@@ -103,8 +104,8 @@ Route::get('/admin/documentcheck/{id}',[AdminController::class,'documentcheck'])
 // 書類管理ページに変更をポストするとき
 Route::post('/admin/document',[AdminController::class,'admindocumentPost'])->name('admindocumentPost');
 
-Route::get('error/{code}',[ErrorController::class,'errorGet'])->name('errorGet');
+Route::get('/error/{code}',[ErrorController::class,'errorGet'])->name('errorGet');
 
-Route::post('usercheck',[TopController::class,'usercheck'])->name('usercheck');
+Route::get('/usercheck',[TopController::class,'usercheck'])->name('usercheck');
 });
 

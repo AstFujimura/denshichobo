@@ -39,7 +39,8 @@
             </div>
             <div class="searchelement">
                 <div class="searchlabel requirelabel">取引先:</div>
-                <input type="text" id="torihikisaki" name="torihikisaki" value="{{$torihikisaki}}" class="searchinputtext torihikisakiinput">
+                <input type="text" id="torihikisaki" name="torihikisaki" value="{{$torihikisaki}}" class="searchinputtext torihikisakiinput" autocomplete="off">
+                <div class="torihikisakiselect" id="torihikisakiselect"></div>
                 <div>(部分一致)</div>
             </div>
         </div>

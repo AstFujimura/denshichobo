@@ -107,13 +107,13 @@ class RegistController extends Controller
         return $int;
     }
 
-    //ランダムな6桁のstring型の数値を出力
+    //ランダムな8桁のstring型の数値を出力
     private function generateRandomCode()
     {
-        $code = mt_rand(100000, 999999);
+        $code = mt_rand(10000000, 99999999);
 
         while ($this->isCompanyCodeExists($code)) {
-            $code = mt_rand(100000, 999999);
+            $code = mt_rand(10000000, 99999999);
         }
         return $code;
     }

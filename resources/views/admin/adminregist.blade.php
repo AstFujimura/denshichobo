@@ -13,7 +13,7 @@
 @endsection
 
 @section('main')
-<h2>ユーザー登録</h2>
+<h2 id="adminregistpage">ユーザー登録</h2>
 
 <form action="{{route('adminregistPost')}}" method="post" enctype="multipart/form-data" id="myForm">
     @csrf

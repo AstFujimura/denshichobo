@@ -166,7 +166,7 @@ a {
   border-right: solid 1px white;
   border-bottom: solid 1px rgb(127, 127, 207);
   line-height: 30px;
- 
+
 }
 
 .delete_history_table_body div {
@@ -286,6 +286,7 @@ a {
   display: flex;
   padding-inline: 10px;
   margin-block: 5px;
+  position: relative;
 }
 
 .searchlabel {
@@ -515,9 +516,52 @@ a {
   text-align: center;
 }
 
+.torihikisakiinput{
+  position: relative;
+}
+
 .torihikisaki {
   width: 200px;
 
+}
+.registtorihikisakiselect{
+  width: 300px;
+  max-height: 159px;
+  overflow-x: hidden;
+  background: white;
+  position: absolute;
+  top: 30px;
+  border: solid 1px gray;
+  display: none;
+}
+
+.torihikisakiselect {
+  width: 300px;
+  max-height: 159px;
+  overflow-x: hidden;
+  background: white;
+  position: absolute;
+  top: 30px;
+  left: 78px;
+  border: solid 1px gray;
+  display: none;
+  z-index: 10;
+}
+
+.gaitounashi{
+  padding-left: 15px;
+}
+
+.torihikisakielement {
+  padding-left: 15px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.torihikisakielement:hover {
+  background: rgb(74, 145, 251);
+  color: white;
+  cursor: pointer;
 }
 
 .bikou {
@@ -908,10 +952,12 @@ a {
   border: solid 1px gray;
   display: none;
 }
-.admin_document_text{
+
+.admin_document_text {
   display: none;
 }
-.document_open{
+
+.document_open {
   display: block;
 }
 
@@ -1002,7 +1048,7 @@ a {
   border-right: solid 1px rgb(192, 192, 192);
 }
 
-.savemessage{
+.savemessage {
   display: none;
   color: red;
 }
