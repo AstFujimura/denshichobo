@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
+        DB::table('users')->insert([
             [
                 'name' => 'astec',
                 'email' => 'astec@ast-sys.co.jp',
