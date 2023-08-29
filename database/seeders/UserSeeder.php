@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\User;
+use App\Models\Document;
 
 class UserSeeder extends Seeder
 {
@@ -18,7 +19,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::create(
+        User::create([
             [
                 'name' => 'astec',
                 'email' => 'astec@ast-sys.co.jp',
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
                 'email' => 'user@dafault.com',
                 'password' => Hash::make('SaLe4ir3'),
             ]
+        ]
         );
 
         DB::table('documents')->insert([
