@@ -7,7 +7,6 @@
     "require": {
         "php": "8.2.*",
         "aws/aws-sdk-php": "^3.0",
-        "box/spout": "^3.3",
         "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
@@ -17,7 +16,6 @@
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
         "maatwebsite/excel": "^1.1",
-        "phpoffice/phpspreadsheet": "^1.29",
         "psr/simple-cache": "2.0"
     },
     "require-dev": {
