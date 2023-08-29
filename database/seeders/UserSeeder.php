@@ -49,22 +49,22 @@ class UserSeeder extends Seeder
             ],
             [
                 '書類' => '契約書',
-                'check' => 'check',
+                'check' => '',
                 'order' => 4,
             ],
             [
                 '書類' => '領収書',
-                'check' => 'check',
+                'check' => '',
                 'order' => 5,
             ],
             [
                 '書類' => '検収書',
-                'check' => 'check',
+                'check' => '',
                 'order' => 6,
             ],
             [
                 '書類' => '注文書',
-                'check' => 'check',
+                'check' => '',
                 'order' => 7,
             ],
         ]);
