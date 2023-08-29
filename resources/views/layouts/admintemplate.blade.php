@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/adminstyle.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/regist.css') }}">
-    <script src="{{asset('jquery/jquery-3.7.0.min')}}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
