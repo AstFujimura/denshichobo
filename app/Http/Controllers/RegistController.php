@@ -30,7 +30,7 @@ class RegistController extends Controller
     {
 
         $url = Storage::disk('s3')->temporaryUrl(
-            "astec/test",
+            "astec/test.png",
             now()->addHours(1) // 有効期限を設定
         );
 
