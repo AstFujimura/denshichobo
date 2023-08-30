@@ -48,7 +48,7 @@ class RegistController extends Controller
         $signedUrl = $s3Client->createPresignedRequest($command, $expiration)->getUri();
 
 
-        return $signedUrl;
+        return view('information.test', ['signedUrl' => $signedUrl]);
     }
 
 
