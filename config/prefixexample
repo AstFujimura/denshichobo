@@ -1,0 +1,6 @@
+<?php
+
+return [
+    'prefix' => 'astec', // 保存先のフォルダパス
+];
+

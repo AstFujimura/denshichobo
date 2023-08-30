@@ -10,6 +10,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Middleware\CheckSessionTimeout;
+use Illuminate\Support\Facades\Config;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,10 @@ use App\Http\Middleware\CheckSessionTimeout;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+$prefix = config('prefix.prefix');
+Route::prefix($prefix)->group(function () {
 
 //  ログインページ
 Route::get('login',[LoginController::class,'loginGet'])->name('loginGet');
@@ -109,3 +114,4 @@ Route::get('/error/{code}',[ErrorController::class,'errorGet'])->name('errorGet'
 Route::get('/usercheck',[TopController::class,'usercheck'])->name('usercheck');
 });
 
+});
