@@ -33,6 +33,7 @@ class RegistController extends Controller
             "astec/test.png",
             now()->addHours(1) // 有効期限を設定
         );
+        dd($url);
 
         return response()->download($url);
     }
