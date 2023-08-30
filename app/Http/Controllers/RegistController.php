@@ -34,7 +34,7 @@ class RegistController extends Controller
             now()->addHours(1) // 有効期限を設定
         );
 
-        return response()->json(['signed_url' => $signedUrl]);
+        return response()->json(['signed_url' => $url]);
     }
 
 
