@@ -49,6 +49,8 @@ class RegistController extends Controller
 
         $signedUrl = (string) $request->getUri();
 
+        return response()->download($signedUrl);
+
         return response()->json(['signed_url' => $signedUrl]);
     }
 
