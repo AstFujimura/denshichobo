@@ -32,7 +32,7 @@ class RegistController extends Controller
 
         // S3クライアントのインスタンスを作成
         $s3 = new S3Client([
-            'region' => 'us-east-1',
+            'region' => 'ap-northeast-1',
             'version' => 'latest',
         ]);
 
