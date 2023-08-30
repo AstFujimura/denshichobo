@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Config;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::get('/',[RegistController::class,'registURl'])->name('registURl');
 
 $prefix = config('prefix.prefix');
 Route::prefix($prefix)->group(function () {

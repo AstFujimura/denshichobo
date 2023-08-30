@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\File;
 use App\Models\Document;
+use Aws\S3\S3Client;
 
 class RegistController extends Controller
 {
@@ -25,6 +26,35 @@ class RegistController extends Controller
 
         return view('information.resistpage', compact('documents'));
     }
+
+    public function registURl()
+    {
+
+        // S3クライアントのインスタンスを作成
+        $s3 = new S3Client([
+            'region' => 'us-east-1',
+            'version' => 'latest',
+        ]);
+
+        // 署名付きURLの生成
+        $bucket = 'astdocs';
+        $objectKey = 'astec/test';
+        $expires = '+1 hour'; // URLの有効期限
+
+        $cmd = $s3->getCommand('GetObject', [
+            'Bucket' => $bucket,
+            'Key' => $objectKey,
+        ]);
+        $request = $s3->createPresignedRequest($cmd, $expires);
+
+        $signedUrl = (string) $request->getUri();
+        dd($signedUrl);
+
+        return response()->json(['signed_url' => $signedUrl]);
+    }
+
+
+
     public function registPost(Request $request)
     {
         $request->validate([
