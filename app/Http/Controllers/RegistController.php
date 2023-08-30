@@ -38,7 +38,7 @@ class RegistController extends Controller
 
         // 署名付きURLの生成
         $bucket = 'astdocs';
-        $objectKey = 'astec/test';
+        $objectKey = 'astec/test.png';
         $expires = '+1 hour'; // URLの有効期限
 
         $cmd = $s3->getCommand('GetObject', [
