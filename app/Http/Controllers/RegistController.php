@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\File;
 use App\Models\Document;
+use Aws\S3\S3Client;
 
 class RegistController extends Controller
 {
@@ -29,13 +30,25 @@ class RegistController extends Controller
     public function registURl()
     {
 
-        $url = Storage::disk('s3')->temporaryUrl(
-            "astec/test.png",
-            now()->addHours(1) // 有効期限を設定
-        );
-        dd($url);
+        // S3バケットの情報とIAMロールによる認証情報
+        $bucket = 'astdocs';
+        $key = 'astec/test.png'; // S3オブジェクトのキー
+        $expiration = '+1 hour'; // 有効期限
 
-        return response()->download($url);
+        $s3Client = new S3Client([
+            'region' => 'ap-northeast-1',
+            'version' => 'latest',
+        ]);
+
+        $command = $s3Client->getCommand('GetObject', [
+            'Bucket' => $bucket,
+            'Key' => $key,
+        ]);
+
+        $signedUrl = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+
+
+        return $signedUrl;
     }
 
 
