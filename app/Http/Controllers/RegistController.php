@@ -39,6 +39,7 @@ class RegistController extends Controller
         $extension = $request->input("extension");
         if ($method == "post"){
             
+            
         // S3バケットの情報とIAMロールによる認証情報
         $bucket = 'astdocs';
         $key = $prefix."/".$currentTime."_".$pastID; // S3オブジェクトのキー
@@ -48,14 +49,16 @@ class RegistController extends Controller
             'region' => 'ap-northeast-1',
             'version' => 'latest',
         ]);
+        
 
         $command = $s3Client->getCommand('PutObject', [
             'Bucket' => $bucket,
             'Key' => $key,
         ]);
+        
 
         $signedUrl = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-
+        return response()->json("a");
         
         $data = [
             'url' => $signedUrl,

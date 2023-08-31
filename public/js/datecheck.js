@@ -67,7 +67,7 @@ $(document).ready(function () {
     if (!$('.errorsentence').length) {
       if (admin == "一般") {
         $.ajax({
-          url: '/admincheck/' + id,
+          url: prefix +'/admincheck/' + id,
           type: 'get',
           processData: false,
           contentType: false,
@@ -105,7 +105,7 @@ $(document).ready(function () {
     var id = $('#userid').val();
     var form = this; // フォーム要素を保持
     $.ajax({
-      url: '/admincheck/' + id,
+      url: prefix +'/admincheck/' + id,
       type: 'get',
       processData: false,
       contentType: false,
@@ -338,7 +338,7 @@ $(document).ready(function () {
 
           $.ajax({
             method: 'GET',
-            url: prefix + '/objectURL', // キー生成のためのエンドポイント
+            url:"/"+ prefix + '/objectURL', // キー生成のためのエンドポイント
             data: {
               method: "post",
               extension: fileExtension
