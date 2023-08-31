@@ -15,8 +15,8 @@ $(document).ready(function () {
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
-    var usercheck = usercheck("name", "usercheck")
-    
+    usercheck("name", "usercheck")
+
 
 
     //登録画面におけるフォームの確認
@@ -510,8 +510,8 @@ $(document).ready(function () {
     var change = ""
     var id = $("#userID").val();
     console.log(id);
-    if ($("#admineditpage").length){
-       change = "change"
+    if ($("#admineditpage").length) {
+      change = "change"
     }
     $.ajax({
       url: '/usercheck',
