@@ -24,6 +24,7 @@ class TopController extends Controller
     public function index(Request $request)
     {
         // dd($this->pagenatearray(5,3));
+        $prefix = config('prefix.prefix');
 
         //デフォルトでは25件表示をする
         $show = 25;
@@ -113,7 +114,7 @@ class TopController extends Controller
 
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata'));
+        return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix'));
     }
 
     //表示するページネーションボタンの配列を返す
@@ -143,7 +144,7 @@ class TopController extends Controller
     public function search(Request $request)
     {
 
-
+        $prefix = config('prefix.prefix');
 
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
@@ -390,7 +391,8 @@ class TopController extends Controller
             'paginate' => $paginate,
             'startdata' => $startdata,
             'enddata' => $enddata,
-            'alldata' => $alldata
+            'alldata' => $alldata,
+            'prefix' => $prefix
         ];
 
         if ($hozonn == "") {
@@ -446,15 +448,17 @@ class TopController extends Controller
 
     public function detail($id)
     {
+        $prefix = config('prefix.prefix');
         $file = File::with('users')
             ->where('過去データID', $id)
             ->orderby('バージョン', 'desc')
             ->first();
         // ファイルのダウンロード
-        return view('information.detailpage', ['file' => $file]);
+        return view('information.detailpage', compact('file','prefix'));
     }
     public function history($id)
     {
+        $prefix = config('prefix.prefix');
         $files = File::with('users')
             ->where('過去データID', $id)
             ->orderby('バージョン')->get();
@@ -465,7 +469,7 @@ class TopController extends Controller
         $file = File::where('過去データID', $id)->first();
         $count = $files->count();
         // ファイルのダウンロード
-        return view('information.historypage', ['files' => $files, 'file' => $file, 'count' => $count]);
+        return view('information.historypage',compact('files','file','count','prefix'));
     }
 
     public function imgget($id)
@@ -490,8 +494,9 @@ class TopController extends Controller
 
     public function usersettingGet()
     {
+        $prefix = config('prefix.prefix');
         $user = Auth::user();
-        return view('information.usersetting', ['user' => $user]);
+        return view('information.usersetting',compact('user','prefix'));
     }
     public function usersettingPost(Request $request)
     {
@@ -522,23 +527,22 @@ class TopController extends Controller
         $username = $request->input("username");
         $change = $request->input("change");
         $id = $request->input("id");
-        
+
         if ($change == "change") {
-            $user =User::whereRaw('BINARY name = ?', $username)
-            ->whereNot('id',$id)
-            ->first();
+            $user = User::whereRaw('BINARY name = ?', $username)
+                ->whereNot('id', $id)
+                ->first();
+        } else {
+            $user = User::whereRaw('BINARY name = ?', $username)
+                ->first();
         }
-        else{
-            $user =User::whereRaw('BINARY name = ?', $username)
-            ->first();
+        // Mysqlは標準では大文字と小文字の区別がされないため、BINARYをつけることによって区別される
+        if ($user) {
+            return "重複";
+        } else {
+            return "重複無し";
         }
-            // Mysqlは標準では大文字と小文字の区別がされないため、BINARYをつけることによって区別される
-            if ($user) {
-                return "重複";
-            } else {
-                return "重複無し";
-            }
-        
+
         // Mysqlは標準では大文字と小文字の区別がされないため、BINARYをつけることによって区別される
         if (User::whereRaw('BINARY name = ?', $username)->first()) {
             return "重複";

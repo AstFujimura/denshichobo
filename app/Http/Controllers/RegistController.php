@@ -20,11 +20,12 @@ class RegistController extends Controller
 {
     public function registGet()
     {
+        $prefix = config('prefix.prefix');
         $documents = Document::where("check", "check")
             ->orderBy('order', 'asc')
             ->get();
 
-        return view('information.resistpage', compact('documents'));
+        return view('information.resistpage', compact('documents','prefix'));
     }
 
     public function registURl()

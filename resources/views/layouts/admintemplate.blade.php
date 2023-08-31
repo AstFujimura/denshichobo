@@ -26,6 +26,7 @@
         <a href="{{route('adminGet')}}" class="logoelement01">
             管理画面
         </a>
+        <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
 </header>
 <div class="menu001">

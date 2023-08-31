@@ -17,13 +17,14 @@ class AdminController extends Controller
     //管理者画面に進む時
     public function adminGet()
     {
+        $prefix = config('prefix.prefix');
         //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
         if (Auth::user()->管理 == "管理") {
             //astecユーザーを表示しないため
             $users = User::where('id', '>=', 2)
                 ->where('削除', '')
                 ->get();
-            return view('admin.adminpage', ['users' => $users]);
+            return view('admin.adminpage',compact('users','prefix'));
         } else {
             return redirect()->route('topGet');
         }
@@ -36,8 +37,9 @@ class AdminController extends Controller
 
     public function adminregistGet()
     {
+        $prefix = config('prefix.prefix');
         if (Auth::user()->管理 == "管理") {
-            return view('admin.adminregist');
+            return view('admin.adminregist',compact('prefix'));
         } else {
             return redirect()->route('topGet');
         }
@@ -74,6 +76,7 @@ class AdminController extends Controller
 
     public function admineditGet($id)
     {
+        $prefix = config('prefix.prefix');
         if (Auth::user()->管理 == "管理") {
             $user = User::where('id', '=', $id)->first();
             if (!$user) {
@@ -82,7 +85,8 @@ class AdminController extends Controller
             $data = [
                 'user' => $user,
                 'admin' => "",
-                'normal' => ""
+                'normal' => "",
+                'prefix' => $prefix
             ];
             if ($user->管理 == "管理") {
                 $data['admin'] = "selected";
@@ -120,7 +124,7 @@ class AdminController extends Controller
 
     public function adminresetPost($id)
     {
-
+        $prefix = config('prefix.prefix');
         $user = User::find($id);
         if (!$user) {
             return response()->json(['message' => 'ユーザーが見つかりません'], 404);
@@ -131,7 +135,7 @@ class AdminController extends Controller
             $user->password = Hash::make($password);
             $user->パスワードリセット時 = Carbon::now();
             $user->save();
-            return view('admin.adminreset', ['password' => $password]);
+            return view('admin.adminreset', compact('password','prefix'));
         } else {
             return redirect()->route("errorGet", ['code' => 'P127262']);
         }
@@ -194,8 +198,9 @@ class AdminController extends Controller
 
     public function admindocumentGet()
     {
+        $prefix = config('prefix.prefix');
         $documents = Document::orderBy('order', 'asc')->get();
-        return view("admin.admindocument", compact("documents"));
+        return view("admin.admindocument", compact("documents",'prefix'));
     }
 
     public function admindocumentPost(Request $request)
