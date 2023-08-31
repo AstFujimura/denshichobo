@@ -8,6 +8,7 @@
 
  
 </head>
+<input type="hidden" id="prefix" value="{{$prefix}}">
 
 <div class="container">
     <div class="row justify-content-center mt-5">

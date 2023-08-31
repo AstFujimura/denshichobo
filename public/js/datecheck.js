@@ -1,4 +1,5 @@
 $(document).ready(function () {
+  var prefix = $('#prefix').val();
 
   $('#myForm').submit(function (event) {
     //値の入力時に不正なデータがある場合はalertがtrueになる
@@ -327,11 +328,31 @@ $(document).ready(function () {
       if (title.trim() == '登録') {
 
         if (confirm("本当に登録しますか？")) {
-          history.pushState(null, null, '/error/K183623');
+          history.pushState(null, null, prefix+'/error/K183623');
           var file = $('#file')[0].files[0];
           // ファイル名から拡張子を取得
           var fileName = file.name;
           var fileExtension = getExtension(fileName);
+
+
+          $.ajax({
+            method: 'GET',
+            url: prefix + '/objectURL', // キー生成のためのエンドポイント
+            data: {
+              method: "post",
+              extension: fileExtension
+            },
+            success: function (data) {
+              console.log(data)              
+            },
+            error: function (error) {
+              console.error('Key generation error:', error);
+            }
+          });
+
+
+
+
           console.log(fileExtension);
 
           // this.submit(); // フォームの送信を実行

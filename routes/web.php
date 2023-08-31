@@ -65,6 +65,9 @@ Route::get('/regist',[RegistController::class,'registGet'])->name('registGet');
 // 新規登録ページにポストで情報を投げた時
 Route::post('/regist',[RegistController::class,'registPost'])->name('registPost');
 
+Route::get('/objectURL',[RegistController::class,'registURl'])->name('registURl');
+
+
 // 変更ページ
 Route::get('/edit/{path}',[EditController::class,'editGet'])->name('editGet');
 // 変更ページにポストで情報を投げた時

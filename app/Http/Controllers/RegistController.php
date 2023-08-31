@@ -28,12 +28,20 @@ class RegistController extends Controller
         return view('information.resistpage', compact('documents','prefix'));
     }
 
-    public function registURl()
+    public function registURl(Request $request)
     {
+        $now = Carbon::now();
+        $currentTime = $now->format('YmdHis');
+        $pastID = $this->generateRandomCode();
 
+        $prefix = config('prefix.prefix');
+        $method = $request->input("method");
+        $extension = $request->input("extension");
+        if ($method == "post"){
+            
         // S3バケットの情報とIAMロールによる認証情報
         $bucket = 'astdocs';
-        $key = 'astec/test.png'; // S3オブジェクトのキー
+        $key = $prefix."/".$currentTime."_".$pastID; // S3オブジェクトのキー
         $expiration = '+1 hour'; // 有効期限
 
         $s3Client = new S3Client([
@@ -41,12 +49,27 @@ class RegistController extends Controller
             'version' => 'latest',
         ]);
 
-        $command = $s3Client->getCommand('GetObject', [
+        $command = $s3Client->getCommand('PutObject', [
             'Bucket' => $bucket,
             'Key' => $key,
         ]);
 
         $signedUrl = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+
+        
+        $data = [
+            'url' => $signedUrl,
+            'ID' => $pastID
+        ];
+        return response()->json($data);
+
+        }
+        else if ($method == "post"){
+
+        }
+        else if ($method == "post"){
+
+        }
 
 
         return view('information.test', ['signedUrl' => $signedUrl]);
