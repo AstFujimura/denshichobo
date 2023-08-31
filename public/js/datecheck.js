@@ -328,7 +328,7 @@ $(document).ready(function () {
 
         if (confirm("本当に登録しますか？")) {
           history.pushState(null, null, '/error/K183623');
-          var file = $('#form')[0].files[0];
+          var file = $('#file')[0].files[0];
           console.log(file.type);
 
           // this.submit(); // フォームの送信を実行
