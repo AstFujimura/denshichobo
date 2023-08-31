@@ -242,7 +242,7 @@ $(document).ready(function () {
   //torihikisakiselectには表示するセレクトボックスのid
   function torihikiselect(searchText, torihikisakiselect) {
     $.ajax({
-      url: '/torihikisaki/',
+      url: '/'+prefix+'/torihikisaki/',
       method: 'GET',
       data: { search: searchText },
       success: function (response) {
