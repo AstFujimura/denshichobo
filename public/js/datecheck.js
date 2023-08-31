@@ -15,7 +15,7 @@ $(document).ready(function () {
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
-    var usercheck = usercheck("name", "usercheck")
+    usercheck("name", "usercheck")
     
 
 
