@@ -16,7 +16,7 @@ $(document).ready(function () {
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
-    var usercheck = usercheck("name", "usercheck")
+    usercheck("name", "usercheck")
 
 
 
@@ -328,7 +328,7 @@ $(document).ready(function () {
       if (title.trim() == '登録') {
 
         if (confirm("本当に登録しますか？")) {
-          history.pushState(null, null, prefix+'/error/K183623');
+          history.pushState(null, null, '/error/K183623');
           var file = $('#file')[0].files[0];
           // ファイル名から拡張子を取得
           var fileName = file.name;
@@ -343,7 +343,7 @@ $(document).ready(function () {
               extension: fileExtension
             },
             success: function (data) {
-              console.log(data)              
+              console.log(data)
             },
             error: function (error) {
               console.error('Key generation error:', error);
