@@ -1,5 +1,6 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
+  console.log(prefix);
 
   $('#myForm').submit(function (event) {
     //値の入力時に不正なデータがある場合はalertがtrueになる
