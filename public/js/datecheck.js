@@ -328,7 +328,7 @@ $(document).ready(function () {
       if (title.trim() == '登録') {
 
         if (confirm("本当に登録しますか？")) {
-          history.pushState(null, null, prefix+'/error/K183623');
+          history.pushState(null, null, '/error/K183623');
           var file = $('#file')[0].files[0];
           // ファイル名から拡張子を取得
           var fileName = file.name;
@@ -337,7 +337,7 @@ $(document).ready(function () {
 
           $.ajax({
             method: 'GET',
-            url: prefix + '/objectURL', // キー生成のためのエンドポイント
+            url: '/objectURL', // キー生成のためのエンドポイント
             data: {
               method: "post",
               extension: fileExtension
