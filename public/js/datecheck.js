@@ -328,7 +328,10 @@ $(document).ready(function () {
 
         if (confirm("本当に登録しますか？")) {
           history.pushState(null, null, '/error/K183623');
-          this.submit(); // フォームの送信を実行
+          var file = $('.form')[0].files[0];
+          console.log(file.type);
+
+          // this.submit(); // フォームの送信を実行
         }
       }
       else {
