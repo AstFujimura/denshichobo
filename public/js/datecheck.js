@@ -16,7 +16,7 @@ $(document).ready(function () {
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
     var usercheck = usercheck("name", "usercheck")
-    
+
 
 
     //登録画面におけるフォームの確認
@@ -329,7 +329,10 @@ $(document).ready(function () {
         if (confirm("本当に登録しますか？")) {
           history.pushState(null, null, '/error/K183623');
           var file = $('#file')[0].files[0];
-          console.log(file.type);
+          // ファイル名から拡張子を取得
+          var fileName = file.name;
+          var fileExtension = getExtension(fileName);
+          console.log(fileExtension);
 
           // this.submit(); // フォームの送信を実行
         }
@@ -342,6 +345,14 @@ $(document).ready(function () {
       }
     }
   });
+
+  function getExtension(fileName) {
+    var lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex === -1 || lastDotIndex === 0) {
+      return ""; // 拡張子がない場合は空文字を返す
+    }
+    return fileName.substring(lastDotIndex + 1);
+  }
 
 
   function kinngaku_comma(id) {
@@ -513,8 +524,8 @@ $(document).ready(function () {
     var change = ""
     var id = $("#userID").val();
     console.log(id);
-    if ($("#admineditpage").length){
-       change = "change"
+    if ($("#admineditpage").length) {
+      change = "change"
     }
     $.ajax({
       url: '/usercheck',
