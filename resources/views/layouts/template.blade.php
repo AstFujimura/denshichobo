@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/admin001.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/regist.css') }}">
-    <script src="{{asset('jquery/jquery-3.7.0.min')}}"></script>
+    <script src="{{asset('jquery/jquery-3.7.0.min.js')}}"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
     </noscript>
