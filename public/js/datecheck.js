@@ -66,7 +66,7 @@ $(document).ready(function () {
     if (!$('.errorsentence').length) {
       if (admin == "一般") {
         $.ajax({
-          url: prefix +'/admincheck/' + id,
+          url: prefix + '/admincheck/' + id,
           type: 'get',
           processData: false,
           contentType: false,
@@ -104,7 +104,7 @@ $(document).ready(function () {
     var id = $('#userid').val();
     var form = this; // フォーム要素を保持
     $.ajax({
-      url: prefix +'/admincheck/' + id,
+      url: prefix + '/admincheck/' + id,
       type: 'get',
       processData: false,
       contentType: false,
@@ -241,7 +241,7 @@ $(document).ready(function () {
   //torihikisakiselectには表示するセレクトボックスのid
   function torihikiselect(searchText, torihikisakiselect) {
     $.ajax({
-      url: '/'+prefix+'/torihikisaki/',
+      url: '/' + prefix + '/torihikisaki/',
       method: 'GET',
       data: { search: searchText },
       success: function (response) {
@@ -337,13 +337,26 @@ $(document).ready(function () {
 
           $.ajax({
             method: 'GET',
-            url:"/"+ prefix + '/objectURL', // キー生成のためのエンドポイント
+            url: "/" + prefix + '/objectURL', // キー生成のためのエンドポイント
             data: {
               method: "post",
               extension: fileExtension
             },
             success: function (data) {
-              console.log(data)
+              // ファイルをS3にアップロード
+              $.ajax({
+                type: 'PUT',
+                url: data.url,
+                data: file,
+                contentType: file.type,
+                processData: false,
+                success: function () {
+                  console.log('アップロード成功');
+                },
+                error: function () {
+                  console.error('アップロードエラー');
+                }
+              });
             },
             error: function (error) {
               console.error('Key generation error:', error);
