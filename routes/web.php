@@ -23,7 +23,10 @@ use Illuminate\Support\Facades\Config;
 |
 */
 
-
+Route::get('/', function () {
+    // ルート名が"topGet"のルートにリダイレクト
+    return redirect()->route('topGet');
+});
 $prefix = config('prefix.prefix');
 Route::prefix($prefix)->group(function () {
 

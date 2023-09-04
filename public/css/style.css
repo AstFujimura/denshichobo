@@ -578,6 +578,11 @@ a {
   width: 40px;
 }
 
+.updater,
+.creater{
+  width: 75px;
+}
+
 .filehennkou {
   width: 100px;
   text-align: center;

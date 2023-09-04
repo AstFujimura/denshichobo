@@ -64,6 +64,15 @@ class TestController extends Controller
             }
         }
 
+        else if ($num == -11){
+            $files = File::all();
+            foreach ($files as $file){
+                $file->更新者ID = $file->保存者ID;
+                $file->save();
+            }
+
+        }
+
 
         return redirect()->route("topGet");
 

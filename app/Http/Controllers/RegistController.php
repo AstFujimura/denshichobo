@@ -147,6 +147,7 @@ class RegistController extends Controller
         $file->金額 = $kinngaku;
         $file->書類ID = $syorui;
         $file->保存者ID = Auth::user()->id;
+        $file->更新者ID = Auth::user()->id;
         $file->ファイルパス = $filepath;
         $file->ファイル形式 = $extension;
         $file->過去データID = $pastID;

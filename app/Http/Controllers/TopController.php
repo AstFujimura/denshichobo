@@ -47,8 +47,10 @@ class TopController extends Controller
 
         if ($admin == "一般") {
             $files = DB::table('files')
-                ->select('files.*', 'documents.書類')
+                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+                ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
+                ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -56,8 +58,10 @@ class TopController extends Controller
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $files = DB::table('files')
-                ->select('files.*', 'documents.書類')
+                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+                ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
+                ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -115,7 +119,7 @@ class TopController extends Controller
 
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix','server'));
+        return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server'));
     }
 
     //表示するページネーションボタンの配列を返す
@@ -158,16 +162,20 @@ class TopController extends Controller
             ->get();
         if ($admin == "一般") {
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類')
+                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+                ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
+                ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->where('files.最新フラグ', '最新')
                 ->where('files.保存者ID', $userId)
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類')
                 ->where('files.最新フラグ', '最新')
+                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+                ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
+                ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->orderBy('files.日付', 'desc');
         }
 
@@ -203,7 +211,8 @@ class TopController extends Controller
         $kennsakuword = $request->input('kennsakuword');
         $hozonn = $request->input('hozonn');
         $deleteOrzenken = $request->input('deleteOrzenken');
-        $registuser = $request->input('registuser');
+        $updater = $request->input('updater');
+        $creater = $request->input('creater');
         $selectdata = $request->input('selectdata');
 
 
@@ -212,8 +221,12 @@ class TopController extends Controller
             $syoruikubunn = "%%";
         }
         //値が入っていないときはすべてのユーザーにするために%%を入れる
-        if (!$registuser) {
-            $registuser = "%%";
+        if (!$updater) {
+            $updater = "%%";
+        }
+        //値が入っていないときはすべてのユーザーにするために%%を入れる
+        if (!$creater) {
+            $creater = "%%";
         }
         //値が入っていないときはすべてのユーザーにするために%%を入れる
         if (!$teisyutu) {
@@ -224,7 +237,8 @@ class TopController extends Controller
 
             //新たにcheckedというカラムを追加する（一時的に）
             //チェックされたユーザーが一致した場合値はcheckedを付与する
-            $user->selected = ($user->id == $registuser) ? 'selected' : '';
+            $user->updaterselected = ($user->id == $updater) ? 'selected' : '';
+            $user->createrselected = ($user->id == $creater) ? 'selected' : '';
         }
 
         foreach ($documents as $document) {
@@ -274,17 +288,14 @@ class TopController extends Controller
             ->where('files.提出', 'like', $teisyutu)
             ->where('files.保存', 'like', "%" . $hozonn . "%")
             ->where('files.備考', 'like', "%" . $kennsakuword . "%")
-            ->where('files.保存者ID', 'like', $registuser)
+            ->where('files.更新者ID', 'like', $updater)
+            ->where('files.保存者ID', 'like', $creater)
             ->where('files.削除フラグ', 'like', $selectdata);
 
         $alldata = $files->count();
 
         $files = $files->paginate($show);
 
-        foreach ($files as $file) {
-
-            $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
-        }
         $count = $files->count();
 
         //表示件数の最大値と最小値
@@ -453,28 +464,34 @@ class TopController extends Controller
     {
         $prefix = config('prefix.prefix');
         $server = config('prefix.server');
-        $file = File::with('users')
+        $file = DB::table('files')
+            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
+            ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+            ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
+            ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
             ->where('過去データID', $id)
             ->orderby('バージョン', 'desc')
             ->first();
         // ファイルのダウンロード
-        return view('information.detailpage', compact('file','prefix','server'));
+        return view('information.detailpage', compact('file', 'prefix', 'server'));
     }
     public function history($id)
     {
         $prefix = config('prefix.prefix');
         $server = config('prefix.server');
-        $files = File::with('users')
+        $files = DB::table('files')
+            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
+            ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
+            ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
+            ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
             ->where('過去データID', $id)
-            ->orderby('バージョン')->get();
-        foreach ($files as $file) {
+            ->orderby('バージョン', 'asc')
+            ->get();
 
-            $file->書類 = DB::table('documents')->where('id', $file->書類ID)->first()->書類;
-        }
-        $file = File::where('過去データID', $id)->first();
+
         $count = $files->count();
         // ファイルのダウンロード
-        return view('information.historypage',compact('files','file','count','prefix','server'));
+        return view('information.historypage', compact('files',  'count', 'prefix', 'server'));
     }
 
     public function imgget($id)
@@ -503,7 +520,7 @@ class TopController extends Controller
         $server = config('prefix.server');
 
         $user = Auth::user();
-        return view('information.usersetting',compact('user','prefix','server'));
+        return view('information.usersetting', compact('user', 'prefix', 'server'));
     }
     public function usersettingPost(Request $request)
     {

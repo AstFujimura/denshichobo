@@ -37,9 +37,9 @@ class EditController extends Controller
         //チェックはしてないが過去のデータをいじりたい時に選択肢に既存の書類区分がないとデフォルトで違うものになってしまう。
         //2023/08/17 芝田さん仕様
         $documents = Document::where("check", "check")
-        ->orWhere('id', $file->書類ID)
-        ->orderBy('order', 'asc')
-        ->get();
+            ->orWhere('id', $file->書類ID)
+            ->orderBy('order', 'asc')
+            ->get();
 
         $hiduke = $file->日付;
         $hiduke = substr_replace($hiduke, '/', 4, 0);
@@ -116,7 +116,15 @@ class EditController extends Controller
         //過去データIDが一致するファイルが何件あるかを格納
         $history = Filemodel::where('過去データID', $path)->get();
         $historycount = $history->count();
-        foreach ($history as $pastdata){
+
+        //最新のデータからファイルパスを取得して格納する
+        $latestdata = Filemodel::where('過去データID', $path)
+            ->where('バージョン', $historycount)
+            ->first();
+
+
+
+        foreach ($history as $pastdata) {
             $pastdata->最新フラグ = "";
             $pastdata->save();
         }
@@ -163,10 +171,7 @@ class EditController extends Controller
             $newfile->ファイルパス = $filepath;
             $newfile->ファイル変更 = "あり";
         } else {
-            //最新のデータからファイルパスを取得して格納する
-            $latestdata = Filemodel::where('過去データID', $path)
-                ->where('バージョン', $historycount)
-                ->first();
+
             $newfile->ファイルパス = $latestdata->ファイルパス;
             $newfile->ファイル形式 = $latestdata->ファイル形式;
         }
@@ -177,7 +182,8 @@ class EditController extends Controller
         $newfile->金額 = $kinngaku;
         $newfile->書類ID = $syorui;
         $newfile->提出 = $teisyutu;
-        $newfile->保存者ID = Auth::user()->id;
+        $newfile->保存者ID = $latestdata->保存者ID;
+        $newfile->更新者ID = Auth::user()->id;
         $newfile->バージョン = $version;
         $newfile->過去データID = $path;
         $newfile->備考 = $kennsakuword;
@@ -206,15 +212,16 @@ class EditController extends Controller
         }
 
         $file = Filemodel::where('過去データID', $path)
-        ->orderby('バージョン', 'desc')
-        ->first();
+            ->orderby('バージョン', 'desc')
+            ->first();
         $newdeletefile = new Filemodel();
         $newdeletefile->日付 = $file->日付;
         $newdeletefile->取引先 = $file->取引先;
         $newdeletefile->金額 = $file->金額;
         $newdeletefile->書類ID = $file->書類ID;
         $newdeletefile->提出 = $file->提出;
-        $newdeletefile->保存者ID = Auth::user()->id;
+        $newdeletefile->保存者ID = $file->保存者ID;
+        $newdeletefile->更新者ID = Auth::user()->id;
         $newdeletefile->バージョン = 9999;
         $newdeletefile->過去データID = $file->過去データID;
         $newdeletefile->備考 = $file->備考;

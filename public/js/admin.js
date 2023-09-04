@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+  var prefix = $('#prefix').val();
 
   var adddocumentCount = 1000
   $(".documenttable_body").on("drop", function (event) {
@@ -19,7 +19,7 @@ $(document).ready(function () {
     if (confirm("本当に削除しますか")) {
       // FormDataをサーバーに送信
       $.ajax({
-        url: '/admin/documentcheck/' + $id,
+        url: '/'+prefix+'/admin/documentcheck/' + $id,
         type: 'GET',
         processData: false,
         contentType: false,
@@ -29,7 +29,6 @@ $(document).ready(function () {
           }
           else {
             var deletecontainer = 'container' + $id;
-            console.log(deletecontainer);
 
             $('#' + deletecontainer).remove();
           }
@@ -131,12 +130,11 @@ $(document).ready(function () {
       }
 
     });
-    console.log(docuarray);
 
     if (confirm("本当に変更しますか。")) {
       // FormDataをサーバーに送信
       $.ajax({
-        url: '/admin/document',
+        url: '/'+prefix+'/admin/document',
         type: 'POST',
         data: JSON.stringify(docuarray),
         contentType: "application/json",
@@ -147,7 +145,7 @@ $(document).ready(function () {
         success: function (response) {
           if (response == "成功") {
             $('#save').val("save");
-            window.location.href = "/admin/document"
+            window.location.href = '/'+prefix+"/admin/document"
           }
           else {
             console.log(response)

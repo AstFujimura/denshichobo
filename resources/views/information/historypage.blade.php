@@ -34,7 +34,7 @@
     <div class="extension pale">形式</div>
     <div class="preview pale"></div>
     <div class="koushinn pale">更新日時</div>
-    <div class="koushinnsya pale">更新者</div>
+    <div class="updater pale">更新者</div>
 </div>
 
 <div class="top_table_element">
@@ -84,8 +84,8 @@
         <div class="koushinn">
             {{$file->created_at}}
         </div>
-        <div class="koushinnsya">
-            {{$file->users->name}}
+        <div class="updater">
+            {{$file->更新者}}
         </div>
     </div>
     @endif

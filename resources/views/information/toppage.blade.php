@@ -110,8 +110,17 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
         <div class="nonerequirearea">
             @if (Auth::user()->管理 == "管理")
             <div class="searchelement">
-                <div class="searchlabel">ユーザー:</div>
-                <select name="registuser" class="searchinputtext userselectbox">
+                <div class="searchlabel">更新者:</div>
+                <select name="updater" class="searchinputtext userselectbox">
+                    <option></option>
+                    @foreach($users as $user)
+                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="searchelement">
+                <div class="searchlabel">作成者:</div>
+                <select name="creater" class="searchinputtext userselectbox">
                     <option></option>
                     @foreach($users as $user)
                     <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -177,6 +186,8 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
     <div class="extension pale">形式</div>
     <div class="preview pale">PV.</div>
     <div class="hennkou pale">変更</div>
+    <div class="updater pale">更新者</div>
+    <div class="creater pale">作成者</div>
 </div>
 
 <div class="top_table_element">
@@ -214,6 +225,8 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
 
                 @endif
             </div>
+            <div class="updater">{{$file->更新者}}</div>
+            <div class="creater">{{$file->作成者}}</div>
         </div>
         @endforeach
     </div>
