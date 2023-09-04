@@ -17,5 +17,5 @@ yarn-error.log
 /.idea
 /.vscode
 
-custom.php
-prefix.php
+/config/custom.php
+/config/prefix.php
