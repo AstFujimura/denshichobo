@@ -25,6 +25,7 @@ class TopController extends Controller
     {
         // dd($this->pagenatearray(5,3));
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
 
         //デフォルトでは25件表示をする
         $show = 25;
@@ -114,7 +115,7 @@ class TopController extends Controller
 
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix'));
+        return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix','server'));
     }
 
     //表示するページネーションボタンの配列を返す
@@ -145,6 +146,7 @@ class TopController extends Controller
     {
 
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
 
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
@@ -392,7 +394,8 @@ class TopController extends Controller
             'startdata' => $startdata,
             'enddata' => $enddata,
             'alldata' => $alldata,
-            'prefix' => $prefix
+            'prefix' => $prefix,
+            'server' => $server
         ];
 
         if ($hozonn == "") {
@@ -449,16 +452,18 @@ class TopController extends Controller
     public function detail($id)
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
         $file = File::with('users')
             ->where('過去データID', $id)
             ->orderby('バージョン', 'desc')
             ->first();
         // ファイルのダウンロード
-        return view('information.detailpage', compact('file','prefix'));
+        return view('information.detailpage', compact('file','prefix','server'));
     }
     public function history($id)
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
         $files = File::with('users')
             ->where('過去データID', $id)
             ->orderby('バージョン')->get();
@@ -469,7 +474,7 @@ class TopController extends Controller
         $file = File::where('過去データID', $id)->first();
         $count = $files->count();
         // ファイルのダウンロード
-        return view('information.historypage',compact('files','file','count','prefix'));
+        return view('information.historypage',compact('files','file','count','prefix','server'));
     }
 
     public function imgget($id)
@@ -495,8 +500,10 @@ class TopController extends Controller
     public function usersettingGet()
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         $user = Auth::user();
-        return view('information.usersetting',compact('user','prefix'));
+        return view('information.usersetting',compact('user','prefix','server'));
     }
     public function usersettingPost(Request $request)
     {

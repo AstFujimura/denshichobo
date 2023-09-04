@@ -20,6 +20,8 @@ class EditController extends Controller
     public function editGet($path)
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         //過去データIDに一致する一番最新のものを取得
         $file = Filemodel::where('過去データID', $path)
             ->orderby('バージョン', 'desc')
@@ -61,7 +63,8 @@ class EditController extends Controller
             'scan' => "",
             'teisyutu' => "",
             'jyuryo' => "",
-            'prefix' => $prefix
+            'prefix' => $prefix,
+            'server' => $server
         ];
 
 

@@ -17,7 +17,9 @@ class LoginController extends Controller
     public function loginGet()
     {
         $prefix = config('prefix.prefix');
-        return view('login.login',compact('prefix'));
+        $server = config('prefix.server');
+
+        return view('login.login',compact('prefix','server'));
     }
 
     public function loginPost(Request $request)

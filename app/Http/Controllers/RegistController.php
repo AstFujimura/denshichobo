@@ -21,11 +21,13 @@ class RegistController extends Controller
     public function registGet()
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         $documents = Document::where("check", "check")
             ->orderBy('order', 'asc')
             ->get();
 
-        return view('information.resistpage', compact('documents','prefix'));
+        return view('information.resistpage', compact('documents','prefix','server'));
     }
 
     public function registURl(Request $request)
@@ -35,6 +37,8 @@ class RegistController extends Controller
         $pastID = $this->generateRandomCode();
 
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         $method = $request->input("method");
         $extension = $request->input("extension");
         if ($method == "post"){

@@ -27,7 +27,7 @@ $(document).ready(function () {
 
 
       if (confirm("本当に登録しますか？")) {
-        history.pushState(null, null, '/'+prefix+'/error/K183623');
+        history.pushState(null, null, "/"+ prefix+'/error/K183623');
         this.submit(); // フォームの送信を実行
       }
 
@@ -46,6 +46,7 @@ $(document).ready(function () {
     $("#changeerror").removeClass("errorsentence");
     var id = $('#userid').val();
     var admin = $('#admin').val();
+    var submitButton = this;
     e.preventDefault(); // フォームの送信を中止
 
     //値の入力時に不正なデータがある場合はalertがtrueになる
@@ -66,7 +67,7 @@ $(document).ready(function () {
     if (!$('.errorsentence').length) {
       if (admin == "一般") {
         $.ajax({
-          url: prefix + '/admincheck/' + id,
+          url: "/"+ prefix+'/admincheck/' + id,
           type: 'get',
           processData: false,
           contentType: false,
@@ -74,8 +75,8 @@ $(document).ready(function () {
             //残りの管理ユーザーが1人以上いる場合は続行する。
             if (response > 0) {
               if (confirm("本当に変更しますか")) {
-                history.pushState(null, null, '/error/K183623');
-                this[0].submit()
+                history.pushState(null, null, "/"+ prefix+'/error/K183623');
+                submitButton.submit()
               }
             }
             else {
@@ -86,8 +87,8 @@ $(document).ready(function () {
       }
       else if (admin == "管理") {
         if (confirm("本当に変更しますか")) {
-          history.pushState(null, null, '/error/K183623');
-          this.submit()
+          history.pushState(null, null, "/"+ prefix+'/error/K183623');
+          submitButton.submit()
         }
       }
     }
@@ -373,7 +374,7 @@ $(document).ready(function () {
       }
       else {
         if (confirm("本当に変更しますか？")) {
-          history.pushState(null, null, '/error/K183623');
+          history.pushState(null, null, "/"+ prefix+'/error/K183623');
           this.submit(); // フォームの送信を実行
         }
       }
@@ -562,7 +563,7 @@ $(document).ready(function () {
       change = "change"
     }
     $.ajax({
-      url: '/usercheck',
+      url: "/"+ prefix+'/usercheck',
       type: 'get',
       data: {
         username: nameval,

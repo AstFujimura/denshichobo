@@ -173,9 +173,13 @@
     @yield('footer')
 </footer>
 <script src="{{ asset('js/all.js') }}"></script>
-<script src="{{ asset('js/datecheck.js') }}"></script>
 <script src="{{ asset('js/style.js') }}"></script>
 <script src="{{ asset('js/admin.js') }}"></script>
+@if ($server == 'onpre')
+<script src="{{ asset('js/onpre.js') }}"></script>
+@else
+<script src="{{ asset('js/cloud.js') }}"></script>
+@endif
 </footer>
 
 

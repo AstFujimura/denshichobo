@@ -18,13 +18,15 @@ class AdminController extends Controller
     public function adminGet()
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
         if (Auth::user()->管理 == "管理") {
             //astecユーザーを表示しないため
             $users = User::where('id', '>=', 2)
                 ->where('削除', '')
                 ->get();
-            return view('admin.adminpage',compact('users','prefix'));
+            return view('admin.adminpage',compact('users','prefix','server'));
         } else {
             return redirect()->route('topGet');
         }
@@ -38,8 +40,10 @@ class AdminController extends Controller
     public function adminregistGet()
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         if (Auth::user()->管理 == "管理") {
-            return view('admin.adminregist',compact('prefix'));
+            return view('admin.adminregist',compact('prefix','server'));
         } else {
             return redirect()->route('topGet');
         }
@@ -77,6 +81,8 @@ class AdminController extends Controller
     public function admineditGet($id)
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         if (Auth::user()->管理 == "管理") {
             $user = User::where('id', '=', $id)->first();
             if (!$user) {
@@ -86,7 +92,8 @@ class AdminController extends Controller
                 'user' => $user,
                 'admin' => "",
                 'normal' => "",
-                'prefix' => $prefix
+                'prefix' => $prefix,
+                'server' => $server
             ];
             if ($user->管理 == "管理") {
                 $data['admin'] = "selected";
@@ -125,6 +132,8 @@ class AdminController extends Controller
     public function adminresetPost($id)
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         $user = User::find($id);
         if (!$user) {
             return response()->json(['message' => 'ユーザーが見つかりません'], 404);
@@ -135,7 +144,7 @@ class AdminController extends Controller
             $user->password = Hash::make($password);
             $user->パスワードリセット時 = Carbon::now();
             $user->save();
-            return view('admin.adminreset', compact('password','prefix'));
+            return view('admin.adminreset', compact('password','prefix','server'));
         } else {
             return redirect()->route("errorGet", ['code' => 'P127262']);
         }
@@ -199,8 +208,10 @@ class AdminController extends Controller
     public function admindocumentGet()
     {
         $prefix = config('prefix.prefix');
+        $server = config('prefix.server');
+
         $documents = Document::orderBy('order', 'asc')->get();
-        return view("admin.admindocument", compact("documents",'prefix'));
+        return view("admin.admindocument", compact("documents",'prefix','server'));
     }
 
     public function admindocumentPost(Request $request)

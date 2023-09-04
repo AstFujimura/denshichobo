@@ -156,7 +156,7 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
 
     <div class="pagecontainer">
         @foreach ($paginate as $pagebutton)
-        <a class={{$pagebutton["class"]}} href={{$pagebutton["a"]}}>
+        <a class={{$pagebutton["class"]}} href=/{{$prefix}}{{$pagebutton["a"]}}>
             {{$pagebutton["value"]}}
         </a>
         @endforeach
@@ -194,13 +194,13 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
             <div class="hozonn">{{$file->保存}}</div>
             <div class="bikou">{{$file->備考}}</div>
             <div class="teisei">@if ($file->バージョン != 1)
-                <div class="maru" onclick="location.href='/history/{{$file->過去データID}}';">〇</div>
+                <div class="maru" onclick="location.href='/{{$prefix}}/history/{{$file->過去データID}}';">〇</div>
                 @else
 
                 @endif
             </div>
             <div class="downloadTd">
-                <img src="{{asset('img/download_2_line.svg')}}" onclick="location.href='/download/{{$file->id}}';" class="download">
+                <img src="{{asset('img/download_2_line.svg')}}" onclick="location.href='/{{$prefix}}/download/{{$file->id}}';" class="download">
             </div>
             <div class="extension">{{$file->ファイル形式}}</div>
             <div class="preview">
@@ -210,7 +210,7 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
             </div>
             <div class="hennkou">
                 @if ($file->削除フラグ != "済")
-                <img src="{{asset('img/transfer_3_fill.svg')}}" class="download" onclick="location.href='/edit/{{$file->過去データID}}';">
+                <img src="{{asset('img/transfer_3_fill.svg')}}" class="download" onclick="location.href='/{{$prefix}}/edit/{{$file->過去データID}}';">
 
                 @endif
             </div>
