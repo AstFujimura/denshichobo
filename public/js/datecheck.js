@@ -27,7 +27,7 @@ $(document).ready(function () {
 
 
       if (confirm("本当に登録しますか？")) {
-        history.pushState(null, null, '/'+prefix+'/error/K183623');
+        history.pushState(null, null, '/' + prefix + '/error/K183623');
         this.submit(); // フォームの送信を実行
       }
 
@@ -62,36 +62,37 @@ $(document).ready(function () {
     fourBytecheck("email", "emailformat")
     usercheck("name", "usercheck")
 
-    //変更画面におけるフォームの確認
-    if (!$('.errorsentence').length) {
-      if (admin == "一般") {
-        $.ajax({
-          url: prefix + '/admincheck/' + id,
-          type: 'get',
-          processData: false,
-          contentType: false,
-          success: function (response) {
-            //残りの管理ユーザーが1人以上いる場合は続行する。
-            if (response > 0) {
-              if (confirm("本当に変更しますか")) {
-                history.pushState(null, null, '/error/K183623');
-                this[0].submit()
+
+        //変更画面におけるフォームの確認
+        if (!$('.errorsentence').length) {
+          if (admin == "一般") {
+            $.ajax({
+              url: '/' + prefix + '/admincheck/' + id,
+              type: 'get',
+              processData: false,
+              contentType: false,
+              success: function (response) {
+                //残りの管理ユーザーが1人以上いる場合は続行する。
+                if (response > 0) {
+                  if (confirm("本当に変更しますか")) {
+                    history.pushState(null, null, '/' + prefix +'/error/K183623');
+                    this[0].submit()
+                  }
+                }
+                else {
+                  $("#changeerror").addClass("errorsentence");
+                }
               }
-            }
-            else {
-              $("#changeerror").addClass("errorsentence");
+            });
+          }
+          else if (admin == "管理") {
+            if (confirm("本当に変更しますか")) {
+              history.pushState(null, null, '/' + prefix +'/error/K183623');
+              this.submit()
             }
           }
-        });
-      }
-      else if (admin == "管理") {
-        if (confirm("本当に変更しますか")) {
-          history.pushState(null, null, '/error/K183623');
-          this.submit()
         }
-      }
-    }
-  });
+    })
 
 
 
@@ -104,7 +105,7 @@ $(document).ready(function () {
     var id = $('#userid').val();
     var form = this; // フォーム要素を保持
     $.ajax({
-      url: prefix + '/admincheck/' + id,
+      url: '/' + prefix + '/admincheck/' + id,
       type: 'get',
       processData: false,
       contentType: false,
@@ -554,34 +555,35 @@ $(document).ready(function () {
 
   //エラーメッセージを出して重複がなければtrue返す
   function usercheck(namedata, errornamedata) {
-    var nameval = $("#" + namedata).val();
-    var change = ""
-    var id = $("#userID").val();
-    console.log(id);
-    if ($("#admineditpage").length) {
-      change = "change"
-    }
-    $.ajax({
-      url: '/usercheck',
-      type: 'get',
-      data: {
-        username: nameval,
-        change: change,
-        id: id
-      },
-      success: function (response) {
-        //ユーザー名が重複している場合
-        if (response == "重複") {
-          $("#" + errornamedata).addClass('errorsentence')
-          $("#" + namedata).addClass('invalid')
-          return true
-        }
-        else {
-          $("#" + errornamedata).removeClass("errorsentence");
-          return false
-        }
+      var nameval = $("#" + namedata).val();
+      var change = ""
+      var id = $("#userID").val();
+      console.log(id);
+      if ($("#admineditpage").length) {
+        change = "change"
       }
-    });
+      $.ajax({
+        url: '/' + prefix + '/usercheck',
+        type: 'get',
+        data: {
+          username: nameval,
+          change: change,
+          id: id
+        },
+        success: function (response) {
+          //ユーザー名が重複している場合
+          if (response == "重複") {
+            $("#" + errornamedata).addClass('errorsentence')
+            $("#" + namedata).addClass('invalid')
+            return true
+          }
+          else {
+            $("#" + errornamedata).removeClass("errorsentence");
+            return false
+          }
+        }
+      });
+
   }
 
 

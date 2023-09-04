@@ -57,8 +57,8 @@
         <div class="koushinn">
             {{$file->created_at}}
         </div>
-        <div class="koushinnsya">
-            {{$file->users->name}}
+        <div class="updater">
+            {{$file->更新者}}
         </div>
     </div>
 
