@@ -335,6 +335,8 @@ $(document).ready(function () {
           var fileName = file.name;
           var fileExtension = getExtension(fileName);
 
+          var hiduke = $("#hiduke").val();
+
 
 
 
@@ -360,7 +362,7 @@ $(document).ready(function () {
                     url: "/" + prefix + '/regist/cloud',
                     type: 'POST',
                     data: {
-                      hiduke: $("#hiduke").val(),
+                      hiduke: hiduke,
                       kinngaku: $("#kinngaku").val(),
                       torihikisaki: $("#torihikisaki").val(),
                       syorui: $("#syorui").val(),
