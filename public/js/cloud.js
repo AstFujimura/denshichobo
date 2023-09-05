@@ -337,7 +337,6 @@ $(document).ready(function () {
 
 
 
-
           $.ajax({
             method: 'GET',
             url: "/" + prefix + '/objectURL', // キー生成のためのエンドポイント
@@ -355,27 +354,29 @@ $(document).ready(function () {
                 contentType: file.type,
                 processData: false,
                 success: function () {
+                  const formData = new FormData();
+
+                  formData.append('hiduke',$("#hiduke").val()),
+                  formData.append('kinngaku',$("#kinngaku").val()),
+                  formData.append('torihikisaki',$("#torihikisaki").val()),
+                  formData.append('syorui',$("#syorui").val()),
+                  formData.append('teisyutu',$("#teisyutu").val()),
+                  formData.append('hozonn',$("#hozonn").val()),
+                  formData.append('kennsakuword',$("#kennsakuword").val()),
+                  formData.append('filepass',data.filepass),
+                  formData.append('pastID',data.pastID),
+                  formData.append('extension',fileExtension),
                   // ファイル以外をコントローラにアップロード
                   $.ajax({
                     url: "/" + prefix + '/regist/cloud',
                     type: 'GET',
-                    data: {
-                      hiduke: $("#hiduke").val(),
-                      kinngaku: $("#kinngaku").val(),
-                      torihikisaki: $("#torihikisaki").val(),
-                      syorui: $("#syorui").val(),
-                      teisyutu: $("#teisyutu").val(),
-                      hozonn: $("#hozonn").val(),
-                      kennsakuword: $("#kennsakuword").val(),
-                      filepass: data.filepass,
-                      pastID: data.pastID,
-                      extension: fileExtension
-                    },
+                    data: formData,
                     dataType: "json",
                     processData: false,
-                    // headers: {
-                    //   'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-                    // },
+                    contentType: false,
+                    headers: {
+                      'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+                    },
                     success: function (response) {
                       console.log(response)
                     },
