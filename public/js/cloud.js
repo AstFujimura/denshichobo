@@ -366,7 +366,7 @@ $(document).ready(function () {
                       teisyutu: $("#teisyutu").val(),
                       hozonn: $("#hozonn").val(),
                       kennsakuword: $("#kennsakuword").val(),
-                      filepass: data.Key,
+                      filepass: data.filepass,
                       pastID: data.pastID,
                       extension: fileExtension
                     },
@@ -376,17 +376,10 @@ $(document).ready(function () {
                       'X-CSRF-TOKEN': $('input[name="_token"]').val(),
                     },
                     success: function (response) {
-                      if (response == "templogin") {
-                        console.log("temp")
-                        $('.tempcontainer').addClass("tempcontainer_open")
-                      }
-                      else if (response == "下書き") {
-                        alert("下書き保存されました")
-                      }
-                      else {
-                        $("#save").val("save")
-                        window.location.href = response
-                      }
+                      window.location.href = response;
+                    },
+                    error: function () {
+                      console.error('laravelエラー');
                     }
 
                   })

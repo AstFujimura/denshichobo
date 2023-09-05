@@ -46,7 +46,7 @@ class RegistController extends Controller
             
         // S3バケットの情報とIAMロールによる認証情報
         $bucket = 'astdocs';
-        $key = $prefix."/".$currentTime."_".$pastID; // S3オブジェクトのキー
+        $key = $prefix."/".$currentTime."_".$pastID.".".$extension; // S3オブジェクトのキー
         $expiration = '+1 hour'; // 有効期限
 
         $s3Client = new S3Client([
@@ -67,7 +67,7 @@ class RegistController extends Controller
         $data = [
             'url' => $signedUrl,
             'pastID' => $pastID,
-            'Key' => $key,
+            'filepass' => $prefix."/".$currentTime."_".$pastID,
         ];
         return response()->json($data);
 
@@ -214,7 +214,7 @@ class RegistController extends Controller
         //バージョンはデフォルトで1になるのでここでは記載しない。変更の時には記述
         //最新フラグはデフォルトで最新になるのでここでは記載しない。変更の時に過去データの最新フラグを外す
         $file->save();
-        return redirect()->route('topGet');
+        return route('topGet');
     }
     public function convert($int)
     {
