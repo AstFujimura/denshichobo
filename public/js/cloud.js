@@ -27,7 +27,7 @@ $(document).ready(function () {
 
 
       if (confirm("本当に登録しますか？")) {
-        history.pushState(null, null, "/"+ prefix+'/error/K183623');
+        history.pushState(null, null, "/" + prefix + '/error/K183623');
         this.submit(); // フォームの送信を実行
       }
 
@@ -67,7 +67,7 @@ $(document).ready(function () {
     if (!$('.errorsentence').length) {
       if (admin == "一般") {
         $.ajax({
-          url: "/"+ prefix+'/admincheck/' + id,
+          url: "/" + prefix + '/admincheck/' + id,
           type: 'get',
           processData: false,
           contentType: false,
@@ -75,7 +75,7 @@ $(document).ready(function () {
             //残りの管理ユーザーが1人以上いる場合は続行する。
             if (response > 0) {
               if (confirm("本当に変更しますか")) {
-                history.pushState(null, null, "/"+ prefix+'/error/K183623');
+                history.pushState(null, null, "/" + prefix + '/error/K183623');
                 submitButton.submit()
               }
             }
@@ -87,7 +87,7 @@ $(document).ready(function () {
       }
       else if (admin == "管理") {
         if (confirm("本当に変更しますか")) {
-          history.pushState(null, null, "/"+ prefix+'/error/K183623');
+          history.pushState(null, null, "/" + prefix + '/error/K183623');
           submitButton.submit()
         }
       }
@@ -336,6 +336,8 @@ $(document).ready(function () {
           var fileExtension = getExtension(fileName);
 
 
+
+
           $.ajax({
             method: 'GET',
             url: "/" + prefix + '/objectURL', // キー生成のためのエンドポイント
@@ -353,6 +355,41 @@ $(document).ready(function () {
                 processData: false,
                 success: function () {
                   // ファイル以外をコントローラにアップロード
+                  $.ajax({
+                    url: "/" + prefix + '/regist/cloud',
+                    type: 'POST',
+                    data: {
+                      hiduke: $("#hiduke").val(),
+                      kinngaku: $("#kinngaku").val(),
+                      torihikisaki: $("#torihikisaki").val(),
+                      syorui: $("#syorui").val(),
+                      teisyutu: $("#teisyutu").val(),
+                      hozonn: $("#hozonn").val(),
+                      kennsakuword: $("#kennsakuword").val(),
+                      filepass: data.Key,
+                      pastID: data.pastID,
+                      extension: fileExtension
+                    },
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                      'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+                    },
+                    success: function (response) {
+                      if (response == "templogin") {
+                        console.log("temp")
+                        $('.tempcontainer').addClass("tempcontainer_open")
+                      }
+                      else if (response == "下書き") {
+                        alert("下書き保存されました")
+                      }
+                      else {
+                        $("#save").val("save")
+                        window.location.href = response
+                      }
+                    }
+
+                  })
                 },
                 error: function () {
                   console.error('アップロードエラー');
@@ -374,7 +411,7 @@ $(document).ready(function () {
       }
       else {
         if (confirm("本当に変更しますか？")) {
-          history.pushState(null, null, "/"+ prefix+'/error/K183623');
+          history.pushState(null, null, "/" + prefix + '/error/K183623');
           this.submit(); // フォームの送信を実行
         }
       }
@@ -563,7 +600,7 @@ $(document).ready(function () {
       change = "change"
     }
     $.ajax({
-      url: "/"+ prefix+'/usercheck',
+      url: "/" + prefix + '/usercheck',
       type: 'get',
       data: {
         username: nameval,

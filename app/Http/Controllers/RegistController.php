@@ -66,7 +66,8 @@ class RegistController extends Controller
         
         $data = [
             'url' => $signedUrl,
-            'ID' => $pastID
+            'pastID' => $pastID,
+            'Key' => $key,
         ];
         return response()->json($data);
 
@@ -149,6 +150,62 @@ class RegistController extends Controller
         $file->保存者ID = Auth::user()->id;
         $file->更新者ID = Auth::user()->id;
         $file->ファイルパス = $filepath;
+        $file->ファイル形式 = $extension;
+        $file->過去データID = $pastID;
+        $file->保存 = $hozonn;
+        $file->提出 = $teisyutu;
+        $file->備考 = $kennsaku;
+        //バージョンはデフォルトで1になるのでここでは記載しない。変更の時には記述
+        //最新フラグはデフォルトで最新になるのでここでは記載しない。変更の時に過去データの最新フラグを外す
+        $file->save();
+        return redirect()->route('topGet');
+    }
+
+    public function registcloudPost(Request $request)
+    {
+        // $request->validate([
+        //     'torihikisaki' => 'string|not_four_byte_chars',
+        //     'kennsakuword' => 'not_four_byte_chars',
+        // ], [
+
+        //     'torihikisaki.not_four_byte_chars' => '環境依存文字は使用しないでください。',
+
+        //     'kennsakuword.not_four_byte_chars' => '環境依存文字は使用しないでください。',
+        // ]);
+        $now = Carbon::now();
+        $currentTime = $now->format('YmdHis');
+
+
+
+
+        $date = $request->input('hiduke');
+        $date = str_replace('/', '', $date);
+        $torihikisaki = $request->input('torihikisaki');
+        $kinngaku = $request->input('kinngaku');
+        $kinngaku = str_replace(',', '', $kinngaku);
+        $syorui = $request->input('syorui');
+        $teisyutu = $request->input('teisyutu');
+        $hozonn = $request->input('hozonn');
+        $kennsaku = $request->input('kennsakuword');
+        $filepass = $request->input('filepass');
+        $pastID = $request->input('pastID');
+        $extension = $request->input('extension');
+
+
+        //値が入っていないときはnullを入れない
+        if (!$kennsaku) {
+            $kennsaku = "";
+        }
+
+
+        $file = new File();
+        $file->日付 = $date;
+        $file->取引先 = $torihikisaki;
+        $file->金額 = $kinngaku;
+        $file->書類ID = $syorui;
+        $file->保存者ID = Auth::user()->id;
+        $file->更新者ID = Auth::user()->id;
+        $file->ファイルパス = $filepass;
         $file->ファイル形式 = $extension;
         $file->過去データID = $pastID;
         $file->保存 = $hozonn;

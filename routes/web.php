@@ -67,6 +67,8 @@ Route::get('/torihikisaki',[TopController::class,'torihikisearch'])->name('torih
 Route::get('/regist',[RegistController::class,'registGet'])->name('registGet');
 // 新規登録ページにポストで情報を投げた時
 Route::post('/regist',[RegistController::class,'registPost'])->name('registPost');
+// 新規登録ページにポストで情報を投げた時
+Route::post('/regist/cloud',[RegistController::class,'registcloudPost'])->name('registcloudPost');
 
 Route::get('/objectURL',[RegistController::class,'registURl'])->name('registURl');
 

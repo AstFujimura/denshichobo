@@ -58,7 +58,7 @@
                 <div class="input-container">
                     <label  class="label">書類区分<span class ="requirered">*</span></label>
                     <div>
-                        <select name="syorui" class="input-field">
+                        <select name="syorui" class="input-field" id="syorui">
                             @foreach($documents as $document)
                                 <option value="{{ $document->id }}">{{ $document->書類 }}</option>
                             @endforeach
@@ -70,7 +70,7 @@
                 <div class="input-container">
                     <label  class="label">受領・提出<span class ="requirered">*</span></label>
                     <div>
-                        <select name="teisyutu" class="input-field">
+                        <select name="teisyutu" class="input-field" id="teisyutu">
                             <option>受領</option>
                             <option>提出</option>
                         </select>
@@ -80,7 +80,7 @@
                 <div class="input-container">
                     <label  class="label">保存方法<span class ="requirered">*</span></label>
                     <div>
-                        <select name="hozonn" class="input-field">
+                        <select name="hozonn" class="input-field" id="hozonn">
                             <option>電子保存</option>
                             <option>スキャナ保存</option>
                         </select>
