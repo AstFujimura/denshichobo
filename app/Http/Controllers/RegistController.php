@@ -196,6 +196,7 @@ class RegistController extends Controller
         if (!$kennsaku) {
             $kennsaku = "";
         }
+        return $date;
 
 
         $file = new File();

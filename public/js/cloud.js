@@ -376,7 +376,7 @@ $(document).ready(function () {
                       'X-CSRF-TOKEN': $('input[name="_token"]').val(),
                     },
                     success: function (response) {
-                      window.location.href = response;
+                      console.log(response)
                     },
                     error: function () {
                       console.error('laravelエラー');
