@@ -358,7 +358,7 @@ $(document).ready(function () {
                   // ファイル以外をコントローラにアップロード
                   $.ajax({
                     url: "/" + prefix + '/regist/cloud',
-                    type: 'POST',
+                    type: 'GET',
                     data: {
                       hiduke: $("#hiduke").val(),
                       kinngaku: $("#kinngaku").val(),
@@ -371,11 +371,11 @@ $(document).ready(function () {
                       pastID: data.pastID,
                       extension: fileExtension
                     },
-                    contentType:'application/x-www-form-urlencoded; charset=UTF-8',
+                    // contentType:'application/x-www-form-urlencoded; charset=UTF-8',
                     processData: false,
-                    headers: {
-                      'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-                    },
+                    // headers: {
+                    //   'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+                    // },
                     success: function (response) {
                       console.log(response)
                     },
