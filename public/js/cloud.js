@@ -369,7 +369,7 @@ $(document).ready(function () {
                   // ファイル以外をコントローラにアップロード
                   $.ajax({
                     url: "/" + prefix + '/regist/cloud',
-                    type: 'GET',
+                    type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
