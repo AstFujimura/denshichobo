@@ -178,7 +178,7 @@ class RegistController extends Controller
 
 
 
-        $date = $request->input('hiduke');
+        $date = $request->get('hiduke');
         $date = str_replace('/', '', $date);
         $torihikisaki = $request->input('torihikisaki');
         $kinngaku = $request->input('kinngaku');
