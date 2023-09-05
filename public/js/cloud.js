@@ -371,7 +371,6 @@ $(document).ready(function () {
                     url: "/" + prefix + '/regist/cloud',
                     type: 'GET',
                     data: formData,
-                    dataType: "json",
                     processData: false,
                     contentType: false,
                     headers: {
