@@ -371,7 +371,7 @@ $(document).ready(function () {
                       pastID: data.pastID,
                       extension: fileExtension
                     },
-                    // contentType:'application/x-www-form-urlencoded; charset=UTF-8',
+                    dataType: "json",
                     processData: false,
                     // headers: {
                     //   'X-CSRF-TOKEN': $('input[name="_token"]').val(),
