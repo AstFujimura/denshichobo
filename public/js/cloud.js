@@ -360,7 +360,7 @@ $(document).ready(function () {
                     url: "/" + prefix + '/regist/cloud',
                     type: 'POST',
                     data: {
-                      hiduke: $("#hiduke").val(),
+                      hiduke: $("#hiduke").serialize(),
                       kinngaku: $("#kinngaku").val(),
                       torihikisaki: $("#torihikisaki").val(),
                       syorui: $("#syorui").val(),
