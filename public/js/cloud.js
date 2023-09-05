@@ -360,7 +360,7 @@ $(document).ready(function () {
                     url: "/" + prefix + '/regist/cloud',
                     type: 'POST',
                     data: {
-                      hiduke: $("#hiduke").serialize(),
+                      hiduke: $("#hiduke").val(),
                       kinngaku: $("#kinngaku").val(),
                       torihikisaki: $("#torihikisaki").val(),
                       syorui: $("#syorui").val(),
@@ -371,7 +371,8 @@ $(document).ready(function () {
                       pastID: data.pastID,
                       extension: fileExtension
                     },
-                    contentType: false,
+                    contentType: 'application/json',
+                    processData: false,
                     headers: {
                       'X-CSRF-TOKEN': $('input[name="_token"]').val(),
                     },
