@@ -371,7 +371,6 @@ $(document).ready(function () {
                       pastID: data.pastID,
                       extension: fileExtension
                     },
-                    processData: false,
                     contentType: false,
                     headers: {
                       'X-CSRF-TOKEN': $('input[name="_token"]').val(),
