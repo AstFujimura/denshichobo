@@ -346,6 +346,7 @@ $(document).ready(function () {
               extension: fileExtension
             },
             success: function (data) {
+              console.log($("#hiduke").val());
               // ファイルをS3にアップロード
               $.ajax({
                 type: 'PUT',
