@@ -335,72 +335,80 @@ $(document).ready(function () {
           var fileName = file.name;
           var fileExtension = getExtension(fileName);
 
+          //帳簿変更時にファイル変更がない場合
+          if ($('#file').val() == '') {
+            this.submit(); // フォームの送信を実行
+          }
+          //帳簿保存または帳簿変更でファイル変更がある場合
+          //サーバーサイドでのアップロードではメモリを消費してしまうのでフロントから直接アップロード
+          else {
+            //S3の署名付きURLを取得するためのエンドポイントにアクセス
+            $.ajax({
+              method: 'GET',
+              url: "/" + prefix + '/objectURL', // キー生成のためのエンドポイント
+              data: {
+                method: "post",
+                extension: fileExtension
+              },
+              success: function (data) {
+                console.log($("#hiduke").val());
+                //署名付きURLを取得したらそれをもとにファイルをS3にアップロード
+                $.ajax({
+                  type: 'PUT',
+                  url: data.url,
+                  data: file,
+                  contentType: file.type,
+                  processData: false,
+                  success: function () {
+                    const formData = new FormData();
 
+                    //フォームの内容をformdataにappendしてデータの作成
+                    formData.append('hiduke', $("#hiduke").val()),
+                      formData.append('kinngaku', $("#kinngaku").val()),
+                      formData.append('torihikisaki', $("#torihikisaki").val()),
+                      formData.append('syorui', $("#syorui").val()),
+                      formData.append('teisyutu', $("#teisyutu").val()),
+                      formData.append('hozonn', $("#hozonn").val()),
+                      formData.append('kennsakuword', $("#kennsakuword").val()),
+                      formData.append('filepass', data.filepass),
+                      formData.append('pastID', data.pastID),
+                      formData.append('extension', fileExtension),
+                      // ファイルの内容以外をサーバーに送信
+                      $.ajax({
+                        url: "/" + prefix + '/regist/cloud',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                          'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+                        },
+                        success: function (response) {
+                          console.log(response)
+                        },
+                        error: function () {
+                          console.error('laravelエラー');
+                        }
 
-          $.ajax({
-            method: 'GET',
-            url: "/" + prefix + '/objectURL', // キー生成のためのエンドポイント
-            data: {
-              method: "post",
-              extension: fileExtension
-            },
-            success: function (data) {
-              console.log($("#hiduke").val());
-              // ファイルをS3にアップロード
-              $.ajax({
-                type: 'PUT',
-                url: data.url,
-                data: file,
-                contentType: file.type,
-                processData: false,
-                success: function () {
-                  const formData = new FormData();
-
-                  formData.append('hiduke',$("#hiduke").val()),
-                  formData.append('kinngaku',$("#kinngaku").val()),
-                  formData.append('torihikisaki',$("#torihikisaki").val()),
-                  formData.append('syorui',$("#syorui").val()),
-                  formData.append('teisyutu',$("#teisyutu").val()),
-                  formData.append('hozonn',$("#hozonn").val()),
-                  formData.append('kennsakuword',$("#kennsakuword").val()),
-                  formData.append('filepass',data.filepass),
-                  formData.append('pastID',data.pastID),
-                  formData.append('extension',fileExtension),
-                  // ファイル以外をコントローラにアップロード
-                  $.ajax({
-                    url: "/" + prefix + '/regist/cloud',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                      'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-                    },
-                    success: function (response) {
-                      console.log(response)
-                    },
-                    error: function () {
-                      console.error('laravelエラー');
-                    }
-
-                  })
-                },
-                error: function () {
-                  console.error('アップロードエラー');
-                }
-              });
-            },
-            error: function (error) {
-              console.error('Key generation error:', error);
-            }
-          });
+                      })
+                  },
+                  error: function () {
+                    console.error('アップロードエラー');
+                  }
+                });
+              },
+              error: function (error) {
+                console.error('Key generation error:', error);
+              }
+            });
+          }
 
 
 
 
           console.log(fileExtension);
 
-          // this.submit(); // フォームの送信を実行
+
         }
       }
       else {
