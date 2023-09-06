@@ -453,22 +453,22 @@ class TopController extends Controller
     {
         $file = File::where('id', $id)->first();
         if (config('prefix.server') == "cloud") {
-            // S3バケットの情報
-            $bucket = 'astdocs';
+
             if ($file->ファイル形式 == "") {
                 $key = $file->ファイルパス;
             } else {
                 $key = $file->ファイルパス . "." . $file->ファイル形式;
             }
-            return $key;
+            $parts = explode('/', $key);
+            $filename = end($parts); // 最後の要素を取得
+            // return $filename;
 
             // S3から一時的にファイルをダウンロードして保存
             $tempFilePath = tempnam(sys_get_temp_dir(), 's3_download_');
-            Storage::disk('s3')->get($key, $tempFilePath);
-    
-            // レスポンスを作成してファイルをダウンロードさせる
-            return response()->download($tempFilePath, $key)->deleteFileAfterSend(true);
+            Storage::disk('s3')->get($filename, $tempFilePath);
 
+            // レスポンスを作成してファイルをダウンロードさせる
+            return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
         } else {
             //拡張子がないファイルの場合分け
             if ($file->ファイル形式 == "") {
