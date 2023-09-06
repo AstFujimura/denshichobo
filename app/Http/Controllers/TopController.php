@@ -515,6 +515,7 @@ class TopController extends Controller
             $filePath = $img->ファイルパス . "." . $img->ファイル形式;
             $expires = '+1 hour'; // 有効期限を設定
             $path = $s3Client->getObjectUrl($bucket, $filePath, $expires);
+            return $path;
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
         }
