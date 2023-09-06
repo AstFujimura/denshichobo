@@ -461,11 +461,10 @@ class TopController extends Controller
             }
             $parts = explode('/', $key);
             $filename = end($parts); // 最後の要素を取得
-            return $filename;
 
             // S3から一時的にファイルをダウンロードして保存
             $tempFilePath = tempnam(sys_get_temp_dir(), 's3_download_');
-            Storage::disk('s3')->get($filename, $tempFilePath);
+            Storage::disk('s3')->get($key, $tempFilePath);
 
             // レスポンスを作成してファイルをダウンロードさせる
             return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
