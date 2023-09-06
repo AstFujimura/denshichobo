@@ -462,8 +462,8 @@ class TopController extends Controller
             $parts = explode('/', $key);
             $filename = end($parts); // 最後の要素を取得
 
-            return Storage::disk('s3')->get($key);
-
+            Storage::disk('s3')->get($key);
+            return response()->download($file);
 
             // // S3からファイルをダウンロード
             // $filePath = $key;
