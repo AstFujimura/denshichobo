@@ -27,57 +27,61 @@ class RegistController extends Controller
             ->orderBy('order', 'asc')
             ->get();
 
-        return view('information.resistpage', compact('documents','prefix','server'));
+        return view('information.resistpage', compact('documents', 'prefix', 'server'));
     }
 
     public function registURl(Request $request)
     {
         $now = Carbon::now();
         $currentTime = $now->format('YmdHis');
-        $pastID = $this->generateRandomCode();
+
 
         $prefix = config('prefix.prefix');
         $server = config('prefix.server');
 
         $method = $request->input("method");
         $extension = $request->input("extension");
-        if ($method == "post"){
-            
-            
+        $ID = $request->input("pastID");
+
+        if ($method == "post") {
+            $pastID = $this->generateRandomCode();
+        } else if ($method == "edit") {
+            $pastID = $ID;
+        }
+
+
+
         // S3バケットの情報とIAMロールによる認証情報
         $bucket = 'astdocs';
-        $key = $prefix."/".$currentTime."_".$pastID.".".$extension; // S3オブジェクトのキー
+        $key = $prefix . "/" . $currentTime . "_" . $pastID . "." . $extension; // S3オブジェクトのキー
         $expiration = '+1 hour'; // 有効期限
 
         $s3Client = new S3Client([
             'region' => 'ap-northeast-1',
             'version' => 'latest',
         ]);
-        
+
 
         $command = $s3Client->getCommand('PutObject', [
             'Bucket' => $bucket,
             'Key' => $key,
         ]);
-        
+
 
         $signedUrl = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-        
-        
+
+
         $data = [
             'url' => $signedUrl,
             'pastID' => $pastID,
-            'filepass' => $prefix."/".$currentTime."_".$pastID,
+            'filepass' => $prefix . "/" . $currentTime . "_" . $pastID,
         ];
         return response()->json($data);
 
-        }
-        else if ($method == "post"){
 
-        }
-        else if ($method == "post"){
 
-        }
+
+
 
 
         return view('information.test', ['signedUrl' => $signedUrl]);
@@ -161,19 +165,14 @@ class RegistController extends Controller
         return redirect()->route('topGet');
     }
 
+    //クラウドでjqueryから直接アップロードされる場合の機能
     public function registcloudPost(Request $request)
     {
-        // $request->validate([
-        //     'torihikisaki' => 'string|not_four_byte_chars',
-        //     'kennsakuword' => 'not_four_byte_chars',
-        // ], [
 
-        //     'torihikisaki.not_four_byte_chars' => '環境依存文字は使用しないでください。',
-
-        //     'kennsakuword.not_four_byte_chars' => '環境依存文字は使用しないでください。',
-        // ]);
         $now = Carbon::now();
         $currentTime = $now->format('YmdHis');
+        //デフォルトでバージョンを1にしておく
+        $version = 1;
 
 
 
@@ -197,6 +196,16 @@ class RegistController extends Controller
             $kennsaku = "";
         }
 
+        if (File::where("過去データID", $pastID)->first()) {
+            //最新のデータからファイルパスを取得して格納する
+            $latestdata = File::where('過去データID', $pastID)
+                ->orderBy('バージョン', "desc")
+                ->first();
+            $latestdata->最新フラグ = "";
+            $latestdata->save();
+            $version = $latestdata->バージョン + 1;
+        }
+
 
         $file = new File();
         $file->日付 = $date;
@@ -205,14 +214,14 @@ class RegistController extends Controller
         $file->書類ID = $syorui;
         $file->保存者ID = Auth::user()->id;
         $file->更新者ID = Auth::user()->id;
+        $file->バージョン = $version;
         $file->ファイルパス = $filepass;
         $file->ファイル形式 = $extension;
         $file->過去データID = $pastID;
         $file->保存 = $hozonn;
         $file->提出 = $teisyutu;
         $file->備考 = $kennsaku;
-        //バージョンはデフォルトで1になるのでここでは記載しない。変更の時には記述
-        //最新フラグはデフォルトで最新になるのでここでは記載しない。変更の時に過去データの最新フラグを外す
+        //最新フラグはデフォルトで最新になるのでここでは記載しない。
         $file->save();
         return route('topGet');
     }

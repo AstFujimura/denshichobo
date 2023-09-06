@@ -342,13 +342,24 @@ $(document).ready(function () {
         //帳簿保存または帳簿変更でファイル変更がある場合
         //サーバーサイドでのアップロードではメモリを消費してしまうのでフロントから直接アップロード
         else {
+          //帳簿変更の場合ajaxで署名付きURLと一緒に取得する過去データIDは既存のものになる
+          //#registは帳簿保存画面のpagetitleについたidである
+          if ($('#regist').length){
+            var method = "post"
+            var pastID = ""
+          }
+          else{
+            var method = "edit"
+            var pastID = $('#id').val()
+          }
           //S3の署名付きURLを取得するためのエンドポイントにアクセス
           $.ajax({
             method: 'GET',
             url: "/" + prefix + '/objectURL', // キー生成のためのエンドポイント
             data: {
-              method: "post",
-              extension: fileExtension
+              method: method,
+              extension: fileExtension,
+              pastID: pastID
             },
             success: function (data) {
               console.log($("#hiduke").val());
@@ -384,7 +395,7 @@ $(document).ready(function () {
                         'X-CSRF-TOKEN': $('input[name="_token"]').val(),
                       },
                       success: function (response) {
-                        console.log(response)
+                        window.location.href = response;
                       },
                       error: function () {
                         console.error('laravelエラー');
