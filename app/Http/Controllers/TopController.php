@@ -460,23 +460,14 @@ class TopController extends Controller
             } else {
                 $key = $file->ファイルパス . "." . $file->ファイル形式;
             }
-            $expiration = '+1 hour'; // 有効期限
-            $s3Client = new S3Client([
-                'region' => 'ap-northeast-1',
-                'version' => 'latest',
-            ]);
 
-            $s3Object  = $s3Client->getCommand('GetObject', [
-                'Bucket' => $bucket,
-                'Key' => $key
-            ]);
-            // ファイルをユーザーのローカルコンピューターにダウンロードさせる
-            $headers = [
-                'Content-Type' => 'application/octet-stream',
-                'Content-Disposition' => 'attachment; filename="' . $key . '"',
-            ];
+            // S3から一時的にファイルをダウンロードして保存
+            $tempFilePath = tempnam(sys_get_temp_dir(), 's3_download_');
+            Storage::disk('s3')->get($key, $tempFilePath);
+    
+            // レスポンスを作成してファイルをダウンロードさせる
+            return response()->download($tempFilePath, $key)->deleteFileAfterSend(true);
 
-            return Storage::disk('s3')->download($key);
         } else {
             //拡張子がないファイルの場合分け
             if ($file->ファイル形式 == "") {
