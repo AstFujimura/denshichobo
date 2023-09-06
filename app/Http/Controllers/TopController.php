@@ -473,6 +473,7 @@ class TopController extends Controller
             ]);
             // 署名付きURLを生成
             $filepath = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+            return $filepath;
         } else {
             //拡張子がないファイルの場合分け
             if ($file->ファイル形式 == "") {
@@ -481,8 +482,6 @@ class TopController extends Controller
                 $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
             }
         }
-
-        return $filepath;
 
         // ファイルのダウンロード
         return response()->download($filepath);

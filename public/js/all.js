@@ -98,6 +98,38 @@ $(document).ready(function () {
 
   }
 
+  //ダウンロードボタンを押したとき
+  $('.downloadbutton').on('click', function () {
+    if ($('#server').val() == "cloud") {
+
+      $.ajax({
+        url: $(this).attr("id"), // データを取得するURLを指定
+        method: 'GET',
+        success: function (response) {
+          // jQueryを使用してダウンロードリンクを作成
+          const downloadLink = $('<a></a>');
+          downloadLink.attr('href', response);  // 署名付き URL を設定する
+          downloadLink.attr('download', 'example.txt');  // ファイル名
+
+          // ダウンロードリンクをクリックしてファイルをダウンロード
+          downloadLink[0].click();
+        },
+        error: function (xhr, status, error) {
+          alert("ダウンロードに失敗しました")
+        }
+      });
+
+
+
+
+
+    }
+    else {
+      window.location.href = $(this).attr("id")
+    }
+  });
+
+
 
   //プレビューボタンを押したとき
   $('.previewbutton').on('click', function () {
