@@ -476,7 +476,7 @@ class TopController extends Controller
                 'Content-Disposition' => 'attachment; filename="' . $key . '"',
             ];
 
-            return response($s3Object['Body'], 200, $headers);
+            return Storage::disk('s3')->download($key);
         } else {
             //拡張子がないファイルの場合分け
             if ($file->ファイル形式 == "") {
