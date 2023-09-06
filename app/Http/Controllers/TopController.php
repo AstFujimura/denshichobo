@@ -461,7 +461,7 @@ class TopController extends Controller
             }
             $parts = explode('/', $key);
             $filename = end($parts); // 最後の要素を取得
-            // return $filename;
+            return $filename;
 
             // S3から一時的にファイルをダウンロードして保存
             $tempFilePath = tempnam(sys_get_temp_dir(), 's3_download_');
