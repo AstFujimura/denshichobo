@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\Paginator;
+use Aws\S3\S3Client;
 
 class TopController extends Controller
 {
@@ -502,7 +503,22 @@ class TopController extends Controller
 
         $filepath = $img->ファイルパス;
         $extension = $img->ファイル形式;
-        $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
+        if (config('prefix.server') == "cloud") {
+
+            $s3Client = new S3Client([
+                'region' => 'ap-northeast-1',
+                'version' => 'latest',
+            ]);
+            // 署名付きURLを生成
+            // S3バケットの情報
+            $bucket = 'astdocs';
+            $filePath = $img->ファイルパス . "." . $img->ファイル形式;
+            $expires = '+1 hour'; // 有効期限を設定
+            $path = $s3Client->getObjectUrl($bucket, $filePath, $expires);
+        } else {
+            $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
+        }
+
 
         // 画像形式の場合は画像を表示
         if (in_array($extension, ['jpeg', 'jpg', 'JPG', 'jpeg', 'png', 'PNG', 'gif', 'bmp', 'svg'])) {

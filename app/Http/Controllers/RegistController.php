@@ -51,7 +51,7 @@ class RegistController extends Controller
 
 
 
-        // S3バケットの情報とIAMロールによる認証情報
+        // S3バケットの情報
         $bucket = 'astdocs';
         $key = $prefix . "/" . $currentTime . "_" . $pastID . "." . $extension; // S3オブジェクトのキー
         $expiration = '+1 hour'; // 有効期限
@@ -174,6 +174,10 @@ class RegistController extends Controller
         //デフォルトでバージョンを1にしておく
         $version = 1;
 
+        //デフォルトで保存者idをログインユーザーのidにしておく。
+        //変更の場合は過去の保存者idを後で代入する
+        $creater = Auth::user()->id;
+
 
 
 
@@ -204,6 +208,7 @@ class RegistController extends Controller
             $latestdata->最新フラグ = "";
             $latestdata->save();
             $version = $latestdata->バージョン + 1;
+            $creater = $latestdata->保存者ID;
         }
 
 
@@ -212,7 +217,7 @@ class RegistController extends Controller
         $file->取引先 = $torihikisaki;
         $file->金額 = $kinngaku;
         $file->書類ID = $syorui;
-        $file->保存者ID = Auth::user()->id;
+        $file->保存者ID = $creater;
         $file->更新者ID = Auth::user()->id;
         $file->バージョン = $version;
         $file->ファイルパス = $filepass;
