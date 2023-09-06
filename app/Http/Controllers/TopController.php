@@ -521,8 +521,7 @@ class TopController extends Controller
             ]);
             // 署名付きURLを生成
             $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-            
-            return $path;
+
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
         }
