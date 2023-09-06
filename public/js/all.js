@@ -5,8 +5,8 @@ $(document).ready(function () {
   $('#registpagebutton').on('click', function (event) {
     $pagetitle = $('.pagetitle').text();
     console.log($pagetitle)
-    if ($pagetitle != "帳簿変更" && $pagetitle != "帳簿保存" && $pagetitle != "変更履歴" ) {
-      window.location.href = "/" + prefix +"/regist"
+    if ($pagetitle != "帳簿変更" && $pagetitle != "帳簿保存" && $pagetitle != "変更履歴") {
+      window.location.href = "/" + prefix + "/regist"
     }
   });
 
@@ -26,10 +26,10 @@ $(document).ready(function () {
   });
 
 
-  if ($(".pagetitle").text() == "帳簿変更"){
+  if ($(".pagetitle").text() == "帳簿変更") {
     var ID = $(".pagetitle").attr("id");
     $.ajax({
-      url: "/" + prefix +'/img/' + ID, // データを取得するURLを指定
+      url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
       method: 'GET',
       xhrFields: {
         responseType: 'blob' // ファイルをBlobとして受け取る
@@ -75,39 +75,45 @@ $(document).ready(function () {
     $(".previewcontainer").empty();
     var ID = $(this).attr("id");
     $.ajax({
-      url: "/" + prefix +'/img/' + ID, // データを取得するURLを指定
+      url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
       method: 'GET',
       xhrFields: {
         responseType: 'blob' // ファイルをBlobとして受け取る
       },
       success: function (response) {
-        if (response.path){
-          console.log("ss")
-        }
-        // 取得したファイルデータを使ってPDFを表示
-        var Url = URL.createObjectURL(response);
-        if (response.type === 'application/pdf') {
-          var embed = $('<embed>');
-          embed.attr('src', Url);
-          embed.attr('width', '100%');
-          embed.attr('height', '100%');
-          embed.attr('type', 'application/pdf');
-          embed.addClass('imgset');
-
-          $('.previewcontainer').append(embed);
-        }
-        else if (response.type.startsWith('image/')) {
-          var img = $('<img>');
-          img.attr('src', Url);
-          img.attr('width', '100%');
-          img.attr('height', '100%');
-          img.addClass('imgset');
-
-          $('.previewcontainer').append(img);
+        if (contentType.indexOf('application/json') !== -1) {
+          // JSONデータの場合の処理
+          var jsonData = JSON.parse(data);
+          // JSONデータを処理するコードを記述
+          console.log(jsonData);
         }
         else {
-          $('.previewarea').text("ファイルが変更されました")
-          
+          // 取得したファイルデータを使ってPDFを表示
+          var Url = URL.createObjectURL(response);
+          if (response.type === 'application/pdf') {
+            var embed = $('<embed>');
+            embed.attr('src', Url);
+            embed.attr('width', '100%');
+            embed.attr('height', '100%');
+            embed.attr('type', 'application/pdf');
+            embed.addClass('imgset');
+
+            $('.previewcontainer').append(embed);
+          }
+          else if (response.type.startsWith('image/')) {
+            var img = $('<img>');
+            img.attr('src', Url);
+            img.attr('width', '100%');
+            img.attr('height', '100%');
+            img.addClass('imgset');
+
+            $('.previewcontainer').append(img);
+          }
+          else {
+            $('.previewarea').text("ファイルが変更されました")
+
+          }
+
         }
       },
       error: function (xhr, status, error) {
@@ -200,10 +206,10 @@ $(document).ready(function () {
       // $('.previewarea').addClass("previewopen");
     }
     else {
-      if ($(".pagetitle").text() == "帳簿変更"){
+      if ($(".pagetitle").text() == "帳簿変更") {
         $('.previewarea').html("ファイルが変更されました")
       }
-      else if ($(".pagetitle").text() == "帳簿保存"){
+      else if ($(".pagetitle").text() == "帳簿保存") {
         $('.previewarea').html("ファイルが登録されました")
       }
 
@@ -239,13 +245,13 @@ $(document).ready(function () {
       }
 
       else {
-        if ($(".pagetitle").text() == "帳簿変更"){
+        if ($(".pagetitle").text() == "帳簿変更") {
           $('.previewarea').html("ファイルが変更されました")
         }
-        else if ($(".pagetitle").text() == "帳簿保存"){
+        else if ($(".pagetitle").text() == "帳簿保存") {
           $('.previewarea').html("ファイルが登録されました")
         }
-  
+
       }
 
 
@@ -258,7 +264,7 @@ $(document).ready(function () {
   $('.deletebutton').on('click', function () {
     $id = $("#id").val();
     if (confirm("本当に削除しますか?")) {
-      window.location.href = "/" + prefix +'/delete/' + $id;
+      window.location.href = "/" + prefix + '/delete/' + $id;
     }
 
 
