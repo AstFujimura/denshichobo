@@ -101,30 +101,7 @@ $(document).ready(function () {
   //ダウンロードボタンを押したとき
   $('.downloadbutton').on('click', function () {
     if ($('#server').val() == "cloud") {
-
-      $.ajax({
-        url: $(this).attr("id"), // データを取得するURLを指定
-        method: 'GET',
-        success: function (response) {
-
-          // ダウンロードリンクを作成
-          var downloadLink = $("<a></a>")
-            .attr("href", response)
-            .attr("download", response)
-
-          // リンクをドキュメントに追加
-          $("body").append(downloadLink);
-          // ダウンロードリンクをクリックしてファイルをダウンロード
-          downloadLink[0].click();
-
-          // リンクを削除
-          downloadLink.remove();
-        },
-        error: function (xhr, status, error) {
-          alert("ダウンロードに失敗しました")
-        }
-      });
-
+      window.location.href = $(this).attr("id")
     }
     else {
       window.location.href = $(this).attr("id")
