@@ -25,7 +25,8 @@
         <a href="{{route('topGet')}}" class="logoelement01">
             電子帳簿保存システム
         </a>
-        <input type="hidden" id="prefix" value="{{$prefix}}">
+        @prefix
+        @server
     </div>
 
 

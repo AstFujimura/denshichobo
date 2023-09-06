@@ -74,23 +74,42 @@ $(document).ready(function () {
     // containerクラス内の要素を削除
     $(".previewcontainer").empty();
     var ID = $(this).attr("id");
-    $.ajax({
-      url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
-      method: 'GET',
-      xhrFields: {
-        responseType: 'blob' // ファイルをBlobとして受け取る
-      },
-      success: function (response, textStatus, xhr) {
-        // サーバーサイドからのレスポンスのContent-Typeを確認
-        var contentType = xhr.getResponseHeader('Content-Type');
-        
-        if (contentType.indexOf('application/json') !== -1) {
-          // JSONデータの場合の処理
-          var jsonData = JSON.parse(response);
-          // JSONデータを処理するコードを記述
-          console.log(jsonData);
+    if ($('#server').val() == "cloud") {
+      $.ajax({
+        url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
+        method: 'GET',
+        dataType: "json",
+        success: function (response) {
+          if (response.Content-Type === 'application/pdf') {
+            var embed = $('<embed>');
+            embed.attr('src', Url);
+            embed.attr('width', '100%');
+            embed.attr('height', '100%');
+            embed.attr('type', 'application/pdf');
+            embed.addClass('imgset');
+
+            $('.previewcontainer').append(embed);
+          }
+          else if (response.Content-Type.startsWith('image/')) {
+            var img = $('<img>');
+            img.attr('src', Url);
+            img.attr('width', '100%');
+            img.attr('height', '100%');
+            img.addClass('imgset');
+
+            $('.previewcontainer').append(img);
+          }
         }
-        else {
+      });
+    }
+    else {
+      $.ajax({
+        url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
+        method: 'GET',
+        xhrFields: {
+          responseType: 'blob' // ファイルをBlobとして受け取る
+        },
+        success: function (response) {
           // 取得したファイルデータを使ってPDFを表示
           var Url = URL.createObjectURL(response);
           if (response.type === 'application/pdf') {
@@ -117,12 +136,14 @@ $(document).ready(function () {
 
           }
 
+
+        },
+        error: function (xhr, status, error) {
+          console.error(error); // エラー処理
         }
-      },
-      error: function (xhr, status, error) {
-        console.error(error); // エラー処理
-      }
-    });
+      });
+    }
+
 
   });
 
