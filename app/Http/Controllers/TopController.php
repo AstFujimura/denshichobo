@@ -449,14 +449,42 @@ class TopController extends Controller
     }
 
     public function download($id)
+
     {
         $file = File::where('id', $id)->first();
-        //拡張子がないファイルの場合分け
-        if ($file->ファイル形式 == "") {
-            $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス;
+        if (config('prefix.server') == "cloud") {
+            // S3バケットの情報
+            $bucket = 'astdocs';
+            if ($file->ファイル形式 == "") {
+                $key = $file->ファイルパス;
+            }
+            else {
+                $key = $file->ファイルパス . "." . $file->ファイル形式;
+            }
+            $expiration = '+1 hour'; // 有効期限
+            $s3Client = new S3Client([
+                'region' => 'ap-northeast-1',
+                'version' => 'latest',
+            ]);
+
+            $command = $s3Client->getCommand('GetObject', [
+                'Bucket' => $bucket,
+                'Key' => $key
+            ]);
+            // 署名付きURLを生成
+            $filepath = $s3Client->createPresignedRequest($command, $expiration)->getUri();
         } else {
-            $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
+            //拡張子がないファイルの場合分け
+            if ($file->ファイル形式 == "") {
+                $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス;
+            } else {
+                $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
+            }
         }
+
+
+
+
         // ファイルのダウンロード
         return response()->download($filepath);
     }
@@ -491,7 +519,7 @@ class TopController extends Controller
 
 
         $count = $files->count();
-        // ファイルのダウンロード
+
         return view('information.historypage', compact('files',  'count', 'prefix', 'server'));
     }
 
@@ -503,12 +531,13 @@ class TopController extends Controller
 
         $filepath = $img->ファイルパス;
         $extension = $img->ファイル形式;
-        // S3バケットの情報
-        $bucket = 'astdocs';
-        $key = $img->ファイルパス . "." . $img->ファイル形式;
-        $expiration = '+1 hour'; // 有効期限
+
 
         if (config('prefix.server') == "cloud") {
+            // S3バケットの情報
+            $bucket = 'astdocs';
+            $key = $img->ファイルパス . "." . $img->ファイル形式;
+            $expiration = '+1 hour'; // 有効期限
 
             $s3Client = new S3Client([
                 'region' => 'ap-northeast-1',
@@ -521,7 +550,6 @@ class TopController extends Controller
             ]);
             // 署名付きURLを生成
             $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
         }
@@ -529,24 +557,21 @@ class TopController extends Controller
 
         // 画像形式の場合は画像を表示
         if (in_array($extension, ['jpeg', 'jpg', 'JPG', 'jpeg', 'png', 'PNG', 'gif', 'bmp', 'svg'])) {
-            if (config('prefix.server') == "cloud"){
-                return response()->json(['path'=>$path,'Type' => 'image/' . $extension]);
-            }
-            else {
+            if (config('prefix.server') == "cloud") {
+                return response()->json(['path' => $path, 'Type' => 'image/' . $extension]);
+            } else {
                 return response()->file($path, ['Content-Type' => 'image/' . $extension]);
             }
         } else if ($extension == "pdf") {
-            if (config('prefix.server') == "cloud"){
-                return response()->json(['path'=>$path,'Type' => 'application/pdf']);
-            }
-            else {
+            if (config('prefix.server') == "cloud") {
+                return response()->json(['path' => $path, 'Type' => 'application/pdf']);
+            } else {
                 return response()->file($path, ['Content-Type' => 'application/pdf']);
             }
         } else {
-            if (config('prefix.server') == "cloud"){
-                return response()->json(['path'=>$path,'Type' => '']);
-            }
-            else {
+            if (config('prefix.server') == "cloud") {
+                return response()->json(['path' => $path, 'Type' => '']);
+            } else {
                 return response()->file($path, ['Content-Type' => '']);
             }
         }
