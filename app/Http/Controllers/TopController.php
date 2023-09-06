@@ -454,20 +454,34 @@ class TopController extends Controller
         $file = File::where('id', $id)->first();
         if (config('prefix.server') == "cloud") {
 
-            if ($file->ファイル形式 == "") {
+            // if ($file->ファイル形式 == "") {
                 $key = $file->ファイルパス;
-            } else {
-                $key = $file->ファイルパス . "." . $file->ファイル形式;
-            }
+            // } else {
+            //     $key = $file->ファイルパス . "." . $file->ファイル形式;
+            // }
             $parts = explode('/', $key);
             $filename = end($parts); // 最後の要素を取得
 
-            // S3から一時的にファイルをダウンロードして保存
-            $tempFilePath = tempnam(sys_get_temp_dir(), 's3_download_');
-            Storage::disk('s3')->get($key, $tempFilePath);
+            // // S3から一時的にファイルをダウンロードして保存
+            // $tempFilePath = tempnam(sys_get_temp_dir(), 's3_download_');
+            // Storage::disk('s3')->get($key, $tempFilePath);
 
-            // レスポンスを作成してファイルをダウンロードさせる
-            return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
+            // // レスポンスを作成してファイルをダウンロードさせる
+            // return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
+
+            // S3からファイルをダウンロード
+            $filePath = $key;
+            $headers = [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ];
+
+            try {
+                // ファイルをダウンロード
+                return response()->download(Storage::disk('s3')->url($filePath), $filename, $headers);
+            } catch (\Exception $e) {
+                return back()->withErrors(['message' => 'ファイルをダウンロードできませんでした。']);
+            }
         } else {
             //拡張子がないファイルの場合分け
             if ($file->ファイル形式 == "") {
