@@ -521,8 +521,7 @@ class TopController extends Controller
             ]);
             // 署名付きURLを生成
             $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-            // // 署名付きURLにリダイレクト
-            // return response()->json($path);
+
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
         }
@@ -530,11 +529,26 @@ class TopController extends Controller
 
         // 画像形式の場合は画像を表示
         if (in_array($extension, ['jpeg', 'jpg', 'JPG', 'jpeg', 'png', 'PNG', 'gif', 'bmp', 'svg'])) {
-            return response()->file($path, ['Content-Type' => 'image/' . $extension]);
+            if (config('prefix.server') == "cloud"){
+                return response()->json(['path'=>$path,'Content-Type' => 'image/' . $extension]);
+            }
+            else {
+                return response()->file($path, ['Content-Type' => 'image/' . $extension]);
+            }
         } else if ($extension == "pdf") {
-            return response()->file($path, ['Content-Type' => 'application/pdf']);
+            if (config('prefix.server') == "cloud"){
+                return response()->json(['path'=>$path,'Content-Type' => 'application/pdf']);
+            }
+            else {
+                return response()->file($path, ['Content-Type' => 'application/pdf']);
+            }
         } else {
-            return response()->file($path, ['Content-Type' => '']);
+            if (config('prefix.server') == "cloud"){
+                return response()->json(['path'=>$path,'Content-Type' => '']);
+            }
+            else {
+                return response()->file($path, ['Content-Type' => '']);
+            }
         }
     }
 

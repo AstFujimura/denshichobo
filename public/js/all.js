@@ -81,6 +81,9 @@ $(document).ready(function () {
         responseType: 'blob' // ファイルをBlobとして受け取る
       },
       success: function (response) {
+        if (response.path){
+          console.log("ss")
+        }
         // 取得したファイルデータを使ってPDFを表示
         var Url = URL.createObjectURL(response);
         if (response.type === 'application/pdf') {
@@ -106,8 +109,6 @@ $(document).ready(function () {
           $('.previewarea').text("ファイルが変更されました")
           
         }
-
-
       },
       error: function (xhr, status, error) {
         console.error(error); // エラー処理
