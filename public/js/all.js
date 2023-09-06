@@ -28,41 +28,73 @@ $(document).ready(function () {
 
   if ($(".pagetitle").text() == "帳簿変更") {
     var ID = $(".pagetitle").attr("id");
-    $.ajax({
-      url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
-      method: 'GET',
-      xhrFields: {
-        responseType: 'blob' // ファイルをBlobとして受け取る
-      },
-      success: function (response) {
-        // 取得したファイルデータを使ってPDFを表示
-        var Url = URL.createObjectURL(response);
-        if (response.type === 'application/pdf') {
-          var embed = $('<embed>');
-          embed.attr('src', Url);
-          embed.attr('width', '100%');
-          embed.attr('height', '600px');
-          embed.attr('type', 'application/pdf');
-          embed.addClass('imgset');
+    if ($('#server').val() == "cloud") {
+      $.ajax({
+        url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
+        method: 'GET',
+        dataType: "json",
+        success: function (response) {
+          if (response.Type === 'application/pdf') {
+            var embed = $('<embed>');
+            embed.attr('src', response.path);
+            embed.attr('width', '100%');
+            embed.attr('height', '600px');
+            embed.attr('type', 'application/pdf');
+            embed.addClass('imgset');
 
-          $('.pastpreview').html(embed);
+            $('.pastpreview').html(embed);
+          }
+          else if (response.Type.startsWith('image/')) {
+            var img = $('<img>');
+            img.attr('src', response.path);
+            img.attr('width', '100%');
+            img.attr('height', '600px');
+            img.addClass('imgset');
+
+            $('.pastpreview').html(img);
+          }
         }
-        else if (response.type.startsWith('image/')) {
-          var img = $('<img>');
-          img.attr('src', Url);
-          img.attr('width', '100%');
-          img.attr('height', '600px');
-          img.addClass('imgset');
+      });
+    }
+    else {
+      $.ajax({
+        url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
+        method: 'GET',
+        xhrFields: {
+          responseType: 'blob' // ファイルをBlobとして受け取る
+        },
+        success: function (response) {
+          // 取得したファイルデータを使ってPDFを表示
+          var Url = URL.createObjectURL(response);
+          if (response.type === 'application/pdf') {
+            var embed = $('<embed>');
+            embed.attr('src', Url);
+            embed.attr('width', '100%');
+            embed.attr('height', '600px');
+            embed.attr('type', 'application/pdf');
+            embed.addClass('imgset');
 
-          $('.pastpreview').html(img);
+            $('.pastpreview').html(embed);
+          }
+          else if (response.type.startsWith('image/')) {
+            var img = $('<img>');
+            img.attr('src', Url);
+            img.attr('width', '100%');
+            img.attr('height', '600px');
+            img.addClass('imgset');
+
+            $('.pastpreview').html(img);
+          }
+
+
+        },
+        error: function (xhr, status, error) {
+          console.error(error); // エラー処理
         }
+      });
 
+    }
 
-      },
-      error: function (xhr, status, error) {
-        console.error(error); // エラー処理
-      }
-    });
 
   }
 
