@@ -482,8 +482,7 @@ class TopController extends Controller
             }
         }
 
-
-
+        return $filepath;
 
         // ファイルのダウンロード
         return response()->download($filepath);
