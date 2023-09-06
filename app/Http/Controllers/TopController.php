@@ -530,21 +530,21 @@ class TopController extends Controller
         // 画像形式の場合は画像を表示
         if (in_array($extension, ['jpeg', 'jpg', 'JPG', 'jpeg', 'png', 'PNG', 'gif', 'bmp', 'svg'])) {
             if (config('prefix.server') == "cloud"){
-                return response()->json(['path'=>$path,'Content-Type' => 'image/' . $extension]);
+                return response()->json(['path'=>$path,'Type' => 'image/' . $extension]);
             }
             else {
                 return response()->file($path, ['Content-Type' => 'image/' . $extension]);
             }
         } else if ($extension == "pdf") {
             if (config('prefix.server') == "cloud"){
-                return response()->json(['path'=>$path,'Content-Type' => 'application/pdf']);
+                return response()->json(['path'=>$path,'Type' => 'application/pdf']);
             }
             else {
                 return response()->file($path, ['Content-Type' => 'application/pdf']);
             }
         } else {
             if (config('prefix.server') == "cloud"){
-                return response()->json(['path'=>$path,'Content-Type' => '']);
+                return response()->json(['path'=>$path,'Type' => '']);
             }
             else {
                 return response()->file($path, ['Content-Type' => '']);
