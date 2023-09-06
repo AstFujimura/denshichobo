@@ -466,14 +466,17 @@ class TopController extends Controller
                 'version' => 'latest',
             ]);
 
-            $command = $s3Client->getCommand('GetObject', [
+            $s3Object  = $s3Client->getCommand('GetObject', [
                 'Bucket' => $bucket,
                 'Key' => $key
             ]);
-            // 署名付きURLを生成
-            $filepath = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-            // 署名付きURLにリダイレクト
-            return redirect($filepath);
+            // ファイルをユーザーのローカルコンピューターにダウンロードさせる
+            $headers = [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . $key . '"',
+            ];
+
+            return response($s3Object['Body'], 200, $headers);
         } else {
             //拡張子がないファイルの場合分け
             if ($file->ファイル形式 == "") {
