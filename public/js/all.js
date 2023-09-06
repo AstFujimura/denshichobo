@@ -80,7 +80,7 @@ $(document).ready(function () {
         method: 'GET',
         dataType: "json",
         success: function (response) {
-          if (response.Content-Type === 'application/pdf') {
+          if (response.Type === 'application/pdf') {
             var embed = $('<embed>');
             embed.attr('src', Url);
             embed.attr('width', '100%');
@@ -90,7 +90,7 @@ $(document).ready(function () {
 
             $('.previewcontainer').append(embed);
           }
-          else if (response.Content-Type.startsWith('image/')) {
+          else if (response.Type.startsWith('image/')) {
             var img = $('<img>');
             img.attr('src', Url);
             img.attr('width', '100%');
