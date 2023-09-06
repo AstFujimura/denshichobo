@@ -457,8 +457,7 @@ class TopController extends Controller
             $bucket = 'astdocs';
             if ($file->ファイル形式 == "") {
                 $key = $file->ファイルパス;
-            }
-            else {
+            } else {
                 $key = $file->ファイルパス . "." . $file->ファイル形式;
             }
             $expiration = '+1 hour'; // 有効期限
@@ -473,8 +472,8 @@ class TopController extends Controller
             ]);
             // 署名付きURLを生成
             $filepath = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-            $file = Storage::disk('s3')->get($filepath);
-            return response()->download($file);
+            // 署名付きURLにリダイレクト
+            return redirect($filepath);
         } else {
             //拡張子がないファイルの場合分け
             if ($file->ファイル形式 == "") {
