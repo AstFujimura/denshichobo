@@ -503,18 +503,25 @@ class TopController extends Controller
 
         $filepath = $img->ファイルパス;
         $extension = $img->ファイル形式;
+        // S3バケットの情報
+        $bucket = 'astdocs';
+        $key = $img->ファイルパス . "." . $img->ファイル形式;
+        $expiration = '+1 hour'; // 有効期限
+
         if (config('prefix.server') == "cloud") {
 
             $s3Client = new S3Client([
                 'region' => 'ap-northeast-1',
                 'version' => 'latest',
             ]);
+
+            $command = $s3Client->getCommand('GetObject', [
+                'Bucket' => $bucket,
+                'Key' => $key
+            ]);
             // 署名付きURLを生成
-            // S3バケットの情報
-            $bucket = 'astdocs';
-            $filePath = $img->ファイルパス . "." . $img->ファイル形式;
-            $expires = '+1 hour'; // 有効期限を設定
-            $path = $s3Client->getObjectUrl($bucket, $filePath, $expires);
+            $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+            
             return $path;
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
