@@ -80,10 +80,13 @@ $(document).ready(function () {
       xhrFields: {
         responseType: 'blob' // ファイルをBlobとして受け取る
       },
-      success: function (response) {
+      success: function (response, textStatus, xhr) {
+        // サーバーサイドからのレスポンスのContent-Typeを確認
+        var contentType = xhr.getResponseHeader('Content-Type');
+        
         if (contentType.indexOf('application/json') !== -1) {
           // JSONデータの場合の処理
-          var jsonData = JSON.parse(data);
+          var jsonData = JSON.parse(response);
           // JSONデータを処理するコードを記述
           console.log(jsonData);
         }
