@@ -460,6 +460,7 @@ class TopController extends Controller
             } else {
                 $key = $file->ファイルパス . "." . $file->ファイル形式;
             }
+            return $key;
 
             // S3から一時的にファイルをダウンロードして保存
             $tempFilePath = tempnam(sys_get_temp_dir(), 's3_download_');
