@@ -82,7 +82,7 @@ $(document).ready(function () {
         success: function (response) {
           if (response.Type === 'application/pdf') {
             var embed = $('<embed>');
-            embed.attr('src', Url);
+            embed.attr('src', response.path);
             embed.attr('width', '100%');
             embed.attr('height', '100%');
             embed.attr('type', 'application/pdf');
@@ -92,7 +92,7 @@ $(document).ready(function () {
           }
           else if (response.Type.startsWith('image/')) {
             var img = $('<img>');
-            img.attr('src', Url);
+            img.attr('src', response.path);
             img.attr('width', '100%');
             img.attr('height', '100%');
             img.addClass('imgset');
