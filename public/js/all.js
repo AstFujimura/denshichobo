@@ -106,10 +106,11 @@ $(document).ready(function () {
         url: $(this).attr("id"), // データを取得するURLを指定
         method: 'GET',
         success: function (response) {
-          // jQueryを使用してダウンロードリンクを作成
-          const downloadLink = $('<a></a>');
-          downloadLink.attr('href', response);  // 署名付き URL を設定する
-          downloadLink.attr('download', 'example.txt');  // ファイル名
+
+          // ダウンロードリンクを作成
+          var downloadLink = $("<a></a>")
+            .attr("href", response)
+            .attr("download", response)
 
           // ダウンロードリンクをクリックしてファイルをダウンロード
           downloadLink[0].click();
@@ -118,10 +119,6 @@ $(document).ready(function () {
           alert("ダウンロードに失敗しました")
         }
       });
-
-
-
-
 
     }
     else {
