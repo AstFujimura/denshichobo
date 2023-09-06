@@ -330,10 +330,7 @@ $(document).ready(function () {
 
       if (confirm("本当に"+title+"しますか？")) {
         history.pushState(null, null, "/" + prefix + '/error/K183623');
-        var file = $('#file')[0].files[0];
-        // ファイル名から拡張子を取得
-        var fileName = file.name;
-        var fileExtension = getExtension(fileName);
+
 
         //帳簿変更時にファイル変更がない場合
         if ($('#file').val() == '') {
@@ -342,6 +339,12 @@ $(document).ready(function () {
         //帳簿保存または帳簿変更でファイル変更がある場合
         //サーバーサイドでのアップロードではメモリを消費してしまうのでフロントから直接アップロード
         else {
+          var file = $('#file')[0].files[0];
+          // ファイル名から拡張子を取得
+          var fileName = file.name;
+          var fileExtension = getExtension(fileName);
+
+          
           //帳簿変更の場合ajaxで署名付きURLと一緒に取得する過去データIDは既存のものになる
           //#registは帳簿保存画面のpagetitleについたidである
           if ($('#regist').length){
