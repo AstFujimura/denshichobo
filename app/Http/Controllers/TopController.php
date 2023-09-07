@@ -459,11 +459,21 @@ class TopController extends Controller
             } else {
                 $key = $file->ファイルパス . "." . $file->ファイル形式;
             }
-            $parts = explode('/', $key);
-            $filename = end($parts); // 最後の要素を取得
 
-            $file = Storage::disk('s3')->get($key);
-            return response()->download(Storage::disk('s3')->url($key));
+            $result = Storage::disk('s3')->getAdapter()->getClient()->getObject(['Bucket' => 'astdocs', 'Key' => $key]);
+            header('Content-Type: application/octet-stream');
+            $filename = $key;
+            header("Content-Disposition: attachment; filename={$filename}");
+
+            // これで指定したファイル名で自動的にダウンロードされる
+            print($result['Body']);
+
+
+            // $parts = explode('/', $key);
+            // $filename = end($parts); // 最後の要素を取得
+
+            // $file = Storage::disk('s3')->get($key);
+            // return response()->download(Storage::disk('s3')->url($key));
 
             // // S3からファイルをダウンロード
             // $filePath = $key;
