@@ -73,7 +73,7 @@
         <div class="bikou">{{$file->備考}}</div>
         <div class="filehennkou">{{$file->ファイル変更}}</div>
         <div class="downloadTd">
-            <img src="{{asset('img/download_2_line.svg')}}" onclick="location.href='/download/{{$file->id}}';" class="download">
+            <img src="{{asset('img/download_2_line.svg')}}" id='/{{$prefix}}/download/{{$file->id}}' class="download downloadbutton">
         </div>
         <div class="extension">{{$file->ファイル形式}}</div>
         <div class="preview">
