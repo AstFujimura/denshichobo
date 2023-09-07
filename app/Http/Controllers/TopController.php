@@ -461,37 +461,37 @@ class TopController extends Controller
             }
 
             $result = Storage::disk('s3')->getAdapter()->getClient()->getObject(['Bucket' => 'astdocs', 'Key' => $key]);
-          
+
             $headers = [
                 'Content-Type' => 'application/octet-stream',
                 'Content-Disposition' => 'attachment; filename="' . $key . '"'
             ];
 
-              return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
-    }
+            return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
+        }
 
 
 
-            // $parts = explode('/', $key);
-            // $filename = end($parts); // 最後の要素を取得
+        // $parts = explode('/', $key);
+        // $filename = end($parts); // 最後の要素を取得
 
-            // $file = Storage::disk('s3')->get($key);
-            // return response()->download(Storage::disk('s3')->url($key));
+        // $file = Storage::disk('s3')->get($key);
+        // return response()->download(Storage::disk('s3')->url($key));
 
-            // // S3からファイルをダウンロード
-            // $filePath = $key;
-            // $headers = [
-            //     'Content-Type' => 'application/octet-stream',
-            //     'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-            // ];
+        // // S3からファイルをダウンロード
+        // $filePath = $key;
+        // $headers = [
+        //     'Content-Type' => 'application/octet-stream',
+        //     'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        // ];
 
-            // try {
-            //     // ファイルをダウンロード
-            //     return response()->download(Storage::disk('s3')->url($filePath), $filename, $headers);
-            // } catch (\Exception $e) {
-            //     return back()->withErrors(['message' => 'ファイルをダウンロードできませんでした。']);
-            // }
-        } else {
+        // try {
+        //     // ファイルをダウンロード
+        //     return response()->download(Storage::disk('s3')->url($filePath), $filename, $headers);
+        // } catch (\Exception $e) {
+        //     return back()->withErrors(['message' => 'ファイルをダウンロードできませんでした。']);
+        // }
+        else {
             //拡張子がないファイルの場合分け
             if ($file->ファイル形式 == "") {
                 $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス;
