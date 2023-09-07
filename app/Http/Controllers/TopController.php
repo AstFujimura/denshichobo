@@ -460,7 +460,6 @@ class TopController extends Controller
                 $key = $file->ファイルパス . "." . $file->ファイル形式;
             }
 
-            $result = Storage::disk('s3')->getAdapter()->getClient()->getObject(['Bucket' => 'astdocs', 'Key' => $key]);
 
             $headers = [
                 'Content-Type' => 'application/octet-stream',
