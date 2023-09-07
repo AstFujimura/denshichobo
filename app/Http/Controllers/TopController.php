@@ -459,11 +459,13 @@ class TopController extends Controller
             } else {
                 $key = $file->ファイルパス . "." . $file->ファイル形式;
             }
+            $parts = explode('/', $key);
+            $filename = end($parts); // 最後の要素を取得       
 
 
             $headers = [
                 'Content-Type' => 'application/octet-stream',
-                'Content-Disposition' => 'attachment; filename="' . $key . '"'
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
             ];
 
             return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
