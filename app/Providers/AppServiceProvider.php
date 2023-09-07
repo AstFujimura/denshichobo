@@ -27,9 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //     if (App::environment('production','staging')) {
-        //         URL::forceScheme('https');
-        // }
+            if (App::environment('production','staging')) {
+                URL::forceScheme('https');
+        }
         // 4バイト文字のバリデーションルールを追加
         Validator::extend('not_four_byte_chars', function ($attribute, $value, $parameters, $validator) {
             return !preg_match('/[\x{10000}-\x{10FFFF}]/u', $value);
