@@ -461,12 +461,15 @@ class TopController extends Controller
             }
 
             $result = Storage::disk('s3')->getAdapter()->getClient()->getObject(['Bucket' => 'astdocs', 'Key' => $key]);
-            header('Content-Type: application/octet-stream');
-            $filename = $key;
-            header("Content-Disposition: attachment; filename={$filename}");
+          
+            $headers = [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . $key . '"'
+            ];
 
-            // これで指定したファイル名で自動的にダウンロードされる
-            print($result['Body']);
+              return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
+    }
+
 
 
             // $parts = explode('/', $key);
