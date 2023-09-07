@@ -40,7 +40,7 @@
                 </div>
             </a>
             <div class="detail_download">
-                <img src="{{asset('img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
+                <img src="{{ asset(config('prefix.prefix').'asset/'.'img/download_2_line.svg')}}"  onclick="location.href='/download/{{$file->id}}';" class="download">
             </div>
 
     </div>

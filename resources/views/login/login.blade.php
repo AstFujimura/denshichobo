@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>ログインページ</title>
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/login.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/login.css') }}">
 
 
  
@@ -43,5 +43,5 @@
         </div>
     </div>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="{{ asset('js/login.js') }}"></script>
+<script src="{{asset(config('prefix.prefix').'asset/'.'jquery/jquery-3.7.0.min.js')}}"></script>
+    <script src="{{ asset(config('prefix.prefix').'asset/'.'js/login.js') }}"></script>

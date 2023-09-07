@@ -30,7 +30,7 @@
                 <div class="email">{{$user->email}}</div>
                 <div class="status">{{$user->管理}}</div>
                 <div class="hennkou">
-                    <img src="{{asset('img/transfer_3_fill.svg')}}"  class="download"  onclick="location.href='/{{$prefix}}/admin/edit/{{$user->id}}';">
+                    <img src="{{ asset(config('prefix.prefix').'asset/'.'img/transfer_3_fill.svg')}}"  class="download"  onclick="location.href='/{{$prefix}}/admin/edit/{{$user->id}}';">
                 </div>
             </div>
         @endforeach
