@@ -23,12 +23,12 @@ use Illuminate\Support\Facades\Config;
 |
 */
 
-Route::get('/', function () {
-    // ルート名が"topGet"のルートにリダイレクト
-    return redirect()->route('topGet');
-});
-$prefix = config('prefix.prefix');
-Route::prefix($prefix)->group(function () {
+// Route::get('/', function () {
+//     // ルート名が"topGet"のルートにリダイレクト
+//     return redirect()->route('topGet');
+// });
+// $prefix = config('prefix.prefix');
+// Route::prefix($prefix)->group(function () {
 
 //  ログインページ
 Route::get('login',[LoginController::class,'loginGet'])->name('loginGet');
@@ -122,4 +122,4 @@ Route::get('/error/{code}',[ErrorController::class,'errorGet'])->name('errorGet'
 Route::get('/usercheck',[TopController::class,'usercheck'])->name('usercheck');
 });
 
-});
+// });
