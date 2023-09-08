@@ -52,7 +52,7 @@ class RegistController extends Controller
 
 
         // S3バケットの情報
-        $bucket = 'astdocs';
+        $bucket = 'astdocs.com';
         $key = $prefix . "/" . $currentTime . "_" . $pastID . "." . $extension; // S3オブジェクトのキー
         $expiration = '+1 hour'; // 有効期限
 

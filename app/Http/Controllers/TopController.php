@@ -551,7 +551,7 @@ class TopController extends Controller
 
         if (config('prefix.server') == "cloud") {
             // S3バケットの情報
-            $bucket = 'astdocs';
+            $bucket = 'astdocs.com';
             $key = $img->ファイルパス . "." . $img->ファイル形式;
             $expiration = '+1 hour'; // 有効期限
 

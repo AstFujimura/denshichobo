@@ -173,8 +173,8 @@
     <div class="extension pale">形式</div>
     <div class="preview pale">PV.</div>
     <div class="hennkou pale">変更</div>
-    <div class="updater pale">更新者</div>
-    <div class="creater pale">作成者</div>
+    <div class="updater verypale">更新者</div>
+    <div class="creater verypale">作成者</div>
 </div>
 
 <div class="top_table_element">
