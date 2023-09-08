@@ -40,7 +40,12 @@ $(document).ready(function () {
 
         const scrollX = $(window).scrollLeft();
         $('.header001').css('left', `${scrollX}px`);
-        $('.menu001').css('left', `${scrollX}px`);
+        if (!$('.menu001fixed').length){
+            $('.menu001').css('left', `${scrollX}px`);
+        }
+        else{
+            $('.menu001').css('left', 0);
+        }
     });
     //スクロールすると上部に固定させるための設定を関数でまとめる
     function FixedAnime() {
