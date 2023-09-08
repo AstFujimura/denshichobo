@@ -9,6 +9,7 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ErrorController;
+use App\Http\Controllers\AssetController;
 use App\Http\Middleware\CheckSessionTimeout;
 use Illuminate\Support\Facades\Config;
 
@@ -23,12 +24,25 @@ use Illuminate\Support\Facades\Config;
 |
 */
 
-// Route::get('/', function () {
-//     // ルート名が"topGet"のルートにリダイレクト
-//     return redirect()->route('topGet');
-// });
-// $prefix = config('prefix.prefix');
-// Route::prefix($prefix)->group(function () {
+Route::get('/', function () {
+    // ルート名が"topGet"のルートにリダイレクト
+    return redirect()->route('topGet');
+});
+$prefix = config('prefix.prefix');
+Route::prefix($prefix)->group(function () {
+
+// CSSフォルダへのルーティング
+Route::get('/css/{file}', [AssetController::class,'css'])->where('file', '.*css');
+
+// JavaScriptフォルダへのルーティング
+Route::get('/js/{file}', [AssetController::class,'js'])->where('file', '.*js');
+
+// 画像フォルダへのルーティング
+Route::get('/img/{file}', [AssetController::class,'img'])->where('file', '.*\.(jpg|jpeg|png|gif|ico)');
+
+// 画像フォルダへのルーティング
+Route::get('/jquery/{file}', [AssetController::class,'jquery'])->where('file', '.*js');
+
 
 //  ログインページ
 Route::get('login',[LoginController::class,'loginGet'])->name('loginGet');
@@ -122,4 +136,4 @@ Route::get('/error/{code}',[ErrorController::class,'errorGet'])->name('errorGet'
 Route::get('/usercheck',[TopController::class,'usercheck'])->name('usercheck');
 });
 
-// });
+});
