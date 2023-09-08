@@ -32,7 +32,7 @@
         <div class="input-container">
             <label class="label">取引日<span class="requirered">*</span></label>
             <div class="dateform">
-                <input type="text" name="hiduke" class="input-field dateinputtext" value="{{$hiduke}}" id="hiduke">
+                <input type="text" name="hiduke" class="input-field dateinputtext" value="{{$hiduke}}" id="hiduke" autocomplete="off">
                 <span class="errorelement" id="required4">必須項目です</span>
                 <span class="errorelement" id="dateformat">形式が不正です</span>
             </div>

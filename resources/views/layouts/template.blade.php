@@ -10,7 +10,10 @@
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/admin001.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/regist.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/jquery-ui.css') }}">
     <script src="{{asset(config('prefix.prefix').'asset/'.'jquery/jquery-3.7.0.min.js')}}"></script>
+    <script src="{{asset(config('prefix.prefix').'asset/'.'jquery/jquery-ui.js')}}"></script>
+    <script src="{{asset(config('prefix.prefix').'asset/'.'jquery/jquery-ui_ja.js')}}"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
     </noscript>

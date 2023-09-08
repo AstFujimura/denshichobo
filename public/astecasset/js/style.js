@@ -1,5 +1,14 @@
 $(document).ready(function () {
 
+    $('.dateinputtext').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        duration: 300,
+        showAnim: 'show'
+
+    }
+    )
+
     //サイドバーの表示
     $('.hamburger01').click(function () {
         $('.sidebar01').toggleClass('sidebar01open'); // サイドバーの表示/非表示を切り替える
@@ -28,6 +37,10 @@ $(document).ready(function () {
     // 画面をスクロールをしたら動かしたい場合の記述
     $(window).scroll(function () {
         FixedAnime();/* スクロール途中からヘッダーを出現させる関数を呼ぶ*/
+
+        const scrollX = $(window).scrollLeft();
+        $('.header001').css('left', `${scrollX}px`);
+        $('.menu001').css('left', `${scrollX}px`);
     });
     //スクロールすると上部に固定させるための設定を関数でまとめる
     function FixedAnime() {
@@ -66,6 +79,8 @@ $(document).ready(function () {
             $('.history_table_div').removeClass('history_table_column_fixed');//fixedというクラス名を除去
             $('.history_table_element').removeClass('history_table_margin');
         }
+
+    
 
     }
 

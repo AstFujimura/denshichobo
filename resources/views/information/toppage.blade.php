@@ -30,15 +30,15 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
         <div class="requirearea">
             <div class="searchelement">
                 <div class="searchlabel requirelabel">取引日:</div>
-                <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext" value="{{$oneMonthAgo}}">
-                ～　
-                <input type="text" id="endyear" name="endhiduke" class="searchinputtext dateinputtext">
+                <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext" value="{{$oneMonthAgo}}" autocomplete="off">
+                　～　
+                <input type="text" id="endyear" name="endhiduke" class="searchinputtext dateinputtext" autocomplete="off">
             </div>
 
             <div class="searchelement">
                 <div class="searchlabel requirelabel">金額:</div>
                 <input type="text" id="startkinngaku" name="startkinngaku" class="searchinputtext kinngakuinput">円
-                ～<input type="text" id="endkinngaku" name="endkinngaku" class="searchinputtext kinngakuinput">円
+                ～　<input type="text" id="endkinngaku" name="endkinngaku" class="searchinputtext kinngakuinput">円
             </div>
 
             <div class="searchelement">

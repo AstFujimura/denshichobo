@@ -28,14 +28,14 @@
         <div class="requirearea">
             <div class="searchelement">
                 <div class="searchlabel requirelabel">取引日:</div>
-                <input type="text" id="startyear" name="starthiduke" value="{{$starthiduke}}" class="searchinputtext dateinputtext">
-                ～
-                <input type="text" id="endyear" name="endhiduke" value="{{$endhiduke}}" class="searchinputtext dateinputtext">
+                <input type="text" id="startyear" name="starthiduke" value="{{$starthiduke}}" class="searchinputtext dateinputtext" autocomplete="off">
+                　～　
+                <input type="text" id="endyear" name="endhiduke" value="{{$endhiduke}}" class="searchinputtext dateinputtext" autocomplete="off">
             </div>
             <div class="searchelement">
                 <div class="searchlabel requirelabel">金額:</div>
                 <input type="text" id="startkinngaku" name="startkinngaku" value="{{$startkinngaku}}" class="searchinputtext kinngakuinput">円
-                ～<input type="text" id="endkinngaku" name="endkinngaku" value="{{$endkinngaku}}" class="searchinputtext kinngakuinput">円
+                ～　<input type="text" id="endkinngaku" name="endkinngaku" value="{{$endkinngaku}}" class="searchinputtext kinngakuinput">円
             </div>
             <div class="searchelement">
                 <div class="searchlabel requirelabel">取引先:</div>

@@ -6,6 +6,7 @@ body{
     background: rgb(155, 204, 96);
     margin: none;
     display: flex;
+    position: relative;
 }
 
 .headerIcon001{
@@ -17,6 +18,7 @@ body{
     height: 48px;
     background: rgb(75, 75, 75);
     display: flex;
+    position: relative;
 }
 
 .menu001fixed{
