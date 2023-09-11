@@ -105,7 +105,7 @@ $(document).ready(function () {
     var id = $('#userid').val();
     var form = this; // フォーム要素を保持
     $.ajax({
-      url:'/' prefix + '/admincheck/' + id,
+      url:'/'+ prefix + '/admincheck/' + id,
       type: 'get',
       processData: false,
       contentType: false,
