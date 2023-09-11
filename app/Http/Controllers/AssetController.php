@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -24,7 +25,14 @@ class AssetController extends Controller
 
     public function img($file)
     {
-        return $this->getResponse('img', $file, 'image/svg+xml'); // 画像のコンテンツタイプに合わせて適切なものに変更してください
+        // ファイルの拡張子を取得
+        $fileExtension = pathinfo($file, PATHINFO_EXTENSION);
+        if ($fileExtension == 'svg'){
+            return $this->getResponse('img', $file, 'image/svg+xml');
+        }
+        else if($fileExtension == 'gif'){
+            return $this->getResponse('img', $file, 'image/gif');
+        }
     }
 
     private function getResponse($folder, $file, $contentType)
