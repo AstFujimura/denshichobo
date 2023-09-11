@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>@yield('title')</title>
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/admin01.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/admin001.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/adminstyle.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/regist.css') }}">
-    <script src="{{ asset(config('prefix.prefix').'asset/'.'jquery/jquery-3.7.0.min.js')}}"></script>
-    <script src="{{ asset(config('prefix.prefix').'asset/'.'jquery/laravelui.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin01.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin001.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/adminstyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
+    <script src="{{ asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
+    <script src="{{ asset(config('prefix.prefix').'/'.'jquery/laravelui.js')}}"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
     </noscript>
@@ -33,32 +33,32 @@
 <div class="menu001">
 
     <div class="headerIcon001" onclick="location.href='{{route('topGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'asset/'.'img/home_3_line.svg') }}" class="menuicon01">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
         <div class="iconmessage">Top</div>
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'asset/'.'img/edit_fill.svg') }}" class="menuicon01">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}" class="menuicon01">
         <div class="iconmessage">ユーザ一覧</div>
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'asset/'.'img/user_add_2_fill.svg') }}" class="menuicon01">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01">
         <div class="iconmessage">ユーザー登録</div>
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('admindocumentGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'asset/'.'img/document_2_line.svg') }}" class="menuicon01">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01">
         <div class="iconmessage">書類管理</div>
     </div>
 
     <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
         <div class="usermenu01">
-            <img src="{{ asset(config('prefix.prefix').'asset/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
         </div>
         <div class="iconmessage">ユーザー情報</div>
     </div>
     <div class="headerIcon001 menue001">
-        <img src="{{ asset(config('prefix.prefix').'asset/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
         <div class="iconmessage">メニュー</div>
-        <img src="{{ asset(config('prefix.prefix').'asset/'.'img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
         <div class="iconmessage">閉じる</div>
     </div>
 
@@ -72,7 +72,7 @@
             <div class="icon01">
                 <div class="user01" onclick="location.href='{{route('usersettingGet')}}';">
                     <div class="usericon01">
-                        <img src="{{ asset(config('prefix.prefix').'asset/'.'img/user_1_line.svg') }}" class="usericon01">
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_1_line.svg') }}" class="usericon01">
                     </div>
                     <div class="username01">
                         {{Auth::user()->name}}
@@ -84,7 +84,7 @@
             <a href="{{route('topGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'asset/'.'img/home_3_line.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}">
                         </div>
                         <div class="button1name01">
                             電子帳簿システム
@@ -97,7 +97,7 @@
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'asset/'.'img/edit_fill.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}">
                         </div>
                         <div class="button1name01">
                             ユーザー一覧
@@ -109,7 +109,7 @@
                 <a href="{{route('adminregistGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'asset/'.'img/user_add_2_fill.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}">
                         </div>
                         <div class="button1name01">
                             ユーザー追加
@@ -123,7 +123,7 @@
                 <a href="{{route('admindocumentGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'asset/'.'img/document_2_line.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}">
                         </div>
                         <div class="button1name01">
                             書類管理
@@ -136,7 +136,7 @@
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'asset/'.'img/open_door_line.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/open_door_line.svg') }}">
                         </div>
                         <div class="button1name01">
                             ログアウト
@@ -173,13 +173,13 @@
 <footer>
     @yield('footer')
 </footer>
-<script src="{{ asset(config('prefix.prefix').'asset/'.'js/all.js') }}"></script>
-<script src="{{ asset(config('prefix.prefix').'asset/'.'js/style.js') }}"></script>
-<script src="{{ asset(config('prefix.prefix').'asset/'.'js/admin.js') }}"></script>
+<script src="{{ asset(config('prefix.prefix').'/'.'js/all.js') }}"></script>
+<script src="{{ asset(config('prefix.prefix').'/'.'js/style.js') }}"></script>
+<script src="{{ asset(config('prefix.prefix').'/'.'js/admin.js') }}"></script>
 @if ($server == 'onpre')
-<script src="{{ asset(config('prefix.prefix').'asset/'.'js/onpre.js') }}"></script>
+<script src="{{ asset(config('prefix.prefix').'/'.'js/onpre.js') }}"></script>
 @else
-<script src="{{ asset(config('prefix.prefix').'asset/'.'js/cloud.js') }}"></script>
+<script src="{{ asset(config('prefix.prefix').'/'.'js/cloud.js') }}"></script>
 @endif
 </footer>
 

@@ -38,7 +38,7 @@ Route::get('/css/{file}', [AssetController::class,'css'])->where('file', '.*css'
 Route::get('/js/{file}', [AssetController::class,'js'])->where('file', '.*js');
 
 // 画像フォルダへのルーティング
-Route::get('/img/{file}', [AssetController::class,'img'])->where('file', '.*\.(jpg|jpeg|png|gif|ico)');
+Route::get('/img/{file}', [AssetController::class,'img'])->where('file', '.*\.(jpg|jpeg|png|gif|ico|svg)');
 
 // 画像フォルダへのルーティング
 Route::get('/jquery/{file}', [AssetController::class,'jquery'])->where('file', '.*js');

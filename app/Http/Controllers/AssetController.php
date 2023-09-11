@@ -24,7 +24,7 @@ class AssetController extends Controller
 
     public function img($file)
     {
-        return $this->getResponse('img', $file, 'image/jpeg'); // 画像のコンテンツタイプに合わせて適切なものに変更してください
+        return $this->getResponse('img', $file, 'image/svg+xml'); // 画像のコンテンツタイプに合わせて適切なものに変更してください
     }
 
     private function getResponse($folder, $file, $contentType)
