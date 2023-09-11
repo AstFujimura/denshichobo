@@ -2,6 +2,14 @@ a {
   text-decoration: none;
 }
 
+.version {
+  color: white;
+  margin-left: auto;
+  margin-top: auto;
+  margin-right: 5px;
+  color: white;
+}
+
 
 .info {
   height: 50px;
@@ -137,6 +145,7 @@ a {
   background: rgb(229, 248, 253) !important;
   justify-content: center;
 }
+
 .verypale {
   background: rgb(227, 227, 227) !important;
   justify-content: center;
@@ -520,7 +529,7 @@ a {
   text-align: center;
 }
 
-.torihikisakiinput{
+.torihikisakiinput {
   position: relative;
 }
 
@@ -528,7 +537,8 @@ a {
   width: 200px;
 
 }
-.registtorihikisakiselect{
+
+.registtorihikisakiselect {
   width: 300px;
   max-height: 159px;
   overflow-x: hidden;
@@ -552,7 +562,7 @@ a {
   z-index: 10;
 }
 
-.gaitounashi{
+.gaitounashi {
   padding-left: 15px;
 }
 
@@ -583,7 +593,7 @@ a {
 }
 
 .updater,
-.creater{
+.creater {
   width: 75px;
 }
 

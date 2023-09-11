@@ -31,7 +31,8 @@
         @prefix
         @server
     </div>
-
+    
+    <span class="version">ver.2.0</span>
 
 </header>
 <div class="menu001">
