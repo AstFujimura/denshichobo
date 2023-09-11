@@ -114,7 +114,6 @@ $(document).ready(function() {
 
 });
 function passcheck(passdata, errorpassdata) {
-  console.log("aaa")
   var passval = $("#" + passdata).val();
   var hasUpperCase = /[A-Z]/.test(passval); // 大文字が含まれているか
   var hasLowerCase = /[a-z]/.test(passval); // 小文字が含まれているか

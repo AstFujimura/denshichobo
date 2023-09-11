@@ -4,7 +4,6 @@ $(document).ready(function () {
   //登録画面、変更画面以外は登録画面に遷移。(登録ボタンなどと間違う可能性が高いため)
   $('#registpagebutton').on('click', function (event) {
     $pagetitle = $('.pagetitle').text();
-    console.log($pagetitle)
     if ($pagetitle != "帳簿変更" && $pagetitle != "帳簿保存" && $pagetitle != "変更履歴") {
       window.location.href = "/" + prefix + "/regist"
     }

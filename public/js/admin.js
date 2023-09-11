@@ -148,7 +148,6 @@ $(document).ready(function () {
             window.location.href = '/'+prefix+"/admin/document"
           }
           else {
-            console.log(response)
           }
         }
 

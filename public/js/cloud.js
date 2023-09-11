@@ -365,7 +365,6 @@ $(document).ready(function () {
               pastID: pastID
             },
             success: function (data) {
-              console.log($("#hiduke").val());
               //署名付きURLを取得したらそれをもとにファイルをS3にアップロード
               $.ajax({
                 type: 'PUT',
@@ -417,10 +416,6 @@ $(document).ready(function () {
           });
         }
 
-
-
-
-        console.log(fileExtension);
 
 
       }
@@ -604,7 +599,6 @@ $(document).ready(function () {
     var nameval = $("#" + namedata).val();
     var change = ""
     var id = $("#userID").val();
-    console.log(id);
     if ($("#admineditpage").length) {
       change = "change"
     }

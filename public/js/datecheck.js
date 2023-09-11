@@ -364,12 +364,6 @@ $(document).ready(function () {
             }
           });
 
-
-
-
-          console.log(fileExtension);
-
-          // this.submit(); // フォームの送信を実行
         }
       }
       else {

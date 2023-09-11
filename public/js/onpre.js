@@ -522,7 +522,6 @@ $(document).ready(function () {
     var nameval = $("#" + namedata).val();
     var change = ""
     var id = $("#userID").val();
-    console.log(id);
     if ($("#admineditpage").length) {
       change = "change"
     }
