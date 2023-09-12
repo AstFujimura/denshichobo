@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'astec',
                 'email' => 'astec@ast-sys.co.jp',
-                'password' => Hash::make('Astec0213'),
+                'password' => Hash::make('Astecakira0813'),
             ],
             [
                 'name' => 'ユーザー1',
