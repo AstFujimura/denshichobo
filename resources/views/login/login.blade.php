@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>ログインページ</title>
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'asset/'.'css/login.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/login.css') }}">
 
 
  
