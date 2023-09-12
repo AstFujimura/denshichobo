@@ -28,8 +28,8 @@
         <a href="{{route('topGet')}}" class="logoelement01">
             電子帳簿保存システム
         </a>
-        @prefix
-        @server
+        <input type="hidden" id="server" value="{{config('prefix.server')}}">
+        <input type="hidden" id="prefix" value="{{config('prefix.prefix')}}">
     </div>
     
     <span class="version">ver.2.0</span>

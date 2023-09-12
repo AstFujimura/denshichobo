@@ -26,8 +26,8 @@
         <a href="{{route('adminGet')}}" class="logoelement01">
             管理画面
         </a>
-        @prefix
-        @server
+        <input type="hidden" id="server" value="{{config('prefix.server')}}">
+        <input type="hidden" id="prefix" value="{{config('prefix.prefix')}}">
     </div>
     <span class="version">ver.2.0</span>
 </header>
