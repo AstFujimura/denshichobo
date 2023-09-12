@@ -16,7 +16,16 @@ $(document).ready(function () {
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
-    usercheck("name", "usercheck")
+    // usercheck("name", "usercheck")
+    if ($("#password").val() != $("#newpassword").val() ){
+      $("#password").addClass('invalid')
+      $("#newpassword").addClass('invalid')
+      $("#newpasswordformat").addClass('errorsentence')
+    }
+    else{
+      $("#newpassword").removeClass('invalid')
+      $("#newpasswordformat").removeClass('errorsentence')
+    }
 
 
 

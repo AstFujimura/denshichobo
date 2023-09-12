@@ -2,11 +2,11 @@
 
 @section('title')
 管理画面
-@endsection 
+@endsection
 
 @section('menuebar')
 
-@endsection 
+@endsection
 
 @section('menue')
 
@@ -50,7 +50,20 @@
             <span class="errorelement" id="required3">必須項目です</span>
             <span class="errorelement" id="passwordformat">大文字,小文字,数字を含めた8文字以上にしてください</span>
         </div>
+
     </div>
+    <div class="input-container">
+        <label class="label">
+            確認用パスワード
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <input type="password" name="newpassword" class="input-field" id="newpassword">
+            <span class="errorelement" id="newpasswordformat">同じパスワードを入力してください</span>
+        </div>
+
+    </div>
+
     <div class="input-container">
         <label class="label">
             アクセス権限
@@ -68,6 +81,6 @@
 
 </form>
 
-@endsection 
-    @section('footer')
-    @endsection 
+@endsection
+@section('footer')
+@endsection
