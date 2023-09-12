@@ -43,5 +43,5 @@
         </div>
     </div>
 </div>
-<script src="{{asset(config('prefix.prefix').'asset/'.'jquery/jquery-3.7.0.min.js')}}"></script>
-    <script src="{{ asset(config('prefix.prefix').'asset/'.'js/login.js') }}"></script>
+<script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
+    <script src="{{ asset(config('prefix.prefix').'/'.'js/login.js') }}"></script>
