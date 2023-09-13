@@ -53,7 +53,6 @@ $(document).ready(function () {
           $("#name").addClass('invalid')
         }
         else {
-          $("#" + errornamedata).removeClass("errorsentence");
           //登録画面におけるフォームの確認
           if (!$('.errorsentence').length) {
 
@@ -182,7 +181,6 @@ $(document).ready(function () {
               $("#name").addClass('invalid')
             }
             else {
-              $("#" + errornamedata).removeClass("errorsentence");
               //登録画面におけるフォームの確認
               if (!$('.errorsentence').length) {
     
