@@ -1,7 +1,10 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
 
+  //管理画面のユーザー登録フォーム
   $('#myForm').submit(function (event) {
+    errorformreset(["name","email","password"]);
+    errorsentencereset(["required1","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
     //値の入力時に不正なデータがある場合はalertがtrueになる
     var alert = false;
     event.preventDefault();
@@ -17,30 +20,56 @@ $(document).ready(function () {
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
     // usercheck("name", "usercheck")
-    if ($("#password").val() != $("#newpassword").val() ){
+    if ($("#password").val() != $("#newpassword").val()) {
       $("#password").addClass('invalid')
       $("#newpassword").addClass('invalid')
       $("#newpasswordformat").addClass('errorsentence')
     }
-    else{
+    else {
       $("#newpassword").removeClass('invalid')
       $("#newpasswordformat").removeClass('errorsentence')
     }
 
 
-
-    //登録画面におけるフォームの確認
-    if (!$('.errorsentence').length) {
-
-      var title = $('#registbutton').val();
-
-
-      if (confirm("本当に登録しますか？")) {
-        history.pushState(null, null, "/"+ prefix+'/error/K183623');
-        this.submit(); // フォームの送信を実行
-      }
-
+    var nameval = $('#name').val();
+    var change = ""
+    var id = $("#userID").val();
+    if ($("#admineditpage").length) {
+      change = "change"
     }
+    //ユーザー名に重複がないかを非同期で問い合わせる
+    $.ajax({
+      url: "/" + prefix + '/usercheck',
+      type: 'get',
+      data: {
+        username: nameval,
+        change: change,
+        id: id
+      },
+      success: function (response) {
+        //ユーザー名が重複している場合
+        if (response == "重複") {
+          $("#usercheck").addClass('errorsentence')
+          $("#name").addClass('invalid')
+        }
+        else {
+          $("#" + errornamedata).removeClass("errorsentence");
+          //登録画面におけるフォームの確認
+          if (!$('.errorsentence').length) {
+
+            var title = $('#registbutton').val();
+
+
+            if (confirm("本当に登録しますか？")) {
+              history.pushState(null, null, "/" + prefix + '/error/K183623');
+              this.submit(); // フォームの送信を実行
+            }
+
+          }
+        }
+      }
+    });
+
   });
 
 
@@ -49,16 +78,15 @@ $(document).ready(function () {
 
 
 
-
+//管理画面のユーザー変更画面
   //管理者画面の編集画面において一般ユーザーに変更する際に残りの管理者の数をカウントしてエラーを出すコード
   $('#admin-myForm').on('submit', function (e) {
+    errorformreset(["name","email","password"]);
+    errorsentencereset(["required1","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
     $("#changeerror").removeClass("errorsentence");
     var id = $('#userid').val();
     var admin = $('#admin').val();
     var submitButton = this;
-
-
-
     e.preventDefault(); // フォームの送信を中止
 
     //値の入力時に不正なデータがある場合はalertがtrueになる
@@ -78,18 +106,53 @@ $(document).ready(function () {
     //変更画面におけるフォームの確認
     if (!$('.errorsentence').length) {
       if (admin == "一般") {
+        //管理ユーザーが他にいるかどうかを非同期で確認
         $.ajax({
-          url: "/"+ prefix + '/admincheck/' + id,
+          url: "/" + prefix + '/admincheck/' + id,
           type: 'get',
           processData: false,
           contentType: false,
           success: function (response) {
             //残りの管理ユーザーが1人以上いる場合は続行する。
             if (response > 0) {
-              if (confirm("本当に変更しますか")) {
-                history.pushState(null, null, "/"+ prefix+'/error/K183623');
-                submitButton.submit()
+              var nameval = $('#name').val();
+              var change = ""
+              var id = $("#userID").val();
+              if ($("#admineditpage").length) {
+                change = "change"
               }
+              //ユーザー名に重複がないかを非同期で問い合わせる
+              $.ajax({
+                url: "/" + prefix + '/usercheck',
+                type: 'get',
+                data: {
+                  username: nameval,
+                  change: change,
+                  id: id
+                },
+                success: function (response) {
+                  //ユーザー名が重複している場合
+                  if (response == "重複") {
+                    $("#usercheck").addClass('errorsentence')
+                    $("#name").addClass('invalid')
+                  }
+                  else {
+                    //登録画面におけるフォームの確認
+                    if (!$('.errorsentence').length) {
+          
+                      var title = $('#registbutton').val();
+          
+          
+                      if (confirm("本当に変更しますか")) {
+                        history.pushState(null, null, "/" + prefix + '/error/K183623');
+                        submitButton.submit()
+                      }
+          
+                    }
+                  }
+                }
+              });
+
             }
             else {
               $("#changeerror").addClass("errorsentence");
@@ -98,10 +161,44 @@ $(document).ready(function () {
         });
       }
       else if (admin == "管理") {
-        if (confirm("本当に変更しますか")) {
-          history.pushState(null, null, "/"+ prefix+'/error/K183623');
-          submitButton.submit()
+        var nameval = $('#name').val();
+        var change = ""
+        var id = $("#userID").val();
+        if ($("#admineditpage").length) {
+          change = "change"
         }
+        //ユーザー名に重複がないかを非同期で問い合わせる
+        $.ajax({
+          url: "/" + prefix + '/usercheck',
+          type: 'get',
+          data: {
+            username: nameval,
+            change: change,
+            id: id
+          },
+          success: function (response) {
+            //ユーザー名が重複している場合
+            if (response == "重複") {
+              $("#usercheck").addClass('errorsentence')
+              $("#name").addClass('invalid')
+            }
+            else {
+              $("#" + errornamedata).removeClass("errorsentence");
+              //登録画面におけるフォームの確認
+              if (!$('.errorsentence').length) {
+    
+                var title = $('#registbutton').val();
+    
+    
+                if (confirm("本当に変更しますか")) {
+                  history.pushState(null, null, "/" + prefix + '/error/K183623');
+                  submitButton.submit()
+                }
+    
+              }
+            }
+          }
+        });
       }
     }
   });
@@ -447,6 +544,17 @@ $(document).ready(function () {
     $(invmessage.join(",")).addClass("errorsentence");
     $(valimessage.join(",")).removeClass("errorsentence");
 
+  }
+
+  function errorformreset(errorform){
+    errorform.forEach(function(element){
+      $('#'+ element).removeClass("invalid");
+    })
+  }
+  function errorsentencereset(errorsentence){
+    errorsentence.forEach(function(element){
+      $('#'+ element).removeClass("errorsentence");
+    })
   }
 
   //不正な形式だった場合はfalse
