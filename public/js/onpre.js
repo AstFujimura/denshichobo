@@ -101,7 +101,6 @@ $(document).ready(function () {
 
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
-    usercheck("name", "usercheck")
 
     //変更画面におけるフォームの確認
     if (!$('.errorsentence').length) {
@@ -634,36 +633,36 @@ $(document).ready(function () {
 
   }
 
-  //エラーメッセージを出して重複がなければtrue返す
-  function usercheck(namedata, errornamedata) {
-    var nameval = $("#" + namedata).val();
-    var change = ""
-    var id = $("#userID").val();
-    if ($("#admineditpage").length) {
-      change = "change"
-    }
-    $.ajax({
-      url: "/"+ prefix +'/usercheck',
-      type: 'get',
-      data: {
-        username: nameval,
-        change: change,
-        id: id
-      },
-      success: function (response) {
-        //ユーザー名が重複している場合
-        if (response == "重複") {
-          $("#" + errornamedata).addClass('errorsentence')
-          $("#" + namedata).addClass('invalid')
-          return true
-        }
-        else {
-          $("#" + errornamedata).removeClass("errorsentence");
-          return false
-        }
-      }
-    });
-  }
+  // //エラーメッセージを出して重複がなければtrue返す
+  // function usercheck(namedata, errornamedata) {
+  //   var nameval = $("#" + namedata).val();
+  //   var change = ""
+  //   var id = $("#userID").val();
+  //   if ($("#admineditpage").length) {
+  //     change = "change"
+  //   }
+  //   $.ajax({
+  //     url: "/"+ prefix +'/usercheck',
+  //     type: 'get',
+  //     data: {
+  //       username: nameval,
+  //       change: change,
+  //       id: id
+  //     },
+  //     success: function (response) {
+  //       //ユーザー名が重複している場合
+  //       if (response == "重複") {
+  //         $("#" + errornamedata).addClass('errorsentence')
+  //         $("#" + namedata).addClass('invalid')
+  //         return true
+  //       }
+  //       else {
+  //         $("#" + errornamedata).removeClass("errorsentence");
+  //         return false
+  //       }
+  //     }
+  //   });
+  // }
 
 
 

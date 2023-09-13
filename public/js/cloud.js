@@ -101,7 +101,6 @@ $(document).ready(function () {
 
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
-    usercheck("name", "usercheck")
 
     //変更画面におけるフォームの確認
     if (!$('.errorsentence').length) {
