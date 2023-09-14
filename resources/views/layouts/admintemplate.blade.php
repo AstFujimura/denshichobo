@@ -49,6 +49,10 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01">
         <div class="iconmessage">書類管理</div>
     </div>
+    <div class="headerIcon001" onclick="location.href='{{route('question')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
+        <div class="iconmessage">ヘルプ</div>
+    </div>
 
     <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
         <div class="usermenu01">

@@ -134,6 +134,10 @@ Route::post('/admin/document',[AdminController::class,'admindocumentPost'])->nam
 Route::get('/error/{code}',[ErrorController::class,'errorGet'])->name('errorGet');
 
 Route::get('/usercheck',[TopController::class,'usercheck'])->name('usercheck');
+
+Route::get('/question',[TopController::class,'question'])->name('question');
+
+
 });
 
 });

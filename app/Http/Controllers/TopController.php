@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\Paginator;
 use Aws\S3\S3Client;
+use Illuminate\Support\Facades\File as PDF;
+use Illuminate\Support\Facades\Response;
 
 class TopController extends Controller
 {
@@ -669,5 +671,14 @@ class TopController extends Controller
             // 該当する結果がある場合の処理
             return response()->json($clients);
         }
+    }
+
+    public function question()
+    {
+       if (Auth::user()->管理 == "管理") {
+        $filePath = public_path("pdf/admin.pdf");
+        $fileContent = PDF::get($filePath);
+        return Response::make($fileContent, 200, ['Content-Type' => 'application/pdf']);
+       }
     }
 }
