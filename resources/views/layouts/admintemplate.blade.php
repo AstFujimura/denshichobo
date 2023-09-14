@@ -29,7 +29,7 @@
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{config('prefix.prefix')}}">
     </div>
-    <span class="version">ver.2.1</span>
+    <span class="version">ver.2.3</span>
 </header>
 <div class="menu001">
 
