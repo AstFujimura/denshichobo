@@ -186,8 +186,10 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
     <div class="extension pale">形式</div>
     <div class="preview pale">PV.</div>
     <div class="hennkou pale">変更</div>
+    @if (Auth::user()->管理 == "管理")
     <div class="updater verypale">更新者</div>
     <div class="creater verypale">作成者</div>
+    @endif
 </div>
 
 <div class="top_table_element">
@@ -225,8 +227,10 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
 
                 @endif
             </div>
+            @if (Auth::user()->管理 == "管理")
             <div class="updater">{{$file->更新者}}</div>
             <div class="creater">{{$file->作成者}}</div>
+            @endif
         </div>
         @endforeach
     </div>

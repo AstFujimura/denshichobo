@@ -7,6 +7,7 @@ $(document).ready(function () {
     errorsentencereset(["required1","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
     //値の入力時に不正なデータがある場合はalertがtrueになる
     var alert = false;
+    var form = this; // フォーム要素を保持
     event.preventDefault();
 
     // 必須項目が空欄の場合のエラーメッセージ
@@ -61,7 +62,7 @@ $(document).ready(function () {
 
             if (confirm("本当に登録しますか？")) {
               history.pushState(null, null, "/" + prefix + '/error/K183623');
-              this.submit(); // フォームの送信を実行
+              form.submit(); // フォームの送信を実行
             }
 
           }
