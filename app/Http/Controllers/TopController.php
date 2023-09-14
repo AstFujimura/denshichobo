@@ -677,8 +677,13 @@ class TopController extends Controller
     {
        if (Auth::user()->管理 == "管理") {
         $filePath = public_path("pdf/admin.pdf");
-        $fileContent = PDF::get($filePath);
-        return Response::make($fileContent, 200, ['Content-Type' => 'application/pdf']);
+
        }
+       else if (Auth::user()->管理 == "一般") {
+        $filePath = public_path("pdf/general.pdf");
+
+       }
+       $fileContent = PDF::get($filePath);
+       return Response::make($fileContent, 200, ['Content-Type' => 'application/pdf']);
     }
 }
