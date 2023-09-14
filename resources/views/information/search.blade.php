@@ -159,6 +159,10 @@
         @endforeach
     </div>
 
+    <div class="excelbutton">
+        エクセル出力
+    </div>
+
 </div>
 <div class="top_table_div">
     <div class="hiduke">取引日</div>

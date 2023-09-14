@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
@@ -378,6 +383,10 @@ class TopController extends Controller
             $endKinngakuStr = number_format(floatval($endKinngakuStr));
         }
 
+        if ($request->input("excel") == "true") {
+            $this->excel($request);
+        }
+
 
         $data = [
             'files' => $files,
@@ -675,15 +684,45 @@ class TopController extends Controller
 
     public function question()
     {
-       if (Auth::user()->管理 == "管理") {
-        $filePath = public_path("pdf/admin.pdf");
+        if (Auth::user()->管理 == "管理") {
+            $filePath = public_path("pdf/admin.pdf");
+        } else if (Auth::user()->管理 == "一般") {
+            $filePath = public_path("pdf/general.pdf");
+        }
+        $fileContent = PDF::get($filePath);
+        return Response::make($fileContent, 200, ['Content-Type' => 'application/pdf']);
+    }
+    public function excel($request)
+    {
+        // エクセルテンプレートを読み込む
+        $templatePath = public_path("xlsx/template.xlsx"); // テンプレートのパスを指定
+        $reader = new XlsxReader();
+        $spreadsheet = $reader->load($templatePath);
 
-       }
-       else if (Auth::user()->管理 == "一般") {
-        $filePath = public_path("pdf/general.pdf");
+        // データベースから取得した値をエクセルに埋め込む
+        $worksheet = $spreadsheet->getActiveSheet();
 
-       }
-       $fileContent = PDF::get($filePath);
-       return Response::make($fileContent, 200, ['Content-Type' => 'application/pdf']);
+        $worksheet->setCellValue('C2', $request->input('starthiduke'));
+        $worksheet->setCellValue('E2', $request->input('endhiduke'));
+        $worksheet->setCellValue('C3', $request->input('startkinngaku'));
+        $worksheet->setCellValue('E3', $request->input('endkinngaku'));
+        $worksheet->setCellValue('C4', $request->input('torihikisaki'));
+        $worksheet->setCellValue('I2', $request->input('syoruikubunn'));
+        $worksheet->setCellValue('I3', $request->input('teisyutu'));
+        $worksheet->setCellValue('I4', $request->input('hozonn'));
+        $worksheet->setCellValue('L2', $request->input('kennsakuword'));
+        $worksheet->setCellValue('L3', $request->input('updater'));
+        $worksheet->setCellValue('L4', $request->input('creater'));
+
+        // エクセルファイルを生成
+        $writer = new Xlsx($spreadsheet);
+
+        // ブラウザにダウンロードさせるためのヘッダーを設定
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="帳簿一覧.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        // ダウンロード
+        $writer->save('php://output');
     }
 }

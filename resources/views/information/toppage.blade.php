@@ -171,6 +171,9 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
         @endforeach
     </div>
 
+    <div class="excelbutton">
+        エクセル出力
+    </div>
 
 </div>
 <div class="top_table_div">

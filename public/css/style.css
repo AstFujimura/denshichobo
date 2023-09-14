@@ -38,6 +38,23 @@ a {
   margin-left: 50px;
 }
 
+.excelbutton{
+  background: #bceda3;
+  border: #1c881c solid 2px;
+  padding: 0px 10px;
+  height: 30px;
+  margin-block: auto;
+  margin-left: 50px;
+  border-radius: 3px;
+  line-height: 30px;
+  color: black;
+  cursor: pointer;
+}
+.excelbutton:hover{
+  background: #234214;
+  color: white;
+}
+
 .pagebutton {
   background: white;
   width: 25px;
