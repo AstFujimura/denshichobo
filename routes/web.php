@@ -96,7 +96,7 @@ Route::post('/edit/{path}',[EditController::class,'editPost'])->name('editPost')
 Route::get('/delete/{path}',[EditController::class,'deleteGet'])->name('deleteGet');
 
 // numの数だけダミーデータを登録するとき
-// Route::get('/test/{num}',[TestController::class,'testGet'])->name('testGet');
+Route::get('/test/{num}',[TestController::class,'testGet'])->name('testGet');
 
 // 管理者ページトップ（ユーザー一覧）
 Route::get('/admin',[AdminController::class,'adminGet'])->name('adminGet');
