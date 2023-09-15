@@ -384,7 +384,7 @@ class TopController extends Controller
         }
 
         if ($request->input("excel") == "true") {
-            $this->excel($request);
+            $this->excel($request, $files);
         }
 
 
@@ -692,7 +692,7 @@ class TopController extends Controller
         $fileContent = PDF::get($filePath);
         return Response::make($fileContent, 200, ['Content-Type' => 'application/pdf']);
     }
-    public function excel($request)
+    public function excel($request, $files)
     {
         // エクセルテンプレートを読み込む
         $templatePath = public_path("xlsx/template.xlsx"); // テンプレートのパスを指定
@@ -702,25 +702,101 @@ class TopController extends Controller
         // データベースから取得した値をエクセルに埋め込む
         $worksheet = $spreadsheet->getActiveSheet();
 
-        $worksheet->setCellValue('C2', $request->input('starthiduke'));
-        $worksheet->setCellValue('E2', $request->input('endhiduke'));
-        $worksheet->setCellValue('C3', $request->input('startkinngaku'));
-        $worksheet->setCellValue('E3', $request->input('endkinngaku'));
-        $worksheet->setCellValue('C4', $request->input('torihikisaki'));
-        $worksheet->setCellValue('I2', $request->input('syoruikubunn'));
-        $worksheet->setCellValue('I3', $request->input('teisyutu'));
-        $worksheet->setCellValue('I4', $request->input('hozonn'));
-        $worksheet->setCellValue('L2', $request->input('kennsakuword'));
-        $worksheet->setCellValue('L3', $request->input('updater'));
-        $worksheet->setCellValue('L4', $request->input('creater'));
+        $starthiduke = $request->input('starthiduke');
+        if (!$starthiduke) {
+            $starthiduke = "指定なし";
+        }
+        $endhiduke = $request->input('endhiduke');
+        if (!$endhiduke) {
+            $endhiduke = "指定なし";
+        }
+        $startkinngaku = $request->input('startkinngaku');
+        if (!$startkinngaku) {
+            $startkinngaku = "指定なし";
+        }
+        $endkinngaku = $request->input('endkinngaku');
+        if (!$endkinngaku) {
+            $endkinngaku = "指定なし";
+        }
+        $torihikisaki = $request->input('torihikisaki');
+        if (!$torihikisaki) {
+            $torihikisaki = "指定なし";
+        }
+        $syoruikubunn = $request->input('syoruikubunn');
+        if (!$syoruikubunn) {
+            $syoruikubunn = "指定なし";
+        } else {
+            $syoruikubunn = Document::where("id", $syoruikubunn)->first();
+            $syoruikubunn = $syoruikubunn->書類;
+        }
+        $teisyutu = $request->input('teisyutu');
+        if (!$teisyutu) {
+            $teisyutu = "指定なし";
+        }
+        $hozonn = $request->input('hozonn');
+        if (!$hozonn) {
+            $hozonn = "指定なし";
+        }
+        $kennsakuword = $request->input('kennsakuword');
+        if (!$kennsakuword) {
+            $kennsakuword = "指定なし";
+        }
+        $updater = $request->input('updater');
+        if (!$updater) {
+            $updater = "指定なし";
+        } else {
+            $updater = User::where("id", $updater)->first();
+            $updater = $updater->name;
+        }
+        $creater = $request->input('creater');
+        if (!$creater) {
+            $creater = "指定なし";
+        } else {
+            $creater = User::where("id", $creater)->first();
+            $creater = $creater->name;
+        }
+
+        $worksheet->setCellValue('B2', $starthiduke);
+        $worksheet->setCellValue('D2', $endhiduke);
+        $worksheet->setCellValue('B3', $startkinngaku);
+        $worksheet->setCellValue('D3', $endkinngaku);
+        $worksheet->setCellValue('B4', $torihikisaki);
+        $worksheet->setCellValue('F2', $syoruikubunn);
+        $worksheet->setCellValue('F3', $teisyutu);
+        $worksheet->setCellValue('F4', $hozonn);
+        $worksheet->setCellValue('H2', $kennsakuword);
+        $worksheet->setCellValue('H3', $updater);
+        $worksheet->setCellValue('H4', $creater);
+
+        $row = 7;
+        foreach ($files as $file) {
+            $worksheet->setCellValue('A' . $row, substr_replace(substr_replace($file->日付, '/', 6, 0), '/', 4, 0));
+            $worksheet->setCellValue('B' . $row, $file->金額);
+            $worksheet->setCellValue('C' . $row, $file->取引先);
+            $worksheet->setCellValue('D' . $row, $file->書類);
+            $worksheet->setCellValue('E' . $row, $file->提出);
+            $worksheet->setCellValue('F' . $row, $file->保存);
+            $worksheet->setCellValue('G' . $row, $file->ファイル形式);
+            $worksheet->setCellValue('H' . $row, $file->更新者);
+            $worksheet->setCellValue('I' . $row, $file->作成者);
+            $worksheet->setCellValue('J' . $row, $file->削除フラグ);
+            $row++;
+        }
+
+
+
+// 新しいスプレッドシートを作成
+$spreadsheet = new Spreadsheet();
 
         // エクセルファイルを生成
         $writer = new Xlsx($spreadsheet);
+
 
         // ブラウザにダウンロードさせるためのヘッダーを設定
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="帳簿一覧.xlsx"');
         header('Cache-Control: max-age=0');
+        header('Content-Encoding: UTF-8'); // エンコーディングをUTF-8に設定
 
         // ダウンロード
         $writer->save('php://output');
