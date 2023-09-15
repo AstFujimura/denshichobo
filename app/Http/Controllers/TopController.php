@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 use Carbon\Carbon;
 use App\Models\File;
@@ -782,20 +783,13 @@ class TopController extends Controller
             $worksheet->setCellValue('J' . $row, $file->削除フラグ);
             $row++;
         }
-
-
-
-        // エクセルファイルを生成
-        $writer = new Xlsx($spreadsheet);
-
-
-        // ブラウザにダウンロードさせるためのヘッダーを設定
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="帳簿一覧.xlsx"');
+        $fileName = '帳簿一覧.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;');
+        header("Content-Disposition: attachment; filename=\"{$fileName}\"");
         header('Cache-Control: max-age=0');
-        header('Content-Encoding: UTF-8'); // エンコーディングをUTF-8に設定
 
-        // ダウンロード
+        $writer = new XlsxWriter($spreadsheet);
         $writer->save('php://output');
+        exit;
     }
 }
