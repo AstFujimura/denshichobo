@@ -785,9 +785,6 @@ class TopController extends Controller
 
 
 
-// 新しいスプレッドシートを作成
-$spreadsheet = new Spreadsheet();
-
         // エクセルファイルを生成
         $writer = new Xlsx($spreadsheet);
 
