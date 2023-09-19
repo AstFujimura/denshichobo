@@ -775,8 +775,8 @@ class TopController extends Controller
         $style = [
             'borders' => [
                 'bottom' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHED,
-                    'color' => ['rgb' => '000000'], // 点線の色を設定
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => 'AEAAAA'], // 点線の色を設定
                 ],
             ],
             'font' => [
