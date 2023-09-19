@@ -125,7 +125,9 @@ class TopController extends Controller
         }
         // dd($paginate);
 
-
+        if ($request->input("excel") == "true") {
+            $this->excel($request, $files);
+        }
 
         // 取得したデータをビューに渡すなどの処理
         return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server'));
@@ -769,8 +771,25 @@ class TopController extends Controller
         $worksheet->setCellValue('H3', $updater);
         $worksheet->setCellValue('H4', $creater);
 
+        // セルのスタイルを設定
+        $style = [
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHED,
+                    'color' => ['rgb' => '000000'], // 点線の色を設定
+                ],
+            ],
+            'font' => [
+                'size' => 10, // フォントサイズを10ポイントに設定
+            ],
+        ];
+
         $row = 7;
         foreach ($files as $file) {
+            $worksheet->getStyle('A' . $row . ':J' . $row)->applyFromArray($style);
+            // E列とJ列のセルだけを中央寄せに設定
+            $worksheet->getStyle('E' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $worksheet->getStyle('J' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $worksheet->setCellValue('A' . $row, substr_replace(substr_replace($file->日付, '/', 6, 0), '/', 4, 0));
             $worksheet->setCellValue('B' . $row, $file->金額);
             $worksheet->setCellValue('C' . $row, $file->取引先);
