@@ -343,19 +343,28 @@ $(document).ready(function () {
 
 
   $('.excelbutton').on('click', function () {
-    // 1. 現在のURLを取得
-    var currentURL = window.location.href;
+    $showcount = $('#showcount').text().replace('件', '');
+    if ($showcount <= 500) {
+      $(".excelerror").css("display","none")
+      // 1. 現在のURLを取得
+      var currentURL = window.location.href;
 
-    // 2. 新しいクエリパラメータを追加
-    var newParameter = "excel=true";
+      // 2. 新しいクエリパラメータを追加
+      var newParameter = "excel=true";
 
-    // URLが既にクエリパラメータを持っているか確認し、適切な区切り記号を選択します
-    var separator = currentURL.includes("?") ? "&" : "?";
+      // URLが既にクエリパラメータを持っているか確認し、適切な区切り記号を選択します
+      var separator = currentURL.includes("?") ? "&" : "?";
 
-    // 新しいクエリパラメータを現在のURLに追加
-    var newURL = currentURL + separator + newParameter;
-    // 3. 更新されたURLでページを再ロードまたはリダイレクト
-    window.location.href = newURL;
+      // 新しいクエリパラメータを現在のURLに追加
+      var newURL = currentURL + separator + newParameter;
+      // 3. 更新されたURLでページを再ロードまたはリダイレクト
+      window.location.href = newURL;
+    }
+    else {
+      $(".excelerror").css("display","block")
+    }
+
+
   });
 
 

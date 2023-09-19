@@ -55,6 +55,12 @@ a {
   color: white;
 }
 
+.excelerror{
+  line-height: 50px;
+  margin-left: 10px;
+  color: red;
+  display: none;
+}
 .pagebutton {
   background: white;
   width: 25px;

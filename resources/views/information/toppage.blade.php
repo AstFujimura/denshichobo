@@ -154,7 +154,7 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
         <div class="showelement">
             -
         </div>
-        <div class="showelement">
+        <div class="showelement" id="showcount">
             {{$enddata}}件
         </div>
         <div class="allshowelement">
@@ -171,9 +171,11 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
         @endforeach
     </div>
 
+    @if (Auth::user()->管理 == "管理")
     <div class="excelbutton">
         エクセル出力
     </div>
+    @endif
 
 </div>
 <div class="top_table_div">

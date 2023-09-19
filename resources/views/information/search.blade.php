@@ -142,7 +142,7 @@
         <div class="showelement">
             -
         </div>
-        <div class="showelement">
+        <div class="showelement" id="showcount">
             {{$enddata}}件
         </div>
         <div class="allshowelement">
@@ -161,6 +161,9 @@
 
     <div class="excelbutton">
         エクセル出力
+    </div>
+    <div class="excelerror">
+        表示件数を500件以下にしてください。
     </div>
 
 </div>
