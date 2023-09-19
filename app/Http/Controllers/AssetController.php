@@ -23,6 +23,11 @@ class AssetController extends Controller
         return $this->getResponse('jquery', $file, 'application/javascript');
     }
 
+    public function icon($file)
+    {
+        return $this->getResponse('icon', $file, 'image/x-icon');
+    }
+
     public function img($file)
     {
         // ファイルの拡張子を取得

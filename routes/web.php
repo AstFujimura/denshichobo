@@ -43,6 +43,9 @@ Route::get('/img/{file}', [AssetController::class,'img'])->where('file', '.*\.(j
 // 画像フォルダへのルーティング
 Route::get('/jquery/{file}', [AssetController::class,'jquery'])->where('file', '.*js');
 
+// 画像フォルダへのルーティング
+Route::get('/icon/{file}', [AssetController::class,'icon'])->where('file', '.*ico');
+
 
 //  ログインページ
 Route::get('login',[LoginController::class,'loginGet'])->name('loginGet');
