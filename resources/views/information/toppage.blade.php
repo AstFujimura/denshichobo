@@ -176,6 +176,9 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
         エクセル出力
     </div>
     @endif
+    <div class="excelerror">
+        表示件数を500件以下にしてください。
+    </div>
 
 </div>
 <div class="top_table_div">
