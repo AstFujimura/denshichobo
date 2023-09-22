@@ -84,8 +84,11 @@
         <div class="koushinn">
             {{$file->created_at}}
         </div>
+        @php
+        $updater = str_replace('(削除ユーザー)', '', $file->更新者);
+        @endphp
         <div class="updater">
-            {{$file->更新者}}
+            {{$updater}}
         </div>
     </div>
     @endif

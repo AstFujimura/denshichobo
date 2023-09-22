@@ -148,13 +148,13 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
 
 <div class="info">
     <div class="showcontainer">
-        <div class="showelement">
+        <div class="showelement" id="showcount1">
             {{$startdata}}
         </div>
         <div class="showelement">
             -
         </div>
-        <div class="showelement" id="showcount">
+        <div class="showelement" id="showcount2">
             {{$enddata}}件
         </div>
         <div class="allshowelement">
@@ -236,8 +236,12 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
                 @endif
             </div>
             @if (Auth::user()->管理 == "管理")
-            <div class="updater">{{$file->更新者}}</div>
-            <div class="creater">{{$file->作成者}}</div>
+            @php
+            $updater = str_replace('(削除ユーザー)', '', $file->更新者);
+            $creater = str_replace('(削除ユーザー)', '', $file->作成者);
+            @endphp
+            <div class="updater">{{$updater}}</div>
+            <div class="creater">{{$creater}}</div>
             @endif
         </div>
         @endforeach

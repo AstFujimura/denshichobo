@@ -797,8 +797,8 @@ class TopController extends Controller
             $worksheet->setCellValue('E' . $row, $file->提出);
             $worksheet->setCellValue('F' . $row, $file->保存);
             $worksheet->setCellValue('G' . $row, $file->ファイル形式);
-            $worksheet->setCellValue('H' . $row, $file->更新者);
-            $worksheet->setCellValue('I' . $row, $file->作成者);
+            $worksheet->setCellValue('H' . $row, str_replace('(削除ユーザー)', '',$file->更新者));
+            $worksheet->setCellValue('I' . $row, str_replace('(削除ユーザー)', '',$file->作成者));
             $worksheet->setCellValue('J' . $row, $file->削除フラグ);
             $row++;
         }

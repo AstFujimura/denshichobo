@@ -343,7 +343,9 @@ $(document).ready(function () {
 
 
   $('.excelbutton').on('click', function () {
-    $showcount = $('#showcount').text().trim().replace('件', '');
+    $showcount1 = $('#showcount1').text().trim();
+    $showcount2 = $('#showcount2').text().trim().replace('件', '');
+    $showcount = $showcount2 - $showcount1 + 1;
     if ($showcount <= 500) {
       $(".excelerror").css("display", "none")
       if (confirm("現在表示中の" + $showcount + "件を出力します。よろしいですか。")) {
