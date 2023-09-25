@@ -30,7 +30,7 @@ class RegistController extends Controller
         return view('information.resistpage', compact('documents', 'prefix', 'server'));
     }
 
-    public function registURl(Request $request)
+    public function registURL(Request $request)
     {
         $now = Carbon::now();
         $currentTime = $now->format('YmdHis');
@@ -209,6 +209,12 @@ class RegistController extends Controller
             $latestdata->save();
             $version = $latestdata->バージョン + 1;
             $creater = $latestdata->保存者ID;
+            //ファイル変更あり(過去データがあるため)
+            $filechange = "あり";
+        }
+        else {
+            //ファイル変更なし(過去データがない→新規の登録であるため)
+            $filechange = "";
         }
 
 
@@ -222,6 +228,7 @@ class RegistController extends Controller
         $file->バージョン = $version;
         $file->ファイルパス = $filepass;
         $file->ファイル形式 = $extension;
+        $file->ファイル変更 = $filechange;
         $file->過去データID = $pastID;
         $file->保存 = $hozonn;
         $file->提出 = $teisyutu;

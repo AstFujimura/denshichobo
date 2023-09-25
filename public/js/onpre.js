@@ -3,8 +3,8 @@ $(document).ready(function () {
 
   //管理画面のユーザー登録フォーム
   $('#myForm').submit(function (event) {
-    errorformreset(["name","email","password"]);
-    errorsentencereset(["required1","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
+    errorformreset(["name", "email", "password"]);
+    errorsentencereset(["required1", "required2", "required3", "userformat", "usercheck", "emailformat", "passwordformat"]);
     //値の入力時に不正なデータがある場合はalertがtrueになる
     var alert = false;
     var form = this; // フォーム要素を保持
@@ -78,11 +78,11 @@ $(document).ready(function () {
 
 
 
-//管理画面のユーザー変更画面
+  //管理画面のユーザー変更画面
   //管理者画面の編集画面において一般ユーザーに変更する際に残りの管理者の数をカウントしてエラーを出すコード
   $('#admin-myForm').on('submit', function (e) {
-    errorformreset(["name","email","password"]);
-    errorsentencereset(["required1","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
+    errorformreset(["name", "email", "password"]);
+    errorsentencereset(["required1", "required2", "required3", "userformat", "usercheck", "emailformat", "passwordformat"]);
     $("#changeerror").removeClass("errorsentence");
     var id = $('#userid').val();
     var admin = $('#admin').val();
@@ -138,15 +138,15 @@ $(document).ready(function () {
                   else {
                     //登録画面におけるフォームの確認
                     if (!$('.errorsentence').length) {
-          
+
                       var title = $('#registbutton').val();
-          
-          
+
+
                       if (confirm("本当に変更しますか")) {
                         history.pushState(null, null, "/" + prefix + '/error/K183623');
                         submitButton.submit()
                       }
-          
+
                     }
                   }
                 }
@@ -184,15 +184,15 @@ $(document).ready(function () {
             else {
               //登録画面におけるフォームの確認
               if (!$('.errorsentence').length) {
-    
+
                 var title = $('#registbutton').val();
-    
-    
+
+
                 if (confirm("本当に変更しますか")) {
                   history.pushState(null, null, "/" + prefix + '/error/K183623');
                   submitButton.submit()
                 }
-    
+
               }
             }
           }
@@ -212,7 +212,7 @@ $(document).ready(function () {
     var id = $('#userid').val();
     var form = this; // フォーム要素を保持
     $.ajax({
-      url: "/"+ prefix +'/admincheck/' + id,
+      url: "/" + prefix + '/admincheck/' + id,
       type: 'get',
       processData: false,
       contentType: false,
@@ -412,11 +412,26 @@ $(document).ready(function () {
       //ただし、編集ページは任意のため空白も許容する
       if ($('#regist').length) {
         $('#file').addClass("invalid")
+        $('.fileerrorelement').text('ファイルを選択してください。');
         $('.fileerrorelement').addClass("errorsentence");
         alert = true
       }
     }
+    //インプットされたものがフォルダの場合
+    else if($('#file')[0].files[0].type === ""){
+      $('.fileerrorelement').text('フォルダが選択されました。ファイルを選択してください。');
+      $('#file').addClass("invalid")
+      $('.fileerrorelement').addClass("errorsentence");
+    }
+    //ファイルサイズが大きい場合
+    else if($('#file')[0].files[0].size > 0.1 * 1024 * 1024){
+      $('.fileerrorelement').text('ファイルサイズが10MBを超えています。10MB以下のファイルを選択してください。');
+      $('#file').addClass("invalid")
+      $('.fileerrorelement').addClass("errorsentence");
+    }
     else {
+      console.log($('#file').size);
+      console.log($('#file').type);
       $('#file').removeClass("invalid")
       $('.fileerrorelement').removeClass("errorsentence");
     }
@@ -544,14 +559,14 @@ $(document).ready(function () {
 
   }
 
-  function errorformreset(errorform){
-    errorform.forEach(function(element){
-      $('#'+ element).removeClass("invalid");
+  function errorformreset(errorform) {
+    errorform.forEach(function (element) {
+      $('#' + element).removeClass("invalid");
     })
   }
-  function errorsentencereset(errorsentence){
-    errorsentence.forEach(function(element){
-      $('#'+ element).removeClass("errorsentence");
+  function errorsentencereset(errorsentence) {
+    errorsentence.forEach(function (element) {
+      $('#' + element).removeClass("errorsentence");
     })
   }
 

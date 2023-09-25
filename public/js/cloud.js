@@ -20,6 +20,7 @@ $(document).ready(function () {
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
+
     // usercheck("name", "usercheck")
     if ($("#password").val() != $("#newpassword").val()) {
       $("#password").addClass('invalid')
@@ -416,14 +417,24 @@ $(document).ready(function () {
 
 
 
+    //ファイルが空欄の場合
     if ($('#file').val() == '') {
       //登録ページの場合は必須条件
       //ただし、編集ページは任意のため空白も許容する
       if ($('#regist').length) {
         $('#file').addClass("invalid")
         $('.fileerrorelement').addClass("errorsentence");
-        alert = true
       }
+    }
+    //インプットされたものがフォルダの場合
+    else if($('#file')[0].files[0].type === ""){
+      $('.fileerrorelement').text('フォルダが選択されました。ファイルを選択してください。');
+      $('.fileerrorelement').addClass("errorsentence");
+    }
+    //ファイルサイズが大きい場合
+    else if($('#file')[0].files[0].size > 0.1 * 1024 * 1024){
+      $('.fileerrorelement').text('ファイルサイズが10MBを超えています。10MB以下のファイルを選択してください。');
+      $('.fileerrorelement').addClass("errorsentence");
     }
     else {
       $('#file').removeClass("invalid")

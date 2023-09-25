@@ -87,7 +87,7 @@ Route::post('/regist',[RegistController::class,'registPost'])->name('registPost'
 // 新規登録ページにポストで情報を投げた時
 Route::post('/regist/cloud',[RegistController::class,'registcloudPost'])->name('registcloudPost');
 
-Route::get('/objectURL',[RegistController::class,'registURl'])->name('registURl');
+Route::get('/objectURL',[RegistController::class,'registURL'])->name('registURl');
 
 
 // 変更ページ
