@@ -432,8 +432,8 @@ $(document).ready(function () {
       $('.fileerrorelement').addClass("errorsentence");
     }
     //ファイルサイズが大きい場合
-    else if($('#file')[0].files[0].size > 0.1 * 1024 * 1024){
-      $('.fileerrorelement').text('ファイルサイズが10MBを超えています。10MB以下のファイルを選択してください。');
+    else if($('#file')[0].files[0].size > 50 * 1024 * 1024){
+      $('.fileerrorelement').text('ファイルサイズが50MBを超えています。10MB以下のファイルを選択してください。');
       $('.fileerrorelement').addClass("errorsentence");
     }
     else {
