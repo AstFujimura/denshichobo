@@ -116,10 +116,7 @@
     background: rgb(34, 33, 33);
 
 }
-.usermenuicon01{
-    padding: 5px;
-    width: 2rem;
-}
+
 
 .topusername01{
     padding: 8px 5px;
@@ -155,6 +152,10 @@
         cursor: pointer;
         border-radius: 30%;
         margin-left: 30px;
+    }
+    .usermenuicon01{
+        padding: 5px;
+        width: 2rem;
     }
     .main01{
         position: relative;
@@ -209,10 +210,14 @@
 @media (max-width:480px){
     .menuicon01{
         padding: 5px;
-        width: 2rem;
+        width: 24px;
         cursor: pointer;
         border-radius: 30%;
         margin-left: 15px;
+    }
+    .usermenuicon01{
+        padding: 5px;
+        width: 24px;
     }
     .maincontent01{
         width: 95%;
