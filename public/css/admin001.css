@@ -21,6 +21,9 @@ body{
         display: flex;
         position: relative;
     }
+    .menue001 {
+        margin-right: 15px;
+    }
 }
 @media (min-width:480px){
     .menu001{
