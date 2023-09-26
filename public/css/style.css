@@ -397,6 +397,7 @@ a {
     border-radius: 5px;
     cursor: pointer;
     margin-inline: auto;
+    color: black;
   }
 
   .buttonarea {
@@ -786,6 +787,7 @@ a {
   cursor: pointer;
   width: 100px;
   font-size: 15px;
+  color: black;
 }
 
 .registbutton:hover {
@@ -884,18 +886,34 @@ a {
 .pagination .flex-1 {
   display: none;
 }
+@media(max-width:480px){
+  .important {
+    position: relative;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: normal;
+    transition: all .5s ease;
+    padding: 10px 50px;
+    border: solid 1px #bababa;
+    margin-block: 20px;
+  }
 
-.important {
-  position: relative;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: normal;
-  transition: all .5s ease;
-  padding: 10px 50px;
-  width: 360px;
-  border: solid 1px #bababa;
-  margin-block: 20px;
 }
+@media(min-width:480px){
+  .important {
+    position: relative;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: normal;
+    transition: all .5s ease;
+    padding: 10px 50px;
+    width: 360px;
+    border: solid 1px #bababa;
+    margin-block: 20px;
+  }
+  
+}
+
 
 /*アイコンの＋と×*/
 .important_title::before,

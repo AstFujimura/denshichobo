@@ -14,12 +14,26 @@ body{
     position: relative;
     display: flex;
 }
-.menu001{
-    height: 48px;
-    background: rgb(75, 75, 75);
-    display: flex;
-    position: relative;
+@media (max-width:480px){
+    .menu001{
+        height: 48px;
+        background: rgb(75, 75, 75);
+        display: flex;
+        position: relative;
+    }
 }
+@media (min-width:480px){
+    .menu001{
+        height: 48px;
+        background: rgb(75, 75, 75);
+        display: flex;
+        position: relative;
+    }
+    .menue001 {
+        margin-right: 100px;
+    }
+}
+
 
 .menu001fixed{
     width: 100%;
@@ -29,9 +43,6 @@ body{
     z-index: 11;
 }
 
-.menue001{
-    margin-right: 100px;
-}
 .rightmenue001{
     margin-left: auto;
 }
