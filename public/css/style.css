@@ -198,22 +198,27 @@ a {
     display: flex;
     font-size: 12px;
   }
+
   .filehennkou {
     width: 52px;
     text-align: center;
   }
+
   .koushinn {
     width: 138px;
   }
 }
+
 @media (min-width:800px) {
   .history_table_div {
     display: flex;
   }
+
   .filehennkou {
     width: 100px;
     text-align: center;
   }
+
   .koushinn {
     width: 200px;
   }
@@ -466,6 +471,10 @@ a {
 
 .searchinputtext {
   height: 30px;
+  background: white;
+  border: solid 1px #a8a8a8;
+  border-radius: 4px;
+  color: black;
 }
 
 .dateinputtext {
@@ -605,6 +614,10 @@ a {
 
 .input-field {
   height: 30px;
+  background: white;
+  border: solid 1px #a8a8a8;
+  border-radius: 4px;
+  color: black;
 }
 
 .kinngakuinput-field {
@@ -815,9 +828,10 @@ a {
     top: 100px;
     background: white;
     display: none;
-  
+
   }
 }
+
 @media (min-width:800px) {
   .previewcontainer {
     width: 500px;
@@ -828,7 +842,7 @@ a {
     left: 100px;
     background: white;
     display: none;
-  
+
   }
 }
 
@@ -1002,6 +1016,7 @@ a {
     display: flex;
     font-size: 13px;
   }
+
   .top_table_div div {
     background: rgb(181, 228, 240);
     text-align: center;
@@ -1009,10 +1024,12 @@ a {
     padding-block: 5px;
     padding-right: 2px;
   }
+
   .top_table_element {
     position: relative;
     font-size: 12px;
   }
+
   .top_table_body>div {
     padding-block: 5px;
     padding-right: 2px;
@@ -1024,49 +1041,57 @@ a {
     height: 30px;
     line-height: 30px;
   }
+
   .hiduke {
-  width: 75px;
-}
-.kinngaku{
-  width: 52px;
-}
-.torihikisaki {
-  width: 81px;
-  width: 65px;
-}
-.syoruikubunn {
-  width: 56px;
-  text-align: center;
-  display: none;
-}
+    width: 75px;
+  }
 
-.teisyutu {
-  width: 69px;
-  text-align: center;
-  display: none;
-}
+  .kinngaku {
+    width: 52px;
+  }
 
-.hozonn {
-  width: 100px;
-  display: none;
-}
-.bikou {
-  width: 75px;
-}
-.teisei,
-.rireki {
-  width: 43px;
-}
-.extension {
-  width: 28px;
-  display: none;
-}
+  .torihikisaki {
+    width: 81px;
+    width: 65px;
+  }
+
+  .syoruikubunn {
+    width: 56px;
+    text-align: center;
+    display: none;
+  }
+
+  .teisyutu {
+    width: 69px;
+    text-align: center;
+    display: none;
+  }
+
+  .hozonn {
+    width: 100px;
+    display: none;
+  }
+
+  .bikou {
+    width: 75px;
+  }
+
+  .teisei,
+  .rireki {
+    width: 43px;
+  }
+
+  .extension {
+    width: 28px;
+    display: none;
+  }
 }
 
 @media (min-width:800px) {
   .top_table_element {
     position: relative;
   }
+
   .top_table_div div {
     background: rgb(181, 228, 240);
     text-align: center;
@@ -1089,33 +1114,38 @@ a {
   .kinngaku {
     width: 130px;
   }
+
   .torihikisaki {
     width: 200px;
-  
+
   }
+
   .syoruikubunn {
     width: 75px;
     text-align: center;
   }
-  
+
   .teisyutu {
     width: 100px;
     text-align: center;
   }
-  
+
   .hozonn {
     width: 100px;
   }
+
   .bikou {
     width: 130px;
   }
+
   .teisei,
-.rireki {
-  width: 75px;
-}
-.extension {
-  width: 45px;
-}
+  .rireki {
+    width: 75px;
+  }
+
+  .extension {
+    width: 45px;
+  }
 }
 
 .loader {
