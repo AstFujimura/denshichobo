@@ -1345,3 +1345,17 @@ a {
   display: none;
   color: red;
 }
+
+.ui-datepicker-trigger{
+  background: #d0d0d0;
+    border-radius: 2px;
+    position: relative;
+    left: 2px;
+    cursor: pointer;
+}
+.ui-datepicker-trigger:hover{
+  background: #a0a0a0;
+}
+.dateform{
+  display: flex;
+}
