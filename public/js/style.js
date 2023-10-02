@@ -7,8 +7,9 @@ $(document).ready(function () {
         showAnim: 'show',
         showOn: 'button', // 日付をボタンクリックでのみ表示する
         buttonImage: '/'+prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
-        buttonImageOnly: true // テキストを非表示にする
+        buttonImageOnly: true, // テキストを非表示にする
     })
+    
 
     //サイドバーの表示
     $('.hamburger01').click(function () {
