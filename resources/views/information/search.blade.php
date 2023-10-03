@@ -214,7 +214,7 @@
             </div>
             <div class="extension">{{$file->ファイル形式}}</div>
             <div class="preview">
-                @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "PNG"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "jpeg"||$file->ファイル形式 == "JPG"||$file->ファイル形式 == "bmp"||$file->ファイル形式 == "gif"||$file->ファイル形式 == "pdf")
+                @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "PNG"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "jpeg"||$file->ファイル形式 == "JPG"||$file->ファイル形式 == "bmp"||$file->ファイル形式 == "gif"||$file->ファイル形式 == "pdf"||$file->ファイル形式 == "PDF")
                 <img src="{{ asset(config('prefix.prefix').'/'.'img/file_search_line.svg')}}" class="download previewbutton" id="{{$file->id}}">
                 @endif
             </div>
