@@ -72,9 +72,14 @@ class TestController extends Controller
             }
 
         }
+        else if ($num == -123){
+            File::query()->delete();
+        }
 
 
         return redirect()->route("topGet");
 
     }
+
+
 }
