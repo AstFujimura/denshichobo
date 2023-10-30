@@ -30,7 +30,7 @@
             電子帳簿保存システム
         </a>
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
-        <input type="hidden" id="prefix" value="{{config('prefix.prefix')}}">
+        <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
     
     <span class="version">ver.2.7.3</span>
