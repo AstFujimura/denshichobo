@@ -1,10 +1,6 @@
 $(document).ready(function () {
     var prefix = $('#prefix').val();
-    //オンプレの場合はprefixをつけないため
-    //prefixがある場合
-    if (prefix !== ""){
-        prefix = '/'+prefix
-    }
+
     $('.dateinputtext').datepicker({
         changeMonth: true,
         changeYear: true,

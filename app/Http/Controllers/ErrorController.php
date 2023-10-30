@@ -13,6 +13,9 @@ class ErrorController extends Controller
     public function errorGet(Request $request,$code)
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         if ($code == 'P127262'){

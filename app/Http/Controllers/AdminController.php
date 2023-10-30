@@ -18,6 +18,9 @@ class AdminController extends Controller
     public function adminGet()
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
@@ -40,6 +43,9 @@ class AdminController extends Controller
     public function adminregistGet()
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         if (Auth::user()->管理 == "管理") {
@@ -81,6 +87,9 @@ class AdminController extends Controller
     public function admineditGet($id)
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         if (Auth::user()->管理 == "管理") {
@@ -132,6 +141,9 @@ class AdminController extends Controller
     public function adminresetPost($id)
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         $user = User::find($id);
@@ -208,6 +220,9 @@ class AdminController extends Controller
     public function admindocumentGet()
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         $documents = Document::orderBy('order', 'asc')->get();

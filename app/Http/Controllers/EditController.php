@@ -20,6 +20,9 @@ class EditController extends Controller
     public function editGet($path)
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         //過去データIDに一致する一番最新のものを取得

@@ -1,9 +1,6 @@
 $(document).ready(function() {
   var prefix = $('#prefix').val();
-      //prefixがある場合
-      if (prefix !== ""){
-        prefix = '/'+prefix
-    }
+
   $('.important_title').on('click',function(){
     //パスワード変更アコーディオンメニューを閉じた時はパスワードの空欄エラーを取る
     $('#oldpass').removeClass("invalid");

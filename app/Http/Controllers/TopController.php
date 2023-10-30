@@ -34,6 +34,9 @@ class TopController extends Controller
     {
         // dd($this->pagenatearray(5,3));
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         //デフォルトでは25件表示をする
@@ -161,6 +164,9 @@ class TopController extends Controller
     {
 
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
@@ -522,6 +528,9 @@ class TopController extends Controller
     public function detail($id)
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
         $file = DB::table('files')
             ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
@@ -537,6 +546,9 @@ class TopController extends Controller
     public function history($id)
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
         $files = DB::table('files')
             ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
@@ -610,6 +622,9 @@ class TopController extends Controller
     public function usersettingGet()
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         $user = Auth::user();

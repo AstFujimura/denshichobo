@@ -21,6 +21,9 @@ class RegistController extends Controller
     public function registGet()
     {
         $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
         $server = config('prefix.server');
 
         $documents = Document::where("check", "check")
@@ -36,6 +39,7 @@ class RegistController extends Controller
         $currentTime = $now->format('YmdHis');
 
 
+        //s3バケットを扱うときはprefixに/は入れない
         $prefix = config('prefix.prefix');
         $server = config('prefix.server');
 

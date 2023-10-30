@@ -1,9 +1,5 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
-      //prefixがある場合
-      if (prefix !== ""){
-        prefix = '/'+prefix
-    }
 
   var adddocumentCount = 1000
   $(".documenttable_body").on("drop", function (event) {

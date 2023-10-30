@@ -1,9 +1,6 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
-      //prefixがある場合
-      if (prefix !== ""){
-        prefix = '/'+prefix
-    }
+
 
   //登録画面、変更画面以外は登録画面に遷移。(登録ボタンなどと間違う可能性が高いため)
   $('#registpagebutton').on('click', function (event) {

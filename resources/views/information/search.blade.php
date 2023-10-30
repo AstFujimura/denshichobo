@@ -153,7 +153,7 @@
 
     <div class="pagecontainer">
         @foreach ($paginate as $pagebutton)
-        <a class={{$pagebutton["class"]}} href=/{{$prefix}}{{$pagebutton["a"]}}>
+        <a class={{$pagebutton["class"]}} href={{$prefix}}{{$pagebutton["a"]}}>
             {{$pagebutton["value"]}}
         </a>
         @endforeach
@@ -204,13 +204,13 @@
             <div class="hozonn">{{$file->保存}}</div>
             <div class="bikou">{{$file->備考}}</div>
             <div class="teisei">@if ($file->バージョン != 1)
-                <div class="maru" onclick="location.href='/{{$prefix}}/history/{{$file->過去データID}}';">〇</div>
+                <div class="maru" onclick="location.href='{{$prefix}}/history/{{$file->過去データID}}';">〇</div>
                 @else
 
                 @endif
             </div>
             <div class="downloadTd">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg')}}" id='/{{$prefix}}/download/{{$file->id}}' class="download downloadbutton">
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg')}}" id='{{$prefix}}/download/{{$file->id}}' class="download downloadbutton">
             </div>
             <div class="extension">{{$file->ファイル形式}}</div>
             <div class="preview">
@@ -220,7 +220,7 @@
             </div>
             <div class="hennkou">
                 @if ($file->削除フラグ != "済")
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/transfer_3_fill.svg')}}" class="download" onclick="location.href='/{{$prefix}}/edit/{{$file->過去データID}}';">
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/transfer_3_fill.svg')}}" class="download" onclick="location.href='{{$prefix}}/edit/{{$file->過去データID}}';">
 
                 @endif
             </div>

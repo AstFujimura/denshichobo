@@ -1,9 +1,5 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
-      //prefixがある場合
-      if (prefix !== ""){
-        prefix = '/'+prefix
-    }
 
   //管理画面のユーザー登録フォーム
   $('#myForm').submit(function (event) {
