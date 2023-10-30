@@ -1,5 +1,9 @@
 $(document).ready(function() {
   var prefix = $('#prefix').val();
+      //prefixがある場合
+      if (prefix !== ""){
+        prefix = '/'+prefix
+    }
   $('.important_title').on('click',function(){
     //パスワード変更アコーディオンメニューを閉じた時はパスワードの空欄エラーを取る
     $('#oldpass').removeClass("invalid");
@@ -102,7 +106,7 @@ $(document).ready(function() {
 
       //ユーザー名に重複がないかを非同期で問い合わせる
       $.ajax({
-        url: "/" + prefix + '/usercheck',
+        url: prefix + '/usercheck',
         type: 'get',
         data: {
           username: nameval,
@@ -121,7 +125,7 @@ $(document).ready(function() {
   
               if (confirm("情報を変更しますよろしいですか")){
                 $.ajax({
-                  url: "/"+ prefix+'/usersetting',
+                  url: prefix+'/usersetting',
                   type: 'POST',
                   data: formData,
                   processData: false,
@@ -131,7 +135,7 @@ $(document).ready(function() {
                    },
                    success: function(response){
                     if (response == "成功"){
-                      window.location.href = "/"+ prefix
+                      window.location.href = prefix
                     }
                     
                     else if(response == "パスワードが違います") {

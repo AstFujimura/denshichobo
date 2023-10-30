@@ -1,5 +1,9 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
+      //prefixがある場合
+      if (prefix !== ""){
+        prefix = '/'+prefix
+    }
 
   //管理画面のユーザー登録フォーム
   $('#myForm').submit(function (event) {
@@ -41,7 +45,7 @@ $(document).ready(function () {
     }
     //ユーザー名に重複がないかを非同期で問い合わせる
     $.ajax({
-      url: "/" + prefix + '/usercheck',
+      url: prefix + '/usercheck',
       type: 'get',
       data: {
         username: nameval,
@@ -62,7 +66,7 @@ $(document).ready(function () {
 
 
             if (confirm("本当に登録しますか？")) {
-              history.pushState(null, null, "/" + prefix + '/error/K183623');
+              history.pushState(null, null, prefix + '/error/K183623');
               form.submit(); // フォームの送信を実行
             }
 
@@ -108,7 +112,7 @@ $(document).ready(function () {
       if (admin == "一般") {
         //管理ユーザーが他にいるかどうかを非同期で確認
         $.ajax({
-          url: "/" + prefix + '/admincheck/' + id,
+          url: prefix + '/admincheck/' + id,
           type: 'get',
           processData: false,
           contentType: false,
@@ -123,7 +127,7 @@ $(document).ready(function () {
               }
               //ユーザー名に重複がないかを非同期で問い合わせる
               $.ajax({
-                url: "/" + prefix + '/usercheck',
+                url: prefix + '/usercheck',
                 type: 'get',
                 data: {
                   username: nameval,
@@ -144,7 +148,7 @@ $(document).ready(function () {
           
           
                       if (confirm("本当に変更しますか")) {
-                        history.pushState(null, null, "/" + prefix + '/error/K183623');
+                        history.pushState(null, null, prefix + '/error/K183623');
                         submitButton.submit()
                       }
           
@@ -169,7 +173,7 @@ $(document).ready(function () {
         }
         //ユーザー名に重複がないかを非同期で問い合わせる
         $.ajax({
-          url: "/" + prefix + '/usercheck',
+          url: prefix + '/usercheck',
           type: 'get',
           data: {
             username: nameval,
@@ -190,7 +194,7 @@ $(document).ready(function () {
     
     
                 if (confirm("本当に変更しますか")) {
-                  history.pushState(null, null, "/" + prefix + '/error/K183623');
+                  history.pushState(null, null, prefix + '/error/K183623');
                   submitButton.submit()
                 }
     
@@ -213,7 +217,7 @@ $(document).ready(function () {
     var id = $('#userid').val();
     var form = this; // フォーム要素を保持
     $.ajax({
-      url: '/' + prefix + '/admincheck/' + id,
+      url: prefix + '/admincheck/' + id,
       type: 'get',
       processData: false,
       contentType: false,
@@ -350,7 +354,7 @@ $(document).ready(function () {
   //torihikisakiselectには表示するセレクトボックスのid
   function torihikiselect(searchText, torihikisakiselect) {
     $.ajax({
-      url: '/' + prefix + '/torihikisaki/',
+      url: prefix + '/torihikisaki/',
       method: 'GET',
       data: { search: searchText },
       success: function (response) {
@@ -456,7 +460,7 @@ $(document).ready(function () {
 
 
       if (confirm("本当に" + title + "しますか？")) {
-        history.pushState(null, null, "/" + prefix + '/error/K183623');
+        history.pushState(null, null,  prefix + '/error/K183623');
 
 
         //帳簿変更時にファイル変更がない場合
@@ -485,7 +489,7 @@ $(document).ready(function () {
           //S3の署名付きURLを取得するためのエンドポイントにアクセス
           $.ajax({
             method: 'GET',
-            url: "/" + prefix + '/objectURL', // キー生成のためのエンドポイント
+            url: prefix + '/objectURL', // キー生成のためのエンドポイント
             data: {
               method: method,
               extension: fileExtension,
@@ -515,7 +519,7 @@ $(document).ready(function () {
                     formData.append('extension', fileExtension),
                     // ファイルの内容以外をサーバーに送信
                     $.ajax({
-                      url: "/" + prefix + '/regist/cloud',
+                      url: prefix + '/regist/cloud',
                       type: 'POST',
                       data: formData,
                       processData: false,

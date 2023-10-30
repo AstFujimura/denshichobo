@@ -1,13 +1,9 @@
 $(document).ready(function () {
     var prefix = $('#prefix').val();
     //オンプレの場合はprefixをつけないため
-    //prefixがない場合
-    if (prefix == ""){
-        buttonImagePath = '/img/calendar_2_line.svg'
-    }
     //prefixがある場合
-    else{
-        buttonImagePath = '/'+prefix + '/img/calendar_2_line.svg'
+    if (prefix !== ""){
+        prefix = '/'+prefix
     }
     $('.dateinputtext').datepicker({
         changeMonth: true,
@@ -15,7 +11,7 @@ $(document).ready(function () {
         duration: 300,
         showAnim: 'show',
         showOn: 'button', // 日付をボタンクリックでのみ表示する
-        buttonImage: buttonImagePath, // カスタムアイコンのパスを指定
+        buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
         buttonImageOnly: true, // テキストを非表示にする
     })
     

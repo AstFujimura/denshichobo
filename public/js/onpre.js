@@ -1,5 +1,9 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
+      //prefixがある場合
+      if (prefix !== ""){
+        prefix = '/'+prefix
+    }
 
   //管理画面のユーザー登録フォーム
   $('#myForm').submit(function (event) {
@@ -40,7 +44,7 @@ $(document).ready(function () {
     }
     //ユーザー名に重複がないかを非同期で問い合わせる
     $.ajax({
-      url: "/" + prefix + '/usercheck',
+      url: prefix + '/usercheck',
       type: 'get',
       data: {
         username: nameval,
@@ -61,7 +65,7 @@ $(document).ready(function () {
 
 
             if (confirm("本当に登録しますか？")) {
-              history.pushState(null, null, "/" + prefix + '/error/K183623');
+              history.pushState(null, null, prefix + '/error/K183623');
               form.submit(); // フォームの送信を実行
             }
 
@@ -107,7 +111,7 @@ $(document).ready(function () {
       if (admin == "一般") {
         //管理ユーザーが他にいるかどうかを非同期で確認
         $.ajax({
-          url: "/" + prefix + '/admincheck/' + id,
+          url:  prefix + '/admincheck/' + id,
           type: 'get',
           processData: false,
           contentType: false,
@@ -122,7 +126,7 @@ $(document).ready(function () {
               }
               //ユーザー名に重複がないかを非同期で問い合わせる
               $.ajax({
-                url: "/" + prefix + '/usercheck',
+                url: prefix + '/usercheck',
                 type: 'get',
                 data: {
                   username: nameval,
@@ -143,7 +147,7 @@ $(document).ready(function () {
 
 
                       if (confirm("本当に変更しますか")) {
-                        history.pushState(null, null, "/" + prefix + '/error/K183623');
+                        history.pushState(null, null, prefix + '/error/K183623');
                         submitButton.submit()
                       }
 
@@ -168,7 +172,7 @@ $(document).ready(function () {
         }
         //ユーザー名に重複がないかを非同期で問い合わせる
         $.ajax({
-          url: "/" + prefix + '/usercheck',
+          url:prefix + '/usercheck',
           type: 'get',
           data: {
             username: nameval,
@@ -189,7 +193,7 @@ $(document).ready(function () {
 
 
                 if (confirm("本当に変更しますか")) {
-                  history.pushState(null, null, "/" + prefix + '/error/K183623');
+                  history.pushState(null, null,  prefix + '/error/K183623');
                   submitButton.submit()
                 }
 
@@ -212,7 +216,7 @@ $(document).ready(function () {
     var id = $('#userid').val();
     var form = this; // フォーム要素を保持
     $.ajax({
-      url: "/" + prefix + '/admincheck/' + id,
+      url: prefix + '/admincheck/' + id,
       type: 'get',
       processData: false,
       contentType: false,
@@ -349,7 +353,7 @@ $(document).ready(function () {
   //torihikisakiselectには表示するセレクトボックスのid
   function torihikiselect(searchText, torihikisakiselect) {
     $.ajax({
-      url: '/' + prefix + '/torihikisaki/',
+      url:  prefix + '/torihikisaki/',
       method: 'GET',
       data: { search: searchText },
       success: function (response) {
@@ -451,13 +455,13 @@ $(document).ready(function () {
       if (title.trim() == '登録') {
 
         if (confirm("本当に登録しますか？")) {
-          history.pushState(null, null, "/" + prefix + '/error/K183623');
+          history.pushState(null, null, prefix + '/error/K183623');
           this.submit(); // フォームの送信を実行
         }
       }
       else {
         if (confirm("本当に変更しますか？")) {
-          history.pushState(null, null, "/" + prefix + '/error/K183623');
+          history.pushState(null, null,  prefix + '/error/K183623');
           this.submit(); // フォームの送信を実行
         }
       }

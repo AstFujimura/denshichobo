@@ -1,11 +1,15 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
+      //prefixがある場合
+      if (prefix !== ""){
+        prefix = '/'+prefix
+    }
 
   //登録画面、変更画面以外は登録画面に遷移。(登録ボタンなどと間違う可能性が高いため)
   $('#registpagebutton').on('click', function (event) {
     $pagetitle = $('.pagetitle').text();
     if ($pagetitle != "帳簿変更" && $pagetitle != "帳簿保存" && $pagetitle != "変更履歴") {
-      window.location.href = "/" + prefix + "/regist"
+      window.location.href = prefix + "/regist"
     }
   });
 
@@ -29,7 +33,7 @@ $(document).ready(function () {
     var ID = $(".pagetitle").attr("id");
     if ($('#server').val() == "cloud") {
       $.ajax({
-        url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
+        url: prefix + '/img/' + ID, // データを取得するURLを指定
         method: 'GET',
         dataType: "json",
         success: function (response) {
@@ -57,7 +61,7 @@ $(document).ready(function () {
     }
     else {
       $.ajax({
-        url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
+        url: prefix + '/img/' + ID, // データを取得するURLを指定
         method: 'GET',
         xhrFields: {
           responseType: 'blob' // ファイルをBlobとして受け取る
@@ -118,7 +122,7 @@ $(document).ready(function () {
     var ID = $(this).attr("id");
     if ($('#server').val() == "cloud") {
       $.ajax({
-        url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
+        url: prefix + '/img/' + ID, // データを取得するURLを指定
         method: 'GET',
         dataType: "json",
         success: function (response) {
@@ -146,7 +150,7 @@ $(document).ready(function () {
     }
     else {
       $.ajax({
-        url: "/" + prefix + '/img/' + ID, // データを取得するURLを指定
+        url: prefix + '/img/' + ID, // データを取得するURLを指定
         method: 'GET',
         xhrFields: {
           responseType: 'blob' // ファイルをBlobとして受け取る
@@ -330,7 +334,7 @@ $(document).ready(function () {
   $('.deletebutton').on('click', function () {
     $id = $("#id").val();
     if (confirm("本当に削除しますか?")) {
-      window.location.href = "/" + prefix + '/delete/' + $id;
+      window.location.href = prefix + '/delete/' + $id;
     }
 
 

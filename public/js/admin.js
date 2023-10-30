@@ -1,5 +1,9 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
+      //prefixがある場合
+      if (prefix !== ""){
+        prefix = '/'+prefix
+    }
 
   var adddocumentCount = 1000
   $(".documenttable_body").on("drop", function (event) {
@@ -19,7 +23,7 @@ $(document).ready(function () {
     if (confirm("本当に削除しますか")) {
       // FormDataをサーバーに送信
       $.ajax({
-        url: '/'+prefix+'/admin/documentcheck/' + $id,
+        url: prefix+'/admin/documentcheck/' + $id,
         type: 'GET',
         processData: false,
         contentType: false,
@@ -134,7 +138,7 @@ $(document).ready(function () {
     if (confirm("本当に変更しますか。")) {
       // FormDataをサーバーに送信
       $.ajax({
-        url: '/'+prefix+'/admin/document',
+        url: prefix+'/admin/document',
         type: 'POST',
         data: JSON.stringify(docuarray),
         contentType: "application/json",
@@ -145,7 +149,7 @@ $(document).ready(function () {
         success: function (response) {
           if (response == "成功") {
             $('#save').val("save");
-            window.location.href = '/'+prefix+"/admin/document"
+            window.location.href = prefix+"/admin/document"
           }
           else {
           }
