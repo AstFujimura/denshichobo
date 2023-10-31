@@ -21,8 +21,8 @@ class TestController extends Controller
     public function testGet($num)
     {
 
-        if ($num > 0){
-            for ($i = 0; $i < $num; $i++){
+        if ($num > 0) {
+            for ($i = 0; $i < $num; $i++) {
                 $file = new File();
                 $file->日付 = "19800101";
                 $file->取引先 = "ダミー";
@@ -36,50 +36,39 @@ class TestController extends Controller
                 $file->保存 = "ダミー";
                 $file->備考 = "DLを押さないでください";
                 $file->save();
-    
             }
-        }
-        else if($num == -999){
+        } else if ($num == -999) {
             // "備考カラム"が"aaa"のデータを取得
-          File::where('備考', 'DLを押さないでください')->delete();
-        }
-
-        else if($num == -10){
+            File::where('備考', 'DLを押さないでください')->delete();
+        } else if ($num == -10) {
             $files = File::all();
-            foreach ($files as $file){
-                $client = Client::where("取引先",$file->取引先)->first();
-                if ($client){
+            foreach ($files as $file) {
+                $client = Client::where("取引先", $file->取引先)->first();
+                if ($client) {
                     $file->取引先 = $client->id;
                     $file->save();
-                }
-                else{
-                    if (!(Client::where("id",$file->取引先)->first())){
+                } else {
+                    if (!(Client::where("id", $file->取引先)->first())) {
                         $client = new Client();
                         $client->取引先 = $file->取引先;
                         $client->save();
                         $file->取引先 = $client->id;
                     }
-
                 }
             }
-        }
-
-        else if ($num == -11){
+        } else if ($num == -11) {
             $files = File::all();
-            foreach ($files as $file){
+            foreach ($files as $file) {
                 $file->更新者ID = $file->保存者ID;
                 $file->save();
             }
-
-        }
-        else if ($num == -123){
-            File::query()->delete();
+        } else if ($num == -123) {
+            if (Auth::id() == 1) {
+                File::query()->delete();
+            }
         }
 
 
         return redirect()->route("topGet");
-
     }
-
-
 }
