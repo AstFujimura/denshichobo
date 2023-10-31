@@ -20,50 +20,50 @@ class TestController extends Controller
 {
     public function testGet($num)
     {
-
-        if ($num > 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $file = new File();
-                $file->日付 = "19800101";
-                $file->取引先 = "ダミー";
-                $file->金額 = "999999";
-                $file->書類ID = 1;
-                $file->提出 = "提出";
-                $file->保存者ID = Auth::user()->id;
-                $file->ファイルパス = "example";
-                $file->過去データID = strval(1000000 + $num);
-                $file->ファイル形式 = "ddd";
-                $file->保存 = "ダミー";
-                $file->備考 = "DLを押さないでください";
-                $file->save();
-            }
-        } else if ($num == -999) {
-            // "備考カラム"が"aaa"のデータを取得
-            File::where('備考', 'DLを押さないでください')->delete();
-        } else if ($num == -10) {
-            $files = File::all();
-            foreach ($files as $file) {
-                $client = Client::where("取引先", $file->取引先)->first();
-                if ($client) {
-                    $file->取引先 = $client->id;
+        if (Auth::id() == 1) {
+            if ($num > 0) {
+                for ($i = 0; $i < $num; $i++) {
+                    $file = new File();
+                    $file->日付 = "19800101";
+                    $file->取引先 = "ダミー";
+                    $file->金額 = "999999";
+                    $file->書類ID = 1;
+                    $file->提出 = "提出";
+                    $file->保存者ID = Auth::user()->id;
+                    $file->ファイルパス = "example";
+                    $file->過去データID = strval(1000000 + $num);
+                    $file->ファイル形式 = "ddd";
+                    $file->保存 = "ダミー";
+                    $file->備考 = "DLを押さないでください";
                     $file->save();
-                } else {
-                    if (!(Client::where("id", $file->取引先)->first())) {
-                        $client = new Client();
-                        $client->取引先 = $file->取引先;
-                        $client->save();
+                }
+            } else if ($num == -999) {
+                // "備考カラム"が"aaa"のデータを取得
+                File::where('備考', 'DLを押さないでください')->delete();
+            } else if ($num == -10) {
+                $files = File::all();
+                foreach ($files as $file) {
+                    $client = Client::where("取引先", $file->取引先)->first();
+                    if ($client) {
                         $file->取引先 = $client->id;
+                        $file->save();
+                    } else {
+                        if (!(Client::where("id", $file->取引先)->first())) {
+                            $client = new Client();
+                            $client->取引先 = $file->取引先;
+                            $client->save();
+                            $file->取引先 = $client->id;
+                        }
                     }
                 }
-            }
-        } else if ($num == -11) {
-            $files = File::all();
-            foreach ($files as $file) {
-                $file->更新者ID = $file->保存者ID;
-                $file->save();
-            }
-        } else if ($num == -123) {
-            if (Auth::id() == 1) {
+            } else if ($num == -11) {
+                $files = File::all();
+                foreach ($files as $file) {
+                    $file->更新者ID = $file->保存者ID;
+                    $file->save();
+                }
+            } else if ($num == -123) {
+
                 File::query()->delete();
             }
         }
