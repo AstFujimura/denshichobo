@@ -829,7 +829,7 @@ a {
   border-right: solid 1px rgb(152, 200, 245);
 }
 
-@media (max-width:800px) {
+@media (max-width:870px) {
   .previewcontainer {
     width: 90vw;
     height: 80vh;
@@ -842,10 +842,10 @@ a {
   }
 }
 
-@media (min-width:800px) {
+@media (min-width:870px) {
   .previewcontainer {
-    width: 700px;
-    height: 770px;
+    width: 800px;
+    height: 90vh;
     z-index: 100;
     position: fixed;
     top: 50px;
