@@ -102,7 +102,7 @@
                 
         </form>
 
-        <div class="previewarea">
+        <div class="previewarea registpreviewarea">
             プレビュー
         </div>
 

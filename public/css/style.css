@@ -598,6 +598,13 @@ a {
 
 }
 
+.registpreviewarea{
+  width: 800px;
+}
+.editpreviewarea{
+  width: 700px;
+}
+
 .previewopen {
   display: flex;
 }
@@ -824,7 +831,8 @@ a {
 
 @media (max-width:800px) {
   .previewcontainer {
-    width: 100vw;
+    width: 90vw;
+    height: 80vh;
     z-index: 100;
     position: fixed;
     top: 100px;
@@ -836,12 +844,12 @@ a {
 
 @media (min-width:800px) {
   .previewcontainer {
-    width: 500px;
-    height: 600px;
+    width: 700px;
+    height: 770px;
     z-index: 100;
     position: fixed;
-    top: 100px;
-    left: 100px;
+    top: 50px;
+    left: 50px;
     background: white;
     display: none;
 

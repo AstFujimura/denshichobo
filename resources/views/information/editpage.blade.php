@@ -119,7 +119,7 @@
         <div class="rightarrow">
             →
         </div>
-        <div class="previewarea">
+        <div class="previewarea editpreviewarea">
             変更なし
         </div>
 
