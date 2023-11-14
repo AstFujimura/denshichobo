@@ -1,8 +1,10 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -13,11 +15,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('files', function (Blueprint $table) {
-            $table->unsignedBigInteger('グループID')->default(100000);
-            $table->foreign('グループID')->references('id')->on('groups');
-
+        // テーブルの作成
+        Schema::create('groups', function (Blueprint $table) {
+            $table->id();
+            $table->string('グループ名');
+            $table->timestamps();
         });
+
+        //マイグレーションファイルでデータの挿入は推奨されないがfilesテーブルでグループIDを作成する際にエラーが出るため
+        // レコードの挿入
+        DB::table('groups')->insert([
+            'id' => 100000,
+            'グループ名' => '指定なし'
+        ]);
     }
 
     /**
@@ -27,10 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('files', function (Blueprint $table) {
-            $table->dropForeign(['グループID']);
-            $table->dropColumn('グループID');
-
-        });
+        Schema::dropIfExists('groups');
     }
 };
