@@ -33,11 +33,22 @@ class RegistController extends Controller
             ->get();
         $userid = Auth::id();
 
-        // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
-        $grouparray = Group_User::where("ユーザーID", $userid)
-            ->where('グループID', '>', 100000)
-            ->pluck('グループID') // グループID のみを取得
-            ->toArray(); // コレクションを配列に変換
+        if (Auth::user()->管理 == "一般") {
+            // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+            $grouparray = Group_User::where("ユーザーID", $userid)
+                ->where('グループID', '>', 100000)
+                ->pluck('グループID') // グループID のみを取得
+                ->toArray(); // コレクションを配列に変換
+        }
+        //管理の場合はすべてのグループを選択することができる
+        else if (Auth::user()->管理 == "管理") {
+            // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+            $grouparray = Group_User::where('グループID', '>', 100000)
+                ->pluck('グループID') // グループID のみを取得
+                ->toArray(); // コレクションを配列に変換
+        }
+
+
         //該当するグループの情報を取得
         $groups = Group::whereIn("id", $grouparray)->get();
 

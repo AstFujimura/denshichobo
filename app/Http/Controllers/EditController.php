@@ -69,12 +69,23 @@ class EditController extends Controller
             $document->selected = ($document->id == $syoruikubunn) ? 'selected' : '';
         }
 
-        // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
-        //表示用
-        $grouparray = Group_User::where("ユーザーID", $userid)
-            ->where('グループID', '>', 100000)
-            ->pluck('グループID') // グループID のみを取得
-            ->toArray(); // コレクションを配列に変換
+        if (Auth::user()->管理 == "一般") {
+            // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+            $grouparray = Group_User::where("ユーザーID", $userid)
+                ->where('グループID', '>', 100000)
+                ->pluck('グループID') // グループID のみを取得
+                ->toArray(); // コレクションを配列に変換
+
+            
+        } 
+        //管理の場合はすべてのグループを選択することができる
+        else if (Auth::user()->管理 == "管理") {
+            // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+            $grouparray = Group_User::where('グループID', '>', 100000)
+                ->pluck('グループID') // グループID のみを取得
+                ->toArray(); // コレクションを配列に変換
+        }
+
         //該当するグループの情報を取得
         $groups = Group::whereIn("id", $grouparray)->get();
 
@@ -177,10 +188,20 @@ class EditController extends Controller
         $hozonn = $request->input('hozonn');
         $kennsakuword = $request->input('kennsakuword');
         $group = $request->input('group');
+
+
+        //グループ番号を確認して管理者かつ指定なし(グループIDが10万以下)の場合は
+        //グループIDを保存者IDと一緒にしておく
+        //(管理者の「指定なし」にすると一般ユーザーから見れなくなるため)
+        if ((Auth::user()->管理 == "管理")&& ($group < 100000)){
+            $group = $latestdata->保存者ID;
+        }
+
         //値が入っていないときはnullを入れない
         if (!$kennsakuword) {
             $kennsakuword = "";
         }
+        //バージョンを1あげる
         $version = $historycount + 1;
 
         //ファイルに変更がある場合とない場合でわける
