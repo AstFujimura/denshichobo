@@ -46,6 +46,10 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01">
         <div class="iconmessage">ユーザー登録</div>
     </div>
+    <div class="headerIcon001" onclick="location.href='{{route('admingroupregistGet')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01">
+        <div class="iconmessage">グループ登録・編集</div>
+    </div>
     <div class="headerIcon001" onclick="location.href='{{route('admindocumentGet')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01">
         <div class="iconmessage">書類管理</div>

@@ -1,6 +1,8 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
 
+  // -------------書類管理画面----------------
+
   var adddocumentCount = 1000
   $(".documenttable_body").on("drop", function (event) {
     change_button_show()
@@ -13,6 +15,7 @@ $(document).ready(function () {
     )
     adddocumentCount++
   })
+
   //既存の書類の削除ボタンを押したとき
   $(".docu_delete_button").on("click", function () {
     $id = $(this).attr("id")
@@ -67,11 +70,12 @@ $(document).ready(function () {
     $('#' + textid).addClass("document_open");
   });
 
+  //書類を送信する時
   $('#admin_document_form').on('submit', function (event) {
     event.preventDefault()
     var docuarray = []
     var order = 1
-    $(".past").each(function () {
+    $(".docu_past").each(function () {
       var id = $(this).attr("id").replace("container", "");
       var check = $(this).find("input[type='checkbox']")
       var document = $(this).find(".admin_document_value").val();
@@ -130,7 +134,7 @@ $(document).ready(function () {
       }
 
     });
-
+    console.log(docuarray)
     if (confirm("本当に変更しますか。")) {
       // FormDataをサーバーに送信
       $.ajax({
@@ -158,6 +162,188 @@ $(document).ready(function () {
 
   });
 
+
+
+
+
+
+
+
+// -------------グループ管理画面----------------
+
+var addgroupCount = 1000
+$(".grouptable_body").on("drop", function (event) {
+  change_button_show()
+});
+$('#gr_addbutton').on("click", function (event) {
+  change_button_show()
+
+  $('.add').append(
+    '<div class="grouptable_body new" id ="' + 'container' + addgroupCount + '"><div class="admin_group"><input type="text" class="add_group" name="' + addgroupCount + '"></div><div class="admin_group_delete"><div class="gr_delete_button" id ="' + addgroupCount + '">削除</div></div></div>'
+  )
+  addgroupCount++
+})
+
+//既存のグループの削除ボタンを押したとき
+$(".gr_delete_button").on("click", function () {
+  $id = $(this).attr("id")
+  if (confirm("本当に削除しますか")) {
+    // FormDataをサーバーに送信
+    $.ajax({
+      url: prefix+'/admin/groupcheck/' + $id,
+      type: 'GET',
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response) {
+          alert("帳簿が保存されているため削除できません。")
+        }
+        else {
+          var deletecontainer = 'container' + $id;
+
+          $('#' + deletecontainer).remove();
+        }
+      }
+    });
+  }
+
+
+
+
+});
+$('input').on("change", function () {
+  change_button_show()
+});
+
+//新しく追加したグループ要素を削除するとき
+$('.add').on("click", ".gr_delete_button", function () {
+
+  var deletecontainer = 'container' + $(this).attr("id");
+
+  $('#' + deletecontainer).remove();
+});
+
+$('.gr_change_button').on("click", function () {
+  var valueid = 'value' + $(this).attr("id").replace("change", "");
+  var textid = 'text' + $(this).attr("id").replace("change", "");
+  $('#' + valueid).addClass("group_open");
+  $('#' + valueid).focus();
+  $('#' + textid).removeClass("group_open");
+});
+
+$('.admin_group_value').on("blur", function () {
+  var textid = 'text' + $(this).attr("id").replace("value", "");
+  $('#' + textid).text($(this).val())
+  $(this).removeClass("group_open");
+  $('#' + textid).addClass("group_open");
+});
+
+//グループを送信する時
+$('#admin_group_form').on('submit', function (event) {
+  event.preventDefault()
+  var grarray = []
+  $(".gr_past").each(function () {
+    var id = $(this).attr("id").replace("container", "");
+    var check = $(this).find("input[type='checkbox']")
+    var group = $(this).find(".admin_group_value").val();
+    var deleteobj = $(this).find(".gr_delete_button").text();
+    var obj = {}
+    obj.id = id
+
+    var isChecked = check.prop("checked");
+    if (isChecked) {
+      obj.check = "check"
+    }
+    else {
+      obj.check = ""
+    }
+    obj.group = group
+    if (deleteobj != "削除") {
+      obj.delete = "削除"
+    }
+    else {
+      obj.delete = ""
+    }
+    obj.past = "past"
+    grarray.push(obj);
+
+  });
+  $(".new").each(function () {
+    var id = $(this).attr("id").replace("container", "");
+    var group = $(this).find(".add_group").val();
+    var deleteobj = $(this).find(".gr_delete_button").text();
+    var obj = {}
+    obj.id = id
+
+
+    obj.group = group
+    if (deleteobj != "削除") {
+      obj.delete = "削除"
+    }
+    else {
+      obj.delete = ""
+    }
+    obj.past = "new"
+    grarray.push(obj);
+
+
+  });
+  console.log(grarray)
+
+  if (confirm("本当に変更しますか。")) {
+    // FormDataをサーバーに送信
+    $.ajax({
+      url: prefix+'/admin/group/regist',
+      type: 'POST',
+      data: JSON.stringify(grarray),
+      contentType: "application/json",
+      dataType: "json",
+      headers: {
+        'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+      },
+      success: function (response) {
+        if (response == "成功") {
+          $('#save').val("save");
+          window.location.href = prefix+"/admin/group/regist"
+        }
+        else {
+        }
+      }
+
+    })
+  }
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   $(".sortable").sortable(
     {
       update: function () {
@@ -170,6 +356,7 @@ $(document).ready(function () {
 
   function change_button_show() {
     $(".document_change_button").show();
+    $(".group_change_button").show();
     $('#save').val("notsave");
   }
 

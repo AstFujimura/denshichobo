@@ -103,6 +103,19 @@
             </div>
 
         </div>
+        <div class="input-container">
+            <label class="label">グループ</label>
+            <div>
+                <select name="group" class="input-field" id="group">
+                    @foreach ($groups as $group)
+                    <option {{$group->selected}} value="{{$group->id}}">{{$group->グループ名}}</option>
+                    @endforeach
+                    <option {{$selectstatus}} value="{{Auth::id()}}">指定なし</option>
+                </select>
+
+            </div>
+
+        </div>
 
 
         <input type="hidden" value="{{$file->過去データID}}" id="id">

@@ -1201,8 +1201,26 @@ a {
   border-right: solid 1px white;
   padding: 5px;
 }
+.grouptable_header>div {
+  background: rgb(245, 227, 217);
+  text-align: center;
+  border-right: solid 1px white;
+  padding: 5px;
+}
 
 .documenttable_body>div {
+  padding: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right: solid 1px white;
+  border-bottom: solid 1px rgb(127, 127, 207);
+  height: 30px;
+  line-height: 30px;
+
+
+}
+.grouptable_body>div {
   padding: 5px;
   white-space: nowrap;
   overflow: hidden;
@@ -1218,8 +1236,14 @@ a {
 .documenttable_header {
   display: flex;
 }
+.grouptable_header {
+  display: flex;
+}
 
 .documenttable_body {
+  display: flex;
+}
+.grouptable_body {
   display: flex;
 }
 
@@ -1234,15 +1258,24 @@ a {
 
 .admin_document {
   width: 110px;
-
+  text-align: center;
+}
+.admin_group {
+  width: 110px;
   text-align: center;
 }
 
 .admin_document_change {
   width: 100px;
 }
+.admin_group_change {
+  width: 100px;
+}
 
 .admin_document_delete {
+  width: 100px;
+}
+.admin_group_delete {
   width: 100px;
 }
 
@@ -1253,12 +1286,25 @@ a {
   border: solid 1px gray;
   display: none;
 }
+.admin_group_value {
+  width: 100px;
+  height: 30px;
+  border-radius: 4px;
+  border: solid 1px gray;
+  display: none;
+}
 
 .admin_document_text {
   display: none;
 }
+.admin_group_text {
+  display: none;
+}
 
 .document_open {
+  display: block;
+}
+.group_open {
   display: block;
 }
 
@@ -1279,11 +1325,29 @@ a {
   height: 27px;
 }
 
+
+
 .docu_change_button:hover {
   background: rgb(12, 124, 22);
   color: white;
 }
 
+.gr_change_button {
+  margin: auto;
+  cursor: pointer;
+  background: rgb(217, 255, 192);
+  border: solid 2px rgb(12, 124, 22);
+  border-radius: 5px;
+  text-align: center;
+  font-size: 15px;
+  width: 44px;
+  height: 27px;
+}
+
+.gr_change_button:hover {
+  background: rgb(12, 124, 22);
+  color: white;
+}
 .docu_delete_button {
   margin: auto;
   cursor: pointer;
@@ -1301,8 +1365,32 @@ a {
   background: red;
   color: white;
 }
+.gr_delete_button {
+  margin: auto;
+  cursor: pointer;
+  background: pink;
+  border: solid 2px red;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 15px;
+  width: 44px;
+  height: 27px;
+
+}
+
+.gr_delete_button:hover {
+  background: red;
+  color: white;
+}
 
 .add_document {
+  width: 100px;
+  height: 30px;
+  border-radius: 4px;
+  border: solid 1px gray;
+}
+
+.add_group {
   width: 100px;
   height: 30px;
   border-radius: 4px;
@@ -1323,6 +1411,20 @@ a {
 .docu_addbutton:hover {
   background: #1c881c;
 }
+.gr_addbutton {
+  margin-block: 30px;
+  background: #2ac02a;
+  width: 73px;
+  text-align: center;
+  padding: 3px;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+}
+
+.gr_addbutton:hover {
+  background: #1c881c;
+}
 
 .document_change_button {
   margin-block: 30px;
@@ -1339,6 +1441,24 @@ a {
 }
 
 .document_change_button:hover {
+  background: #347973;
+  color: white;
+}
+.group_change_button {
+  margin-block: 30px;
+  background: #d4f9ff;
+  width: 145px;
+  text-align: center;
+  padding: 13px;
+  border-radius: 9px;
+  color: black;
+  border: solid 2px #66e1d6;
+  cursor: pointer;
+  display: none;
+  font-size: 20px;
+}
+
+.group_change_button:hover {
   background: #347973;
   color: white;
 }
@@ -1366,4 +1486,17 @@ a {
 }
 .dateform{
   display: flex;
+}
+
+.checkform{
+  max-height: 200px;
+  overflow-x: auto;
+}
+
+.group_check_label {
+  height: 33px;
+  line-height: 33px;
+  width: 100px;
+  display: inline-block;
+  border-bottom: solid 1px #c5c5c5;
 }

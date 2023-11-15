@@ -2,13 +2,13 @@
 
 @section('title')
 管理者ページ
-@endsection 
+@endsection
 
 @section('menuebar')
 
-@endsection 
+@endsection
 
-@section('menue') 
+@section('menue')
 
 @endsection
 
@@ -16,9 +16,9 @@
 <h2 id="admineditpage">ユーザー変更画面</h2>
 
 <form action="{{route('admineditPut',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="admin-myForm">
-        @csrf
-        @method('PUT')
-        <div class="input-container">
+    @csrf
+    @method('PUT')
+    <div class="input-container">
         <label class="label">
             ユーザー名
             <span class="requirered">*</span>
@@ -54,31 +54,43 @@
             <div class="errorelement" id="changeerror">管理ユーザーが他にいないためこの変更はできません。</div>
         </div>
     </div>
-    <input type="hidden" value="{{$user->id}}" id = "userid">
+    <div class="input-container">
+        <label class="label">
+            グループ
+        </label>
+        <div class="checkform">
+            @foreach ($groups as $group)
+            <div>
+                <input type="checkbox" name="grouparray[]" id="group{{$group->id}}" value="{{$group->id}}" {{$group->checked}}><label for="group{{$group->id}}" class="group_check_label">{{$group->グループ名}}</label>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    <input type="hidden" value="{{$user->id}}" id="userid">
     <button class="admineditbutton">変更</button>
 </form>
 <div class="important">
-        <div class="title">重要設定
-        </div>
-        <div class="importantelement">
-
-                
-                <form class="adminreset" action="{{route('adminresetPost',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="adminreset">
-                        @csrf
-                        <input type="submit" class="adminresetbutton" value="パスワードリセット">
-                            
-                </form>
+    <div class="title">重要設定
+    </div>
+    <div class="importantelement">
 
 
-                <form class="adminDelete" action="{{route('adminDelete',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="admindelete">
-                        @csrf
-                        @method('DELETE')
-                        <input type="submit" class="admindeletebutton" value="削除">
-                </form>
+        <form class="adminreset" action="{{route('adminresetPost',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="adminreset">
+            @csrf
+            <input type="submit" class="adminresetbutton" value="パスワードリセット">
+
+        </form>
 
 
-        </div>
-        <div class="errorelement" id="deleteerror">管理ユーザーが他にいないため削除できません。</div>
+        <form class="adminDelete" action="{{route('adminDelete',['id' => $user->id])}}" method="post" enctype="multipart/form-data" id="admindelete">
+            @csrf
+            @method('DELETE')
+            <input type="submit" class="admindeletebutton" value="削除">
+        </form>
+
+
+    </div>
+    <div class="errorelement" id="deleteerror">管理ユーザーが他にいないため削除できません。</div>
 </div>
 <input type="hidden" id="userID" value="{{$user->id}}">
 
@@ -86,6 +98,6 @@
 
 
 
-@endsection 
-    @section('footer')
-    @endsection 
+@endsection
+@section('footer')
+@endsection

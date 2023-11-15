@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\File;
 use App\Models\Client;
+use App\Models\Group;
+use App\Models\Group_User;
 use GuzzleHttp\Client as GuzzleClient;
 
 class TestController extends Controller
@@ -65,6 +67,29 @@ class TestController extends Controller
             } else if ($num == -123) {
 
                 File::query()->delete();
+            }
+            //グループ機能追加前に使用しているアカウントに対して保存者IDを一時的にグループIDとして保存 
+            else if ($num == -1123) {
+                $users = User::all();
+                foreach ($users as $user) {
+                    $newgroup = new Group();
+                    $newgroup->id = $user->id;
+                    $newgroup->グループ名 = $user->name . "(固有グループ名ghdF4ol)";
+                    $newgroup->save();
+                    $newGroupUser = new Group_User();
+                    //中間テーブルに追加(今回は同じIDとなるが)
+                    $newGroupUser->グループID = $newgroup->id;
+                    $newGroupUser->ユーザーID = $user->id;
+                    $newGroupUser->save();
+                }
+                
+
+                $files = File::all();
+                foreach ($files as $file) {
+                    //デフォルトの100000のグループIDを保存者IDと同じにする。
+                    $file->グループID = $file->保存者ID;
+                    $file->save();
+                }
             }
         }
 

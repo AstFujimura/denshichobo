@@ -7,12 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Document;
 use App\Models\Client;
+use App\Models\Group;
 
 class File extends Model
 {
     use HasFactory;
     public function users() {
         return $this->belongsTo(User::class,'保存者ID','id');
+    }
+    public function groups() {
+        return $this->belongsTo(Group::class,'グループID','id');
     }
 
     public function documents() {

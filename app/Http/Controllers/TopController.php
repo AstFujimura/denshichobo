@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Document;
+use App\Models\Group;
+use App\Models\Group_User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +36,7 @@ class TopController extends Controller
     {
         // dd($this->pagenatearray(5,3));
         $prefix = config('prefix.prefix');
-        if ($prefix !==""){
+        if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
@@ -57,6 +59,11 @@ class TopController extends Controller
             ->orderBy('order', 'asc')
             ->get();
 
+        // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+        $grouparray = Group_User::where('ユーザーID', $userId) // 条件を指定
+            ->pluck('グループID') // グループID のみを取得
+            ->toArray(); // コレクションを配列に変換
+            
         if ($admin == "一般") {
             $files = DB::table('files')
                 ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
@@ -66,7 +73,7 @@ class TopController extends Controller
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
-                ->where('files.保存者ID', $userId)
+                ->whereIn('files.グループID', $grouparray)
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
             $files = DB::table('files')
@@ -164,7 +171,7 @@ class TopController extends Controller
     {
 
         $prefix = config('prefix.prefix');
-        if ($prefix !==""){
+        if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
@@ -177,6 +184,13 @@ class TopController extends Controller
         $documents = Document::where("check", "check")
             ->orderBy('order', 'asc')
             ->get();
+
+            
+        // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+        $grouparray = Group_User::where('ユーザーID', $userId) // 条件を指定
+        ->pluck('グループID') // グループID のみを取得
+        ->toArray(); // コレクションを配列に変換
+
         if ($admin == "一般") {
             $allfiles = DB::table('files')
                 ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
@@ -184,8 +198,9 @@ class TopController extends Controller
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->where('files.最新フラグ', '最新')
-                ->where('files.保存者ID', $userId)
+                ->where('files.グループID', $grouparray)
                 ->orderBy('files.日付', 'desc');
+                
         } else if ($admin == "管理") {
             $allfiles = DB::table('files')
                 ->where('files.最新フラグ', '最新')
@@ -528,7 +543,7 @@ class TopController extends Controller
     public function detail($id)
     {
         $prefix = config('prefix.prefix');
-        if ($prefix !==""){
+        if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
@@ -546,7 +561,7 @@ class TopController extends Controller
     public function history($id)
     {
         $prefix = config('prefix.prefix');
-        if ($prefix !==""){
+        if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
@@ -598,13 +613,13 @@ class TopController extends Controller
 
 
         // 画像形式の場合は画像を表示
-        if (in_array($extension, ['jpeg', 'jpg', 'JPG','jpe','JPEG', 'png', 'PNG', 'gif', 'bmp', 'svg'])) {
+        if (in_array($extension, ['jpeg', 'jpg', 'JPG', 'jpe', 'JPEG', 'png', 'PNG', 'gif', 'bmp', 'svg'])) {
             if (config('prefix.server') == "cloud") {
                 return response()->json(['path' => $path, 'Type' => 'image/' . $extension]);
             } else {
                 return response()->file($path, ['Content-Type' => 'image/' . $extension]);
             }
-        } else if (in_array($extension,['PDF','pdf'] )) {
+        } else if (in_array($extension, ['PDF', 'pdf'])) {
             if (config('prefix.server') == "cloud") {
                 return response()->json(['path' => $path, 'Type' => 'application/pdf']);
             } else {
@@ -622,7 +637,7 @@ class TopController extends Controller
     public function usersettingGet()
     {
         $prefix = config('prefix.prefix');
-        if ($prefix !==""){
+        if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
@@ -812,8 +827,8 @@ class TopController extends Controller
             $worksheet->setCellValue('E' . $row, $file->提出);
             $worksheet->setCellValue('F' . $row, $file->保存);
             $worksheet->setCellValue('G' . $row, $file->ファイル形式);
-            $worksheet->setCellValue('H' . $row, str_replace('(削除ユーザー)', '',$file->更新者));
-            $worksheet->setCellValue('I' . $row, str_replace('(削除ユーザー)', '',$file->作成者));
+            $worksheet->setCellValue('H' . $row, str_replace('(削除ユーザー)', '', $file->更新者));
+            $worksheet->setCellValue('I' . $row, str_replace('(削除ユーザー)', '', $file->作成者));
             $worksheet->setCellValue('J' . $row, $file->削除フラグ);
             $row++;
         }

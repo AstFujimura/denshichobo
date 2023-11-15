@@ -511,6 +511,7 @@ $(document).ready(function () {
                     formData.append('teisyutu', $("#teisyutu").val()),
                     formData.append('hozonn', $("#hozonn").val()),
                     formData.append('kennsakuword', $("#kennsakuword").val()),
+                    formData.append('group', $("#group").val()),
                     formData.append('filepass', data.filepass),
                     formData.append('pastID', data.pastID),
                     formData.append('extension', fileExtension),

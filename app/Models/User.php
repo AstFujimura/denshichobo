@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\File;
+use App\Models\Group;
 
 
 class User extends Authenticatable
@@ -49,6 +50,10 @@ class User extends Authenticatable
 
     public function files() {
         return $this->hasMany(File::class);
+    }
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class);
     }
 
 

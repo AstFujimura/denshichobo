@@ -13,6 +13,9 @@ use App\Models\File as Filemodel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 
+use App\Models\Group;
+use App\Models\Group_User;
+
 class EditController extends Controller
 {
 
@@ -20,7 +23,7 @@ class EditController extends Controller
     public function editGet($path)
     {
         $prefix = config('prefix.prefix');
-        if ($prefix !==""){
+        if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
@@ -29,12 +32,20 @@ class EditController extends Controller
         $file = Filemodel::where('過去データID', $path)
             ->orderby('バージョン', 'desc')
             ->first();
+
+        $userid = Auth::id();
+
+        // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+        //エラーページを出すかの判定用
+        $grouparray = Group_User::where("ユーザーID", $userid)
+            ->pluck('グループID') // グループID のみを取得
+            ->toArray(); // コレクションを配列に変換
         //ファイルがDBに存在しなければエラーページ
         if (!$file) {
             return redirect()->route("errorGet", ['code' => 'N173647']);
         }
         //一般ユーザーで他のユーザーのファイルを変更しようとしたときはエラーページ
-        if ($file->保存者ID != Auth::id() && Auth::user()->管理 == "一般") {
+        if (!(in_array($file->グループID, $grouparray)) && Auth::user()->管理 == "一般") {
             return redirect()->route("errorGet", ['code' => 'E183728']);
         }
         //チェックはしてないが過去のデータをいじりたい時に選択肢に既存の書類区分がないとデフォルトで違うものになってしまう。
@@ -58,6 +69,24 @@ class EditController extends Controller
             $document->selected = ($document->id == $syoruikubunn) ? 'selected' : '';
         }
 
+        // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+        //表示用
+        $grouparray = Group_User::where("ユーザーID", $userid)
+            ->where('グループID', '>', 100000)
+            ->pluck('グループID') // グループID のみを取得
+            ->toArray(); // コレクションを配列に変換
+        //該当するグループの情報を取得
+        $groups = Group::whereIn("id", $grouparray)->get();
+
+        //指定されたグループがあるかどうかのステータス。デフォルトは「指定なし」
+        $selectstatus = "selected";
+        foreach ($groups as $group){
+            if ($group->id == $file->グループID){
+                $group->selected = "selected";
+                $selectstatus = "";
+            }
+        }
+        
         $data = [
             'file' => $file,
             'documents' => $documents,
@@ -67,7 +96,9 @@ class EditController extends Controller
             'teisyutu' => "",
             'jyuryo' => "",
             'prefix' => $prefix,
-            'server' => $server
+            'server' => $server,
+            'groups' => $groups,
+            'selectstatus' => $selectstatus,
         ];
 
 
@@ -145,6 +176,7 @@ class EditController extends Controller
         $teisyutu = $request->input('teisyutu');
         $hozonn = $request->input('hozonn');
         $kennsakuword = $request->input('kennsakuword');
+        $group = $request->input('group');
         //値が入っていないときはnullを入れない
         if (!$kennsakuword) {
             $kennsakuword = "";
@@ -191,6 +223,7 @@ class EditController extends Controller
         $newfile->過去データID = $path;
         $newfile->備考 = $kennsakuword;
         $newfile->保存 = $hozonn;
+        $newfile->グループID = $group;
         $newfile->save();
 
         return redirect()->route('topGet');

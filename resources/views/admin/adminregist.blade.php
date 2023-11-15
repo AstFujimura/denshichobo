@@ -77,6 +77,19 @@
         </div>
     </div>
 
+    <div class="input-container">
+        <label class="label">
+            グループ
+        </label>
+        <div class="checkform">
+            @foreach ($groups as $group)
+            <div>
+                <input type="checkbox" name="grouparray[]" id="group{{$group->id}}" value="{{$group->id}}"><label for="group{{$group->id}}" class="group_check_label">{{$group->グループ名}}</label>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
     <button class="adminregistbutton">登録</button>
 
 </form>

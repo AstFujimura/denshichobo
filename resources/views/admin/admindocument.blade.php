@@ -27,7 +27,7 @@
         <div class="sortable">
             @foreach($documents as $document)
 
-            <div class="documenttable_body past" id="container{{$document->id}}">
+            <div class="documenttable_body docu_past" id="container{{$document->id}}">
                 @if ($document->check == "check")
                 <div class="admin_use"><input type="checkbox" class="docu_check" checked id="check{{$document->id}}"></div>
                 @else

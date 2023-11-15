@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\File;
 use App\Models\Document;
+use App\Models\Group;
+use App\Models\Group_User;
 use Aws\S3\S3Client;
 
 class RegistController extends Controller
@@ -21,7 +23,7 @@ class RegistController extends Controller
     public function registGet()
     {
         $prefix = config('prefix.prefix');
-        if ($prefix !==""){
+        if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
@@ -29,8 +31,17 @@ class RegistController extends Controller
         $documents = Document::where("check", "check")
             ->orderBy('order', 'asc')
             ->get();
+        $userid = Auth::id();
 
-        return view('information.resistpage', compact('documents', 'prefix', 'server'));
+        // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
+        $grouparray = Group_User::where("ユーザーID", $userid)
+            ->where('グループID', '>', 100000)
+            ->pluck('グループID') // グループID のみを取得
+            ->toArray(); // コレクションを配列に変換
+        //該当するグループの情報を取得
+        $groups = Group::whereIn("id", $grouparray)->get();
+
+        return view('information.resistpage', compact('documents', 'prefix', 'server', 'groups'));
     }
 
     public function registURL(Request $request)
@@ -120,6 +131,7 @@ class RegistController extends Controller
         $file = $request->file('file');
         $hozonn = $request->input('hozonn');
         $kennsaku = $request->input('kennsakuword');
+        $group = $request->input('group');
         $pastID = $this->generateRandomCode();
 
 
@@ -163,6 +175,7 @@ class RegistController extends Controller
         $file->保存 = $hozonn;
         $file->提出 = $teisyutu;
         $file->備考 = $kennsaku;
+        $file->グループID = $group;
         //バージョンはデフォルトで1になるのでここでは記載しない。変更の時には記述
         //最新フラグはデフォルトで最新になるのでここでは記載しない。変更の時に過去データの最新フラグを外す
         $file->save();
@@ -194,6 +207,7 @@ class RegistController extends Controller
         $teisyutu = $request->input('teisyutu');
         $hozonn = $request->input('hozonn');
         $kennsaku = $request->input('kennsakuword');
+        $group = $request->input('group');
         $filepass = $request->input('filepass');
         $pastID = $request->input('pastID');
         $extension = $request->input('extension');
@@ -215,8 +229,7 @@ class RegistController extends Controller
             $creater = $latestdata->保存者ID;
             //ファイル変更あり(過去データがあるため)
             $filechange = "あり";
-        }
-        else {
+        } else {
             //ファイル変更なし(過去データがない→新規の登録であるため)
             $filechange = "";
         }
@@ -237,6 +250,7 @@ class RegistController extends Controller
         $file->保存 = $hozonn;
         $file->提出 = $teisyutu;
         $file->備考 = $kennsaku;
+        $file->グループID = $group;
         //最新フラグはデフォルトで最新になるのでここでは記載しない。
         $file->save();
         return route('topGet');

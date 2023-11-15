@@ -134,6 +134,17 @@ Route::get('/admin/documentcheck/{id}',[AdminController::class,'documentcheck'])
 // 書類管理ページに変更をポストするとき
 Route::post('/admin/document',[AdminController::class,'admindocumentPost'])->name('admindocumentPost');
 
+// グループ登録・編集画面
+Route::get('/admin/group/regist',[AdminController::class,'admingroupregistGet'])->name('admingroupregistGet');
+
+//グループを削除しても大丈夫か確認するとき
+Route::get('/admin/groupcheck/{id}',[AdminController::class,'groupcheck'])->name('groupcheck');
+
+// グループ登録のポスト
+Route::post('/admin/group/regist',[AdminController::class,'admingroupregistPost'])->name('admingroupregistPost');
+
+
+
 Route::get('/error/{code}',[ErrorController::class,'errorGet'])->name('errorGet');
 
 Route::get('/usercheck',[TopController::class,'usercheck'])->name('usercheck');
