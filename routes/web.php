@@ -149,6 +149,8 @@ Route::get('/error/{code}',[ErrorController::class,'errorGet'])->name('errorGet'
 
 Route::get('/usercheck',[TopController::class,'usercheck'])->name('usercheck');
 
+Route::post('/userexcel',[TestController::class,'userexcel'])->name('userexcel');
+
 Route::get('/question',[TopController::class,'question'])->name('question');
 
 

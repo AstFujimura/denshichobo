@@ -55,6 +55,7 @@ class TopController extends Controller
         $users = User::where("id", "not like", 1)
             ->where("削除", "")
             ->get();
+
         $documents = Document::where("check", "check")
             ->orderBy('order', 'asc')
             ->get();
@@ -63,24 +64,38 @@ class TopController extends Controller
         $grouparray = Group_User::where('ユーザーID', $userId) // 条件を指定
             ->pluck('グループID') // グループID のみを取得
             ->toArray(); // コレクションを配列に変換
-            
+
+
+
+
         if ($admin == "一般") {
+            //一般の場合はログインユーザーが含まれるグループIDのリストを表示する(検索ボックス用)
+            $groups = Group::whereIn("id", $grouparray)
+                ->where('id', ">", 100000)
+                ->get();
+
+
             $files = DB::table('files')
-                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
+                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', "groups.グループ名")
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
+                ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
                 ->whereIn('files.グループID', $grouparray)
                 ->orderBy('files.日付', 'desc');
         } else if ($admin == "管理") {
+            //管理の場合はすべてを表示する(検索ボックス用)
+            $groups = Group::where('id', ">", 100000)
+                ->get();
             $files = DB::table('files')
-                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
+                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', "groups.グループ名")
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
+                ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
@@ -140,7 +155,7 @@ class TopController extends Controller
         }
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'users', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server'));
+        return view('information.toppage', compact('files', 'users', 'groups', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server'));
     }
 
     //表示するページネーションボタンの配列を返す
@@ -167,6 +182,17 @@ class TopController extends Controller
     }
 
 
+
+
+
+
+
+
+
+
+    //------------ここから検索ページ--------------------
+
+
     public function search(Request $request)
     {
 
@@ -185,29 +211,41 @@ class TopController extends Controller
             ->orderBy('order', 'asc')
             ->get();
 
-            
+
         // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
         $grouparray = Group_User::where('ユーザーID', $userId) // 条件を指定
-        ->pluck('グループID') // グループID のみを取得
-        ->toArray(); // コレクションを配列に変換
+            ->pluck('グループID') // グループID のみを取得
+            ->toArray(); // コレクションを配列に変換
 
         if ($admin == "一般") {
+
+            //一般の場合はログインユーザーが含まれるグループIDのリストを表示する(検索ボックス用)
+            $groups = Group::whereIn("id", $grouparray)
+                ->where('id', ">", 100000)
+                ->get();
+
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
+                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', "groups.グループ名")
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
+                ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
-                ->where('files.グループID', $grouparray)
+                ->whereIn('files.グループID', $grouparray)
                 ->orderBy('files.日付', 'desc');
-                
         } else if ($admin == "管理") {
+
+            //管理の場合はすべてを表示する(検索ボックス用)
+            $groups = Group::where('id', ">", 100000)
+                ->get();
+
             $allfiles = DB::table('files')
-                ->where('files.最新フラグ', '最新')
-                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
+                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', "groups.グループ名")
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
+                ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
+                ->where('files.最新フラグ', '最新')
                 ->orderBy('files.日付', 'desc');
         }
 
@@ -243,6 +281,7 @@ class TopController extends Controller
         $kennsakuword = $request->input('kennsakuword');
         $hozonn = $request->input('hozonn');
         $deleteOrzenken = $request->input('deleteOrzenken');
+        $group = $request->input('group');
         $updater = $request->input('updater');
         $creater = $request->input('creater');
         $selectdata = $request->input('selectdata');
@@ -251,6 +290,10 @@ class TopController extends Controller
         //値が入ってない時は%%を入れる
         if (!$syoruikubunn) {
             $syoruikubunn = "%%";
+        }
+        //値が入っていないときはすべてのグループにするために%%を入れる
+        if (!$group) {
+            $group = "%%";
         }
         //値が入っていないときはすべてのユーザーにするために%%を入れる
         if (!$updater) {
@@ -271,6 +314,12 @@ class TopController extends Controller
             //チェックされたユーザーが一致した場合値はcheckedを付与する
             $user->updaterselected = ($user->id == $updater) ? 'selected' : '';
             $user->createrselected = ($user->id == $creater) ? 'selected' : '';
+        }
+        foreach ($groups as $grouprecord) {
+
+            //新たにcheckedというカラムを追加する（一時的に）
+            //チェックされたユーザーが一致した場合値はcheckedを付与する
+            $grouprecord->groupselected = ($grouprecord->id == $group) ? 'selected' : '';
         }
 
         foreach ($documents as $document) {
@@ -320,6 +369,7 @@ class TopController extends Controller
             ->where('files.提出', 'like', $teisyutu)
             ->where('files.保存', 'like', "%" . $hozonn . "%")
             ->where('files.備考', 'like', "%" . $kennsakuword . "%")
+            ->where('files.グループID', 'like', $group)
             ->where('files.更新者ID', 'like', $updater)
             ->where('files.保存者ID', 'like', $creater)
             ->where('files.削除フラグ', 'like', $selectdata);
@@ -442,7 +492,8 @@ class TopController extends Controller
             'enddata' => $enddata,
             'alldata' => $alldata,
             'prefix' => $prefix,
-            'server' => $server
+            'server' => $server,
+            'groups' =>$groups
         ];
 
         if ($hozonn == "") {
@@ -548,10 +599,11 @@ class TopController extends Controller
         }
         $server = config('prefix.server');
         $file = DB::table('files')
-            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
+            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者','groups.グループ名')
             ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
             ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
             ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
+            ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
             ->where('過去データID', $id)
             ->orderby('バージョン', 'desc')
             ->first();
@@ -566,10 +618,11 @@ class TopController extends Controller
         }
         $server = config('prefix.server');
         $files = DB::table('files')
-            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者')
+            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者','groups.グループ名')
             ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
             ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
             ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
+            ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
             ->where('過去データID', $id)
             ->orderby('バージョン', 'asc')
             ->get();
@@ -774,6 +827,13 @@ class TopController extends Controller
         if (!$kennsakuword) {
             $kennsakuword = "指定なし";
         }
+        $group = $request->input('group');
+        if (!$group) {
+            $group = "指定なし";
+        } else {
+            $group = Group::where("id", $group)->first();
+            $group = $group->グループ名;
+        }
         $updater = $request->input('updater');
         if (!$updater) {
             $updater = "指定なし";
@@ -800,6 +860,7 @@ class TopController extends Controller
         $worksheet->setCellValue('H2', $kennsakuword);
         $worksheet->setCellValue('H3', $updater);
         $worksheet->setCellValue('H4', $creater);
+        $worksheet->setCellValue('K2', $group);
 
         // セルのスタイルを設定
         $style = [
@@ -819,7 +880,7 @@ class TopController extends Controller
             $worksheet->getStyle('A' . $row . ':J' . $row)->applyFromArray($style);
             // E列とJ列のセルだけを中央寄せに設定
             $worksheet->getStyle('E' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-            $worksheet->getStyle('J' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $worksheet->getStyle('K' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $worksheet->setCellValue('A' . $row, substr_replace(substr_replace($file->日付, '/', 6, 0), '/', 4, 0));
             $worksheet->setCellValue('B' . $row, $file->金額);
             $worksheet->setCellValue('C' . $row, $file->取引先);
@@ -827,9 +888,13 @@ class TopController extends Controller
             $worksheet->setCellValue('E' . $row, $file->提出);
             $worksheet->setCellValue('F' . $row, $file->保存);
             $worksheet->setCellValue('G' . $row, $file->ファイル形式);
-            $worksheet->setCellValue('H' . $row, str_replace('(削除ユーザー)', '', $file->更新者));
-            $worksheet->setCellValue('I' . $row, str_replace('(削除ユーザー)', '', $file->作成者));
-            $worksheet->setCellValue('J' . $row, $file->削除フラグ);
+            //個人グループ名の場合は空欄
+            if ($file->グループID > 100000){
+                $worksheet->setCellValue('H' . $row, $file->グループ名);
+            }            
+            $worksheet->setCellValue('I' . $row, str_replace('(削除ユーザー)', '', $file->更新者));
+            $worksheet->setCellValue('J' . $row, str_replace('(削除ユーザー)', '', $file->作成者));
+            $worksheet->setCellValue('K' . $row, $file->削除フラグ);
             $row++;
         }
         $fileName = '帳簿一覧.xlsx';

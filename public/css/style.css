@@ -476,6 +476,7 @@ a {
   border: solid 1px #a8a8a8;
   border-radius: 4px;
   color: black;
+  min-width: 88px;
 }
 
 .dateinputtext {

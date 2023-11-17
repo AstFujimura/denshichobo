@@ -34,6 +34,7 @@
     <div class="extension pale">形式</div>
     <div class="preview pale"></div>
     <div class="koushinn pale">更新日時</div>
+    <div class="updater pale">グループ</div>
     <div class="updater pale">更新者</div>
 </div>
 
@@ -57,6 +58,7 @@
         <div class="koushinn">
             {{$file->created_at}}
         </div>
+        <div class="updater"></div>
         <div class="updater">
             {{$file->更新者}}
         </div>
@@ -84,6 +86,11 @@
         <div class="koushinn">
             {{$file->created_at}}
         </div>
+        @if ($file->グループID > 100000)
+        <div class="updater">{{$file->グループ名}}</div>
+        @else
+        <div class="updater"></div>
+        @endif
         @php
         $updater = str_replace('(削除ユーザー)', '', $file->更新者);
         @endphp

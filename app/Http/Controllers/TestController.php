@@ -17,6 +17,7 @@ use App\Models\Client;
 use App\Models\Group;
 use App\Models\Group_User;
 use GuzzleHttp\Client as GuzzleClient;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class TestController extends Controller
 {
@@ -82,7 +83,7 @@ class TestController extends Controller
                     $newGroupUser->ユーザーID = $user->id;
                     $newGroupUser->save();
                 }
-                
+
 
                 $files = File::all();
                 foreach ($files as $file) {
@@ -90,10 +91,58 @@ class TestController extends Controller
                     $file->グループID = $file->保存者ID;
                     $file->save();
                 }
+            } else if ($num == -5486) {
+
+                if (Auth::id() == 1) {
+                    return view("test.userexcel");
+                }
+            } else if ($num == -1923) {
+
+                if (Auth::id() == 1) {
+                    $deletegroups = Group::where("グループ名", "like", "%" . "(固有グループ名excel1923)")
+                        ->get();
+                    foreach ($deletegroups as $deletegroup) {
+                        $id = $deletegroup->id;
+                        Group_User::where("グループID", $id)->delete();
+                        User::where("id", $id)->delete();
+                        $deletegroup->delete();
+                    }
+                }
             }
         }
 
 
+
         return redirect()->route("topGet");
+    }
+    public function userExcel(Request $request)
+    {
+        if (Auth::id() == 1) {
+            $file = $request->file('excel_file');
+            $spreadsheet = IOFactory::load($file->getRealPath());
+            $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+            foreach ($sheetData as $row) {
+                $newuser = new User();
+                $newuser->name = $row["B"];
+                $newuser->password = Hash::make($row["A"]);
+                $newuser->email = $row["C"];
+                $newuser->管理 = "一般";
+                $newuser->削除 = "";
+                $newuser->パスワードリセット時 = "2000-01-01 00:00:00";
+                $newuser->save();
+
+                $newgroup = new Group();
+                $newgroup->id = $newuser->id;
+                $newgroup->グループ名 = $row["B"] . "(固有グループ名excel1923)";
+                $newgroup->save();
+
+                $newGroupUser = new Group_User();
+                $newGroupUser->グループID = $newuser->id;
+                $newGroupUser->ユーザーID = $newuser->id;
+                $newGroupUser->save();
+            }
+
+            return back()->with('success', 'Excelファイルをインポートしました。');
+        }
     }
 }

@@ -100,6 +100,15 @@
 
         </div>
         <div class="nonerequirearea">
+            <div class="searchelement">
+                <div class="searchlabel">グループ:</div>
+                <select name="group" class="searchinputtext userselectbox">
+                    <option></option>
+                    @foreach($groups as $group)
+                    <option {{$group->groupselected}} value="{{ $group->id }}">{{ $group->グループ名 }}</option>
+                    @endforeach
+                </select>
+            </div>
             @if (Auth::user()->管理 == "管理")
             <div class="searchelement">
                 <div class="searchlabel">更新者:</div>
@@ -182,6 +191,7 @@
     <div class="extension pale">形式</div>
     <div class="preview pale">PV.</div>
     <div class="hennkou pale">変更</div>
+    <div class="updater verypale">グループ</div>
     @if (Auth::user()->管理 == "管理")
     <div class="updater verypale">更新者</div>
     <div class="creater verypale">作成者</div>
@@ -224,6 +234,12 @@
 
                 @endif
             </div>
+            @if ($file->グループID < 100000)
+            <div class="updater"></div>
+            @else
+            <div class="updater">{{$file->グループ名}}</div>
+            @endif
+
             @if (Auth::user()->管理 == "管理")
             @php
             $updater = str_replace('(削除ユーザー)', '', $file->更新者);
