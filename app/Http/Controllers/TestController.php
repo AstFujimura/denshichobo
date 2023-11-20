@@ -160,5 +160,12 @@ class TestController extends Controller
             $newGroupUser->ユーザーID = $user->id;
             $newGroupUser->save();
         }
+
+        $files = File::all();
+        foreach ($files as $file) {
+            //デフォルトの100000のグループIDを保存者IDと同じにする。
+            $file->グループID = $file->保存者ID;
+            $file->save();
+        }
     }
 }

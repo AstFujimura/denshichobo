@@ -12,14 +12,14 @@ class groupsetting extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'command:groupsetting';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = '2.7.4 → 2.8 groupIDsetting';
 
     /**
      * Execute the console command.
