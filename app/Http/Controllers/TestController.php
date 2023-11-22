@@ -145,4 +145,27 @@ class TestController extends Controller
             return back()->with('success', 'Excelファイルをインポートしました。');
         }
     }
+
+    public function groupsetting()
+    {
+        $users = User::all();
+        foreach ($users as $user) {
+            $newgroup = new Group();
+            $newgroup->id = $user->id;
+            $newgroup->グループ名 = $user->name . "(固有グループ名ghdF4ol)";
+            $newgroup->save();
+            $newGroupUser = new Group_User();
+            //中間テーブルに追加(今回は同じIDとなるが)
+            $newGroupUser->グループID = $newgroup->id;
+            $newGroupUser->ユーザーID = $user->id;
+            $newGroupUser->save();
+        }
+
+        $files = File::all();
+        foreach ($files as $file) {
+            //デフォルトの100000のグループIDを保存者IDと同じにする。
+            $file->グループID = $file->保存者ID;
+            $file->save();
+        }
+    }
 }

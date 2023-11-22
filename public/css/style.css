@@ -1262,8 +1262,8 @@ a {
   text-align: center;
 }
 .admin_group {
-  width: 110px;
-  text-align: center;
+  width: 183px;
+  text-align: left !important;
 }
 
 .admin_document_change {
@@ -1490,14 +1490,15 @@ a {
 }
 
 .checkform{
-  max-height: 200px;
+  max-height: 370px;
   overflow-x: auto;
 }
+
+
 
 .group_check_label {
   height: 33px;
   line-height: 33px;
-  width: 100px;
   display: inline-block;
   border-bottom: solid 1px #c5c5c5;
 }
