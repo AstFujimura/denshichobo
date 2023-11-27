@@ -877,7 +877,7 @@ class TopController extends Controller
 
         $row = 7;
         foreach ($files as $file) {
-            $worksheet->getStyle('A' . $row . ':J' . $row)->applyFromArray($style);
+            $worksheet->getStyle('A' . $row . ':K' . $row)->applyFromArray($style);
             // E列とJ列のセルだけを中央寄せに設定
             $worksheet->getStyle('E' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             $worksheet->getStyle('K' . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
