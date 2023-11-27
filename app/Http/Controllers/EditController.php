@@ -288,6 +288,7 @@ class EditController extends Controller
         $newdeletefile->保存 = $file->保存;
         $newdeletefile->ファイルパス = $file->ファイルパス;
         $newdeletefile->ファイル形式 = $file->ファイル形式;
+        $newdeletefile->グループID = $file->グループID;
         $newdeletefile->削除フラグ = "済";
         $newdeletefile->最新フラグ = "最新";
         $newdeletefile->save();
