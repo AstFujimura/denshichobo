@@ -91,7 +91,15 @@ class TestController extends Controller
                     $file->グループID = $file->保存者ID;
                     $file->save();
                 }
-            } else if ($num == -5486) {
+            } else if ($num == -1156) {
+                $files = File::all();
+                foreach ($files as $file){
+                    if ($file->グループID == 100000){
+                        $file->グループID = $file->保存者ID;
+                        $file->save();
+                    }
+                }
+            }else if ($num == -5486) {
 
                 if (Auth::id() == 1) {
                     return view("test.userexcel");
