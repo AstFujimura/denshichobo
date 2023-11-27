@@ -180,11 +180,11 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
         @endforeach
     </div>
 
-    @if (Auth::user()->管理 == "管理")
+    
     <div class="excelbutton">
         エクセル出力
     </div>
-    @endif
+    
     <div class="excelerror">
         表示件数を500件以下にしてください。
     </div>
