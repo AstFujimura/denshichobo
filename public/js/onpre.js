@@ -406,7 +406,7 @@ $(document).ready(function () {
     emptycheck(requiredarray);
 
 
-
+    console.log($('#file')[0].files[0].type)
     if ($('#file').val() == '') {
       //登録ページの場合は必須条件
       //ただし、編集ページは任意のため空白も許容する
@@ -417,12 +417,13 @@ $(document).ready(function () {
         alert = true
       }
     }
+    
     //インプットされたものがフォルダの場合
-    else if($('#file')[0].files[0].type === ""){
-      $('.fileerrorelement').text('フォルダが選択されました。ファイルを選択してください。');
-      $('#file').addClass("invalid")
-      $('.fileerrorelement').addClass("errorsentence");
-    }
+    // else if($('#file')[0].files[0].type === ""){
+    //   $('.fileerrorelement').text('フォルダが選択されました。ファイルを選択してください。');
+    //   $('#file').addClass("invalid")
+    //   $('.fileerrorelement').addClass("errorsentence");
+    // }
     //ファイルサイズが大きい場合
     else if($('#file')[0].files[0].size > 50 * 1024 * 1024){
       $('.fileerrorelement').text('ファイルサイズが50MBを超えています。10MB以下のファイルを選択してください。');
@@ -430,8 +431,6 @@ $(document).ready(function () {
       $('.fileerrorelement').addClass("errorsentence");
     }
     else {
-      console.log($('#file').size);
-      console.log($('#file').type);
       $('#file').removeClass("invalid")
       $('.fileerrorelement').removeClass("errorsentence");
     }
