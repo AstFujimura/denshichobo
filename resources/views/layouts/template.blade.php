@@ -46,7 +46,7 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/pencil_2_line_gray.svg') }}" class="menuicon01">
         <div class="iconmessage">帳簿保存</div>
     </div>
-    <div class="headerIcon001" onclick="location.href='{{route('question')}}';">
+    <div class="headerIcon001" onclick="window.open('{{route('question')}}', '_blank');">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
         <div class="iconmessage">ヘルプ</div>
     </div>
