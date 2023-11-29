@@ -406,7 +406,6 @@ $(document).ready(function () {
     emptycheck(requiredarray);
 
 
-    console.log($('#file')[0].files[0].type)
     if ($('#file').val() == '') {
       //登録ページの場合は必須条件
       //ただし、編集ページは任意のため空白も許容する
