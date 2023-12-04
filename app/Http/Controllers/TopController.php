@@ -493,7 +493,7 @@ class TopController extends Controller
             'alldata' => $alldata,
             'prefix' => $prefix,
             'server' => $server,
-            'groups' =>$groups
+            'groups' => $groups
         ];
 
         if ($hozonn == "") {
@@ -599,7 +599,7 @@ class TopController extends Controller
         }
         $server = config('prefix.server');
         $file = DB::table('files')
-            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者','groups.グループ名')
+            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', 'groups.グループ名')
             ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
             ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
             ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
@@ -618,7 +618,7 @@ class TopController extends Controller
         }
         $server = config('prefix.server');
         $files = DB::table('files')
-            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者','groups.グループ名')
+            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', 'groups.グループ名')
             ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
             ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
             ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
@@ -755,7 +755,10 @@ class TopController extends Controller
         $searchtext = $request->input("search");
 
         $clients = File::where('取引先', 'like', '%' . $searchtext . '%')
+        ->where("最新フラグ","最新")
+            ->where('削除フラグ', "")
             ->groupBy('取引先')
+            ->orderBy('取引先', "asc")
             ->select('取引先')
             ->get();
         if ($clients->isEmpty()) {
@@ -889,9 +892,9 @@ class TopController extends Controller
             $worksheet->setCellValue('F' . $row, $file->保存);
             $worksheet->setCellValue('G' . $row, $file->ファイル形式);
             //個人グループ名の場合は空欄
-            if ($file->グループID > 100000){
+            if ($file->グループID > 100000) {
                 $worksheet->setCellValue('H' . $row, $file->グループ名);
-            }            
+            }
             $worksheet->setCellValue('I' . $row, str_replace('(削除ユーザー)', '', $file->更新者));
             $worksheet->setCellValue('J' . $row, str_replace('(削除ユーザー)', '', $file->作成者));
             $worksheet->setCellValue('K' . $row, $file->削除フラグ);
