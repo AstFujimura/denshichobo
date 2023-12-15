@@ -1,64 +1,109 @@
-canvas {
-    width: 100%;
-    height: 100%;
-}
-.header001{
+.header001 {
     background: rgb(142, 214, 216) !important;
 }
-.grid{
+
+.grid {
     position: relative;
     display: grid;
-
+    font-size: 13px;
 }
-.leftline{
+
+.add_button {
+    background: rgb(75, 223, 75);
+    color: white;
+    border-radius: 3px;
+    border: solid 1px green;
+    height: 20px;
+    width: 50px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.common_grid_add_button {
+
+    grid-column: 2/3;
+    grid-row: 1/2;
+}
+
+.leftline {
     border-left: solid 2px black;
 }
 
-.e{
-    background: green;
+.e {
+    position: relative;
+    background: transparent;
+    border: solid 2px gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
 }
 
-.l{position: relative;
+.grid_content {
+    display: grid;
+    grid-template-columns: 0.5fr 3fr;
+    width: 200px;
 }
 
-.leftstartline{
-    position: absolute;
-    height: 50%;
-    width: 3px;
-    background: rgb(197, 125, 125);
-    top: 0;
-    left: 5px;
-}
-.rightstartline{
-    position: absolute;
-    height: 50%;
-    width: 3px;
-    background: black;
-    top: 0;
-    right: 5px;
+.grid_index {
+    border: solid 1px black;
+    background: #4472C4;
+    color: white;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
 }
 
-.middleline{
-    position: absolute;
-    height: 3px;
-    width: calc(100% - 10px);
-    background: black;
-    top: 50%;
-    left: 5px;
+.grid_name_container {
+    border: solid 1px black;
+    line-height: 25px;
+    height: 25px;
 }
-.leftendline{
-    position: absolute;
-    height: 50%;
-    width: 3px;
-    background: black;
-    top: 50%;
-    left: 5px;
+
+.grid_and_or {
+    border: solid 1px black;
+    line-height: 25px;
+    height: 25px;
+    width: 50px;
+
 }
-.rightendline{
+
+.grid_add_button {
     position: absolute;
-    height: 50%;
-    width: 3px;
-    background: black;
-    top: 50%;
-    right: 5px;
+    top: 3px;
+    left: 10px;
 }
+
+.grid_delete_button {
+    position: absolute;
+    top: 3px;
+    left: 70px;
+    background: rgb(223, 75, 75);
+    color: white;
+    border-radius: 3px;
+    border: solid 1px rgb(128, 0, 0);
+    height: 20px;
+    width: 50px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.d{
+border:  solid 5px rgb(202, 202, 202);
+color: rgb(202, 202, 202);
+font-size: 20px;
+text-align: center;
+}
+
+.l {
+    position: relative;
+}
+.yellow {
+    border: solid 5px #cbcb1e;
+    box-shadow: 0px 0px 15px 0 #cbcb1e;
+}
+
+.blue {
+    border: solid 5px blue;
+}
+
