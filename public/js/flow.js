@@ -190,22 +190,19 @@ $(document).ready(function () {
         Object.keys(arrays).forEach(function (index) {
           // 線の先の要素が配列の中の何番目かを格納、なければnumは-1となる
           var num = arrays[index].lastIndexOf(elementToAppend)
-          console.log(num,arrays[index].length - 1)
           // インデックスが存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
           if (num !== -1 && num < arrays[index].length - 1) {
             var afterArray = arrays[index].slice(num + 1);
-            console.log("先の要素"+afterArray)
             var newArray = myArray.slice();
             newArray.push(elementToAppend);
             newArray = newArray.concat(afterArray)
             // addroutenumが1の場合は既存のルートに後の要素を結合させる
             if (addroutenum == 1) {
-              console.log("route1")
               arrays[wholeindex] = newArray;
+              addroutenum = addroutenum + 1
             }
             // addroutenumが2以上の場合は新たなルートとして配列を追加する
             else {
-              console.log("more_route")
               routecount = routecount + 1
               arrays[routecount] = newArray;
             }
@@ -213,7 +210,6 @@ $(document).ready(function () {
           }
           // インデックスが存在し、最後の要素である場合
           else if (num !== -1 && num == arrays[index].length - 1) {
-            console.log("last")
             var newArray = myArray.slice();
             newArray.push(elementToAppend);
             arrays[wholeindex] = newArray;
@@ -222,53 +218,95 @@ $(document).ready(function () {
         })
         // 線の先の要素が新規だった場合
         if (toroute == false) {
-          console.log("new")
           var newArray = myArray.slice();
           newArray.push(elementToAppend);
           arrays[wholeindex] = newArray;
         }
 
-      } else if (lastIndex !== -1 && lastIndex < myArray.length - 1) {
-        // 要素が最後尾以外にある場合、新しい配列を作成
-        var newArray = myArray.slice(0, lastIndex + 1);
-        newArray.push(elementToAppend)
+      }
+
+      // 線の元の要素が最後尾以外にある場合、新しい配列を作成
+      else if (lastIndex !== -1 && lastIndex < myArray.length - 1) {
 
         // 例えば1_1, 2_2, 2_3と1_1, 2_2, 3_3というルートがあり新たに2_2から4_3という線を結ぼうとしたとき
         // 2_2から派生するルートとして1_1, 2_2, 4_3というルートが二つできることになってしまう。
         // これを阻止するために新規にルートを追加するときに既存のルートがないかをチェックする必要がある
-        // samearrayというbool型の変数がtrueであれば既存のルートがあることになる（デフォルトはfalse）
-        var samearray = false
-        // オブジェクトの中を一つずつ検索
+
+
+        // この最初の要素追加用のルートを示す番号を宣言する(addroutenum)
+        var addroutenum = 1
+        // // 線の先の要素が既存でなかった場合はtorouteがfalse
+        var toroute = false
         Object.keys(arrays).forEach(function (index) {
-          // 配列を比較する
-          if (arraysAreEqual(arrays[index], newArray)) {
-            samearray = true
+          var newArray = myArray.slice(0, lastIndex + 1);
+          // 線の先の要素が配列の中の何番目かを格納、なければnumは-1となる
+          var num = arrays[index].lastIndexOf(elementToAppend)
+          // インデックスが存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
+          if (num !== -1 && num < arrays[index].length - 1) {
+            var afterArray = arrays[index].slice(num + 1);
+            console.log("先の要素" + afterArray)
+            newArray.push(elementToAppend)
+            newArray = newArray.concat(afterArray)
+
+            toroute = true
+          }
+          // インデックスが存在し、最後の要素である場合
+          else if (num !== -1 && num == arrays[index].length - 1) {
+            console.log("last")
+            // arrays[wholeindex] = newArray;
+            newArray.push(elementToAppend)
+
+            toroute = true
+          }
+
+
+
+          // 配列をオブジェクトから検索して新しいルートがかぶっていなければ追加する
+          console.log(arraysAreEqual(newArray))
+          if (toroute && !arraysAreEqual(newArray)) {
+            routecount = routecount + 1
+            arrays[routecount] = newArray;
           }
         })
-        // 既存のルートがなかった場合
-        if (samearray == false) {
-          // 新たにルートのカウントを増やして
-          // オブジェクトに配列を追加する
-          routecount = routecount + 1
-          arrays[routecount] = newArray;
+        // 線の先の要素が新規だった場合
+        if (!toroute) {
+          var newArray = myArray.slice(0, lastIndex + 1);
+          newArray.push(elementToAppend)
+          if (!arraysAreEqual(newArray)) {
+            routecount = routecount + 1
+            arrays[routecount] = newArray;
+          }
         }
+
+
       }
     });
   }
 
   // 配列を比較して確認する中身が一致していたらtrueを返す
-  function arraysAreEqual(array1, array2) {
-    if (array1.length !== array2.length) {
-      return false;
-    }
+  function arraysAreEqual(newArray) {
 
-    for (let i = 0; i < array1.length; i++) {
-      if (array1[i] !== array2[i]) {
-        return false;
+    // arraysオブジェクトの中身を見る
+    // foreachを使わないのは途中でbreakがあるものにも対応できるようにするため
+    for (const index in arrays) {
+      const searchArray = arrays[index];
+
+      if (searchArray.length === newArray.length) {
+        let statusCheck = true;
+        for (let i = 0; i < searchArray.length; i++) {
+          if (searchArray[i] !== newArray[i]) {
+            console.log(searchArray[i], newArray[i]);
+            statusCheck = false;
+            break;
+          }
+        }
+
+        if (statusCheck) {
+          return true;
+        }
       }
     }
-
-    return true;
+    return false;
   }
 
   // 要素含まれているルートの要素を配列に格納して返す関数
