@@ -234,7 +234,8 @@ class TopController extends Controller
                 ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
                 ->whereIn('files.グループID', $grouparray)
-                ->orderBy('files.日付', 'desc');
+                ->orderBy('files.日付', 'desc')
+                ->orderBy('files.id','desc');
         } else if ($admin == "管理") {
 
             //管理の場合はすべてを表示する(検索ボックス用)
@@ -248,7 +249,8 @@ class TopController extends Controller
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
-                ->orderBy('files.日付', 'desc');
+                ->orderBy('files.日付', 'desc')
+                ->orderBy('files.id','desc');
         }
 
 
