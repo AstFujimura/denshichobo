@@ -15,10 +15,7 @@
 
 
 @section('main')
-@php
-use Carbon\Carbon;
-$oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
-@endphp
+
 <div class="loader">
     <img src="{{ asset($prefix.'/'.'img/loading.gif')}}">
     <div class="searchcomment">検索中です</div>
@@ -30,7 +27,7 @@ $oneMonthAgo = Carbon::now()->subMonth()->format('Y/m/d');
         <div class="requirearea">
             <div class="searchelement">
                 <div class="searchlabel requirelabel">取引日:</div>
-                <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext" value="{{$oneMonthAgo}}" autocomplete="off">
+                <input type="text" id="startyear" name="starthiduke" class="searchinputtext dateinputtext" autocomplete="off">
                 　～　
                 <input type="text" id="endyear" name="endhiduke" class="searchinputtext dateinputtext" autocomplete="off">
             </div>
