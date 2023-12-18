@@ -172,10 +172,9 @@ $(document).ready(function () {
   // 要素を検索したのちにルートを作成
   function searchAndUpdateArrays(elementToSearch, elementToAppend) {
     // すべての配列に対して検索と更新を行う
-    Object.keys(arrays).forEach(function (wholeindex) {
-      var myArray = arrays[wholeindex];
-      var lastIndex = myArray.lastIndexOf(elementToSearch);
-
+    for (const wholeindex in arrays) {
+      const myArray = arrays[wholeindex];
+      const lastIndex = myArray.lastIndexOf(elementToSearch);
 
       // 線の元の要素が最後尾にある場合
       if (lastIndex !== -1 && lastIndex === myArray.length - 1) {
@@ -184,103 +183,80 @@ $(document).ready(function () {
         // ルートは終端だけを考えると2ルート増えることになる。
         // ここでは1ルートは要素を追加して更新、もう1ルートは新たな配列を追加する必要がある。
         // この最初の要素追加用のルートを示す番号を宣言する(addroutenum)
-        var addroutenum = 1
+        let addroutenum = 1;
         // 線の先の要素が既存でなかった場合はtorouteがfalse
-        var toroute = false
-        Object.keys(arrays).forEach(function (index) {
+        let toroute = false;
+
+        for (const index in arrays) {
           // 線の先の要素が配列の中の何番目かを格納、なければnumは-1となる
-          var num = arrays[index].lastIndexOf(elementToAppend)
+          const num = arrays[index].lastIndexOf(elementToAppend);
           // インデックスが存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
           if (num !== -1 && num < arrays[index].length - 1) {
-            var afterArray = arrays[index].slice(num + 1);
-            var newArray = myArray.slice();
+            const afterArray = arrays[index].slice(num + 1);
+            const newArray = myArray.slice();
             newArray.push(elementToAppend);
-            newArray = newArray.concat(afterArray)
+            newArray.push(...afterArray);
             // addroutenumが1の場合は既存のルートに後の要素を結合させる
-            if (addroutenum == 1) {
+            if (addroutenum === 1) {
               arrays[wholeindex] = newArray;
-              addroutenum = addroutenum + 1
+              addroutenum = addroutenum + 1;
             }
             // addroutenumが2以上の場合は新たなルートとして配列を追加する
             else {
-              routecount = routecount + 1
+              routecount = routecount + 1;
               arrays[routecount] = newArray;
             }
-            toroute = true
+            toroute = true;
           }
           // インデックスが存在し、最後の要素である場合
-          else if (num !== -1 && num == arrays[index].length - 1) {
-            var newArray = myArray.slice();
+          else if (num !== -1 && num === arrays[index].length - 1) {
+            const newArray = myArray.slice();
             newArray.push(elementToAppend);
             arrays[wholeindex] = newArray;
-            toroute = true
+            toroute = true;
           }
-        })
+        }
         // 線の先の要素が新規だった場合
-        if (toroute == false) {
-          var newArray = myArray.slice();
+        if (!toroute) {
+          const newArray = myArray.slice();
           newArray.push(elementToAppend);
           arrays[wholeindex] = newArray;
         }
-
       }
-
       // 線の元の要素が最後尾以外にある場合、新しい配列を作成
       else if (lastIndex !== -1 && lastIndex < myArray.length - 1) {
 
-        // 例えば1_1, 2_2, 2_3と1_1, 2_2, 3_3というルートがあり新たに2_2から4_3という線を結ぼうとしたとき
-        // 2_2から派生するルートとして1_1, 2_2, 4_3というルートが二つできることになってしまう。
-        // これを阻止するために新規にルートを追加するときに既存のルートがないかをチェックする必要がある
 
+        for (const index in arrays) {
+          const newArray = myArray.slice(0, lastIndex + 1);
+          const num = arrays[index].lastIndexOf(elementToAppend);
 
-        // この最初の要素追加用のルートを示す番号を宣言する(addroutenum)
-        var addroutenum = 1
-        // // 線の先の要素が既存でなかった場合はtorouteがfalse
-        var toroute = false
-        Object.keys(arrays).forEach(function (index) {
-          var newArray = myArray.slice(0, lastIndex + 1);
-          // 線の先の要素が配列の中の何番目かを格納、なければnumは-1となる
-          var num = arrays[index].lastIndexOf(elementToAppend)
-          // インデックスが存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
+          // 要素が存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
           if (num !== -1 && num < arrays[index].length - 1) {
-            var afterArray = arrays[index].slice(num + 1);
-            console.log("先の要素" + afterArray)
-            newArray.push(elementToAppend)
-            newArray = newArray.concat(afterArray)
-
-            toroute = true
+            const afterArray = arrays[index].slice(num + 1);
+            newArray.push(elementToAppend);
+            newArray.push(...afterArray);
           }
-          // インデックスが存在し、最後の要素である場合
-          else if (num !== -1 && num == arrays[index].length - 1) {
-            console.log("last")
-            // arrays[wholeindex] = newArray;
-            newArray.push(elementToAppend)
-
-            toroute = true
+          // 要素が存在し、最後の要素である場合
+          else if (num !== -1 && num === arrays[index].length - 1) {
+            newArray.push(elementToAppend);
+          }
+          // 線の先の要素が新規だった場合
+          else {
+            newArray.push(elementToAppend);
           }
 
 
-
-          // 配列をオブジェクトから検索して新しいルートがかぶっていなければ追加する
-          console.log(arraysAreEqual(newArray))
-          if (toroute && !arraysAreEqual(newArray)) {
-            routecount = routecount + 1
-            arrays[routecount] = newArray;
-          }
-        })
-        // 線の先の要素が新規だった場合
-        if (!toroute) {
-          var newArray = myArray.slice(0, lastIndex + 1);
-          newArray.push(elementToAppend)
+          // 例えば1_1, 2_2, 2_3と1_1, 2_2, 3_3というルートがあり新たに2_2から4_3という線を結ぼうとしたとき
+          // 2_2から派生するルートとして1_1, 2_2, 4_3というルートが二つできることになってしまう。
+          // これを阻止するために新規にルートを追加するときに既存のルートがないかをチェックする必要がある
           if (!arraysAreEqual(newArray)) {
-            routecount = routecount + 1
+            routecount = routecount + 1;
             arrays[routecount] = newArray;
           }
         }
-
-
       }
-    });
+    }
   }
 
   // 配列を比較して確認する中身が一致していたらtrueを返す
@@ -331,13 +307,18 @@ $(document).ready(function () {
     return resultArray;
   }
 
+  function rootcheck(fromElement,toElement){
+    for (const key in arrays) {
+      if (arrays[key].includes(fromElement) && arrays[key].includes(toElement)){
+        return true
+      }
+    }
+    return false
+  }
 
-  // ドラッグ対象の要素にマウスダウンイベントを設定
-  // $(document).on('click','.e', function (event) {
-  //   console.log($(this).attr("id"))
-  // });
 
-  //lineのスタートとエンドの位置を
+
+  //lineのスタートとエンドの位置を格納
   var linedata = [];
   $(document).on('mousedown', function (event) {
 
@@ -359,22 +340,26 @@ $(document).ready(function () {
         });
         // ドラッグ元とドラッグ先が同じであるか
         if (toElement.attr("id") == linedata[0] + '_' + linedata[1]) {
-          $(this).removeClass("blue")
+          toElement.removeClass("blue")
         }
         // 既存の線が存在するか
         else if (lineresult.length != 0) {
-          $(this).removeClass("blue")
+          toElement.removeClass("blue")
         }
-        //
-        else if (linedata[0] == $(this).data("column")) {
+        
+        else if (rootcheck(toElement.attr('id'),linedata[0] + '_' +linedata[1])){
+          toElement.removeClass("blue")
+        }
+        
+        else if (linedata[0] == toElement.data("column")) {
           //真上に要素があった場合
           if (linedata[1] > $(this).data("row")) {
-            $(this).removeClass("blue")
+            toElement.removeClass("blue")
           }
           //ドラッグ元とドラッグ先の間に要素があるかを確認
           for (let row = (linedata[1] + 1); row < $(this).data('row'); row++) {
             if ($('#' + linedata[0] + "_" + row).length != 0) {
-              $(this).removeClass("blue")
+              toElement.removeClass("blue")
             }
           }
 
