@@ -101,7 +101,7 @@ class TopController extends Controller
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
                 ->orderBy('files.日付', 'desc')
-                ->orderBy('files.id','desc');
+                ->orderBy('files.id','asc');
         }
         $alldata = $files->get()->count();
         $files = $files->paginate($show);
