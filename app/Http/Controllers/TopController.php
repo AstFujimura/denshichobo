@@ -85,7 +85,8 @@ class TopController extends Controller
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
                 ->whereIn('files.グループID', $grouparray)
-                ->orderBy('files.日付', 'desc');
+                ->orderBy('files.日付', 'desc')
+                ->orderBy('files.id','desc');
         } else if ($admin == "管理") {
             //管理の場合はすべてを表示する(検索ボックス用)
             $groups = Group::where('id', ">", 100000)
@@ -99,7 +100,8 @@ class TopController extends Controller
                 ->where('files.最新フラグ', '最新')
                 ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
-                ->orderBy('files.日付', 'desc');
+                ->orderBy('files.日付', 'desc')
+                ->orderBy('files.id','desc');
         }
         $alldata = $files->get()->count();
         $files = $files->paginate($show);
