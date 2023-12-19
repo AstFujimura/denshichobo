@@ -1,187 +1,181 @@
-$(document).ready(function () {
-  // グリッドの範囲
-  var Xcellcount = 1
-  var Ycellcount = 1
-  // グリッドの範囲を決定する
-  $('.element').each(function () {
-    if ($(this).data("column") > Xcellcount) {
-      Xcellcount = $(this).data("column")
-    }
-    if ($(this).data("row") > Ycellcount) {
-      Ycellcount = $(this).data("row")
-    }
+
+// グリッドを作成する
+function creategrid(Xcellcount, Ycellcount, cellwidth, cellheight, gapcellwidth, gapcellheight) {
+  $(".grid").css({
+    "grid-template-columns": " 20px repeat(" + Xcellcount + ", " + cellwidth + "px " + cellwidth + "px " + gapcellwidth + "px)",
+    "grid-template-rows": "40px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
   })
-  // 範囲を一つ広げる
-  Xcellcount = Xcellcount + 1
-  Ycellcount = Ycellcount + 1
+}
 
-  // グリッドのセルの値を指定
-  const cellwidth = 150
-  const cellheight = 50
 
-  // 空白のセルの値を指定
-  const gapcellwidth = 80
-  const gapcellheight = 20
-
-  // 画面表示された段階でグリッドを作成
-  creategrid()
-
-  reloadline()
-
-  // グリッドを作成する
-  function creategrid() {
-    $(".grid").css({
-      "grid-template-columns": " 20px repeat(" + Xcellcount + ", " + cellwidth + "px " + cellwidth + "px " + gapcellwidth + "px)",
-      "grid-template-rows": "40px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
-    })
+// グリッド行の範囲変更
+function modifygridcolumn(maxcolumn, Xcellcount) {
+  // 最大幅、高さの変更が必要な場合はcellの数を増やす
+  if (maxcolumn + 1 > Xcellcount) {
+    Xcellcount = maxcolumn + 1
   }
+  return Xcellcount
+}
 
-  // グリッドの範囲変更
-  function modifygrid(maxcolumn, maxrow) {
-    // 最大幅、高さの変更が必要な場合はcellの数を増やす
-    if (maxcolumn + 1 > Xcellcount) {
-      Xcellcount = maxcolumn + 1
-    }
-    if (maxrow + 1 > Ycellcount) {
-      Ycellcount = maxrow + 1
-    }
-    // グリッドのcss変更
-    creategrid()
+// グリッド列の範囲変更
+function modifygridrow(maxrow,Ycellcount) {
+  // 最大幅、高さの変更が必要な場合はcellの数を増やす
+
+  if (maxrow + 1 > Ycellcount) {
+    Ycellcount = maxrow + 1
   }
+  return Ycellcount
+}
 
 
+function makeinputelement(gridcolumn,gridrow,last="none"){
+    $(".element_input").append('<input type="hidden" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '">')
+}
 
-
-
-  // 要素を作成する
+function reloadelement(){
+  $(".e").remove()
+  //フロー線を作成する
   $(".element").each(function () {
     var gridcolumn = $(this).data("column")
     var gridrow = $(this).data("row")
     var last = $(this).data("last")
-    createelement(gridcolumn, gridrow, last, "initial")
+
+    createelement(gridcolumn, gridrow,last)
   })
-  function createelement(gridcolumn, gridrow, last = "none", status = "add") {
-    if (status == "add") {
-      $(".element_input").append('<input type="hidden" class="element" data-column="' + gridcolumn + '" data-row="' + gridcolumn + '" data-last="' + last + '">')
-    }
-
-    $(".grid").append('<div class="grid' + gridcolumn + '_' + gridrow + ' e" id="' + gridcolumn + '_' + gridrow + '" data-column="' + gridcolumn + '" data-row="' + gridrow + '"></div>')
-    var Xstart = 3 * gridcolumn - 1
-    var Xend = 3 * gridcolumn + 1
-    var Ystart = 4 * gridrow - 2
-    var Yend = 4 * gridrow
-    $('.grid' + gridcolumn + '_' + gridrow).css({
-      'grid-column': Xstart + '/' + Xend,
-      'grid-row': Ystart + '/' + Yend,
-      'user-select': "none",
-      'z-index': "10"
-    })
-
-    if (last == "last") {
-      $('.grid' + gridcolumn + '_' + gridrow).addClass("last")
-    }
-
-    // 1_1の場合は申請者
-    if (gridcolumn == 1 && gridrow == 1) {
-      $('.grid' + gridcolumn + '_' + gridrow).append(
-        "<div>申請者</div>"
-      )
-    }
-    // それ以外
-    else {
-      $('.grid' + gridcolumn + '_' + gridrow).append(
-        '<div class=".grid' + gridcolumn + '_' + gridrow + ' grid_content"><div class="grid_index">1</div><select class="grid_name_container"><option>aa</option></select></div></div>'
-      )
-      $('.grid' + gridcolumn + '_' + gridrow).append('<div class="add_button grid_add_button" data-coordinates="' + gridcolumn + '_' + gridrow + '">追加</div>　<div class="grid_delete_button" data-coordinates="' + gridcolumn + '_' + gridrow + '">削除</div>')
-
-    }
+}
 
 
+
+
+// 要素を作成する
+function createelement(gridcolumn, gridrow, last = "none", status = "add") {
+
+
+  $(".grid").append('<div class="grid' + gridcolumn + '_' + gridrow + ' e" id="' + gridcolumn + '_' + gridrow + '" data-column="' + gridcolumn + '" data-row="' + gridrow + '"></div>')
+  var Xstart = 3 * gridcolumn - 1
+  var Xend = 3 * gridcolumn + 1
+  var Ystart = 4 * gridrow - 2
+  var Yend = 4 * gridrow
+  $('.grid' + gridcolumn + '_' + gridrow).css({
+    'grid-column': Xstart + '/' + Xend,
+    'grid-row': Ystart + '/' + Yend,
+    'user-select': "none",
+    'z-index': "10"
+  })
+
+  if (last == "last") {
+    $('.grid' + gridcolumn + '_' + gridrow).addClass("last")
   }
 
-
-  function reloadline() {
-    $(".l").remove()
-    //フロー線を作成する
-    $(".line").each(function () {
-      var startcolumn = $(this).data("startcolumn")
-      var startrow = $(this).data("startrow")
-      var endcolumn = $(this).data("endcolumn")
-      var endrow = $(this).data("endrow")
-
-      createline(startcolumn, startrow, endcolumn, endrow)
-    })
-  }
-
-
-  function createline(startcolumn, startrow, endcolumn, endrow) {
-
-    $(".element_input").append(
-      '<input type="hidden" class="line" data-startcolumn="' + startcolumn + '" data-startrow="' + startrow + '" data-endcolumn="' + endcolumn + '" data-endrow="' + endrow + '">'
-
+  // 1_1の場合は申請者
+  if (gridcolumn == 1 && gridrow == 1) {
+    $('.grid' + gridcolumn + '_' + gridrow).append(
+      "<div>申請者</div>"
     )
-    var Xstart = 3 * startcolumn
-    var Xend = 3 * endcolumn
-    var Ystart = 4 * startrow
-    var Yend = 4 * endrow - 2
+  }
+  // それ以外
+  else {
+    $('.grid' + gridcolumn + '_' + gridrow).append(
+      '<div class=".grid' + gridcolumn + '_' + gridrow + ' grid_content"><div class="grid_index">1</div><select class="grid_name_container"><option>aa</option></select></div></div>'
+    )
+    $('.grid' + gridcolumn + '_' + gridrow).append('<div class="add_button grid_add_button" data-coordinates="' + gridcolumn + '_' + gridrow + '">追加</div>　<div class="grid_delete_button" data-coordinates="' + gridcolumn + '_' + gridrow + '">削除</div>')
 
-    var lineclass = 'line' + startcolumn + '_' + startrow + '_' + endcolumn + '_' + endrow
-
-    //ラインを引く要素の幅
-    // 幅は負の数にならないように絶対値をとる
-    var linewidth = Math.abs(((endcolumn - startcolumn) * 2 * cellwidth) + ((endcolumn - startcolumn) * 1 * gapcellwidth))
-    if (linewidth == 0) {
-      linewidth = 10
-    }
-
-    //ラインを引く要素の高さ
-    var lineheight = (endrow - startrow) * 2 * gapcellheight + (endrow - startrow - 1) * 2 * cellheight
-
-    // widthとheightとviewboxを格納する変数
-    var WidthHeightView = 'width="' + linewidth + 'px" height="' + lineheight + 'px" viewBox="0 0 ' + linewidth + ' ' + lineheight + '"'
-
-    $(".grid").append('<svg ' + WidthHeightView + '  class=" ' + lineclass + ' l ">' + createsvgpath(startcolumn, startrow, endcolumn, endrow, linewidth, lineheight) + '</svg>')
-    $('.' + lineclass).css({
-      'grid-column': Xstart + '/' + Xend,
-      'grid-row': Ystart + '/' + Yend,
-    })
   }
 
-  function createsvgpath(startcolumn, startrow, endcolumn, endrow, linewidth, lineheight) {
-    // 線が左上から右下に引かれる場合
-    if (startcolumn < endcolumn) {
-      // 列が2以上離れているとき
-      if (endrow - startrow > 1) {
-        return '<path d="M 0 0 a ' + (cellwidth) + ' ' + (gapcellheight * 1.5) + ' 0 0 0  ' + (cellwidth) + ' ' + (gapcellheight * 1.5) + ' a ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' 0 0 1 ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' v ' + ((endrow - startrow - 1) * (cellheight * 2) + (endrow - startrow - 2) * (gapcellheight * 2)) + ' a ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' 0 0 0 ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' a ' + (linewidth - gapcellwidth - cellwidth) + ' ' + (gapcellheight * 1.5) + ' 0 0 1 ' + (linewidth - gapcellwidth - cellwidth) + ' ' + (gapcellheight * 1.5) + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
-      }
-      else {
-        return '<path d="M 0 0 a ' + linewidth + ' ' + lineheight + ' 0 0 0  ' + (linewidth / 2) + ' ' + (lineheight / 2) + ' a  ' + linewidth + ' ' + lineheight + ' 0 0 1  ' + (linewidth / 2) + ' ' + (lineheight / 2) + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
-      }
+
+}
+
+
+
+// inputタグの線の情報を記述、変更時にはlineのidを引数に入れる
+// 削除時にはchangeに"delete"を入れる（デフォルトはchange）
+function makeinputline(startcolumn, startrow, endcolumn, endrow, id = 0, change = "change") {
+  $(".element_input").append(
+    '<input type="hidden" class="line" data-startcolumn="' + startcolumn + '" data-startrow="' + startrow + '" data-endcolumn="' + endcolumn + '" data-endrow="' + endrow + '">'
+
+  )
+}
+
+
+function reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight) {
+  $(".l").remove()
+  //フロー線を作成する
+  $(".line").each(function () {
+    var startcolumn = $(this).data("startcolumn")
+    var startrow = $(this).data("startrow")
+    var endcolumn = $(this).data("endcolumn")
+    var endrow = $(this).data("endrow")
+
+    createline(startcolumn, startrow, endcolumn, endrow,cellwidth, cellheight, gapcellwidth, gapcellheight)
+  })
+}
+
+
+function createline(startcolumn, startrow, endcolumn, endrow, cellwidth, cellheight, gapcellwidth, gapcellheight) {
+
+  var Xstart = 3 * startcolumn
+  var Xend = 3 * endcolumn
+  var Ystart = 4 * startrow
+  var Yend = 4 * endrow - 2
+
+  var lineclass = 'line' + startcolumn + '_' + startrow + '_' + endcolumn + '_' + endrow
+
+  //ラインを引く要素の幅
+  // 幅は負の数にならないように絶対値をとる
+  var linewidth = Math.abs(((endcolumn - startcolumn) * 2 * cellwidth) + ((endcolumn - startcolumn) * 1 * gapcellwidth))
+  if (linewidth == 0) {
+    linewidth = 10
+  }
+
+  //ラインを引く要素の高さ
+  var lineheight = (endrow - startrow) * 2 * gapcellheight + (endrow - startrow - 1) * 2 * cellheight
+
+  // widthとheightとviewboxを格納する変数
+  var WidthHeightView = 'width="' + linewidth + 'px" height="' + lineheight + 'px" viewBox="0 0 ' + linewidth + ' ' + lineheight + '"'
+
+  $(".grid").append('<svg ' + WidthHeightView + '  class=" ' + lineclass + ' l ">' + createsvgpath(startcolumn, startrow, endcolumn, endrow, linewidth, lineheight, cellwidth, cellheight, gapcellwidth, gapcellheight) + '</svg>')
+  $('.' + lineclass).css({
+    'grid-column': Xstart + '/' + Xend,
+    'grid-row': Ystart + '/' + Yend,
+  })
+
+}
+
+function createsvgpath(startcolumn, startrow, endcolumn, endrow, linewidth, lineheight, cellwidth, cellheight, gapcellwidth, gapcellheight) {
+  // 線が左上から右下に引かれる場合
+  if (startcolumn < endcolumn) {
+    // 列が2以上離れているとき
+    if (endrow - startrow > 1) {
+      return '<path d="M 0 0 a ' + (cellwidth) + ' ' + (gapcellheight * 1.5) + ' 0 0 0  ' + (cellwidth) + ' ' + (gapcellheight * 1.5) + ' a ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' 0 0 1 ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' v ' + ((endrow - startrow - 1) * (cellheight * 2) + (endrow - startrow - 2) * (gapcellheight * 2)) + ' a ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' 0 0 0 ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' a ' + (linewidth - gapcellwidth - cellwidth) + ' ' + (gapcellheight * 1.5) + ' 0 0 1 ' + (linewidth - gapcellwidth - cellwidth) + ' ' + (gapcellheight * 1.5) + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
     }
-    // 線が右上から左上に引かれる場合
-    else if (startcolumn > endcolumn) {
-      // 列が2以上離れているとき
-      if (endrow - startrow > 1) {
-        return '<path d="M ' + linewidth + ' 0 a ' + -(cellwidth) + ' ' + (gapcellheight * 1.5) + ' 0 0 1  ' + -(cellwidth) + ' ' + (gapcellheight * 1.5) + ' a ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' 0 0 0 ' + -(gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' v ' + ((endrow - startrow - 1) * (cellheight * 2) + (endrow - startrow - 2) * (gapcellheight * 2)) + ' a ' + -(gapcellwidth / 2) + ' ' + (gapcellheight) + ' 0 0 1 ' + -(gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' a ' + (linewidth - gapcellwidth - cellwidth) + ' ' + (gapcellheight * 1.5) + ' 0 0 0 ' + -(linewidth - gapcellwidth - cellwidth) + ' ' + (gapcellheight * 1.5) + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
-      }
-      else {
-        return '<path d="M ' + linewidth + ' 0 a ' + linewidth + ' ' + lineheight + ' 0 0 1  ' + -(linewidth / 2) + ' ' + (lineheight / 2) + ' a  ' + linewidth + ' ' + lineheight + ' 0 0 0  ' + -(linewidth / 2) + ' ' + (lineheight / 2) + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
-      }
-    }
-    // 真下に引かれる場合
     else {
-      return '<path d="M 2.5 0 v ' + lineheight + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
+      return '<path d="M 0 0 a ' + linewidth + ' ' + lineheight + ' 0 0 0  ' + (linewidth / 2) + ' ' + (lineheight / 2) + ' a  ' + linewidth + ' ' + lineheight + ' 0 0 1  ' + (linewidth / 2) + ' ' + (lineheight / 2) + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
     }
   }
-
-  //ルートの数(新規の場合は1となる)
-  var routecount = $("#route").data("routecount")
-  var arrays = {
-    "1": ["1_1", "1_2"]
+  // 線が右上から左上に引かれる場合
+  else if (startcolumn > endcolumn) {
+    // 列が2以上離れているとき
+    if (endrow - startrow > 1) {
+      return '<path d="M ' + linewidth + ' 0 a ' + -(cellwidth) + ' ' + (gapcellheight * 1.5) + ' 0 0 1  ' + -(cellwidth) + ' ' + (gapcellheight * 1.5) + ' a ' + (gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' 0 0 0 ' + -(gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' v ' + ((endrow - startrow - 1) * (cellheight * 2) + (endrow - startrow - 2) * (gapcellheight * 2)) + ' a ' + -(gapcellwidth / 2) + ' ' + (gapcellheight) + ' 0 0 1 ' + -(gapcellwidth / 2) + ' ' + (gapcellheight / 2) + ' a ' + (linewidth - gapcellwidth - cellwidth) + ' ' + (gapcellheight * 1.5) + ' 0 0 0 ' + -(linewidth - gapcellwidth - cellwidth) + ' ' + (gapcellheight * 1.5) + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
+    }
+    else {
+      return '<path d="M ' + linewidth + ' 0 a ' + linewidth + ' ' + lineheight + ' 0 0 1  ' + -(linewidth / 2) + ' ' + (lineheight / 2) + ' a  ' + linewidth + ' ' + lineheight + ' 0 0 0  ' + -(linewidth / 2) + ' ' + (lineheight / 2) + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
+    }
   }
+  // 真下に引かれる場合
+  else {
+    return '<path d="M 2.5 0 v ' + lineheight + '" fill="none" stroke="#a3a3a3" stroke-width="2" />'
+  }
+}
+
+
+
+
+
+
 
   // 要素を検索したのちにルートを作成
-  function searchAndUpdateArrays(elementToSearch, elementToAppend) {
+  function searchAndUpdateArrays(elementToSearch, elementToAppend,arrays,routecount) {
     // すべての配列に対して検索と更新を行う
     for (const wholeindex in arrays) {
       const myArray = arrays[wholeindex];
@@ -216,6 +210,7 @@ $(document).ready(function () {
             else {
               routecount = routecount + 1;
               arrays[routecount] = newArray;
+              $("#route").data("routecount",routecount)
             }
             toroute = true;
           }
@@ -261,17 +256,20 @@ $(document).ready(function () {
           // 例えば1_1, 2_2, 2_3と1_1, 2_2, 3_3というルートがあり新たに2_2から4_3という線を結ぼうとしたとき
           // 2_2から派生するルートとして1_1, 2_2, 4_3というルートが二つできることになってしまう。
           // これを阻止するために新規にルートを追加するときに既存のルートがないかをチェックする必要がある
-          if (!arraysAreEqual(newArray)) {
+          if (!arraysAreEqual(newArray,arrays)) {
             routecount = routecount + 1;
             arrays[routecount] = newArray;
+            $("#route").data("routecount",routecount)
           }
         }
       }
     }
+
+    return arrays
   }
 
   // 配列を比較して確認する中身が一致していたらtrueを返す
-  function arraysAreEqual(newArray) {
+  function arraysAreEqual(newArray,arrays) {
 
     // arraysオブジェクトの中身を見る
     // foreachを使わないのは途中でbreakがあるものにも対応できるようにするため
@@ -282,7 +280,6 @@ $(document).ready(function () {
         let statusCheck = true;
         for (let i = 0; i < searchArray.length; i++) {
           if (searchArray[i] !== newArray[i]) {
-            console.log(searchArray[i], newArray[i]);
             statusCheck = false;
             break;
           }
@@ -320,7 +317,7 @@ $(document).ready(function () {
 
   // 線を結ぶときに元と先が子孫の関係になっていないかを確認
   // もしなっていればtrueを返す
-  function rootcheck(fromElement, toElement) {
+  function rootcheck(fromElement, toElement,arrays) {
     for (const key in arrays) {
       if (arrays[key].includes(fromElement) && arrays[key].includes(toElement)) {
         return true
@@ -331,141 +328,6 @@ $(document).ready(function () {
 
 
 
-  //lineのスタートとエンドの位置を格納
-  var linedata = [];
-  $(document).on('mousedown', function (event) {
-
-    var mousedownTarget = $(event.target)
-
-    if (mousedownTarget.hasClass("e")) {
-
-      // ドラッグ中のデータをリセット
-      linedata = [];
-      linedata[0] = mousedownTarget.data("column")
-      linedata[1] = mousedownTarget.data("row")
-
-      //各要素をチェック
-      $(".e").each(function () {
-        $(this).addClass("blue")
-        var toElement = $(this)
-        var lineresult = $('input').filter(function () {
-          return $(this).data('startcolumn') === linedata[0] && $(this).data('startrow') === linedata[1] && $(this).data('endcolumn') === toElement.data('column') && $(this).data('endrow') === toElement.data('row');
-        });
-        // ドラッグ元とドラッグ先が同じであるか
-        if (toElement.attr("id") == linedata[0] + '_' + linedata[1]) {
-          toElement.removeClass("blue")
-        }
-        // 既存の線が存在するか
-        else if (lineresult.length != 0) {
-          toElement.removeClass("blue")
-        }
-
-        else if (rootcheck(toElement.attr('id'), linedata[0] + '_' + linedata[1])) {
-          toElement.removeClass("blue")
-        }
-
-        else if (linedata[0] == toElement.data("column")) {
-          //真上に要素があった場合
-          if (linedata[1] > $(this).data("row")) {
-            toElement.removeClass("blue")
-          }
-          //ドラッグ元とドラッグ先の間に要素があるかを確認
-          for (let row = (linedata[1] + 1); row < $(this).data('row'); row++) {
-            if ($('#' + linedata[0] + "_" + row).length != 0) {
-              toElement.removeClass("blue")
-            }
-          }
-
-        }
-      })
-
-      var status = false
-      var gridcolumn = linedata[0]
-      var gridrow = linedata[1] + 1
-
-      do {
-        if ($('#' + gridcolumn + "_" + gridrow).length != 0) {
-          gridcolumn = gridcolumn + 1
-        }
-        else {
-          status = true
-        }
-      }
-      while (!status)
-
-      $(".grid").append('<div class="drag' + gridcolumn + '_' + gridrow + ' d" id="' + gridcolumn + '_' + gridrow + '" data-column="' + gridcolumn + '" data-row="' + gridrow + '">ドラッグ&ドロップで追加</div>')
-      var Xstart = 3 * gridcolumn - 1
-      var Xend = 3 * gridcolumn + 1
-      var Ystart = 4 * gridrow - 2
-      var Yend = 4 * gridrow
-      $('.drag' + gridcolumn + '_' + gridrow).css({
-        'grid-column': Xstart + '/' + Xend,
-        'grid-row': Ystart + '/' + Yend,
-        'user-select': "none",
-        "z-index": "10",
-        "line-height": cellheight * 2 + "px"
-      })
-
-    }
-
-  });
-
-
-  $(document).on('mousemove', '.d', function (event) {
-
-    $(this).addClass("yellow")
-  });
-
-  $(document).on('mouseleave', '.d', function (event) {
-
-    $(this).removeClass("yellow")
-  });
-
-  // ドラッグ終了時にイベントを解除
-  $(document).on('mouseup', function (event) {
-
-    var targetElement = $(event.target);
-    // closestメソッドを使用して、特定の親要素を取得
-    var eElement = targetElement.closest('.blue');
-
-    // 既存の要素に線をつなげる場合
-    if (eElement.length == 1) {
-      linedata[2] = $(eElement[0]).data("column")
-      linedata[3] = $(eElement[0]).data("row")
-      // インプットタグから線がすでにあるかを確認
-      var lineresult = $('input').filter(function () {
-        return $(this).data('startcolumn') === linedata[0] && $(this).data('startrow') === linedata[1] && $(this).data('endcolumn') === linedata[2] && $(this).data('endrow') === linedata[3];
-      });
-      // 線がない場合はインプットタグを作成する
-      if (lineresult.length == 0) {
-
-        createline(linedata[0], linedata[1], linedata[2], linedata[3])
-        reloadline()
-        $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
-        searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3])
-        console.log(arrays)
-      }
 
 
 
-    }
-    // 新規の要素を作成する場合
-    else if (targetElement.hasClass('d')) {
-      linedata[2] = targetElement.data("column")
-      linedata[3] = targetElement.data("row")
-      modifygrid(linedata[2], linedata[3])
-      createline(linedata[0], linedata[1], linedata[2], linedata[3])
-      reloadline()
-      $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
-      createelement(linedata[2], linedata[3], "last")
-      searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3])
-      console.log(arrays)
-    }
-    $('.e').removeClass("blue")
-    $('.d').remove()
-
-  });
-
-
-
-});
