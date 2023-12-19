@@ -33,7 +33,7 @@
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
     
-    <span class="version">ver.2.8.3</span>
+    <span class="version">ver.2.8.4</span>
 
 </header>
 <div class="menu001">

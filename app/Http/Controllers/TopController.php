@@ -51,7 +51,6 @@ class TopController extends Controller
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
         $today = Carbon::today(); // 今日の日付を取得
-        $oneMonthAgo = Carbon::now()->subMonth()->format('Ymd'); //一か月前の日付を取得
         $users = User::where("id", "not like", 1)
             ->where("削除", "")
             ->get();
@@ -82,10 +81,10 @@ class TopController extends Controller
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
-                ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
                 ->whereIn('files.グループID', $grouparray)
-                ->orderBy('files.日付', 'desc');
+                ->orderBy('files.日付', 'desc')
+                ->orderBy('files.id','desc');
         } else if ($admin == "管理") {
             //管理の場合はすべてを表示する(検索ボックス用)
             $groups = Group::where('id', ">", 100000)
@@ -97,9 +96,9 @@ class TopController extends Controller
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
-                ->where('files.日付', '>=', $oneMonthAgo)
                 ->where("files.削除フラグ", "")
-                ->orderBy('files.日付', 'desc');
+                ->orderBy('files.日付', 'desc')
+                ->orderBy('files.id','desc');
         }
         $alldata = $files->get()->count();
         $files = $files->paginate($show);
@@ -232,7 +231,8 @@ class TopController extends Controller
                 ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
                 ->whereIn('files.グループID', $grouparray)
-                ->orderBy('files.日付', 'desc');
+                ->orderBy('files.日付', 'desc')
+                ->orderBy('files.id','desc');
         } else if ($admin == "管理") {
 
             //管理の場合はすべてを表示する(検索ボックス用)
@@ -246,7 +246,8 @@ class TopController extends Controller
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
                 ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
-                ->orderBy('files.日付', 'desc');
+                ->orderBy('files.日付', 'desc')
+                ->orderBy('files.id','desc');
         }
 
 
