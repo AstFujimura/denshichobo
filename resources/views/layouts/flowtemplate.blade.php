@@ -186,6 +186,7 @@
 <script src="{{ asset(config('prefix.prefix').'/'.'js/all.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/style.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/flow.js') }}"></script>
+<script src="{{ asset(config('prefix.prefix').'/'.'js/flowfunction.js') }}"></script>
 @if ($server == 'onpre')
 <script src="{{ asset(config('prefix.prefix').'/'.'js/onpre.js') }}"></script>
 @else
