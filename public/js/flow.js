@@ -1,4 +1,20 @@
 $(document).ready(function () {
+
+$(".accordion_menu_title").on("click",function(){
+  console.log(";lakd")
+  $(this).toggleClass("accordion_menu_title_open")
+  $(this).parent().find(".accordion_content").toggleClass("accordion_content_open")
+})
+
+
+
+
+
+
+
+
+
+
   // グリッドの範囲
   var Xcellcount = 1
   var Ycellcount = 1
@@ -11,10 +27,9 @@ $(document).ready(function () {
       Ycellcount = $(this).data("row")
     }
   })
-  // 範囲を一つ広げる
-  Xcellcount = Xcellcount + 1
-  Ycellcount = Ycellcount + 1
 
+  $("#maxgrid").data("maxcolumn",Xcellcount + 1)
+  $("#maxgrid").data("maxrow",Ycellcount + 1)
   // グリッドのセルの値を指定
   const cellwidth = 150
   const cellheight = 50
@@ -24,7 +39,7 @@ $(document).ready(function () {
   const gapcellheight = 20
 
   // 画面表示された段階でグリッドを作成
-  creategrid(Xcellcount, Ycellcount, cellwidth, cellheight, gapcellwidth, gapcellheight)
+  creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight)
 
   reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
 
@@ -64,7 +79,7 @@ $(document).ready(function () {
           toElement.removeClass("blue")
         }
 
-        else if (rootcheck(toElement.attr('id'), linedata[0] + '_' + linedata[1],arrays)) {
+        else if (rootcheck(toElement.attr('id'), linedata[0] + '_' + linedata[1], arrays)) {
           toElement.removeClass("blue")
         }
 
@@ -143,12 +158,23 @@ $(document).ready(function () {
       });
       // 線がない場合はインプットタグを作成する
       if (lineresult.length == 0) {
+        // つないだ要素が上から下につないでいるとき
+        if (linedata[1] < linedata[3]) {
+          makeinputline(linedata[0], linedata[1], linedata[2], linedata[3])
+          reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
+          $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
+          arrays = searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3], arrays, routecount)
+          console.log(arrays)
+        }
+        // 真横もしくは上の要素につないだ時
+        // 影響を及ぼす線と要素のinputタグを変更して描画しなおす
+        else {
+          change_line_element(linedata[0], linedata[1], linedata[2], linedata[3])
+          creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight)
+          reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
+          reloadelement()
+        }
 
-        makeinputline(linedata[0], linedata[1], linedata[2], linedata[3])
-        reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
-        $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
-        arrays = searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3], arrays, routecount)
-        console.log(arrays)
       }
 
 
@@ -159,10 +185,7 @@ $(document).ready(function () {
       linedata[2] = targetElement.data("column")
       linedata[3] = targetElement.data("row")
       // グリッドの最大幅を変更
-      Xcellcount = modifygridcolumn(linedata[2], Xcellcount)
-      Ycellcount = modifygridrow(linedata[3], Ycellcount)
-      creategrid(Xcellcount, Ycellcount, cellwidth, cellheight, gapcellwidth, gapcellheight)
-
+      modifygrid(linedata[2],linedata[3],cellwidth, cellheight, gapcellwidth, gapcellheight)
       // 線のインプットタグを追加・要素の作成
       makeinputline(linedata[0], linedata[1], linedata[2], linedata[3])
       reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)

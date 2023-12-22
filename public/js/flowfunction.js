@@ -1,6 +1,8 @@
 
 // グリッドを作成する
-function creategrid(Xcellcount, Ycellcount, cellwidth, cellheight, gapcellwidth, gapcellheight) {
+function creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight) {
+  var Xcellcount = $("#maxgrid").data("maxcolumn")
+  var Ycellcount = $("#maxgrid").data("maxrow")
   $(".grid").css({
     "grid-template-columns": " 20px repeat(" + Xcellcount + ", " + cellwidth + "px " + cellwidth + "px " + gapcellwidth + "px)",
     "grid-template-rows": "40px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
@@ -9,30 +11,30 @@ function creategrid(Xcellcount, Ycellcount, cellwidth, cellheight, gapcellwidth,
 
 
 // グリッド行の範囲変更
-function modifygridcolumn(maxcolumn, Xcellcount) {
+function modifygrid(maxcolumn, maxrow,cellwidth, cellheight, gapcellwidth, gapcellheight) {
+  var Xcellcount = $("#maxgrid").data("maxcolumn")
+  var Ycellcount = $("#maxgrid").data("maxrow")
   // 最大幅、高さの変更が必要な場合はcellの数を増やす
   if (maxcolumn + 1 > Xcellcount) {
     Xcellcount = maxcolumn + 1
+    $("#maxgrid").data("maxcolumn",Xcellcount)
   }
-  return Xcellcount
-}
-
-// グリッド列の範囲変更
-function modifygridrow(maxrow,Ycellcount) {
-  // 最大幅、高さの変更が必要な場合はcellの数を増やす
-
   if (maxrow + 1 > Ycellcount) {
     Ycellcount = maxrow + 1
+    $("#maxgrid").data("maxrow",Ycellcount)
   }
-  return Ycellcount
+  $(".grid").css({
+    "grid-template-columns": " 20px repeat(" + Xcellcount + ", " + cellwidth + "px " + cellwidth + "px " + gapcellwidth + "px)",
+    "grid-template-rows": "40px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
+  })
 }
 
 
-function makeinputelement(gridcolumn,gridrow,last="none"){
-    $(".element_input").append('<input type="hidden" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '">')
+function makeinputelement(gridcolumn, gridrow, last = "none") {
+  $(".element_input").append('<input type="hidden" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '">')
 }
 
-function reloadelement(){
+function reloadelement() {
   $(".e").remove()
   //フロー線を作成する
   $(".element").each(function () {
@@ -40,7 +42,7 @@ function reloadelement(){
     var gridrow = $(this).data("row")
     var last = $(this).data("last")
 
-    createelement(gridcolumn, gridrow,last)
+    createelement(gridcolumn, gridrow, last)
   })
 }
 
@@ -106,7 +108,7 @@ function reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight) {
     var endcolumn = $(this).data("endcolumn")
     var endrow = $(this).data("endrow")
 
-    createline(startcolumn, startrow, endcolumn, endrow,cellwidth, cellheight, gapcellwidth, gapcellheight)
+    createline(startcolumn, startrow, endcolumn, endrow, cellwidth, cellheight, gapcellwidth, gapcellheight)
   })
 }
 
@@ -174,157 +176,200 @@ function createsvgpath(startcolumn, startrow, endcolumn, endrow, linewidth, line
 
 
 
-  // 要素を検索したのちにルートを作成
-  function searchAndUpdateArrays(elementToSearch, elementToAppend,arrays,routecount) {
-    // すべての配列に対して検索と更新を行う
-    for (const wholeindex in arrays) {
-      const myArray = arrays[wholeindex];
-      const lastIndex = myArray.lastIndexOf(elementToSearch);
+// 要素を検索したのちにルートを作成
+function searchAndUpdateArrays(elementToSearch, elementToAppend, arrays, routecount) {
+  // すべての配列に対して検索と更新を行う
+  for (const wholeindex in arrays) {
+    const myArray = arrays[wholeindex];
+    const lastIndex = myArray.lastIndexOf(elementToSearch);
 
-      // 線の元の要素が最後尾にある場合
-      if (lastIndex !== -1 && lastIndex === myArray.length - 1) {
-        // 線の先の要素が分岐またはそれ以降の要素が分岐する可能性を考慮する
-        // 例えば1_1, 1_2, 1_3, 1_4 と 1_1, 1_2, 1_3, 2_4というルートがあり新たに2_2から1_3という線を結ぼうとしたとき
-        // ルートは終端だけを考えると2ルート増えることになる。
-        // ここでは1ルートは要素を追加して更新、もう1ルートは新たな配列を追加する必要がある。
-        // この最初の要素追加用のルートを示す番号を宣言する(addroutenum)
-        let addroutenum = 1;
-        // 線の先の要素が既存でなかった場合はtorouteがfalse
-        let toroute = false;
+    // 線の元の要素が最後尾にある場合
+    if (lastIndex !== -1 && lastIndex === myArray.length - 1) {
+      // 線の先の要素が分岐またはそれ以降の要素が分岐する可能性を考慮する
+      // 例えば1_1, 1_2, 1_3, 1_4 と 1_1, 1_2, 1_3, 2_4というルートがあり新たに2_2から1_3という線を結ぼうとしたとき
+      // ルートは終端だけを考えると2ルート増えることになる。
+      // ここでは1ルートは要素を追加して更新、もう1ルートは新たな配列を追加する必要がある。
+      // この最初の要素追加用のルートを示す番号を宣言する(addroutenum)
+      let addroutenum = 1;
+      // 線の先の要素が既存でなかった場合はtorouteがfalse
+      let toroute = false;
 
-        for (const index in arrays) {
-          // 線の先の要素が配列の中の何番目かを格納、なければnumは-1となる
-          const num = arrays[index].lastIndexOf(elementToAppend);
-          // インデックスが存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
-          if (num !== -1 && num < arrays[index].length - 1) {
-            const afterArray = arrays[index].slice(num + 1);
-            const newArray = myArray.slice();
-            newArray.push(elementToAppend);
-            newArray.push(...afterArray);
-            // addroutenumが1の場合は既存のルートに後の要素を結合させる
-            if (addroutenum === 1) {
-              arrays[wholeindex] = newArray;
-              addroutenum = addroutenum + 1;
-            }
-            // addroutenumが2以上の場合は新たなルートとして配列を追加する
-            else {
-              routecount = routecount + 1;
-              arrays[routecount] = newArray;
-              $("#route").data("routecount",routecount)
-            }
-            toroute = true;
-          }
-          // インデックスが存在し、最後の要素である場合
-          else if (num !== -1 && num === arrays[index].length - 1) {
-            const newArray = myArray.slice();
-            newArray.push(elementToAppend);
+      for (const index in arrays) {
+        // 線の先の要素が配列の中の何番目かを格納、なければnumは-1となる
+        const num = arrays[index].lastIndexOf(elementToAppend);
+        // インデックスが存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
+        if (num !== -1 && num < arrays[index].length - 1) {
+          const afterArray = arrays[index].slice(num + 1);
+          const newArray = myArray.slice();
+          newArray.push(elementToAppend);
+          newArray.push(...afterArray);
+          // addroutenumが1の場合は既存のルートに後の要素を結合させる
+          if (addroutenum === 1) {
             arrays[wholeindex] = newArray;
-            toroute = true;
+            addroutenum = addroutenum + 1;
           }
+          // addroutenumが2以上の場合は新たなルートとして配列を追加する
+          else {
+            routecount = routecount + 1;
+            arrays[routecount] = newArray;
+            $("#route").data("routecount", routecount)
+          }
+          toroute = true;
         }
-        // 線の先の要素が新規だった場合
-        if (!toroute) {
+        // インデックスが存在し、最後の要素である場合
+        else if (num !== -1 && num === arrays[index].length - 1) {
           const newArray = myArray.slice();
           newArray.push(elementToAppend);
           arrays[wholeindex] = newArray;
+          toroute = true;
         }
       }
-      // 線の元の要素が最後尾以外にある場合、新しい配列を作成
-      else if (lastIndex !== -1 && lastIndex < myArray.length - 1) {
-
-
-        for (const index in arrays) {
-          const newArray = myArray.slice(0, lastIndex + 1);
-          const num = arrays[index].lastIndexOf(elementToAppend);
-
-          // 要素が存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
-          if (num !== -1 && num < arrays[index].length - 1) {
-            const afterArray = arrays[index].slice(num + 1);
-            newArray.push(elementToAppend);
-            newArray.push(...afterArray);
-          }
-          // 要素が存在し、最後の要素である場合
-          else if (num !== -1 && num === arrays[index].length - 1) {
-            newArray.push(elementToAppend);
-          }
-          // 線の先の要素が新規だった場合
-          else {
-            newArray.push(elementToAppend);
-          }
-
-
-          // 例えば1_1, 2_2, 2_3と1_1, 2_2, 3_3というルートがあり新たに2_2から4_3という線を結ぼうとしたとき
-          // 2_2から派生するルートとして1_1, 2_2, 4_3というルートが二つできることになってしまう。
-          // これを阻止するために新規にルートを追加するときに既存のルートがないかをチェックする必要がある
-          if (!arraysAreEqual(newArray,arrays)) {
-            routecount = routecount + 1;
-            arrays[routecount] = newArray;
-            $("#route").data("routecount",routecount)
-          }
-        }
+      // 線の先の要素が新規だった場合
+      if (!toroute) {
+        const newArray = myArray.slice();
+        newArray.push(elementToAppend);
+        arrays[wholeindex] = newArray;
       }
     }
+    // 線の元の要素が最後尾以外にある場合、新しい配列を作成
+    else if (lastIndex !== -1 && lastIndex < myArray.length - 1) {
 
-    return arrays
-  }
 
-  // 配列を比較して確認する中身が一致していたらtrueを返す
-  function arraysAreEqual(newArray,arrays) {
+      for (const index in arrays) {
+        const newArray = myArray.slice(0, lastIndex + 1);
+        const num = arrays[index].lastIndexOf(elementToAppend);
 
-    // arraysオブジェクトの中身を見る
-    // foreachを使わないのは途中でbreakがあるものにも対応できるようにするため
-    for (const index in arrays) {
-      const searchArray = arrays[index];
-
-      if (searchArray.length === newArray.length) {
-        let statusCheck = true;
-        for (let i = 0; i < searchArray.length; i++) {
-          if (searchArray[i] !== newArray[i]) {
-            statusCheck = false;
-            break;
-          }
+        // 要素が存在し、線の先が最後の要素でない場合、対象要素以降の部分配列を返す
+        if (num !== -1 && num < arrays[index].length - 1) {
+          const afterArray = arrays[index].slice(num + 1);
+          newArray.push(elementToAppend);
+          newArray.push(...afterArray);
+        }
+        // 要素が存在し、最後の要素である場合
+        else if (num !== -1 && num === arrays[index].length - 1) {
+          newArray.push(elementToAppend);
+        }
+        // 線の先の要素が新規だった場合
+        else {
+          newArray.push(elementToAppend);
         }
 
-        if (statusCheck) {
-          return true;
+
+        // 例えば1_1, 2_2, 2_3と1_1, 2_2, 3_3というルートがあり新たに2_2から4_3という線を結ぼうとしたとき
+        // 2_2から派生するルートとして1_1, 2_2, 4_3というルートが二つできることになってしまう。
+        // これを阻止するために新規にルートを追加するときに既存のルートがないかをチェックする必要がある
+        if (!arraysAreEqual(newArray, arrays)) {
+          routecount = routecount + 1;
+          arrays[routecount] = newArray;
+          $("#route").data("routecount", routecount)
         }
       }
     }
-    return false;
   }
 
-  // 要素含まれているルートの要素を配列に格納して返す関数
-  // arraysには要素をルートのすべての配列が格納されたオブジェクト
-  // targetValueには検索する要素
-  function findAndStoreElements(arrays, targetValue) {
-    const resultArray = [];
+  return arrays
+}
 
-    for (const key in arrays) {
-      const currentArray = arrays[key];
+// 配列を比較して確認する中身が一致していたらtrueを返す
+function arraysAreEqual(newArray, arrays) {
 
-      if (currentArray.includes(targetValue)) {
-        arrays[key].forEach((element) => {
-          // resultArrayに重複要素がないかを確認
-          if (!resultArray.includes(element)) {
-            resultArray.push(element);
-          }
-        });
+  // arraysオブジェクトの中身を見る
+  // foreachを使わないのは途中でbreakがあるものにも対応できるようにするため
+  for (const index in arrays) {
+    const searchArray = arrays[index];
+
+    if (searchArray.length === newArray.length) {
+      let statusCheck = true;
+      for (let i = 0; i < searchArray.length; i++) {
+        if (searchArray[i] !== newArray[i]) {
+          statusCheck = false;
+          break;
+        }
+      }
+
+      if (statusCheck) {
+        return true;
       }
     }
-
-    return resultArray;
   }
+  return false;
+}
 
-  // 線を結ぶときに元と先が子孫の関係になっていないかを確認
-  // もしなっていればtrueを返す
-  function rootcheck(fromElement, toElement,arrays) {
-    for (const key in arrays) {
-      if (arrays[key].includes(fromElement) && arrays[key].includes(toElement)) {
-        return true
-      }
+// 要素含まれているルートの要素を配列に格納して返す関数
+// arraysには要素をルートのすべての配列が格納されたオブジェクト
+// targetValueには検索する要素
+function findAndStoreElements(arrays, targetValue) {
+  const resultArray = [];
+
+  for (const key in arrays) {
+    const currentArray = arrays[key];
+
+    if (currentArray.includes(targetValue)) {
+      arrays[key].forEach((element) => {
+        // resultArrayに重複要素がないかを確認
+        if (!resultArray.includes(element)) {
+          resultArray.push(element);
+        }
+      });
     }
-    return false
   }
+
+  return resultArray;
+}
+
+// 線を結ぶときに元と先が子孫の関係になっていないかを確認
+// もしなっていればtrueを返す
+function rootcheck(fromElement, toElement, arrays) {
+  for (const key in arrays) {
+    if (arrays[key].includes(fromElement) && arrays[key].includes(toElement)) {
+      return true
+    }
+  }
+  return false
+}
+
+// 関数を再帰的に呼び出すためデフォルトのstatusをinitialとして２回目以降はstatusをchangeにする
+function change_line_element(startcolumn, startrow, endcolumn, endrow,status = "initial") {
+  // 下に移動する分の値
+  const changerow = startrow - endrow + 1
+  var Ycellcount = $("#maxgrid").data("maxrow")
+  $("#maxgrid").data("maxrow",Ycellcount+changerow)
+
+  console.log(changerow)
+  if (status == "initial"){
+    makeinputline(startcolumn, startrow, endcolumn, endrow) 
+  }
+
+  // 要素をそれぞれチェック
+  $(".element").each(function () {
+    var nowcolumn = $(this).data("column")
+    var nowrow = $(this).data("row")
+    // 要素が線の先のカラムに該当し、線の先の列よりも下、もしくは横にある場合changerowだけ下に移動する
+    if (nowcolumn == endcolumn && nowrow >= endrow) {
+      $(this).data("row", nowrow + changerow)
+    }
+  })
+  $(".line").each(function () {
+    // 現在の行、列を取得
+    var nowstartcolumn = $(this).data("startcolumn")
+    var nowstartrow = $(this).data("startrow")
+    var nowendcolumn = $(this).data("endcolumn")
+    var nowendrow = $(this).data("endrow")
+    if (nowstartcolumn == endcolumn && nowstartrow >= endrow) {
+      $(this).data("startrow", nowstartrow + changerow)
+    }
+    if (nowendcolumn == endcolumn && nowendrow >= endrow) {
+      $(this).data("endrow", nowendrow + changerow)
+    }
+  })
+
+  var lineresult = $('input').filter(function () {
+    return $(this).data('startrow') >= $(this).data('endrow');
+  }).first();
+  if (lineresult.length !== 0){
+    change_line_element(lineresult.data('startcolumn'), lineresult.data('startrow'), lineresult.data('endcolumn'), lineresult.data('endrow'),status = "change")
+  }
+}
 
 
 

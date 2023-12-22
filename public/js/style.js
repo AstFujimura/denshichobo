@@ -10,7 +10,7 @@ $(document).ready(function () {
         buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
         buttonImageOnly: true, // テキストを非表示にする
     })
-    
+
 
     //サイドバーの表示
     $('.hamburger01').click(function () {
@@ -30,7 +30,7 @@ $(document).ready(function () {
 
 
     //パスワードリセット時のアコーディオンメニュー
-    $('.title').on('click',function(){
+    $('.title').on('click', function () {
         $('.title').toggleClass('close')
         $('.importantelement').toggleClass('open')
     });
@@ -43,10 +43,10 @@ $(document).ready(function () {
 
         const scrollX = $(window).scrollLeft();
         $('.header001').css('left', `${scrollX}px`);
-        if (!$('.menu001fixed').length){
+        if (!$('.menu001fixed').length) {
             $('.menu001').css('left', `${scrollX}px`);
         }
-        else{
+        else {
             $('.menu001').css('left', 0);
         }
     });
@@ -65,12 +65,16 @@ $(document).ready(function () {
             $('.menu001').addClass('menu001fixed');//fixedというクラス名を付与
             $('.pagetitle').addClass('h2_margin');
             $('.sidebar01').addClass('sidebar01top');
+            $('.left_side_menu').addClass('left_side_menu_top');
+            $('.right_side_menu').addClass('right_side_menu_top');
         } else {//それ以外は
             $('.menu001').removeClass('menu001fixed');//fixedというクラス名を除去
             $('.pagetitle').removeClass('h2_margin');
             $('.sidebar01').removeClass('sidebar01top');
+            $('.left_side_menu').removeClass('left_side_menu_top');
+            $('.right_side_menu').removeClass('right_side_menu_top');
         }
-
+        
         if (scroll >= headerH + pageTitleH + serachBoxH + infoH - tablecolumnH) {//headerの高さ以上になったら
             $('.top_table_div').addClass('top_table_column_fixed');//fixedというクラス名を付与
             $('.top_table_element').addClass('top_table_margin');
@@ -88,7 +92,7 @@ $(document).ready(function () {
             $('.history_table_element').removeClass('history_table_margin');
         }
 
-    
+
 
     }
 

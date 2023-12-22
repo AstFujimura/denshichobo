@@ -7,6 +7,7 @@ body{
     margin: none;
     display: flex;
     position: relative;
+    z-index: 2;
 }
 
 .headerIcon001{
@@ -20,6 +21,7 @@ body{
         background: rgb(75, 75, 75);
         display: flex;
         position: relative;
+        z-index: 2;
     }
     .menue001 {
         margin-right: 35px;
@@ -31,6 +33,7 @@ body{
         background: rgb(75, 75, 75);
         display: flex;
         position: relative;
+        z-index: 2;
     }
     .menue001 {
         margin-right: 100px;

@@ -1,7 +1,149 @@
 .header001 {
     background: rgb(142, 214, 216) !important;
+    z-index: 13 ;
+}
+.menu001{
+    z-index: 13 ;
+}
+.MenueBar{
+    width: 250px;
+    height: 100vh;
+    margin-right: 25px;
+}
+.maincontent01 {
+    padding-left: 0;
+    display: flex;
+}
+.Mainelement{
 }
 
+.left_side_menu {
+    width: 250px;
+    height: 100vh;
+    background: #dfdede;
+    margin-right: 25px;
+    position: fixed;
+    top:0;
+    padding-top: 150px;
+    padding-left: 20px;
+    z-index: 12;
+    font-size: 12px;
+}
+.left_side_menu_top{
+    padding-top: 100px;
+}
+
+.left_side_section{
+    margin-bottom: 30px;
+}
+
+.left_side_content_title{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.accordion_menu{
+    margin-left: 20px;
+}
+.accordion_menu_title{
+    position: relative;
+    cursor: pointer;
+}
+.accordion_menu_title::before,.accordion_menu_title::after{
+    content: "";
+    height: 2px;
+    width: 8px;
+    border-radius: 2px;
+    background: #313131;
+}
+.accordion_menu_title::before{
+    transform: rotate(32deg);
+    position: absolute;
+    left: -12px;
+    top: 6px;
+    transition: all 0.2s;
+}
+.accordion_menu_title::after{
+    transform: rotate(-27deg);
+    position: absolute;
+    left: -12px;
+    top: 9px;
+    transition: all 0.2s;
+}
+.accordion_menu_title_open::before{
+    transform: rotate(-45deg);
+    left: -9px;
+    top: 8px;
+}
+.accordion_menu_title_open::after{
+    transform: rotate(45deg);
+    left: -13px;
+    top: 8px;
+}
+
+.accordion_content{
+    height: 0;
+    overflow: hidden;
+    margin-left: 20px;
+    transition: all 0.2s;
+}
+.accordion_group ~ .accordion_content_open{
+    height: 100px;
+    overflow-y: auto;
+}  
+.accordion_price ~ .accordion_content_open{
+    height: 74px;
+}   
+.flow_plice_box{
+    margin-bottom: 5px;
+}
+
+
+.flow_plice_text{
+    height: 30px;
+    border: solid 1px rgb(180, 180, 180);
+    border-radius: 3px;
+    width: 126px;
+}
+
+
+.flow_name_text{
+    height: 30px;
+    border: solid 1px rgb(180, 180, 180);
+    border-radius: 3px;
+}
+
+
+
+/* 右側サイドメニュー */
+
+.right_side_menu{
+    width: 250px;
+    height: 100vh;
+    background: #dfdede;;
+    position: fixed;
+    top:0;
+    right: 0;
+    padding-top: 150px;
+    padding-left: 20px;
+    z-index: 12;
+    font-size: 12px;
+}
+.right_side_menu_top{
+    padding-top: 100px;
+}
+
+.right_side_section{
+    margin-bottom: 30px;
+}
+
+.right_side_content_title{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/* メイン機能 */
 .grid {
     position: relative;
     display: grid;
@@ -88,16 +230,17 @@
     cursor: pointer;
 }
 
-.d{
-border:  solid 5px rgb(202, 202, 202);
-color: rgb(202, 202, 202);
-font-size: 20px;
-text-align: center;
+.d {
+    border: solid 5px rgb(202, 202, 202);
+    color: rgb(202, 202, 202);
+    font-size: 20px;
+    text-align: center;
 }
 
 .l {
     position: relative;
 }
+
 .yellow {
     border: solid 5px #cbcb1e;
     box-shadow: 0px 0px 15px 0 #cbcb1e;
@@ -106,4 +249,3 @@ text-align: center;
 .blue {
     border: solid 5px blue;
 }
-
