@@ -1,11 +1,37 @@
 $(document).ready(function () {
 
+  // アコーディオンメニューを押したとき
 $(".accordion_menu_title").on("click",function(){
-  console.log(";lakd")
   $(this).toggleClass("accordion_menu_title_open")
   $(this).parent().find(".accordion_content").toggleClass("accordion_content_open")
 })
 
+// 承認者を個人かグループで選ぶかを選択し要素の表示非表示を行う
+$('.authorizer').on("change",function() {
+  if ($('#authorizer1').prop('checked')){
+    $('.person_container').addClass("person_container_open")
+    $('.group_container').removeClass("group_container_open")
+  }
+  else if ($('#authorizer2').prop('checked')){
+    $('.group_container').addClass("group_container_open")
+    $('.person_container').removeClass("person_container_open")
+  }
+})
+// 承認者グループでの要素の表示非表示
+$('.choice_method').on("change",function() {
+  if ($('#choice_method1').prop('checked')){
+    $('.choice_container').removeClass("choice_container_open")
+    $('.post_choice_container').removeClass("post_choice_container_open")
+  }
+  else if ($('#choice_method2').prop('checked')){
+    $('.choice_container').addClass("choice_container_open")
+    $('.post_choice_container').removeClass("post_choice_container_open")
+  }
+  else if ($('#authorizer2').prop('checked')){
+    $('.post_choice_container').addClass("post_choice_container_open")
+    $('.choice_container').removeClass("choice_container_open")
+  }
+})
 
 
 
@@ -163,13 +189,14 @@ $(".accordion_menu_title").on("click",function(){
           makeinputline(linedata[0], linedata[1], linedata[2], linedata[3])
           reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
           $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
-          arrays = searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3], arrays, routecount)
+          arrays = searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3], arrays)
           console.log(arrays)
         }
         // 真横もしくは上の要素につないだ時
         // 影響を及ぼす線と要素のinputタグを変更して描画しなおす
         else {
-          change_line_element(linedata[0], linedata[1], linedata[2], linedata[3])
+          // 線と要素を変更してarraysの最新情報を返すので、代入する
+          arrays = change_line_element(linedata[0], linedata[1], linedata[2], linedata[3],arrays)
           creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight)
           reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
           reloadelement()
@@ -193,7 +220,7 @@ $(".accordion_menu_title").on("click",function(){
       $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
       makeinputelement(linedata[2], linedata[3])
       reloadelement()
-      arrays = searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3], arrays, routecount)
+      arrays = searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3], arrays)
       console.log(arrays)
     }
     $('.e').removeClass("blue")

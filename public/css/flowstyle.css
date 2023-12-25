@@ -1,21 +1,24 @@
 .header001 {
     background: rgb(142, 214, 216) !important;
-    z-index: 13 ;
+    z-index: 13;
 }
-.menu001{
-    z-index: 13 ;
+
+.menu001 {
+    z-index: 13;
 }
-.MenueBar{
+
+.MenueBar {
     width: 250px;
     height: 100vh;
     margin-right: 25px;
 }
+
 .maincontent01 {
     padding-left: 0;
     display: flex;
 }
-.Mainelement{
-}
+
+.Mainelement {}
 
 .left_side_menu {
     width: 250px;
@@ -23,83 +26,94 @@
     background: #dfdede;
     margin-right: 25px;
     position: fixed;
-    top:0;
+    top: 0;
     padding-top: 150px;
     padding-left: 20px;
     z-index: 12;
     font-size: 12px;
 }
-.left_side_menu_top{
+
+.left_side_menu_top {
     padding-top: 100px;
 }
 
-.left_side_section{
+.left_side_section {
     margin-bottom: 30px;
 }
 
-.left_side_content_title{
+.left_side_content_title {
     font-size: 14px;
     font-weight: bold;
 }
 
-.accordion_menu{
+.accordion_menu {
     margin-left: 20px;
 }
-.accordion_menu_title{
+
+.accordion_menu_title {
     position: relative;
     cursor: pointer;
 }
-.accordion_menu_title::before,.accordion_menu_title::after{
+
+.accordion_menu_title::before,
+.accordion_menu_title::after {
     content: "";
     height: 2px;
     width: 8px;
     border-radius: 2px;
     background: #313131;
 }
-.accordion_menu_title::before{
+
+.accordion_menu_title::before {
     transform: rotate(32deg);
     position: absolute;
     left: -12px;
     top: 6px;
     transition: all 0.2s;
 }
-.accordion_menu_title::after{
+
+.accordion_menu_title::after {
     transform: rotate(-27deg);
     position: absolute;
     left: -12px;
     top: 9px;
     transition: all 0.2s;
 }
-.accordion_menu_title_open::before{
+
+.accordion_menu_title_open::before {
     transform: rotate(-45deg);
     left: -9px;
     top: 8px;
 }
-.accordion_menu_title_open::after{
+
+.accordion_menu_title_open::after {
     transform: rotate(45deg);
     left: -13px;
     top: 8px;
 }
 
-.accordion_content{
+.accordion_content {
     height: 0;
     overflow: hidden;
     margin-left: 20px;
     transition: all 0.2s;
 }
-.accordion_group ~ .accordion_content_open{
+
+.accordion_group~.accordion_content_open {
     height: 100px;
     overflow-y: auto;
-}  
-.accordion_price ~ .accordion_content_open{
+}
+
+.accordion_price~.accordion_content_open {
     height: 74px;
-}   
-.flow_plice_box{
+}
+
+.flow_plice_box {
     margin-bottom: 5px;
 }
 
 
-.flow_plice_text{
+.flow_plice_text {
     height: 30px;
     border: solid 1px rgb(180, 180, 180);
     border-radius: 3px;
@@ -107,7 +121,7 @@
 }
 
 
-.flow_name_text{
+.flow_name_text {
     height: 30px;
     border: solid 1px rgb(180, 180, 180);
     border-radius: 3px;
@@ -117,29 +131,153 @@
 
 /* 右側サイドメニュー */
 
-.right_side_menu{
+.right_side_menu {
     width: 250px;
     height: 100vh;
-    background: #dfdede;;
+    background: #dfdede;
+    ;
     position: fixed;
-    top:0;
+    top: 0;
     right: 0;
     padding-top: 150px;
     padding-left: 20px;
+    padding-right: 20px;
     z-index: 12;
     font-size: 12px;
 }
-.right_side_menu_top{
+
+.right_side_menu_top {
     padding-top: 100px;
 }
 
-.right_side_section{
+.right_side_section {
     margin-bottom: 30px;
 }
 
-.right_side_content_title{
+.right_side_content_title {
     font-size: 14px;
     font-weight: bold;
+}
+
+.person_container {
+    background: #edeeeb;
+    border-radius: 23px;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.person_container_open{
+    padding: 10px;
+    height: auto;
+}
+
+.group_container {
+    background: #edeeeb;
+    border-radius: 23px;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.group_container_open{
+    padding: 10px;
+    height: auto;
+}
+
+.group_select{
+    width: 100px;
+    height: 25px;
+    border: solid 1px #b3b3b3;
+    border-radius: 5px;
+}
+
+.plus_button {
+    width: 30px;
+    background: #a8a8a8;
+    position: relative;
+    margin-left: auto;
+    margin-right: 55px;
+    margin-bottom: 3px;
+    text-align: center;
+    border-radius: 3px;
+    line-height: 21px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.plus_button:hover {
+    background: rgb(56, 56, 56);
+    color: white;
+}
+
+.person_content {}
+
+.person_box {
+    display: flex;
+    margin-bottom: 2px;
+}
+
+.person_elment {
+    border: solid 1px #b1b1b1;
+    height: 25px;
+}
+
+.batsu_button {
+    width: 20px;
+    text-align: center;
+    background: pink;
+    border: solid 1px red;
+    margin-left: 4px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #530202;
+    cursor: pointer;
+    line-height: 22px;
+}
+
+.batsu_button:hover {
+    background: rgb(196, 69, 69);
+    color: white;
+}
+
+.authorizer_number {
+    width: 50px;
+    height: 25px;
+    border-radius: 4px;
+    border: solid 1px rgb(201, 201, 201);
+}
+
+.autorizer_number_container {
+    text-align: right;
+    margin-right: 95px;
+}
+
+.choice_container{
+    margin-left: 20px;
+    background: #ccddc2;
+    border-radius: 8px;
+    height: 0;
+    overflow: hidden;
+}
+.choice_container_open{
+    height: 100px;
+    padding: 5px;
+}
+
+.choice_content{
+
+}
+.post_choice_container{
+    margin-left: 20px;
+    background: #d4ebff;
+    border-radius: 8px;
+    height: 0;
+    overflow: hidden;
+}
+.post_choice_container_open{
+    height: 100px;
+    padding: 5px;
 }
 
 

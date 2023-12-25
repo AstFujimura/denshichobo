@@ -1,4 +1,3 @@
-
 // グリッドを作成する
 function creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight) {
   var Xcellcount = $("#maxgrid").data("maxcolumn")
@@ -177,7 +176,8 @@ function createsvgpath(startcolumn, startrow, endcolumn, endrow, linewidth, line
 
 
 // 要素を検索したのちにルートを作成
-function searchAndUpdateArrays(elementToSearch, elementToAppend, arrays, routecount) {
+function searchAndUpdateArrays(elementToSearch, elementToAppend, arrays) {
+  var routecount = $("#route").data("routecount")
   // すべての配列に対して検索と更新を行う
   for (const wholeindex in arrays) {
     const myArray = arrays[wholeindex];
@@ -328,27 +328,41 @@ function rootcheck(fromElement, toElement, arrays) {
   return false
 }
 
+// 線を真横もしくは上の要素につないだ時要素を下にずらす。2列以上変更が必要な場合はこの関数を再帰的に呼び出す
 // 関数を再帰的に呼び出すためデフォルトのstatusをinitialとして２回目以降はstatusをchangeにする
-function change_line_element(startcolumn, startrow, endcolumn, endrow,status = "initial") {
+function change_line_element(startcolumn, startrow, endcolumn, endrow,arrays,status = "initial") {
   // 下に移動する分の値
   const changerow = startrow - endrow + 1
+  // 現時点でのY方向のグリッドの最大値を取得
   var Ycellcount = $("#maxgrid").data("maxrow")
+  // 移動する分Y方向の最大値を追加する
   $("#maxgrid").data("maxrow",Ycellcount+changerow)
 
   console.log(changerow)
+  // 一回目は線を新規で作成する。この場合、線は真横もしくは上方向になるが後でずらすので問題なし
   if (status == "initial"){
     makeinputline(startcolumn, startrow, endcolumn, endrow) 
+    searchAndUpdateArrays(startcolumn +"_"+startrow, endcolumn +"_"+endrow, arrays)
   }
 
   // 要素をそれぞれチェック
   $(".element").each(function () {
     var nowcolumn = $(this).data("column")
     var nowrow = $(this).data("row")
+    var column_row = nowcolumn +"_"+ nowrow
     // 要素が線の先のカラムに該当し、線の先の列よりも下、もしくは横にある場合changerowだけ下に移動する
     if (nowcolumn == endcolumn && nowrow >= endrow) {
       $(this).data("row", nowrow + changerow)
+
+      for (const index in arrays) {
+        var indexelement = arrays[index].lastIndexOf(column_row)
+        if (indexelement !== -1){
+          arrays[index].splice(indexelement,1,nowcolumn + "_" + (nowrow + changerow))
+        }
+      }
     }
   })
+  // 線をそれぞれチェック
   $(".line").each(function () {
     // 現在の行、列を取得
     var nowstartcolumn = $(this).data("startcolumn")
@@ -362,13 +376,15 @@ function change_line_element(startcolumn, startrow, endcolumn, endrow,status = "
       $(this).data("endrow", nowendrow + changerow)
     }
   })
-
+// inputタグから、要素や線をずらしたことによって線が真横、もしくは上方向に延びていないかをチェックする
   var lineresult = $('input').filter(function () {
     return $(this).data('startrow') >= $(this).data('endrow');
   }).first();
+  // 該当した場合は再帰的にこの関数をもう一度呼び出す。第5引数はinitialではなくchange
   if (lineresult.length !== 0){
-    change_line_element(lineresult.data('startcolumn'), lineresult.data('startrow'), lineresult.data('endcolumn'), lineresult.data('endrow'),status = "change")
+    change_line_element(lineresult.data('startcolumn'), lineresult.data('startrow'), lineresult.data('endcolumn'), lineresult.data('endrow'),arrays,status = "change")
   }
+  return arrays
 }
 
 
