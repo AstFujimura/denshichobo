@@ -90,46 +90,28 @@
             承認者
         </div>
         <div>
-            <input type="radio" class="authorizer" name="authorizer" id="authorizer1">
+            <input type="radio" class="authorizer" name="authorizer" id="authorizer1" checked>
             <label for="authorizer1">個人</label>
         </div>
-        <div class="person_container">
+        <div class="person_container person_container_open">
             <div class="plus_button">
                 +
             </div>
             <div class="person_content">
                 <div class="person_box">
-                    <input type="text" class="person_elment" value="藤村直輝">
-                    <div class="batsu_button">
-                        ×
-                    </div>
-                </div>
-                <div class="person_box">
-                    <input type="text" class="person_elment" value="藤村直輝">
-                    <div class="batsu_button">
-                        ×
-                    </div>
-                </div>
-                <div class="person_box">
-                    <input type="text" class="person_elment" value="藤村直輝">
-                    <div class="batsu_button">
-                        ×
-                    </div>
-                </div>
-                <div class="person_box">
-                    <input type="text" class="person_elment" value="藤村直輝">
+                    <input type="text" class="person_elment">
                     <div class="batsu_button">
                         ×
                     </div>
                 </div>
             </div>
             <div>
-                <input type="radio" name="authorizer_condition" id="mailpoint1">
-                <label for="mailpoint1">全員の承認</label>
+                <input type="radio" class="authorizer_condition" name="authorizer_condition" id="authorizer_condition1" checked>
+                <label for="authorizer_condition1">全員の承認</label>
             </div>
             <div>
-                <input type="radio" name="authorizer_condition" id="mailpoint2">
-                <label for="mailpoint2">条件指定</label>
+                <input type="radio" class="authorizer_condition" name="authorizer_condition" id="authorizer_condition2">
+                <label for="authorizer_condition2">条件指定</label>
             </div>
             <div class="autorizer_number_container">
                 <span class="parameter">3</span>人中 <input type="number" class="authorizer_number"> 人
@@ -166,7 +148,7 @@
                 </div>
                 <div class="choice_content">
                     <div>
-                        <input type="radio" name="choice_limit" id="choice_limit1">
+                        <input type="radio" name="choice_limit" id="choice_limit1" checked>
                         <label for="choice_limit1">無制限</label>
                     </div>
                     <div>

@@ -17,6 +17,15 @@ $('.authorizer').on("change",function() {
     $('.person_container').removeClass("person_container_open")
   }
 })
+// 個人での承認者で全員の承認もしくは条件指定の場合の表示非表示
+$('.authorizer_condition').on("change",function() {
+  if ($('#authorizer_condition1').prop('checked')){
+    $('.autorizer_number_container').removeClass("autorizer_number_container_open")
+  }
+  else if ($('#authorizer_condition2').prop('checked')){
+    $('.autorizer_number_container').addClass("autorizer_number_container_open")
+  }
+})
 // 承認者グループでの要素の表示非表示
 $('.choice_method').on("change",function() {
   if ($('#choice_method1').prop('checked')){
@@ -31,6 +40,11 @@ $('.choice_method').on("change",function() {
     $('.post_choice_container').addClass("post_choice_container_open")
     $('.choice_container').removeClass("choice_container_open")
   }
+})
+
+
+$('.plus_button').on('click',function(){
+  $(".person_content").append('<div class="person_box"><input type="text" class="person_elment"><div class="batsu_button">×</div></div>')
 })
 
 
@@ -57,7 +71,7 @@ $('.choice_method').on("change",function() {
   $("#maxgrid").data("maxcolumn",Xcellcount + 1)
   $("#maxgrid").data("maxrow",Ycellcount + 1)
   // グリッドのセルの値を指定
-  const cellwidth = 150
+  const cellwidth = 100
   const cellheight = 50
 
   // 空白のセルの値を指定
@@ -218,6 +232,10 @@ $('.choice_method').on("change",function() {
       reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
 
       $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
+      $("#" + linedata[2] + '_' + linedata[3]).addClass("last")
+      $(".last").each(function(){
+        console.log($(this).attr("id"))
+      })
       makeinputelement(linedata[2], linedata[3])
       reloadelement()
       arrays = searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3], arrays)

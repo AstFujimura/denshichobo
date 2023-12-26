@@ -77,10 +77,8 @@ function createelement(gridcolumn, gridrow, last = "none", status = "add") {
   // それ以外
   else {
     $('.grid' + gridcolumn + '_' + gridrow).append(
-      '<div class=".grid' + gridcolumn + '_' + gridrow + ' grid_content"><div class="grid_index">1</div><select class="grid_name_container"><option>aa</option></select></div></div>'
+      "<div>未設定</div>"
     )
-    $('.grid' + gridcolumn + '_' + gridrow).append('<div class="add_button grid_add_button" data-coordinates="' + gridcolumn + '_' + gridrow + '">追加</div>　<div class="grid_delete_button" data-coordinates="' + gridcolumn + '_' + gridrow + '">削除</div>')
-
   }
 
 

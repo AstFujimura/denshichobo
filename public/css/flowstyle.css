@@ -249,6 +249,10 @@
 }
 
 .autorizer_number_container {
+    display: none;
+}
+.autorizer_number_container_open {
+    display: block;
     text-align: right;
     margin-right: 95px;
 }
@@ -288,27 +292,6 @@
     font-size: 13px;
 }
 
-.add_button {
-    background: rgb(75, 223, 75);
-    color: white;
-    border-radius: 3px;
-    border: solid 1px green;
-    height: 20px;
-    width: 50px;
-    text-align: center;
-    cursor: pointer;
-}
-
-.common_grid_add_button {
-
-    grid-column: 2/3;
-    grid-row: 1/2;
-}
-
-.leftline {
-    border-left: solid 2px black;
-}
-
 .e {
     position: relative;
     background: transparent;
@@ -325,53 +308,11 @@
     width: 200px;
 }
 
-.grid_index {
-    border: solid 1px black;
-    background: #4472C4;
-    color: white;
-    height: 25px;
-    text-align: center;
-    line-height: 25px;
-}
-
-.grid_name_container {
-    border: solid 1px black;
-    line-height: 25px;
-    height: 25px;
-}
-
-.grid_and_or {
-    border: solid 1px black;
-    line-height: 25px;
-    height: 25px;
-    width: 50px;
-
-}
-
-.grid_add_button {
-    position: absolute;
-    top: 3px;
-    left: 10px;
-}
-
-.grid_delete_button {
-    position: absolute;
-    top: 3px;
-    left: 70px;
-    background: rgb(223, 75, 75);
-    color: white;
-    border-radius: 3px;
-    border: solid 1px rgb(128, 0, 0);
-    height: 20px;
-    width: 50px;
-    text-align: center;
-    cursor: pointer;
-}
 
 .d {
     border: solid 5px rgb(202, 202, 202);
     color: rgb(202, 202, 202);
-    font-size: 20px;
+    font-size: 16px;
     text-align: center;
 }
 
