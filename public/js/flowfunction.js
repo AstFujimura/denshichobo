@@ -28,9 +28,15 @@ function modifygrid(maxcolumn, maxrow,cellwidth, cellheight, gapcellwidth, gapce
   })
 }
 
+function nowelementcount(){
+  var count = $(".e").length
+  return count
 
-function makeinputelement(gridcolumn, gridrow, last = "none") {
-  $(".element_input").append('<input type="hidden" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '">')
+}
+
+
+function makeinputelement(gridcolumn, gridrow,nowelementid, last = "none") {
+  $(".element_input").append('<input type="hidden" id="'+nowelementid+'" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '">')
 }
 
 function reloadelement() {
@@ -386,7 +392,14 @@ function change_line_element(startcolumn, startrow, endcolumn, endrow,arrays,sta
 }
 
 
-
+function focus_right_side_menu(column,row){
+  // 右側メニューを表示
+  $('.right_side_menu').addClass("right_side_menu_open")
+  var focusid = $('input[class="element"]').filter(function () {
+    return (($(this).data('column') == column)&&($(this).data('row') == row));
+  }).first();
+  console.log(focusid.attr("id"))
+}
 
 
 

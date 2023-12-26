@@ -135,15 +135,19 @@
     width: 250px;
     height: 100vh;
     background: #dfdede;
-    ;
     position: fixed;
     top: 0;
-    right: 0;
+    right: -290px;
     padding-top: 150px;
     padding-left: 20px;
     padding-right: 20px;
     z-index: 12;
     font-size: 12px;
+    transition: all 0.2s;
+}
+
+.right_side_menu_open{
+    right: 0px;
 }
 
 .right_side_menu_top {
@@ -164,7 +168,6 @@
     border-radius: 23px;
     height: 0;
     overflow: hidden;
-    transition: all 0.3s;
 }
 
 .person_container_open{
@@ -177,7 +180,6 @@
     border-radius: 23px;
     height: 0;
     overflow: hidden;
-    transition: all 0.3s;
 }
 
 .group_container_open{
@@ -265,7 +267,7 @@
     overflow: hidden;
 }
 .choice_container_open{
-    height: 100px;
+    height: auto;
     padding: 5px;
 }
 
@@ -300,6 +302,10 @@
     justify-content: center;
     align-items: center;
     font-size: 13px;
+}
+
+.focus{
+    border: solid 5px rgb(0, 255, 85);
 }
 
 .grid_content {
