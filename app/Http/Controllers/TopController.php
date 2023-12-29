@@ -42,7 +42,7 @@ class TopController extends Controller
         $startdate = "2023-12-29 00:00:00";
         $expiration = "2024-1-31 23:59:59";
         // -----------------------------
-
+        dd(Carbon::today());
 
         $newsstatus = Auth::user()->ニュース番号;
 
@@ -184,7 +184,7 @@ class TopController extends Controller
         }
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'users', 'groups', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server','newsshow'));
+        return view('information.toppage', compact('files', 'users', 'groups', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server', 'newsshow'));
     }
 
     //表示するページネーションボタンの配列を返す
