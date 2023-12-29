@@ -117,6 +117,16 @@ class TestController extends Controller
                     }
                 }
             }
+            else if ($num == -853) {
+
+                if (Auth::id() == 1) {
+                    $users = User::all();
+                    foreach ($users as $user){
+                        $user->ニュース番号 = 0;
+                        $user->save();
+                    }
+                }
+            }
         }
 
 
