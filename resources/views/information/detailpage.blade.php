@@ -1,7 +1,7 @@
 @extends('layouts.template')
 
 @section('title')
-電子帳簿保存システム
+変更結果 |TAMERU
 @endsection 
 
 @section('menuebar')

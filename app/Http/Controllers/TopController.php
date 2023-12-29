@@ -34,6 +34,36 @@ class TopController extends Controller
      */
     public function index(Request $request)
     {
+
+        // -------------ニュース表示のための処理----------------
+
+        // 変更が必要な箇所
+        $nownewsnumber = 1;
+        $startdate = "2022-1-1 00:00:00";
+        $expiration = "2024-1-31 23:59:59";
+        // -----------------------------
+
+
+        $newsstatus = Auth::user()->ニュース番号;
+
+        // bladeファイルにてニュースを表示させるか否かのclassをnewsshowの中に入れて表示させる
+        // news_black_noneはdisplay: noneである
+
+        // 有効期限を過ぎておらずユーザーが未確認の場合→表示する
+        if (Carbon::today() < $expiration && Carbon::today() > $startdate && $nownewsnumber > $newsstatus) {
+            $newsshow = "news_black";
+            $userid = Auth::id();
+            $user = User::find($userid);
+            $user->ニュース番号 = $nownewsnumber;
+            $user->save();
+        }
+        // 有効期限が過ぎているかユーザーが確認済みの場合→表示しない
+        else {
+            $newsshow = "news_black news_black_none";
+        }
+
+        // -----------------------------
+
         // dd($this->pagenatearray(5,3));
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
@@ -84,7 +114,7 @@ class TopController extends Controller
                 ->where("files.削除フラグ", "")
                 ->whereIn('files.グループID', $grouparray)
                 ->orderBy('files.日付', 'desc')
-                ->orderBy('files.id','desc');
+                ->orderBy('files.id', 'desc');
         } else if ($admin == "管理") {
             //管理の場合はすべてを表示する(検索ボックス用)
             $groups = Group::where('id', ">", 100000)
@@ -98,7 +128,7 @@ class TopController extends Controller
                 ->where('files.最新フラグ', '最新')
                 ->where("files.削除フラグ", "")
                 ->orderBy('files.日付', 'desc')
-                ->orderBy('files.id','desc');
+                ->orderBy('files.id', 'desc');
         }
         $alldata = $files->get()->count();
         $files = $files->paginate($show);
@@ -154,7 +184,7 @@ class TopController extends Controller
         }
 
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'users', 'groups', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server'));
+        return view('information.toppage', compact('files', 'users', 'groups', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server','newsshow'));
     }
 
     //表示するページネーションボタンの配列を返す
@@ -232,7 +262,7 @@ class TopController extends Controller
                 ->where('files.最新フラグ', '最新')
                 ->whereIn('files.グループID', $grouparray)
                 ->orderBy('files.日付', 'desc')
-                ->orderBy('files.id','desc');
+                ->orderBy('files.id', 'desc');
         } else if ($admin == "管理") {
 
             //管理の場合はすべてを表示する(検索ボックス用)
@@ -247,7 +277,7 @@ class TopController extends Controller
                 ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
                 ->where('files.最新フラグ', '最新')
                 ->orderBy('files.日付', 'desc')
-                ->orderBy('files.id','desc');
+                ->orderBy('files.id', 'desc');
         }
 
 
@@ -756,7 +786,7 @@ class TopController extends Controller
         $searchtext = $request->input("search");
 
         $clients = File::where('取引先', 'like', '%' . $searchtext . '%')
-        ->where("最新フラグ","最新")
+            ->where("最新フラグ", "最新")
             ->where('削除フラグ', "")
             ->groupBy('取引先')
             ->orderBy('取引先', "asc")

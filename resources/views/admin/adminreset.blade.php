@@ -1,7 +1,7 @@
 @extends('layouts.admintemplate')
 
 @section('title')
-電子帳簿保存システム　管理画面
+パスワードリセット | TAMERU
 @endsection 
 
 @section('menuebar')

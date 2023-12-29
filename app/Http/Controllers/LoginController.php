@@ -37,7 +37,7 @@ class LoginController extends Controller
 
         if ($user && Hash::check($password, $user->password)) {
             Auth::login($user);
-            return redirect()->route('topGet');
+            return redirect(session('url.intended'));
         }
         else {
             // エラーメッセージをフラッシュデータに設定

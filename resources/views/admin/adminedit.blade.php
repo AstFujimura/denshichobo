@@ -1,7 +1,7 @@
 @extends('layouts.admintemplate')
 
 @section('title')
-管理者ページ
+ユーザー変更画面 | TAMERU
 @endsection
 
 @section('menuebar')

@@ -1,7 +1,7 @@
 @extends('layouts.admintemplate')
 
 @section('title')
-管理者ページ
+グループ編集 | TAMERU
 @endsection
 
 @section('menuebar')

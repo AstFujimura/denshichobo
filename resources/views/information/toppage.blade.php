@@ -1,7 +1,7 @@
 @extends('layouts.template')
 
 @section('title')
-電子帳簿保存システム
+TAMERU ~電子帳簿保存
 @endsection
 
 @section('menuebar')
@@ -15,7 +15,25 @@
 
 
 @section('main')
+<div class="{{$newsshow}}">
+    <div class="news">
+        <div class="news_delete_button">
 
+        </div>
+        <div class="news_title">
+            システム名変更のお知らせ
+        </div>
+        <div class="news_content">
+            あけましておめでとうございます<br>
+            旧年中はひとかたならぬご愛顧にあずかり誠にありがとうございました<br>
+            さて本サービスについてですが1月より「電子帳簿保存システム」から「<strong>TAMERU</strong>」に<br>
+            システム名を変更いたしました。<br> 
+            本年もより一層のサービス向上を目指し誠心誠意努める所存でございます<br>
+            今後ともよろしくお願い申し上げます<br>             
+        </div>
+        <div class="news_astec">株式会社アステック</div>
+    </div>
+</div>
 <div class="loader">
     <img src="{{ asset($prefix.'/'.'img/loading.gif')}}">
     <div class="searchcomment">検索中です</div>
@@ -177,11 +195,11 @@
         @endforeach
     </div>
 
-    
+
     <div class="excelbutton">
         エクセル出力
     </div>
-    
+
     <div class="excelerror">
         表示件数を500件以下にしてください。
     </div>
@@ -242,27 +260,27 @@
 
                 @endif
             </div>
-            @if ($file->グループID < 100000)
-            <div class="updater"></div>
-            @else
-            <div class="updater">{{$file->グループ名}}</div>
-            @endif
-
-            @if (Auth::user()->管理 == "管理")
-            @php
-            $updater = str_replace('(削除ユーザー)', '', $file->更新者);
-            $creater = str_replace('(削除ユーザー)', '', $file->作成者);
-            @endphp
-            <div class="updater">{{$updater}}</div>
-            <div class="creater">{{$creater}}</div>
-            @endif
+            @if ($file->グループID < 100000) <div class="updater">
         </div>
-        @endforeach
+        @else
+        <div class="updater">{{$file->グループ名}}</div>
+        @endif
+
+        @if (Auth::user()->管理 == "管理")
+        @php
+        $updater = str_replace('(削除ユーザー)', '', $file->更新者);
+        $creater = str_replace('(削除ユーザー)', '', $file->作成者);
+        @endphp
+        <div class="updater">{{$updater}}</div>
+        <div class="creater">{{$creater}}</div>
+        @endif
     </div>
+    @endforeach
+</div>
 
 
 
-    @endsection
-    @section('footer')
+@endsection
+@section('footer')
 
-    @endsection
+@endsection

@@ -1,7 +1,7 @@
 @extends('layouts.admintemplate')
 
 @section('title')
-電子帳簿保存システム　管理画面
+ユーザー一覧 | TAMERU
 @endsection 
 
 @section('menuebar')

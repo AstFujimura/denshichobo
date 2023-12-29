@@ -27,13 +27,13 @@
 <header class="header001">
     <div class="logo01">
         <a href="{{route('topGet')}}" class="logoelement01">
-            電子帳簿保存システム
+            TAMERU
         </a>
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
     
-    <span class="version">ver.2.8.4</span>
+    <span class="version">ver.2.8.5</span>
 
 </header>
 <div class="menu001">

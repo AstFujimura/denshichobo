@@ -10,7 +10,13 @@ $(document).ready(function () {
         buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
         buttonImageOnly: true, // テキストを非表示にする
     })
-    
+
+    $('.news_delete_button').click(function () {
+        $('.news_black').addClass('news_black_none')
+    });
+    $('.news_black').click(function () {
+        $('.news_black').addClass('news_black_none')
+    });
 
     //サイドバーの表示
     $('.hamburger01').click(function () {

@@ -25,12 +25,12 @@
 <header class="header001">
     <div class="logo01">
         <a href="{{route('adminGet')}}" class="logoelement01">
-            管理画面
+            TAMERU 管理画面
         </a>
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
-    <span class="version">ver.2.8.4</span>
+    <span class="version">ver.2.8.5</span>
 </header>
 <div class="menu001">
 

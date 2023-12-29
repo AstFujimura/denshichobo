@@ -1,7 +1,7 @@
 @extends('layouts.template')
 
 @section('title')
-帳簿保存
+帳簿保存 | TAMERU
 @endsection
 
 @section('menuebar')

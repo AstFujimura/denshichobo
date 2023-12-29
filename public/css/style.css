@@ -10,6 +10,87 @@ a {
   color: white;
 }
 
+.news_black {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.301);
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.news_black_none {
+  display: none;
+}
+
+.news {
+  position: relative;
+  width: 50%;
+  height: 80%;
+  background: white;
+  overflow-x: auto;
+  opacity: 1;
+
+}
+
+.news_delete_button {
+  width: 40px;
+  height: 40px;
+  top: 10px;
+  right: 10px;
+  position: absolute;
+  border: solid 2px black;
+  border-radius: 30px;
+  cursor: pointer;
+}
+.news_delete_button:hover{
+  background: black;
+}
+.news_delete_button:hover::before,.news_delete_button:hover::after{
+background: white;
+}
+.news_title{
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 30px;
+}
+.news_content{
+  margin-top: 50px;
+  margin-inline: 30px;
+}
+.news_astec{
+  position: absolute;
+  bottom: 35px;
+  right: 59px;
+}
+
+.news_delete_button::before {
+  position: absolute;
+  content: "";
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 20px;
+  height: 3px;
+  background: black;
+}
+
+.news_delete_button::after {
+  position: absolute;
+  content: "";
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 20px;
+  height: 3px;
+  background: black;
+}
+
 @media (max-width:800px) {
   .info {
     height: 50px;
@@ -599,10 +680,11 @@ a {
 
 }
 
-.registpreviewarea{
+.registpreviewarea {
   width: 800px;
 }
-.editpreviewarea{
+
+.editpreviewarea {
   width: 700px;
 }
 
@@ -895,7 +977,8 @@ a {
 .pagination .flex-1 {
   display: none;
 }
-@media(max-width:480px){
+
+@media(max-width:480px) {
   .important {
     position: relative;
     cursor: pointer;
@@ -908,7 +991,8 @@ a {
   }
 
 }
-@media(min-width:480px){
+
+@media(min-width:480px) {
   .important {
     position: relative;
     cursor: pointer;
@@ -920,7 +1004,7 @@ a {
     border: solid 1px #bababa;
     margin-block: 20px;
   }
-  
+
 }
 
 
@@ -1202,6 +1286,7 @@ a {
   border-right: solid 1px white;
   padding: 5px;
 }
+
 .grouptable_header>div {
   background: rgb(245, 227, 217);
   text-align: center;
@@ -1221,6 +1306,7 @@ a {
 
 
 }
+
 .grouptable_body>div {
   padding: 5px;
   white-space: nowrap;
@@ -1237,6 +1323,7 @@ a {
 .documenttable_header {
   display: flex;
 }
+
 .grouptable_header {
   display: flex;
 }
@@ -1244,6 +1331,7 @@ a {
 .documenttable_body {
   display: flex;
 }
+
 .grouptable_body {
   display: flex;
 }
@@ -1261,6 +1349,7 @@ a {
   width: 110px;
   text-align: center;
 }
+
 .admin_group {
   width: 183px;
   text-align: left !important;
@@ -1269,6 +1358,7 @@ a {
 .admin_document_change {
   width: 100px;
 }
+
 .admin_group_change {
   width: 100px;
 }
@@ -1276,6 +1366,7 @@ a {
 .admin_document_delete {
   width: 100px;
 }
+
 .admin_group_delete {
   width: 100px;
 }
@@ -1287,6 +1378,7 @@ a {
   border: solid 1px gray;
   display: none;
 }
+
 .admin_group_value {
   width: 100px;
   height: 30px;
@@ -1298,6 +1390,7 @@ a {
 .admin_document_text {
   display: none;
 }
+
 .admin_group_text {
   display: none;
 }
@@ -1305,6 +1398,7 @@ a {
 .document_open {
   display: block;
 }
+
 .group_open {
   display: block;
 }
@@ -1349,6 +1443,7 @@ a {
   background: rgb(12, 124, 22);
   color: white;
 }
+
 .docu_delete_button {
   margin: auto;
   cursor: pointer;
@@ -1366,6 +1461,7 @@ a {
   background: red;
   color: white;
 }
+
 .gr_delete_button {
   margin: auto;
   cursor: pointer;
@@ -1412,6 +1508,7 @@ a {
 .docu_addbutton:hover {
   background: #1c881c;
 }
+
 .gr_addbutton {
   margin-block: 30px;
   background: #2ac02a;
@@ -1445,6 +1542,7 @@ a {
   background: #347973;
   color: white;
 }
+
 .group_change_button {
   margin-block: 30px;
   background: #d4f9ff;
@@ -1475,21 +1573,23 @@ a {
   color: red;
 }
 
-.ui-datepicker-trigger{
+.ui-datepicker-trigger {
   background: #d0d0d0;
-    border-radius: 2px;
-    position: relative;
-    left: 2px;
-    cursor: pointer;
+  border-radius: 2px;
+  position: relative;
+  left: 2px;
+  cursor: pointer;
 }
-.ui-datepicker-trigger:hover{
+
+.ui-datepicker-trigger:hover {
   background: #a0a0a0;
 }
-.dateform{
+
+.dateform {
   display: flex;
 }
 
-.checkform{
+.checkform {
   max-height: 370px;
   overflow-x: auto;
 }
