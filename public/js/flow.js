@@ -8,15 +8,32 @@ $(document).ready(function () {
 
   // 承認者を個人かグループで選ぶかを選択し要素の表示非表示を行う
   $('.authorizer').on("change", function () {
+    var focusid = $("#focus").data("id")
+    // 承認者_個人が選択されたとき
     if ($('#authorizer1').prop('checked')) {
       $('.person_container').addClass("person_container_open")
       $('.group_container').removeClass("group_container_open")
+      // 要素のインプットタグのdata-authorizerを変更する
+      $('#'+focusid).data("authorizer","person")
     }
+    // 承認者_グループが選択されたとき
     else if ($('#authorizer2').prop('checked')) {
       $('.group_container').addClass("group_container_open")
       $('.person_container').removeClass("person_container_open")
+      $('#'+focusid).data("authorizer","group")
     }
   })
+
+  // 承認者_個人のテキストボックスの文字が変わったとき
+  $(document).on("change", ".person_text", function () {
+    change_person()
+
+  })
+
+
+
+
+
   // 承認者_個人での承認者で全員の承認もしくは条件指定の場合の表示非表示
   $('.authorizer_condition').on("change", function () {
     if ($('#authorizer_condition1').prop('checked')) {
@@ -70,7 +87,7 @@ $(document).ready(function () {
         eElement.addClass("focus")
         console.log(eElement.data("column"))
         console.log(eElement.data("row"))
-        focus_right_side_menu(eElement.data("column"),eElement.data("row"))
+        focus_right_side_menu(eElement.data("column"), eElement.data("row"))
       }
       else {
         $(".e").removeClass("focus")
@@ -79,8 +96,10 @@ $(document).ready(function () {
     }
     // 右側メニューの内容をクリックしたとき
     else if (rightElement.length == 1) {
+      // ×ボタンを押したとき
       if (batsuElement.length == 1) {
         batsuElement.parent().remove();
+        change_person()
       }
     }
     else {
@@ -92,7 +111,7 @@ $(document).ready(function () {
 
   // 承認者_個人の追加(+)ボタンを押したときの挙動
   $('.plus_button').on('click', function () {
-    $(".person_content").append('<div class="person_box"><input type="text" class="person_elment"><div class="batsu_button">×</div></div>')
+    $(".person_content").append('<div class="person_box"><input type="text" class="person_text"><div class="batsu_button">×</div></div>')
   })
 
   // 承認者_個人の削除(×)ボタンを押したときの挙動
@@ -101,8 +120,8 @@ $(document).ready(function () {
   // })
 
   // 承認者_個人のinputが変更されたときの挙動
-  $(document).on('change', '.person_element', function () {
-    $('.person_element')
+  $(document).on('change', '.person_text', function () {
+    $('.person_text')
   })
 
 
@@ -128,12 +147,12 @@ $(document).ready(function () {
   $("#maxgrid").data("maxcolumn", Xcellcount + 1)
   $("#maxgrid").data("maxrow", Ycellcount + 1)
   // グリッドのセルの値を指定
-  const cellwidth = 100
+  const cellwidth = 150
   const cellheight = 50
 
   // 空白のセルの値を指定
-  const gapcellwidth = 80
-  const gapcellheight = 20
+  const gapcellwidth = 40
+  const gapcellheight = 15
 
   // 画面表示された段階でグリッドを作成
   creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight)
@@ -147,7 +166,7 @@ $(document).ready(function () {
     "1": ["1_1", "1_2"]
   }
 
-// 現在の最新のid番号を格納する
+  // 現在の最新のid番号を格納する
   var nowelementid = 10000
 
   // 現在の要素をカウントする関数
@@ -300,7 +319,7 @@ $(document).ready(function () {
         console.log($(this).attr("id"))
       })
       // 要素のinputタグを作成
-      makeinputelement(linedata[2], linedata[3],nowelementid)
+      makeinputelement(linedata[2], linedata[3], nowelementid)
       // 最新の要素idを1増やす
       nowelementid = nowelementid + 1
       // 要素を再生成
@@ -311,7 +330,7 @@ $(document).ready(function () {
       // ここで明示的にdクラスの要素を消去する
       $('.d').remove()
       $("#" + linedata[2] + '_' + linedata[3]).addClass("focus")
-      focus_right_side_menu(linedata[2],linedata[3])
+      focus_right_side_menu(linedata[2], linedata[3])
     }
     $('.e').removeClass("blue")
     $('.d').remove()

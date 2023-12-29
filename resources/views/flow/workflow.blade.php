@@ -99,7 +99,7 @@
             </div>
             <div class="person_content">
                 <div class="person_box">
-                    <input type="text" class="person_elment">
+                    <input type="text" class="person_text">
                     <div class="batsu_button">
                         ×
                     </div>

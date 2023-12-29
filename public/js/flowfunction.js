@@ -1,3 +1,12 @@
+// 個人アイコンを返す
+function person_icon() {
+  return '<svg class="flow_img" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 410" xml:space="preserve" overflow="hidden"><g transform="translate(-828 -707)"><path d="M828 912C828 798.782 924.707 707 1044 707 1163.29 707 1260 798.782 1260 912 1260 1025.22 1163.29 1117 1044 1117 924.707 1117 828 1025.22 828 912Z" fill="#0F9ED5" fill-rule="evenodd"/><g><g><g><path d="M1099 840.125C1099 870.501 1074.38 895.125 1044 895.125 1013.62 895.125 989 870.501 989 840.125 989 809.749 1013.62 785.125 1044 785.125 1074.38 785.125 1099 809.749 1099 840.125Z" fill="#FFFFFF"/><path d="M1154 1018.88 1154 963.875C1154 955.625 1149.88 947.375 1143 941.875 1127.88 929.5 1108.62 921.25 1089.38 915.75 1075.62 911.625 1060.5 908.875 1044 908.875 1028.88 908.875 1013.75 911.625 998.625 915.75 979.375 921.25 960.125 930.875 945 941.875 938.125 947.375 934 955.625 934 963.875L934 1018.88 1154 1018.88Z" fill="#FFFFFF"/></g></g></g></g></svg>'
+}
+// グループアイコンを返す
+function group_icon() {
+  return '<svg class="flow_img" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 410" xml:space="preserve" overflow="hidden"><g transform="translate(-828 -707)"><path d="M828 912C828 798.782 924.707 707 1044 707 1163.29 707 1260 798.782 1260 912 1260 1025.22 1163.29 1117 1044 1117 924.707 1117 828 1025.22 828 912Z" fill="#0F9ED5" fill-rule="evenodd"/><g><g><g><path d="M1099 840.125C1099 870.501 1074.38 895.125 1044 895.125 1013.62 895.125 989 870.501 989 840.125 989 809.749 1013.62 785.125 1044 785.125 1074.38 785.125 1099 809.749 1099 840.125Z" fill="#FFFFFF"/><path d="M1154 1018.88 1154 963.875C1154 955.625 1149.88 947.375 1143 941.875 1127.88 929.5 1108.62 921.25 1089.38 915.75 1075.62 911.625 1060.5 908.875 1044 908.875 1028.88 908.875 1013.75 911.625 998.625 915.75 979.375 921.25 960.125 930.875 945 941.875 938.125 947.375 934 955.625 934 963.875L934 1018.88 1154 1018.88Z" fill="#FFFFFF"/></g></g></g></g></svg>'
+}
+
 // グリッドを作成する
 function creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight) {
   var Xcellcount = $("#maxgrid").data("maxcolumn")
@@ -10,17 +19,17 @@ function creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight) {
 
 
 // グリッド行の範囲変更
-function modifygrid(maxcolumn, maxrow,cellwidth, cellheight, gapcellwidth, gapcellheight) {
+function modifygrid(maxcolumn, maxrow, cellwidth, cellheight, gapcellwidth, gapcellheight) {
   var Xcellcount = $("#maxgrid").data("maxcolumn")
   var Ycellcount = $("#maxgrid").data("maxrow")
   // 最大幅、高さの変更が必要な場合はcellの数を増やす
   if (maxcolumn + 1 > Xcellcount) {
     Xcellcount = maxcolumn + 1
-    $("#maxgrid").data("maxcolumn",Xcellcount)
+    $("#maxgrid").data("maxcolumn", Xcellcount)
   }
   if (maxrow + 1 > Ycellcount) {
     Ycellcount = maxrow + 1
-    $("#maxgrid").data("maxrow",Ycellcount)
+    $("#maxgrid").data("maxrow", Ycellcount)
   }
   $(".grid").css({
     "grid-template-columns": " 20px repeat(" + Xcellcount + ", " + cellwidth + "px " + cellwidth + "px " + gapcellwidth + "px)",
@@ -28,15 +37,63 @@ function modifygrid(maxcolumn, maxrow,cellwidth, cellheight, gapcellwidth, gapce
   })
 }
 
-function nowelementcount(){
+function nowelementcount() {
   var count = $(".e").length
   return count
 
 }
 
+function change_person() {
+  // 現在選択中の要素のidを取得
+  var focusid = $("#focus").data("id")
 
-function makeinputelement(gridcolumn, gridrow,nowelementid, last = "none") {
-  $(".element_input").append('<input type="hidden" id="'+nowelementid+'" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '">')
+  // 要素のインプットタグを取得
+  // そのcolumnとrowも取得
+  var inputelement = $("#" + focusid)
+  var column = inputelement.data("column")
+  var row = inputelement.data("row")
+  // 要素のauthorizer_container(入れ物)を取得
+  var element = $("#" + column + "_" + row).find(".authorizer_container")
+  // 個人のインプットタグを一旦削除する
+  // 要素の個人の情報を一旦削除する
+  $('input[class="person"][data-id="' + focusid + '"]').remove()
+  element.html("")
+
+  $(".person_text").each(function () {
+    if ($(this).val() != "") {
+      $(".element_input").append('<input type="hidden" class="person" data-id="' + focusid + '" data-person_name="' + $(this).val() + '">')
+      element.append('<div class="person_element">' + $(this).val() + '</div>')
+    }
+  })
+  if (($('.person[data-id="' + focusid + '"]').length == 0)) {
+    element.append('<div class="none_setting">未設定</div>')
+  }
+}
+
+function personreload(id) {
+  // 要素のインプットタグを取得
+  // そのcolumnとrowも取得
+  var inputelement = $("#" + id)
+  var column = inputelement.data("column")
+  var row = inputelement.data("row")
+  // 要素のauthorizer_container(入れ物)を取得
+  var element = $("#" + column + "_" + row).find(".authorizer_container")
+  // 要素の個人の情報を一旦削除する
+  element.html("")
+  $('.person[data-id="' + id + '"]').each(function () {
+    element.append('<div class="person_element">' + $(this).data('person_name') + '</div>')
+  })
+  if ($('.person[data-id="' + id + '"]').length == 0 && id != 10000) {
+    element.append('<div class="none_setting">未設定</div>')
+  }
+  else if (id == 10000) {
+    element.append('<div class="authorizer_container"><div class="applicant">申請者</div></div>')
+  }
+}
+
+
+function makeinputelement(gridcolumn, gridrow, nowelementid, last = "none") {
+  $(".element_input").append('<input type="hidden" id="' + nowelementid + '" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '" data-authorizer = "person">')
 }
 
 function reloadelement() {
@@ -48,6 +105,7 @@ function reloadelement() {
     var last = $(this).data("last")
 
     createelement(gridcolumn, gridrow, last)
+    personreload($(this).attr("id"))
   })
 }
 
@@ -77,13 +135,13 @@ function createelement(gridcolumn, gridrow, last = "none", status = "add") {
   // 1_1の場合は申請者
   if (gridcolumn == 1 && gridrow == 1) {
     $('.grid' + gridcolumn + '_' + gridrow).append(
-      "<div>申請者</div>"
+      "<div class='authorizer_container'><div>申請者</div></div>"
     )
   }
   // それ以外
   else {
     $('.grid' + gridcolumn + '_' + gridrow).append(
-      "<div>未設定</div>"
+      '<div class="flow_img_box">' + person_icon() + '</div><div class="authorizer_container"><div class="none_setting">未設定</div></div>'
     )
   }
 
@@ -334,34 +392,34 @@ function rootcheck(fromElement, toElement, arrays) {
 
 // 線を真横もしくは上の要素につないだ時要素を下にずらす。2列以上変更が必要な場合はこの関数を再帰的に呼び出す
 // 関数を再帰的に呼び出すためデフォルトのstatusをinitialとして２回目以降はstatusをchangeにする
-function change_line_element(startcolumn, startrow, endcolumn, endrow,arrays,status = "initial") {
+function change_line_element(startcolumn, startrow, endcolumn, endrow, arrays, status = "initial") {
   // 下に移動する分の値
   const changerow = startrow - endrow + 1
   // 現時点でのY方向のグリッドの最大値を取得
   var Ycellcount = $("#maxgrid").data("maxrow")
   // 移動する分Y方向の最大値を追加する
-  $("#maxgrid").data("maxrow",Ycellcount+changerow)
+  $("#maxgrid").data("maxrow", Ycellcount + changerow)
 
   console.log(changerow)
   // 一回目は線を新規で作成する。この場合、線は真横もしくは上方向になるが後でずらすので問題なし
-  if (status == "initial"){
-    makeinputline(startcolumn, startrow, endcolumn, endrow) 
-    searchAndUpdateArrays(startcolumn +"_"+startrow, endcolumn +"_"+endrow, arrays)
+  if (status == "initial") {
+    makeinputline(startcolumn, startrow, endcolumn, endrow)
+    searchAndUpdateArrays(startcolumn + "_" + startrow, endcolumn + "_" + endrow, arrays)
   }
 
   // 要素をそれぞれチェック
   $(".element").each(function () {
     var nowcolumn = $(this).data("column")
     var nowrow = $(this).data("row")
-    var column_row = nowcolumn +"_"+ nowrow
+    var column_row = nowcolumn + "_" + nowrow
     // 要素が線の先のカラムに該当し、線の先の列よりも下、もしくは横にある場合changerowだけ下に移動する
     if (nowcolumn == endcolumn && nowrow >= endrow) {
       $(this).data("row", nowrow + changerow)
 
       for (const index in arrays) {
         var indexelement = arrays[index].lastIndexOf(column_row)
-        if (indexelement !== -1){
-          arrays[index].splice(indexelement,1,nowcolumn + "_" + (nowrow + changerow))
+        if (indexelement !== -1) {
+          arrays[index].splice(indexelement, 1, nowcolumn + "_" + (nowrow + changerow))
         }
       }
     }
@@ -380,25 +438,33 @@ function change_line_element(startcolumn, startrow, endcolumn, endrow,arrays,sta
       $(this).data("endrow", nowendrow + changerow)
     }
   })
-// inputタグから、要素や線をずらしたことによって線が真横、もしくは上方向に延びていないかをチェックする
+  // inputタグから、要素や線をずらしたことによって線が真横、もしくは上方向に延びていないかをチェックする
   var lineresult = $('input').filter(function () {
     return $(this).data('startrow') >= $(this).data('endrow');
   }).first();
   // 該当した場合は再帰的にこの関数をもう一度呼び出す。第5引数はinitialではなくchange
-  if (lineresult.length !== 0){
-    change_line_element(lineresult.data('startcolumn'), lineresult.data('startrow'), lineresult.data('endcolumn'), lineresult.data('endrow'),arrays,status = "change")
+  if (lineresult.length !== 0) {
+    change_line_element(lineresult.data('startcolumn'), lineresult.data('startrow'), lineresult.data('endcolumn'), lineresult.data('endrow'), arrays, status = "change")
   }
   return arrays
 }
 
 
-function focus_right_side_menu(column,row){
+function focus_right_side_menu(column, row) {
   // 右側メニューを表示
   $('.right_side_menu').addClass("right_side_menu_open")
-  var focusid = $('input[class="element"]').filter(function () {
-    return (($(this).data('column') == column)&&($(this).data('row') == row));
+  var focus = $('input[class="element"]').filter(function () {
+    return (($(this).data('column') == column) && ($(this).data('row') == row));
   }).first();
-  console.log(focusid.attr("id"))
+  var focusid = focus.attr("id")
+  $('#focus').data("id", focusid)
+  $('.person_box').remove()
+  if ($('input[class="person"][data-id="' + focusid + '"]').length == 0) {
+    $(".person_content").append('<div class="person_box"><input type="text" class="person_text"><div class="batsu_button">×</div></div>')
+  }
+  $('input[class="person"][data-id="' + focusid + '"]').each(function () {
+    $(".person_content").append('<div class="person_box"><input type="text" class="person_text" value="' + $(this).data("person_name") + '"><div class="batsu_button">×</div></div>')
+  })
 }
 
 
