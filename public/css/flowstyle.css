@@ -309,6 +309,9 @@
     left: 3px;
     top: 3px;
 }
+.element_authorizer_number{
+    text-align: center;
+}
 .flow_img{
     width: 40px;
 }
@@ -316,6 +319,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow-x: auto;
 }
 
 .none_setting{

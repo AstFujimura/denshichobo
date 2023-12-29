@@ -43,6 +43,8 @@ function nowelementcount() {
 
 }
 
+// person_textからpersonのinputの情報の更新を行う。
+// focus情報をもとに選択中の要素だけの更新も行う
 function change_person() {
   // 現在選択中の要素のidを取得
   var focusid = $("#focus").data("id")
@@ -67,9 +69,14 @@ function change_person() {
   })
   if (($('.person[data-id="' + focusid + '"]').length == 0)) {
     element.append('<div class="none_setting">未設定</div>')
+    element.parent().find(".element_authorizer_number").text("")
+  }
+  else {
+    person_number_change(focusid)
   }
 }
 
+// 引数にいれたidの要素だけinputの情報をもとに更新する
 function personreload(id) {
   // 要素のインプットタグを取得
   // そのcolumnとrowも取得
@@ -83,12 +90,37 @@ function personreload(id) {
   $('.person[data-id="' + id + '"]').each(function () {
     element.append('<div class="person_element">' + $(this).data('person_name') + '</div>')
   })
+  // inputの数が0であり申請者に当たらない場合、未設定の文字をいれる
   if ($('.person[data-id="' + id + '"]').length == 0 && id != 10000) {
     element.append('<div class="none_setting">未設定</div>')
   }
+  // 申請者の場合
   else if (id == 10000) {
-    element.append('<div class="authorizer_container"><div class="applicant">申請者</div></div>')
+    element.append('<div class="applicant">申請者</div>')
   }
+  // inputの数が1以上ある場合
+  else {
+    person_number_change(id)
+  }
+}
+
+function person_number_change(id) {
+  // 要素のインプットタグを取得
+  // そのcolumnとrowも取得
+  var inputelement = $("#" + id)
+  var column = inputelement.data("column")
+  var row = inputelement.data("row")
+  // 要素のauthorizer_container(入れ物)を取得
+  var element = $("#" + column + "_" + row).find(".authorizer_container")
+  var authorizer_number = $('.person[data-id="' + id + '"]').length
+  if (authorizer_number == 0) {
+    element.parent().find(".element_authorizer_number").text("")
+  }
+  else {
+    element.parent().find(".element_authorizer_number").text(authorizer_number + "人")
+  }
+
+  $('.parameter').text(authorizer_number)
 }
 
 
@@ -141,7 +173,7 @@ function createelement(gridcolumn, gridrow, last = "none", status = "add") {
   // それ以外
   else {
     $('.grid' + gridcolumn + '_' + gridrow).append(
-      '<div class="flow_img_box">' + person_icon() + '</div><div class="authorizer_container"><div class="none_setting">未設定</div></div>'
+      '<div class="flow_img_box">' + person_icon() + '<div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div>'
     )
   }
 
@@ -465,6 +497,7 @@ function focus_right_side_menu(column, row) {
   $('input[class="person"][data-id="' + focusid + '"]').each(function () {
     $(".person_content").append('<div class="person_box"><input type="text" class="person_text" value="' + $(this).data("person_name") + '"><div class="batsu_button">×</div></div>')
   })
+  person_number_change(focusid)
 }
 
 
