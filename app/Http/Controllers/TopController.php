@@ -39,7 +39,7 @@ class TopController extends Controller
 
         // 変更が必要な箇所
         $nownewsnumber = 1;
-        $startdate = Carbon::parse("2023-12-28");
+        $startdate = Carbon::parse("2023-12-31");
         $expiration = Carbon::parse("2024-2-11");
         // $startdate = "2023-12-29 00:00:00";
         // $expiration = "2024-1-31 23:59:59";
