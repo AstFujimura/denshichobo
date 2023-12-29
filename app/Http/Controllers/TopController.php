@@ -39,7 +39,7 @@ class TopController extends Controller
 
         // 変更が必要な箇所
         $nownewsnumber = 1;
-        $startdate = "2022-1-1 00:00:00";
+        $startdate = "2023-12-29 00:00:00";
         $expiration = "2024-1-31 23:59:59";
         // -----------------------------
 
