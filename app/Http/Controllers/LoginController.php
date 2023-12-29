@@ -37,7 +37,15 @@ class LoginController extends Controller
 
         if ($user && Hash::check($password, $user->password)) {
             Auth::login($user);
-            return redirect(session('url.intended'));
+            // ログイン前に指定したurlがある場合("/"の場合も含む)
+            if (session('url.intended')){
+                return redirect(session('url.intended'));
+            }
+            // ログアウトボタンを押してログイン画面に遷移してきた場合
+            else {
+                return redirect()->route('topGet');
+            }
+            
         }
         else {
             // エラーメッセージをフラッシュデータに設定
