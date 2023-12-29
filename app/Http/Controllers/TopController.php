@@ -39,10 +39,13 @@ class TopController extends Controller
 
         // 変更が必要な箇所
         $nownewsnumber = 1;
-        $startdate = "2023-12-28 00:00:00";
-        $expiration = "2024-1-31 23:59:59";
+        $startdate = Carbon::parse("2023-12-28");
+        $expiration = Carbon::parse("2024-2-11");
+        // $startdate = "2023-12-29 00:00:00";
+        // $expiration = "2024-1-31 23:59:59";
         // -----------------------------
 
+        $today = Carbon::today();
 
         $newsstatus = Auth::user()->ニュース番号;
 
@@ -50,7 +53,7 @@ class TopController extends Controller
         // news_black_noneはdisplay: noneである
 
         // 有効期限を過ぎておらずユーザーが未確認の場合→表示する
-        if (Carbon::today() < $expiration && Carbon::today() > $startdate && $nownewsnumber > $newsstatus) {
+        if ($today->greaterThan($startdate) && $today->lessThan($expiration) && $nownewsnumber > $newsstatus) {
             $newsshow = "news_black";
             $userid = Auth::id();
             $user = User::find($userid);
