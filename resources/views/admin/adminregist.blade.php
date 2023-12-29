@@ -1,7 +1,7 @@
 @extends('layouts.admintemplate')
 
 @section('title')
-管理画面
+ユーザー登録 | TAMERU
 @endsection
 
 @section('menuebar')
