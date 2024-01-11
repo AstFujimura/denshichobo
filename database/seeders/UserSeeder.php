@@ -32,6 +32,27 @@ class UserSeeder extends Seeder
             ]
         ]
         );
+        // DB::table('groups')->insert([
+        //     [
+        //         'グループ名' => 'astec(固有グループ名ghdF4ol)'
+        //     ],
+        //     [
+        //         'グループ名' => '管理者(固有グループ名ghdF4ol)'
+        //     ]
+        // ]
+        // );
+
+        // DB::table('group_user')->insert([
+        //     [
+        //         'グループID' => 1,
+        //         'ユーザーID' => 1,
+        //     ],
+        //     [
+        //         'グループID' => 2,
+        //         'ユーザーID' => 2,
+        //     ]
+        // ]
+        // );
 
         DB::table('documents')->insert([
             [

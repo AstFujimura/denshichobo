@@ -139,6 +139,7 @@ class TestController extends Controller
                         $newGroupUser = new Group_User();
                         $newGroupUser->グループID = 1;
                         $newGroupUser->ユーザーID = 1;
+                        $newGroupUser->save();
                     }
                     if (!Group::find(2)){
                         $newgroup = new Group();
@@ -149,6 +150,7 @@ class TestController extends Controller
                         $newGroupUser = new Group_User();
                         $newGroupUser->グループID = 2;
                         $newGroupUser->ユーザーID = 2;
+                        $newGroupUser->save();
                     }
                 }
             }
