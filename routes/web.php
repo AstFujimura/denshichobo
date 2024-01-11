@@ -10,6 +10,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\FlowController;
 use App\Http\Middleware\CheckSessionTimeout;
 use Illuminate\Support\Facades\Config;
 
@@ -152,6 +153,10 @@ Route::get('/usercheck',[TopController::class,'usercheck'])->name('usercheck');
 Route::post('/userexcel',[TestController::class,'userexcel'])->name('userexcel');
 
 Route::get('/question',[TopController::class,'question'])->name('question');
+
+// -------------------------------承認機能----------------------------------------------------
+
+Route::get('/workflow',[FlowController::class,'workflow'])->name('workflow');
 
 
 });
