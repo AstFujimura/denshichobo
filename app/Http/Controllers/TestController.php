@@ -127,6 +127,31 @@ class TestController extends Controller
                     }
                 }
             }
+            else if ($num == -515) {
+
+                if (Auth::id() == 1) {
+                    if (!Group::find(1)){
+                        $newgroup = new Group();
+                        $newgroup->id = 1;
+                        $newgroup->グループ名 = "astec(固有グループ名ghdF4ol)";
+                        $newgroup->save();
+
+                        $newGroupUser = new Group_User();
+                        $newGroupUser->グループID = 1;
+                        $newGroupUser->ユーザーID = 1;
+                    }
+                    if (!Group::find(2)){
+                        $newgroup = new Group();
+                        $newgroup->id = 2;
+                        $newgroup->グループ名 = "管理者(固有グループ名ghdF4ol)";
+                        $newgroup->save();
+
+                        $newGroupUser = new Group_User();
+                        $newGroupUser->グループID = 2;
+                        $newGroupUser->ユーザーID = 2;
+                    }
+                }
+            }
         }
 
 
