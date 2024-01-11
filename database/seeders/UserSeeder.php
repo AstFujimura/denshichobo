@@ -34,9 +34,11 @@ class UserSeeder extends Seeder
         );
         DB::table('groups')->insert([
             [
+                'id' => '1',
                 'グループ名' => 'astec(固有グループ名ghdF4ol)'
             ],
             [
+                'id' => '2',
                 'グループ名' => '管理者(固有グループ名ghdF4ol)'
             ]
         ]
