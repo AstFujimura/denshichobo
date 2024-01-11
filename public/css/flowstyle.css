@@ -341,6 +341,18 @@
 .person_element:last-child{
     margin-bottom: auto;
 }
+
+.group_element{
+    width: 100px;
+    height: 20px;
+    border-bottom: solid 1px rgb(189, 189, 189);
+}
+.group_element:first-child{
+    margin-top: auto;
+}
+.group_element:last-child{
+    margin-bottom: auto;
+}
 /* .person_element:not(last-child){
     margin-bottom: 2px;
 } */

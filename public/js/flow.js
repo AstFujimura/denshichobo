@@ -7,26 +7,42 @@ $(document).ready(function () {
   })
 
   // 承認者を個人かグループで選ぶかを選択し要素の表示非表示を行う
-  $('.authorizer').on("change", function () {
+  $('.authorizer').on("click", function () {
     var focusid = $("#focus").data("id")
     // 承認者_個人が選択されたとき
     if ($('#authorizer1').prop('checked')) {
       $('.person_container').addClass("person_container_open")
       $('.group_container').removeClass("group_container_open")
       // 要素のインプットタグのdata-authorizerを変更する
-      $('#'+focusid).data("authorizer","person")
+      $('#' + focusid).data("authorizer", "person")
+      $('#' + focusid).attr("data-authorizer", "person")
+      change_authorizer("person")
     }
     // 承認者_グループが選択されたとき
     else if ($('#authorizer2').prop('checked')) {
       $('.group_container').addClass("group_container_open")
       $('.person_container').removeClass("person_container_open")
-      $('#'+focusid).data("authorizer","group")
+      $('#' + focusid).data("authorizer", "group")
+      $('#' + focusid).attr("data-authorizer", "group")
+      change_authorizer("group")
     }
   })
 
   // 承認者_個人のテキストボックスの文字が変わったとき
   $(document).on("change", ".person_text", function () {
     change_person()
+
+  })
+
+  $(document).on("focus", ".person_text", function () {
+    ajax_person()
+
+  })
+
+
+  // 承認者_グループのテキストボックスの文字が変わったとき
+  $(document).on("change", ".group_select", function () {
+    change_group()
 
   })
 
@@ -42,6 +58,11 @@ $(document).ready(function () {
     else if ($('#authorizer_condition2').prop('checked')) {
       $('#person_authorizer_number_container').addClass("autorizer_number_container_open")
     }
+    change_person_required_number()
+  })
+  // 承認者_個人での条件指定での承認者の数が変更されたとき
+  $('#person_required_number').on("change", function () {
+    change_person_required_number()
   })
   // 承認者_グループの選択方法での要素の表示非表示
   $('.choice_method').on("change", function () {
@@ -88,6 +109,7 @@ $(document).ready(function () {
         console.log(eElement.data("column"))
         console.log(eElement.data("row"))
         focus_right_side_menu(eElement.data("column"), eElement.data("row"))
+        person_required_number_reload()
       }
       else {
         $(".e").removeClass("focus")
@@ -98,8 +120,12 @@ $(document).ready(function () {
     else if (rightElement.length == 1) {
       // ×ボタンを押したとき
       if (batsuElement.length == 1) {
-        batsuElement.parent().remove();
-        change_person()
+        if ($(".batsu_button").length != 1) {
+          batsuElement.parent().remove();
+          change_person()
+          change_person_required_number()
+        }
+
       }
     }
     else {
@@ -331,6 +357,7 @@ $(document).ready(function () {
       $('.d').remove()
       $("#" + linedata[2] + '_' + linedata[3]).addClass("focus")
       focus_right_side_menu(linedata[2], linedata[3])
+      person_required_number_reload()
     }
     $('.e').removeClass("blue")
     $('.d').remove()

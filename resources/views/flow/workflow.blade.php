@@ -114,7 +114,7 @@
                 <label for="authorizer_condition2">条件指定</label>
             </div>
             <div class="autorizer_number_container" id="person_authorizer_number_container">
-                <span class="parameter">3</span>人中 <input type="number" class="authorizer_number"> 人
+                <span class="parameter">3</span>人中 <input type="number" class="authorizer_number" id="person_required_number"> 人
             </div>
 
         </div>
@@ -211,7 +211,7 @@
     <input type="hidden" class="route" id="route" data-routecount="1">
     <input type="hidden" class="maxgrid" id="maxgrid" data-maxcolumn="1" data-maxrow="1">
     <input type="hidden" id="10000" class="element" data-column="1" data-row="1" data-last="none" >
-    <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last">
+    <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last" data-authorizer="person" data-person_required_number="all">
 
     <input type="hidden" class="line" data-startcolumn="1" data-startrow="1" data-endcolumn="1" data-endrow="2">
     <input type="hidden" id="focus" class="focus" data-id="">
