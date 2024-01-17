@@ -23,6 +23,28 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflow',compact("prefix","server"));
+        $groups = Group::where('id', ">", 100000)
+            ->get();
+        foreach ($groups as $group) {
+            $count = Group_User::where("グループID",$group->id)
+            ->count();
+            $group->count = $count;
+        }
+        return view('flow.workflow', compact("prefix", "server", "groups"));
+    }
+
+    public function flowuserlist(Request $request)
+    {
+        $searchtext = $request->input("search");
+
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $users = User::where('name', 'like', '%' . $searchtext . '%')
+            ->where('削除', "")
+            ->get();
+        return response()->json($users);
     }
 }

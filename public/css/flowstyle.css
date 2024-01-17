@@ -20,6 +20,18 @@
 
 .Mainelement {}
 
+.gray {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: gray;
+    opacity: 0.5;
+    top: 0;
+    left: 0;
+    z-index: 13;
+}
+
 .left_side_menu {
     width: 250px;
     height: 100vh;
@@ -141,9 +153,9 @@
     padding-top: 150px;
     padding-left: 20px;
     padding-right: 20px;
-    z-index: 12;
     font-size: 12px;
     transition: all 0.2s;
+    z-index: 12;
 }
 
 .right_side_menu_open{
@@ -215,14 +227,45 @@
 
 .person_content {}
 
+
+
 .person_box {
     display: flex;
     margin-bottom: 2px;
+    position: relative;
+}
+
+.person_text{
+    position: relative;
+    z-index: 12;
+}
+.person_text_focus {
+    z-index: 13 !important;
 }
 
 .person_elment {
     border: solid 1px #b1b1b1;
     height: 25px;
+}
+.flow_user_list{
+    display: none;
+    position: absolute;
+    top: 24px;
+    background: white;
+    width: 175px;
+    border: solid 1px #b9b9b9;
+    z-index: 14;
+}
+.nothing{
+    
+}
+.userelement{
+    padding-left: 5px;
+}
+.userelement:hover{
+    background: rgb(53, 123, 255);
+    color: white;
+    cursor: pointer;
 }
 
 .batsu_button {
@@ -299,8 +342,7 @@
     background: transparent;
     border: solid 2px gray;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
     font-size: 13px;
     overflow-x: auto;
 }
@@ -319,7 +361,20 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow-x: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 40%;
+    margin-left: 30%;
+}
+.detail_container{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 30%;
+}
+
+.detail_element{
+    margin-top: auto;
 }
 
 .none_setting{

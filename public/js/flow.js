@@ -35,9 +35,27 @@ $(document).ready(function () {
   })
 
   $(document).on("focus", ".person_text", function () {
-    ajax_person()
-
+    ajax_flowuserlist($(this).val(), $(this))
+    $(this).addClass("person_text_focus")
   })
+  $(document).on("input", ".person_text", function () {
+    ajax_flowuserlist($(this).val(), $(this))
+    $(this).addClass("person_text_focus")
+  })
+  // $(document).on("blur", ".person_text", function () {
+
+  // })
+  // フォーカスが当たっているときにkeydownイベントをリッスン
+  $(document).keydown(function (e) {
+    // キーがTabキーであるかつフォーカスが当たっているとき
+    if (e.which === 9 && $('.person_text').is(':focus')) {
+      // ここにTabキーが押されたときに実行したい処理を記述
+      $(".gray").click()
+    }
+  });
+
+
+
 
 
   // 承認者_グループのテキストボックスの文字が変わったとき
@@ -66,17 +84,23 @@ $(document).ready(function () {
   })
   // 承認者_グループの選択方法での要素の表示非表示
   $('.choice_method').on("change", function () {
-    if ($('#choice_method1').prop('checked')) {
+    // 限定無しにチェックされた場合
+    if ($('#nolimit').prop('checked')) {
       $('.choice_container').removeClass("choice_container_open")
       $('.post_choice_container').removeClass("post_choice_container_open")
+      change_group_select_method("nolimit")
     }
-    else if ($('#choice_method2').prop('checked')) {
+    // 申請者が選択にチェックされた場合
+    else if ($('#byapplicant').prop('checked')) {
       $('.choice_container').addClass("choice_container_open")
       $('.post_choice_container').removeClass("post_choice_container_open")
+      change_group_select_method("byapplicant")
     }
-    else if ($('#authorizer2').prop('checked')) {
+    // 役職から選択にチェックされた場合
+    else if ($('#postchoice').prop('checked')) {
       $('.post_choice_container').addClass("post_choice_container_open")
       $('.choice_container').removeClass("choice_container_open")
+      change_group_select_method("postchoice")
     }
   })
 
@@ -84,10 +108,16 @@ $(document).ready(function () {
   $('.choice_limit').on("change", function () {
     if ($('#choice_limit1').prop('checked')) {
       $('#group_authorizer_number_container').removeClass("autorizer_number_container_open")
+      change_choice_number('all')
     }
     else if ($('#choice_limit2').prop('checked')) {
       $('#group_authorizer_number_container').addClass("autorizer_number_container_open")
+      change_choice_number('select')
     }
+  })
+
+  $('#group_authorizer_number').on("change", function () {
+    change_choice_number('number')
   })
 
   // クリックしたときの場所により判定を行う
@@ -100,7 +130,7 @@ $(document).ready(function () {
     var rightElement = targetElement.closest('.right_side_menu');
     var batsuElement = targetElement.closest('.batsu_button');
 
-    console.log(eElement.attr("class"))
+    var classname = targetElement.attr("class")
     // 要素をクリックした場合は要素にfocusクラスを付与する
     if (eElement.length == 1) {
       if (eElement.attr("id") !== "1_1") {
@@ -126,29 +156,40 @@ $(document).ready(function () {
           change_person_required_number()
         }
 
+
+      }
+      else if (targetElement.attr("class") == "userelement") {
+        var person_name = targetElement.text()
+        targetElement.parent().parent().find('.person_text').val(person_name)
+        remove_focus()
+        change_person()
+      }
+      else if (targetElement.attr("class") == "gray") {
+        remove_focus()
       }
     }
+
+
     else {
       $(".e").removeClass("focus")
       $('.right_side_menu').removeClass("right_side_menu_open")
+      // グレーエリアと個人の候補リストを非表示
+      $(".gray").hide()
+      $(".flow_user_list").hide()
+      $(".person_text").removeClass("person_text_focus")
     }
 
   })
 
   // 承認者_個人の追加(+)ボタンを押したときの挙動
   $('.plus_button').on('click', function () {
-    $(".person_content").append('<div class="person_box"><input type="text" class="person_text"><div class="batsu_button">×</div></div>')
+    $(".person_content").append('<div class="person_box"><input type="text" class="person_text"><div class="batsu_button">×</div><div class="flow_user_list"></div></div>')
   })
 
   // 承認者_個人の削除(×)ボタンを押したときの挙動
   // $(document).on('click', '.batsu_button', function () {
   //   $(this)
   // })
-
-  // 承認者_個人のinputが変更されたときの挙動
-  $(document).on('change', '.person_text', function () {
-    $('.person_text')
-  })
 
 
 
@@ -202,7 +243,7 @@ $(document).ready(function () {
   var linedata = [];
   $(document).on('mousedown', function (event) {
 
-    var mousedownTarget = $(event.target)
+    var mousedownTarget = $(event.target).closest('.e')
 
     if (mousedownTarget.hasClass("e")) {
 

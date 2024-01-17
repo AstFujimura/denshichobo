@@ -9,6 +9,7 @@
 @endsection
 
 @section('menue')
+
 <div class="left_side_menu">
     <div class="left_side_section">
         <div class="left_side_content_title">
@@ -85,6 +86,7 @@
     </div>
 </div>
 <div class="right_side_menu">
+    <div class="gray"></div>
     <div class="right_side_section">
         <div class="right_side_content_title">
             承認者
@@ -103,6 +105,9 @@
                     <div class="batsu_button">
                         ×
                     </div>
+                    <div class="flow_user_list">
+
+                    </div>
                 </div>
             </div>
             <div>
@@ -114,7 +119,7 @@
                 <label for="authorizer_condition2">条件指定</label>
             </div>
             <div class="autorizer_number_container" id="person_authorizer_number_container">
-                <span class="parameter">3</span>人中 <input type="number" class="authorizer_number" id="person_required_number"> 人
+                <span class="parameter">0</span>人中 <input type="number" class="authorizer_number" id="person_required_number"> 人
             </div>
 
         </div>
@@ -127,20 +132,18 @@
         <div class="group_container">
             <div>
                 <select class="group_select">
-                    <option>本営</option>
-                    <option>東京</option>
-                    <option>大阪</option>
-                    <option>川越</option>
-                    <option>管理</option>
+                    @foreach ($groups as $group)
+                    <option data-group_id="{{$group->id}}" data-group_count="{{$group->count}}">{{$group->グループ名}}</option>
+                    @endforeach
                 </select>
             </div>
             <div>
-                <input type="radio" class="choice_method" name="choice_method" id="choice_method1" checked>
-                <label for="choice_method1">限定無し</label>
+                <input type="radio" class="choice_method" name="choice_method" id="nolimit" checked>
+                <label for="nolimit">限定無し</label>
             </div>
             <div>
-                <input type="radio" class="choice_method" name="choice_method" id="choice_method2">
-                <label for="choice_method2">申請者が選択</label>
+                <input type="radio" class="choice_method" name="choice_method" id="byapplicant">
+                <label for="byapplicant">申請者が選択</label>
             </div>
             <div class="choice_container">
                 <div>
@@ -156,15 +159,15 @@
                         <label for="choice_limit2">選択人数指定</label>
                     </div>
                     <div class="autorizer_number_container" id="group_authorizer_number_container">
-                        <input type="number" class="authorizer_number"> 人
+                        <input type="number" class="authorizer_number" id="group_authorizer_number"> 人
                     </div>
                 </div>
 
             </div>
 
             <div>
-                <input type="radio" class="choice_method" name="choice_method" id="choice_method3">
-                <label for="choice_method3">役職から選択</label>
+                <input type="radio" class="choice_method" name="choice_method" id="postchoice">
+                <label for="postchoice">役職から選択</label>
             </div>
             <div class="post_choice_container">
                 <div>
@@ -210,8 +213,8 @@
 <div class="element_input">
     <input type="hidden" class="route" id="route" data-routecount="1">
     <input type="hidden" class="maxgrid" id="maxgrid" data-maxcolumn="1" data-maxrow="1">
-    <input type="hidden" id="10000" class="element" data-column="1" data-row="1" data-last="none" >
-    <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last" data-authorizer="person" data-person_required_number="all">
+    <input type="hidden" id="10000" class="element" data-column="1" data-row="1" data-last="none">
+    <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last" data-authorizer="person" data-person_required_number="all" data-select_method="nolimit">
 
     <input type="hidden" class="line" data-startcolumn="1" data-startrow="1" data-endcolumn="1" data-endrow="2">
     <input type="hidden" id="focus" class="focus" data-id="">

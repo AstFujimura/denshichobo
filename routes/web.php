@@ -14,6 +14,9 @@ use App\Http\Controllers\FlowController;
 use App\Http\Middleware\CheckSessionTimeout;
 use Illuminate\Support\Facades\Config;
 
+
+use App\Models\Version;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -155,8 +158,10 @@ Route::post('/userexcel',[TestController::class,'userexcel'])->name('userexcel')
 Route::get('/question',[TopController::class,'question'])->name('question');
 
 // -------------------------------承認機能----------------------------------------------------
-
-Route::get('/workflow',[FlowController::class,'workflow'])->name('workflow');
+if (Version::where('フロー',true)->first()){
+    Route::get('/workflow',[FlowController::class,'workflow'])->name('workflow');
+    Route::get('/flowuserlist',[FlowController::class,'flowuserlist'])->name('flowuserlist');
+}
 
 
 });
