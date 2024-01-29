@@ -1,14 +1,14 @@
 // 個人アイコンを返す
 function person_icon() {
-  return '<svg class="flow_img" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 410" xml:space="preserve" overflow="hidden"><g transform="translate(-828 -707)"><path d="M828 912C828 798.782 924.707 707 1044 707 1163.29 707 1260 798.782 1260 912 1260 1025.22 1163.29 1117 1044 1117 924.707 1117 828 1025.22 828 912Z" fill="#0F9ED5" fill-rule="evenodd"/><g><g><g><path d="M1099 840.125C1099 870.501 1074.38 895.125 1044 895.125 1013.62 895.125 989 870.501 989 840.125 989 809.749 1013.62 785.125 1044 785.125 1074.38 785.125 1099 809.749 1099 840.125Z" fill="#FFFFFF"/><path d="M1154 1018.88 1154 963.875C1154 955.625 1149.88 947.375 1143 941.875 1127.88 929.5 1108.62 921.25 1089.38 915.75 1075.62 911.625 1060.5 908.875 1044 908.875 1028.88 908.875 1013.75 911.625 998.625 915.75 979.375 921.25 960.125 930.875 945 941.875 938.125 947.375 934 955.625 934 963.875L934 1018.88 1154 1018.88Z" fill="#FFFFFF"/></g></g></g></g></svg>'
+  return '<svg class="flow_img person_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 410" xml:space="preserve" overflow="hidden"><g transform="translate(-828 -707)"><path d="M828 912C828 798.782 924.707 707 1044 707 1163.29 707 1260 798.782 1260 912 1260 1025.22 1163.29 1117 1044 1117 924.707 1117 828 1025.22 828 912Z" fill="#0F9ED5" fill-rule="evenodd"/><g><g><g><path d="M1099 840.125C1099 870.501 1074.38 895.125 1044 895.125 1013.62 895.125 989 870.501 989 840.125 989 809.749 1013.62 785.125 1044 785.125 1074.38 785.125 1099 809.749 1099 840.125Z" fill="#FFFFFF"/><path d="M1154 1018.88 1154 963.875C1154 955.625 1149.88 947.375 1143 941.875 1127.88 929.5 1108.62 921.25 1089.38 915.75 1075.62 911.625 1060.5 908.875 1044 908.875 1028.88 908.875 1013.75 911.625 998.625 915.75 979.375 921.25 960.125 930.875 945 941.875 938.125 947.375 934 955.625 934 963.875L934 1018.88 1154 1018.88Z" fill="#FFFFFF"/></g></g></g></g></svg>'
 }
 // グループアイコンを返す
 function group_icon() {
-  return '<svg  class="flow_img" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 410"  xml:space="preserve" overflow="hidden"><g transform="translate(-1672 -730)"><path d="M1672 935C1672 821.782 1768.71 730 1888 730 2007.29 730 2104 821.782 2104 935 2104 1048.22 2007.29 1140 1888 1140 1768.71 1140 1672 1048.22 1672 935Z" fill="#F2AA84" fill-rule="evenodd"/><g><g><g><path d="M1853.62 980.75 1922.37 980.75 1922.37 1028.88 1853.62 1028.88Z" fill="#FFFFFF"/><path d="M1853.62 795.125 1922.37 795.125 1922.37 843.25 1853.62 843.25Z" fill="#FFFFFF"/><path d="M1750.5 980.75 1819.25 980.75 1819.25 1028.88 1750.5 1028.88Z" fill="#FFFFFF"/><path d="M1956.75 980.75 2025.5 980.75 2025.5 1028.88 1956.75 1028.88Z" fill="#FFFFFF"/><path d="M1894.87 905.125 1894.87 857 1881.12 857 1881.12 905.125 1778 905.125 1778 967 1791.75 967 1791.75 918.875 1881.12 918.875 1881.12 967 1894.87 967 1894.87 918.875 1984.25 918.875 1984.25 967 1998 967 1998 905.125Z" fill="#FFFFFF"/></g></g></g></g></svg>'
+  return '<svg  class="flow_img group_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 410"  xml:space="preserve" overflow="hidden"><g transform="translate(-1672 -730)"><path d="M1672 935C1672 821.782 1768.71 730 1888 730 2007.29 730 2104 821.782 2104 935 2104 1048.22 2007.29 1140 1888 1140 1768.71 1140 1672 1048.22 1672 935Z" fill="#F2AA84" fill-rule="evenodd"/><g><g><g><path d="M1853.62 980.75 1922.37 980.75 1922.37 1028.88 1853.62 1028.88Z" fill="#FFFFFF"/><path d="M1853.62 795.125 1922.37 795.125 1922.37 843.25 1853.62 843.25Z" fill="#FFFFFF"/><path d="M1750.5 980.75 1819.25 980.75 1819.25 1028.88 1750.5 1028.88Z" fill="#FFFFFF"/><path d="M1956.75 980.75 2025.5 980.75 2025.5 1028.88 1956.75 1028.88Z" fill="#FFFFFF"/><path d="M1894.87 905.125 1894.87 857 1881.12 857 1881.12 905.125 1778 905.125 1778 967 1791.75 967 1791.75 918.875 1881.12 918.875 1881.12 967 1894.87 967 1894.87 918.875 1984.25 918.875 1984.25 967 1998 967 1998 905.125Z" fill="#FFFFFF"/></g></g></g></g></svg>'
 }
 // 未設定アイコンを返す
 function none_icon() {
-  return '<svg class="flow_img" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 410" xml:space="preserve" overflow="hidden"><defs><clipPath id="clip0"><rect x="2539" y="722" width="432" height="410"/></clipPath></defs><g clip-path="url(#clip0)" transform="translate(-2539 -722)"><path d="M2539 927C2539 813.781 2635.71 722 2755 722 2874.29 722 2971 813.781 2971 927 2971 1040.22 2874.29 1132 2755 1132 2635.71 1132 2539 1040.22 2539 927Z" fill="#AEAEAE" fill-rule="evenodd"/><g><g><g><path d="M125.285 23.6667 158.715 23.6667 155.934 191.966 128.066 191.966 125.285 23.6667Z" fill="#FFFFFF" transform="matrix(1.16197 0 0 1 2590 783)"/><path d="M165.667 233.708C165.667 246.779 155.071 257.375 142 257.375 128.929 257.375 118.333 246.779 118.333 233.708 118.333 220.638 128.929 210.042 142 210.042 155.071 210.042 165.667 220.638 165.667 233.708Z" fill="#FFFFFF" transform="matrix(1.16197 0 0 1 2590 783)"/></g></g></g></g></svg>'
+  return '<svg class="flow_img none_icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 432 410" xml:space="preserve" overflow="hidden"><defs><clipPath id="clip0"><rect x="2539" y="722" width="432" height="410"/></clipPath></defs><g clip-path="url(#clip0)" transform="translate(-2539 -722)"><path d="M2539 927C2539 813.781 2635.71 722 2755 722 2874.29 722 2971 813.781 2971 927 2971 1040.22 2874.29 1132 2755 1132 2635.71 1132 2539 1040.22 2539 927Z" fill="#AEAEAE" fill-rule="evenodd"/><g><g><g><path d="M125.285 23.6667 158.715 23.6667 155.934 191.966 128.066 191.966 125.285 23.6667Z" fill="#FFFFFF" transform="matrix(1.16197 0 0 1 2590 783)"/><path d="M165.667 233.708C165.667 246.779 155.071 257.375 142 257.375 128.929 257.375 118.333 246.779 118.333 233.708 118.333 220.638 128.929 210.042 142 210.042 155.071 210.042 165.667 220.638 165.667 233.708Z" fill="#FFFFFF" transform="matrix(1.16197 0 0 1 2590 783)"/></g></g></g></g></svg>'
 }
 
 // グリッドを作成する
@@ -74,14 +74,14 @@ function change_person() {
     }
   })
   if (($('.person[data-id="' + focusid + '"]').length == 0)) {
-    change_icon(focusid, "none")
+    change_icon(focusid)
     element.append('<div class="none_setting">未設定</div>')
     element.parent().find(".element_authorizer_number").text("")
   }
   else {
-    change_icon(focusid, "person")
-    person_number_change(focusid)
-    person_detail(focusid)
+    change_icon(focusid)
+    element_authorizer_reload(focusid)
+    change_detail(focusid)
   }
 }
 
@@ -107,7 +107,7 @@ function personreload(id) {
   // inputの数が0であり申請者に当たらない場合、未設定の文字をいれる
   if ($('.person[data-id="' + id + '"]').length == 0 && id != 10000) {
     element.append('<div class="none_setting">未設定</div>')
-    change_icon(id, "none")
+    change_icon(id)
   }
   // 申請者の場合
   else if (id == 10000) {
@@ -115,68 +115,103 @@ function personreload(id) {
   }
   // inputの数が1以上ある場合
   else {
-    change_icon(id, "person")
-    person_number_change(id)
-    person_detail(id)
+    change_icon(id)
+    element_authorizer_reload(id)
+    change_detail(id)
   }
 }
-function change_icon(focusid, icon_name) {
+function change_icon(id) {
   // 要素のインプットタグを取得
   // そのcolumnとrowも取得
-  var inputelement = $("#" + focusid)
+  var inputelement = $("#" + id)
+  var authorizer = inputelement.data("authorizer")
   var column = inputelement.data("column")
   var row = inputelement.data("row")
   // 要素のflow_img_box(アイコンの入れ物)を取得
   var icon = $("#" + column + "_" + row).find(".flow_img_box").find(".flow_img_element")
 
-  if (icon_name == "none") {
-    icon.html(none_icon())
+  if (authorizer == "person") {
+    if ($('.person[data-id = "' + id + '"]').length != 0) {
+      icon.html(person_icon())
+    }
+    else {
+      icon.html(none_icon())
+    }
   }
-  else if (icon_name == "person") {
-    icon.html(person_icon())
+  else if (authorizer == "group") {
+    if ($('.group[data-id="' + id + '"]').length == 0) {
+      icon.html(none_icon())
+    }
+    else if (inputelement.data("group_parameter") == "0" || inputelement.data("group_required_number") == "0") {
+      icon.html(none_icon())
+    }
+    else if (inputelement.data("group_parameter") < inputelement.data("group_required_number")) {
+      icon.html(none_icon())
+    }
+    else {
+      icon.html(group_icon())
+    }
   }
-  else if (icon_name == "group") {
-    icon.html(group_icon())
-  }
+  // if (icon_name == "none") {
+  //   icon.html(none_icon())
+  // }
+  // else if (icon_name == "person") {
+  //   icon.html(person_icon())
+  // }
+  // else if (icon_name == "group") {
+  //   icon.html(group_icon())
+  // }
 }
 
-function person_number_change(id) {
+function element_authorizer_reload(id) {
   // 要素のインプットタグを取得
   // そのcolumnとrowも取得
   var inputelement = $("#" + id)
   var column = inputelement.data("column")
   var row = inputelement.data("row")
   // 要素のauthorizer_container(入れ物)を取得
-  var element = $("#" + column + "_" + row).find(".authorizer_container")
-  var authorizer_number = $('.person[data-id="' + id + '"]').length
+  var element = $("#" + column + "_" + row).find(".element_authorizer_number")
+
   if (inputelement.data("authorizer") == "person") {
+    var authorizer_number = $('.person[data-id="' + id + '"]').length
     if (authorizer_number == 0) {
-      element.parent().find(".element_authorizer_number").text("")
+      element.text("")
       $('.parameter').text('0')
     }
     else {
-      element.parent().find(".element_authorizer_number").text(authorizer_number + "人")
+      element.text(authorizer_number + "人")
       $('.parameter').text(authorizer_number)
     }
+  }
+  else if (inputelement.data("authorizer") == "group") {
+    element.text(inputelement.data('group_parameter') + "人")
   }
 }
 
 
-function person_detail(id) {
+function change_detail(id) {
   var inputelement = $("#" + id)
   var column = inputelement.data("column")
   var row = inputelement.data("row")
   // 要素のdetail_container(入れ物)を取得
   var detail_container = $("#" + column + "_" + row).find(".detail_container")
-  var detail = inputelement.data("person_required_number")
-  if (detail == "all") {
-    detail_container.html('<div class="detail_element">全員の承認</div>')
+  if (inputelement.data('authorizer') == "person") {
+    var detail = inputelement.data("person_required_number")
+    if (detail == "all") {
+      detail_container.html('<div class="detail_element">全員の承認</div>')
+    }
+    else {
+      detail_container.html('<div class="detail_element">うち' + detail + '人承認</div>')
+    }
   }
-  else {
+  else if (inputelement.data('authorizer') == "group") {
+    var detail = inputelement.data("group_required_number")
     detail_container.html('<div class="detail_element">うち' + detail + '人承認</div>')
   }
-}
 
+}
+// フォーカスが当たったり、文字が変更されたときに
+// サーバーに非同期で通信してユーザー情報を取得する
 function ajax_flowuserlist(searchtext, inputtext) {
   var prefix = $('#prefix').val();
   $.ajax({
@@ -188,12 +223,16 @@ function ajax_flowuserlist(searchtext, inputtext) {
 
       if (response.length == 0) {
         $(".gray").show()
+        $(".person_container").addClass("person_container_status_gray")
         inputtext.parent().find(".flow_user_list").show()
         inputtext.parent().find(".flow_user_list").append('<div class="nothing">該当なし</div>');
       }
       else {
         $.each(response, function (index, user) {
           $(".gray").show()
+          // person_containerはデフォルトではoverflow:hiddenとなっているがフォーカスの時は
+          // 選択肢の要素が隠れてしまうので一時的にoverflow:visibleにするクラスを付与していた
+          $(".person_container").addClass("person_container_status_gray")
           inputtext.parent().find(".flow_user_list").show()
           inputtext.parent().find(".flow_user_list").append('<div class="userelement">' + user.name + '</div>');
         });
@@ -205,13 +244,19 @@ function ajax_flowuserlist(searchtext, inputtext) {
 // 承認者個人のフォーカスが外れた時、グレーエリア、リスト、フォーカスのクラスの削除を行う
 function remove_focus() {
   $(".gray").hide()
+  // person_containerはデフォルトではoverflow:hiddenとなっているがフォーカスの時は
+  // 選択肢の要素が隠れてしまうので一時的にoverflow:visibleにするクラスを付与していた
+  // それを外す
+  $(".person_container").removeClass("person_container_status_gray")
   $(".flow_user_list").hide()
   $(".person_text").removeClass("person_text_focus")
+
 }
 
 
 // group_selectからgroupのinputの情報の更新を行う。
 // focus情報をもとに選択中の要素だけの更新も行う
+// グループに該当しないpostはinputから消去
 function change_group() {
   // 現在選択中の要素のidを取得
   var focusid = $("#focus").data("id")
@@ -223,21 +268,43 @@ function change_group() {
   var row = inputelement.data("row")
   // 要素のauthorizer_container(入れ物)を取得
   var element = $("#" + column + "_" + row).find(".authorizer_container")
-  // 個人のインプットタグを一旦削除する
-  // 要素の個人の情報を一旦削除する
+  // グループのインプットタグを一旦削除する
+  // 要素のグループの情報を一旦削除する
   $('input[class="group"][data-id="' + focusid + '"]').remove()
   element.html("")
 
   var group = $('.group_select').val()
-  $(".element_input").append('<input type="hidden" class="group" data-id="' + focusid + '" data-group_name="' + group + '">')
-  element.append('<div class="group_element">' + group + '</div>')
+  var groupid = $('.group_select').find("option:selected").data("group_id")
+  if (group == "") {
+    element.append('<div class="none_setting">未設定</div>')
+    element.parent().find(".element_authorizer_number").text("")
+    group_parameter_reload()
+    // $(".element_input").append('<input type="hidden" class="group" data-id="' + focusid + '" data-group_id= "' + groupid + '" data-group_count ="0">')
+  }
+  else {
+    var group_count = $('.group_select').find("option:selected").data("group_count")
+    $(".element_input").append('<input type="hidden" class="group" data-id="' + focusid + '" data-group_id= "' + groupid + '" data-group_name="' + group + '" data-group_count ="' + group_count + '">')
+    element.append('<div class="group_element">' + group + '</div><div class="group_select_method_container"></div>')
+  }
+
 
 
   if (($('.group[data-id="' + focusid + '"]').length == 0)) {
-    // element.append('<div class="none_setting">未設定</div>')
-    // element.parent().find(".element_authorizer_number").text("")
+
   }
-  person_number_change(focusid)
+  // 選択されているinputのフォーカスidに当てはまるものを順に参照していく
+  $('.post[data-id="' + focusid + '"]').each(function () {
+    // その役職が現在選択されているグループに該当しなかった場合inputを消去する
+    if ($('.position[groupid="' + groupid + '"]').data("positionid") != $(this).data("positionid")) {
+      $(this).remove()
+    }
+  })
+  element_authorizer_reload(focusid)
+  group_select_method_reload(focusid)
+  // 役職の一覧を更新
+  positionreload()
+
+  change_icon(focusid)
 }
 // グループのセレクトボックスの値をinputから取得して表示する
 function group_select(focusid) {
@@ -263,11 +330,11 @@ function group_select_method(focusid) {
     // 選択人数を指定する場合
     else {
       $('#choice_limit2').click()
-      $('#group_authorizer_number').val(group_authorizer_number)
+      $('#group_choice_number').val(group_authorizer_number)
     }
   }
   else if (inputelement_select_method == "postchoice") {
-
+    positionreload()
   }
 }
 // 引数にいれたidの要素だけinputの情報をもとに要素を更新する
@@ -285,10 +352,11 @@ function groupreload(id) {
 
   // inputの数が0であり申請者に当たらない場合、セレクトボックスの初期値の値をinputに入れる
   if ($('.group[data-id="' + id + '"]').length == 0 && id != 10000) {
-    var group = $('.group_select').val()
-    $(".element_input").append('<input type="hidden" class="group" data-id="' + id + '" data-group_name="' + group + '">')
-    element.append('<div class="group_element">' + group + '</div>')
-    change_icon(id, "group")
+    // var group = $('.group_select').val()
+    // var groupid = $('.group_select').find("option:selected").data("group_id")
+    // $(".element_input").append('<input type="hidden" class="group" data-id="' + id + '" data-group_id= "' + groupid + '"  data-group_name="' + group + '">')
+    element.append('<div class="none_setting">未設定</div>')
+    change_icon(id)
   }
   // 申請者の場合
   else if (id == 10000) {
@@ -296,9 +364,11 @@ function groupreload(id) {
   }
   // inputの数が1以上ある場合
   else {
-    element.append('<div class="group_element">' + $('.group[data-id="' + id + '"]').data('group_name') + '</div>')
-    person_number_change(id)
-    change_icon(id, "group")
+    element.append('<div class="group_element">' + $('.group[data-id="' + id + '"]').data('group_name') + '</div><div class="group_select_method_container"></div>')
+    element_authorizer_reload(id)
+    group_select_method_reload(id)
+    change_detail(id)
+    change_icon(id)
   }
 }
 // 承認者の個人・グループのラジオボタンが切り替わったときの動作
@@ -313,6 +383,7 @@ function change_authorizer(person_group) {
   var row = inputelement.data("row")
   // 要素のflow_img_box(アイコンの入れ物)を取得
   var flow_img_box = $("#" + column + "_" + row).find(".flow_img_box")
+  // 切り替わったラジオボタンが個人の場合
   if (person_group == "person") {
     if ($("#" + column + "_" + row).find(".authorizer_container").find(".none_setting").length != 0) {
       // flow_img_box.html('<div class="flow_img_element">' + none_icon() + '</div><div class="element_authorizer_number"></div>')
@@ -324,6 +395,7 @@ function change_authorizer(person_group) {
     }
 
   }
+  // 切り替わったラジオボタンがグループの場合
   else if (person_group == "group") {
     // flow_img_box.html('<div class="flow_img_element">' + group_icon() + '</div><div class="element_authorizer_number"></div>')
     group_select(focusid)
@@ -409,12 +481,23 @@ function change_group_select_method(method) {
   var row = inputelement.data("row")
   inputelement.data("select_method", method)
   inputelement.attr("data-select_method", method)
-  if (method == "byapplicant") {
-    byapplicant_create()
+
+  if (method == "nolimit") {
+    group_parameter_reload()
+    group_select_method_reload(focusid)
   }
-  else if (method == "postchoice"){
+  else if (method == "byapplicant") {
+    byapplicant_create()
+    group_parameter_reload()
+    group_select_method_reload(focusid)
 
   }
+  else if (method == "postchoice") {
+    positionreload()
+    group_parameter_reload()
+    group_select_method_reload(focusid)
+  }
+  change_icon(focusid)
 }
 // 承認者グループの申請者が選択をチェックした場合、inputに選択人数を作成する(デフォルトは無制限)
 // フォーカスがあたって要素の切り替わりの際にもこの関数が呼ばれるため
@@ -438,6 +521,160 @@ function byapplicant_create() {
   }
 
 }
+// 承認者グループのグループ名が変わった時と「役職から選択」にチェックがされたとき
+// inputの役職一覧からグループに該当する役職を並べて表示する
+// 表示された役職にinputの情報からチェックしていく
+// 母数を更新する
+function positionreload() {
+  $('.post_choice_container').html("")
+  // 現在選択中の要素のidを取得
+  var focusid = $("#focus").data("id")
+  // 選択中のグループidを取得
+  var groupid = $('.group[data-id = "' + focusid + '"]').data("group_id")
+  var positioncount = 0
+  // inputからグループに該当する役職をそれぞれ参照していく
+  $('.position[data-groupid = "' + groupid + '"]').each(function () {
+    positioncount = positioncount + 1
+    // チェックボックスを表示していく
+    $('.post_choice_container').append(
+      '<div><input type="checkbox" name="post_choice" class="post_choice" id="positionid' + positioncount + '" value="' + $(this).data("positionid") + '"><label for="positionid' + positioncount + '">' + $(this).val() + '</label></div>'
+    )
+  })
+
+  // 表示されているチェックボックスの値を順に参照していく
+  $('.post_choice').each(function () {
+    // inputの情報からチェックボックスに該当するidがあった場合チェックボックスにチェックをつける
+    if ($('.post[data-id="' + focusid + '"][data-positionid="' + $(this).val() + '"]').length != 0) {
+      $(this).prop("checked", true)
+    }
+    // inputの情報からチェックボックスに該当するidがあった場合チェックボックスにチェックをつける
+    else {
+      $(this).prop("checked", false)
+    }
+  })
+  group_parameter_reload()
+}
+// 「役職から選択」の中の役職のチェックボックスにチェックがされたときに
+// 役職選択のインプットタグを作成する
+// 母数を更新する
+function positioninputcreate() {
+  // 現在選択中の要素のidを取得
+  var focusid = $("#focus").data("id")
+  $('.post[data-id="' + focusid + '"]').remove()
+  $('.post_choice:checked').each(function () {
+    $('.element_input').append(
+      '<input type="hidden" class="post" data-id="' + focusid + '" data-positionid="' + $(this).val() + '">'
+    )
+  })
+  group_select_method_reload(focusid)
+  group_parameter_reload()
+  change_icon(focusid)
+
+}
+
+// グループの選択方法が変わった際承認人数の母数を変更する
+function group_parameter_reload() {
+  // 現在選択中の要素のidを取得
+  var focusid = $("#focus").data("id")
+  var inputelement = $('#' + focusid)
+
+  var method = $('#' + focusid).data('select_method')
+  var group_element = $('.group[data-id="' + focusid + '"]')
+  if (group_element.length != 0) {
+    var group_count = group_element.data("group_count")
+  }
+  else {
+    var group_count = "0"
+  }
+
+
+  // 限定無しの場合
+  if (method == "nolimit") {
+    // 該当するグループがインプットにある場合
+    if (group_element.length != 0) {
+      $('.group_parameter').text(group_count)
+      inputelement.data('group_parameter', group_count)
+      inputelement.attr('data-group_parameter', group_count)
+    }
+    // inputに値がない場合(空のグループが選択されている場合)
+    else {
+      $('.group_parameter').text(0)
+      inputelement.data('group_parameter', "0")
+      inputelement.attr('data-group_parameter', "0")
+    }
+  }
+  else if (method == "byapplicant") {
+    var byapplicant_element = $('.byapplicant[data-id="' + focusid + '"]')
+    // 選択人数が無制限の場合
+    // パラメーターはグループの数を母数にする
+    if (byapplicant_element.data("group_choice_number ") == "all") {
+      $('.group_parameter').text(group_count)
+      inputelement.data('group_parameter', group_count)
+      inputelement.attr('data-group_parameter', group_count)
+    }
+    // 選択人数の指定がありそれがグループの数より少ない場合
+    // パラメーターは指定された選択人数を母数にする
+    else if (byapplicant_element.data("group_choice_number") < group_count) {
+      $('.group_parameter').text(byapplicant_element.data("group_choice_number"))
+      inputelement.data('group_parameter', byapplicant_element.data("group_choice_number"))
+      inputelement.attr('data-group_parameter', byapplicant_element.data("group_choice_number"))
+    }
+    // それ以外(選択人数の指定がグループの数より多い場合)
+    // パラメーターはグループの数を母数にする
+    else {
+      $('.group_parameter').text(group_count)
+      inputelement.data('group_parameter', group_count)
+      inputelement.attr('data-group_parameter', group_count)
+    }
+  }
+  else if (method == "postchoice") {
+    var position_total_count = 0
+    $('.post[data-id="' + focusid + '"]').each(function () {
+      var positionid = $(this).data("positionid")
+      var position_count = $('.position[data-positionid="' + positionid + '"]').data("position_count")
+      position_total_count = position_total_count + position_count
+    })
+    $('.group_parameter').text(position_total_count)
+    inputelement.data('group_parameter', position_total_count)
+    inputelement.attr('data-group_parameter', position_total_count)
+  }
+  element_authorizer_reload(focusid)
+
+}
+function group_select_method_reload(id) {
+  var inputelement = $('#' + id)
+  var column = inputelement.data("column")
+  var row = inputelement.data("row")
+  // 要素のauthorizer_container(入れ物)を取得
+  var group_select_method_container = $("#" + column + "_" + row).find(".group_select_method_container")
+  group_select_method_container.html("")
+  if (inputelement.data("select_method") == "byapplicant") {
+    group_select_method_container.append(
+      '<div class="byapplicant_container">申請者が選択</div>'
+    )
+  }
+  else if (inputelement.data("select_method") == "postchoice") {
+    var length = $('.post[data-id="' + id + '"]').length
+    $('.post[data-id="' + id + '"]').each(function () {
+      group_select_method_container.append(
+        '<div class="postchoice_container">' + $('.position[data-positionid = "' + $(this).data("positionid") + '"]').val() + '</div>'
+      )
+    })
+
+  }
+
+
+}
+
+function group_required_number_reload(id){
+  var inputelement = $('#' + id)
+  var group_required_number = inputelement.data("group_required_number")
+  $("#group_authorizer_number").val(group_required_number)
+}
+
+
+
+
 // 承認者グループ、申請者が選択の選択可能人数が変更された際、inputに情報を更新する
 function change_choice_number(status) {
   var focusid = $("#focus").data("id")
@@ -456,37 +693,67 @@ function change_choice_number(status) {
       byapplicant.data('group_choice_number', "1")
       byapplicant.attr('data-group_choice_number', "1")
 
-      $('#group_authorizer_number').val("1")
+      $('#group_choice_number').val("1")
     }
 
   }
   else if (status == 'number') {
     // 選択人数指定が0以下の場合は値を1にする
-    if ($('#group_authorizer_number').val() < 1) {
+    if ($('#group_choice_number').val() < 1) {
       byapplicant.data('group_choice_number', 1)
-      byapplicant.attr('data-group_choice_number',1)
-      $('#group_authorizer_number').val("1")
+      byapplicant.attr('data-group_choice_number', 1)
+      $('#group_choice_number').val("1")
     }
     // 選択人数指定が1以上の場合は値をそのまま入れる
-    else if ($('#group_authorizer_number').val() >= 1) {
-      byapplicant.data('group_choice_number', $('#group_authorizer_number').val())
-      byapplicant.attr('data-group_choice_number', $('#group_authorizer_number').val())
+    else if ($('#group_choice_number').val() >= 1) {
+      byapplicant.data('group_choice_number', $('#group_choice_number').val())
+      byapplicant.attr('data-group_choice_number', $('#group_choice_number').val())
     }
     // inputに値がなかった場合は値を1にする
     else {
       byapplicant.data('group_choice_number', 1)
-      byapplicant.attr('data-group_choice_number',1)
-      $('#group_authorizer_number').val("1")
+      byapplicant.attr('data-group_choice_number', 1)
+      $('#group_choice_number').val("1")
     }
 
   }
+  group_parameter_reload()
+}
+// グループの承認人数が変更されたときにinputに情報を入れる
+// 母数を超えた時に処理を行う
+// 
+function change_group_authorizer_number() {
+  var focusid = $("#focus").data("id")
+
+  var inputelement = $("#" + focusid)
+  var group_authorizer_number = $('#group_authorizer_number').val()
+  // 母数をチェックする
+  var group_parameter = $('.group_parameter').text()
+  if (group_authorizer_number < 1) {
+    $('#group_authorizer_number').val("1")
+    inputelement.data("group_required_number", "1")
+    inputelement.attr("data-group_required_number", "1")
+  }
+  else if (group_authorizer_number > group_parameter) {
+    $('#group_authorizer_number').val(group_parameter)
+    inputelement.data("group_required_number", group_parameter)
+    inputelement.attr("data-group_required_number", group_parameter)
+  }
+  else {
+    inputelement.data("group_required_number", group_authorizer_number)
+    inputelement.attr("data-group_required_number", group_authorizer_number)
+  }
+  change_detail(focusid)
+  change_icon(focusid)
+
+
 }
 
 
 
 
 function makeinputelement(gridcolumn, gridrow, nowelementid, last = "none") {
-  $(".element_input").append('<input type="hidden" id="' + nowelementid + '" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '" data-authorizer = "person" data-person_required_number="all" data-select_method ="nolimit" >')
+  $(".element_input").append('<input type="hidden" id="' + nowelementid + '" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '" data-authorizer = "person" data-person_required_number="all" data-group_parameter="0" data-group_required_number="0" data-select_method ="nolimit" >')
 }
 
 function reloadelement() {
@@ -541,13 +808,13 @@ function createelement(gridcolumn, gridrow, last = "none", status = "add") {
     console.log($(".element"))
     if ($('input[data-column = "' + gridcolumn + '"][data-row = "' + gridrow + '"]').data('authorizer') == 'person') {
       $('.grid' + gridcolumn + '_' + gridrow).append(
-        '<div class="flow_img_box"><div class="flow_img_element">' + person_icon() + '</div><div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div><div class="detail_container"><div class="detail_element">0人</div></div>'
+        '<div class="flow_img_box"><div class="flow_img_element">' + person_icon() + '</div><div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div><div class="detail_container"><div class="detail_element"></div></div>'
       )
       console.log('個人')
     }
     else if ($('input[data-column = "' + gridcolumn + '"][data-row = "' + gridrow + '"]').data('authorizer') == 'group') {
       $('.grid' + gridcolumn + '_' + gridrow).append(
-        '<div class="flow_img_box"><div class="flow_img_element">' + group_icon() + '</div><div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div><div class=detail_container><div class="detail_element">0人</div></div>'
+        '<div class="flow_img_box"><div class="flow_img_element">' + group_icon() + '</div><div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div><div class=detail_container><div class="detail_element"></div></div>'
       )
       console.log('グループ')
     }
@@ -888,14 +1155,16 @@ function focus_right_side_menu(column, row) {
     $('input[class="person"][data-id="' + focusid + '"]').each(function () {
       $(".person_content").append('<div class="person_box"><input type="text" class="person_text" value="' + $(this).data("person_name") + '"><div class="batsu_button">×</div><div class="flow_user_list"></div></div>')
     })
-    person_number_change(focusid)
   }
   // フォーカスしている要素が個人の場合はラジオボタン「グループ」をクリック
   else if ($('#' + focusid).data('authorizer') == "group") {
     $("#authorizer2").click()
     group_select(focusid)
     group_select_method(focusid)
+    group_required_number_reload(focusid)
   }
+
+  element_authorizer_reload(focusid)
 
 
 

@@ -119,7 +119,7 @@
                 <label for="authorizer_condition2">条件指定</label>
             </div>
             <div class="autorizer_number_container" id="person_authorizer_number_container">
-                <span class="parameter">0</span>人中 <input type="number" class="authorizer_number" id="person_required_number"> 人
+                <span class="parameter">0</span>人中 <input type="number" class="authorizer_number" id="person_required_number"> 人承認
             </div>
 
         </div>
@@ -132,6 +132,7 @@
         <div class="group_container">
             <div>
                 <select class="group_select">
+                    <option></option>
                     @foreach ($groups as $group)
                     <option data-group_id="{{$group->id}}" data-group_count="{{$group->count}}">{{$group->グループ名}}</option>
                     @endforeach
@@ -159,7 +160,7 @@
                         <label for="choice_limit2">選択人数指定</label>
                     </div>
                     <div class="autorizer_number_container" id="group_authorizer_number_container">
-                        <input type="number" class="authorizer_number" id="group_authorizer_number"> 人
+                        <input type="number" class="authorizer_number" id="group_choice_number"> 人
                     </div>
                 </div>
 
@@ -170,19 +171,8 @@
                 <label for="postchoice">役職から選択</label>
             </div>
             <div class="post_choice_container">
-                <div>
-                    <input type="checkbox" name="post_choice" id="post_choice1">
-                    <label for="post_choice1">社長</label>
-                </div>
-                <div>
-                    <input type="checkbox" name="post_choice" id="post_choice2">
-                    <label for="post_choice2">部長</label>
-                </div>
-                <div>
-                    <input type="checkbox" name="post_choice" id="post_choice3">
-                    <label for="post_choice3">取締役</label>
-                </div>
             </div>
+            <div class="group_authorizer_number_container" id="group_authorizer_number_container"><span class="group_parameter">0</span>人中<input type="number" class="authorizer_number" id="group_authorizer_number">人承認</div>
 
         </div>
         <div class="right_side_section">
@@ -211,10 +201,13 @@
 
 <h2 class="pagetitle">ワークフロー登録</h2>
 <div class="element_input">
+    @foreach ($positions as $position)
+    <input type="hidden" class="position" data-groupid="{{$position->グループID}}" data-positionid="{{$position->id}}" data-position_count="{{$position->count}}" value="{{$position->役職}}">
+    @endforeach
     <input type="hidden" class="route" id="route" data-routecount="1">
     <input type="hidden" class="maxgrid" id="maxgrid" data-maxcolumn="1" data-maxrow="1">
     <input type="hidden" id="10000" class="element" data-column="1" data-row="1" data-last="none">
-    <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last" data-authorizer="person" data-person_required_number="all" data-select_method="nolimit">
+    <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last" data-authorizer="person" data-person_required_number="all" data-person_required_number="all" data-group_parameter="0" data-group_required_number="0" data-select_method="nolimit">
 
     <input type="hidden" class="line" data-startcolumn="1" data-startrow="1" data-endcolumn="1" data-endrow="2">
     <input type="hidden" id="focus" class="focus" data-id="">

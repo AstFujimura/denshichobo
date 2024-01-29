@@ -6,6 +6,9 @@ use App\Models\Document;
 use App\Models\File;
 use App\Models\Group;
 use App\Models\Group_User;
+use App\Models\Version;
+use App\Models\Position;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -188,7 +191,7 @@ class AdminController extends Controller
             // $newGroupUser->save();
 
             //固有グループ名を除くグループIDとユーザーIDの組み合わせのレコードを一旦消去する
-            Group_User::where("グループID",">",100000)
+            Group_User::where("グループID", ">", 100000)
                 ->where('ユーザーID', $user->id)
                 ->delete();
 
@@ -331,7 +334,14 @@ class AdminController extends Controller
     {
         $document = File::where("グループID", $id)
             ->first();
+        //  グループに属している帳簿がなければ、削除
+        // グループに紐づくユーザーの関係を削除
+        // グループに属している役職の削除
         if (!$document) {
+            $group_users = Group_User::where("グループID", $id)->delete();
+
+            $positions = Position::where("グループID", $id)->delete();
+
             $record = Group::find($id);
             $record->delete();
         }
@@ -346,8 +356,10 @@ class AdminController extends Controller
         }
         $server = config('prefix.server');
 
-        $groups = Group::where('id','>',100000)->get();
-        return view("admin.admingroup", compact("groups", 'prefix', 'server'));
+        $groups = Group::where('id', '>', 100000)->get();
+        $version = Version::find(1)->フロー;
+
+        return view("admin.admingroup", compact("groups", 'version', 'prefix', 'server'));
     }
 
     public function admingroupregistPost(Request $request)
@@ -368,6 +380,109 @@ class AdminController extends Controller
                 }
             }
         }
+        return response()->json("成功");
+    }
+
+    public function admingroupuserGet($id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $server = config('prefix.server');
+
+        $group = Group::find($id);
+        $users = DB::table("group_user")
+            ->select('users.*', 'group_user.役職ID')
+            ->leftJoin('users', 'group_user.ユーザーID', '=', 'users.id')
+            ->where('group_user.グループID', $id)
+            ->get();
+
+        $count = $users->count();
+
+
+        $allusers = User::where("id", ">", 1)->get();
+        $positions = Position::where("グループID", $id)->get();
+        return view("admin.admingroupuser", compact("group", "users", "allusers", "count", "positions", 'prefix', 'server'));
+    }
+    public function admingroupuserPost(Request $request, $id)
+    {
+        $groupuser_count = $request->input("groupusercount");
+        Group_User::where("グループID",$id)->delete();
+        for ($i = 1; $i <= $groupuser_count; $i++) {
+            $userid = $request->input("user" . $i);
+            $positionid = $request->input("position" . $i);
+            // ユーザー名が空欄でなかった場合(フロントエンドで制御するが万が一漏れていた場合の保険)
+            if ($userid) {
+                // 役職が指定されたければ役職IDを0にする
+                if (!$positionid) {
+                    $positionid = 0;
+                }
+                $newgroupuser = new Group_User();
+                $newgroupuser->グループID = $id;
+                $newgroupuser->ユーザーID = $userid;
+                $newgroupuser->役職ID = $positionid;
+                $newgroupuser->save();
+            }
+        }
+        return redirect()->route("admingroupuserGet", ['id' => $id]);
+    }
+    public function admingrouppositionGet($id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+
+        $group = Group::find($id);
+        // グループIDが該当する役職の一覧
+        $positions = Position::where("グループID", $id)->get();
+        return view("admin.admingroupposition", compact("group", 'prefix', 'server', 'positions'));
+    }
+
+    public function admingrouppositionPost(Request $request, $id)
+    {
+
+        $positionarray = json_decode($request->getContent());
+
+        foreach ($positionarray as $position) {
+            if ($position->past == "past") {
+                $pastposition = Position::where("id", $position->id)->first();
+                $pastposition->役職 = $position->position;
+                $pastposition->グループID = $id;
+                $pastposition->save();
+            } else if ($position->past == "new" && $position->position != "") {
+                $existposition = Position::where("役職", $position->position)
+                    ->where("グループID", $id)
+                    ->first();
+                if (!$existposition) {
+                    $newposition = new Position();
+                    $newposition->役職 = $position->position;
+                    $newposition->グループID = $id;
+                    $newposition->save();
+                }
+            }
+        }
+        return response()->json("成功");
+    }
+
+    public function admingrouppositiondeleteGet($id)
+    {
+
+        // 指定の役職を消去する
+        $position = Position::find($id);
+        $position->delete();
+
+        // グループユーザーテーブルから該当の役職があれば0にしてそのユーザーの役職をなしにする
+        $group_users = Group_User::where("役職ID", $id)->get();
+        foreach ($group_users as $group_user) {
+            $group_user->役職ID = 0;
+            $group_user->save();
+        }
+
+
         return response()->json("成功");
     }
 }

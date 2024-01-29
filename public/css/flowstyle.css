@@ -181,6 +181,9 @@
     height: 0;
     overflow: hidden;
 }
+.person_container_status_gray{
+    overflow: visible !important;
+}
 
 .person_container_open{
     padding: 10px;
@@ -329,6 +332,11 @@
     padding: 5px;
 }
 
+.group_authorizer_number_container{
+    margin-top: 11px;
+    margin-left: 23px;
+}
+
 
 /* メイン機能 */
 .grid {
@@ -390,10 +398,10 @@
     height: 20px;
     border-bottom: solid 1px rgb(189, 189, 189);
 }
-.person_element:first-child{
+.authorizer_container>div:first-child{
     margin-top: auto;
 }
-.person_element:last-child{
+.authorizer_container>div:last-child{
     margin-bottom: auto;
 }
 
@@ -411,6 +419,25 @@
 /* .person_element:not(last-child){
     margin-bottom: 2px;
 } */
+
+.byapplicant_container{
+    margin-top: 3px;
+    background: #aade7d;
+    border-radius: 3px;
+    padding: 2px;
+    width: 100px;
+    text-align: center;
+    font-weight: bold;
+}
+.postchoice_container{
+    margin-top: 3px;
+    background: #de977d;
+    border-radius: 3px;
+    padding: 2px;
+    width: 90px;
+    text-align: center;
+    font-weight: bold;
+}
 
 .focus{
     border: solid 5px rgb(0, 255, 85);

@@ -22,6 +22,10 @@
             <div class="admin_group">グループ</div>
             <div class="admin_group_change">名称変更</div>
             <div class="admin_group_delete">削除</div>
+            @if ($version != 0)
+            <div class="admin_group_detail_change">ユーザー設定</div>
+            <div class="admin_group_detail_change">役職設定</div>
+            @endif
         </div>
         <div class="nonsortable">
             @foreach($groups as $group)
@@ -37,6 +41,14 @@
                 <div class="admin_group_delete">
                     <div class="gr_delete_button" id="{{$group->id}}">削除</div>
                 </div>
+                @if ($version != 0)
+                <div class="admin_group_detail_change">
+                    <img src="{{ asset($prefix.'/'.'img/user_setting.svg')}}" class="download" onclick="location.href='{{$prefix}}/admin/groupuser/{{$group->id}}';">
+                </div>
+                <div class="admin_group_detail_change">
+                    <img src="{{ asset($prefix.'/'.'img/position.svg')}}" class="download" onclick="location.href='{{$prefix}}/admin/groupposition/{{$group->id}}';">
+                </div>
+                @endif
             </div>
             @endforeach
 

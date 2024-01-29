@@ -6,6 +6,7 @@ use App\Models\Document;
 use App\Models\File;
 use App\Models\Group;
 use App\Models\Group_User;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -26,11 +27,18 @@ class FlowController extends Controller
         $groups = Group::where('id', ">", 100000)
             ->get();
         foreach ($groups as $group) {
-            $count = Group_User::where("グループID",$group->id)
-            ->count();
+            $count = Group_User::where("グループID", $group->id)
+                ->count();
             $group->count = $count;
         }
-        return view('flow.workflow', compact("prefix", "server", "groups"));
+        $positions = Position::all();
+        // 役職についている人が何人いるかを中間テーブルから取得して新たなカラムとして付与
+        foreach ($positions as $position) {
+            $positioncount = Group_User::where("役職ID", $position->id)
+                ->count();
+            $position->count = $positioncount;
+        }
+        return view('flow.workflow', compact("prefix", "server", "groups", "positions"));
     }
 
     public function flowuserlist(Request $request)

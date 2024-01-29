@@ -61,7 +61,6 @@ $(document).ready(function () {
   // 承認者_グループのテキストボックスの文字が変わったとき
   $(document).on("change", ".group_select", function () {
     change_group()
-
   })
 
 
@@ -115,9 +114,17 @@ $(document).ready(function () {
       change_choice_number('select')
     }
   })
-
-  $('#group_authorizer_number').on("change", function () {
+// 選択人数指定が変わった時
+  $('#group_choice_number').on("change", function () {
     change_choice_number('number')
+  })
+// 承認者グループの役職選択の中のチェックボックスが変わった時
+  $(document).on("change",".post_choice",function(){
+    positioninputcreate()
+  })
+// 承認者グループの承認人数が変わった時
+  $('#group_authorizer_number').on("change", function(){
+    change_group_authorizer_number()
   })
 
   // クリックしたときの場所により判定を行う
@@ -173,10 +180,7 @@ $(document).ready(function () {
     else {
       $(".e").removeClass("focus")
       $('.right_side_menu').removeClass("right_side_menu_open")
-      // グレーエリアと個人の候補リストを非表示
-      $(".gray").hide()
-      $(".flow_user_list").hide()
-      $(".person_text").removeClass("person_text_focus")
+      remove_focus()
     }
 
   })

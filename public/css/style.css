@@ -47,23 +47,29 @@ a {
   border-radius: 30px;
   cursor: pointer;
 }
-.news_delete_button:hover{
+
+.news_delete_button:hover {
   background: black;
 }
-.news_delete_button:hover::before,.news_delete_button:hover::after{
-background: white;
+
+.news_delete_button:hover::before,
+.news_delete_button:hover::after {
+  background: white;
 }
-.news_title{
+
+.news_title {
   font-size: 25px;
   font-weight: bold;
   text-align: center;
   margin-top: 30px;
 }
-.news_content{
+
+.news_content {
   margin-top: 50px;
   margin-inline: 30px;
 }
-.news_astec{
+
+.news_astec {
   position: absolute;
   bottom: 35px;
   right: 59px;
@@ -1355,6 +1361,11 @@ background: white;
   text-align: left !important;
 }
 
+.admin_position {
+  width: 110px;
+  text-align: center;
+}
+
 .admin_document_change {
   width: 100px;
 }
@@ -1369,6 +1380,12 @@ background: white;
 
 .admin_group_delete {
   width: 100px;
+}
+
+.admin_group_detail_change {
+  width: 100px;
+  display: flex;
+  justify-content: center;
 }
 
 .admin_document_value {
@@ -1393,6 +1410,10 @@ background: white;
 
 .admin_group_text {
   display: none;
+}
+
+.position_open {
+  display: flex !important;
 }
 
 .document_open {
@@ -1562,6 +1583,272 @@ background: white;
   color: white;
 }
 
+
+/* グループ_役職設定 */
+
+.positiontable {
+  width: 500px;
+}
+
+.positiontable_header {
+  display: flex;
+}
+
+.positiontable_header div {
+  background: rgb(245, 227, 217);
+  border-right: solid 1px white;
+  text-align: center;
+  height: 35px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.position_name {
+  display: flex;
+  width: 50%;
+  align-items: center;
+}
+
+.position_text {
+  display: none;
+}
+
+.position_name_value {
+  height: 30px;
+  border: solid 1px gray;
+  border-radius: 3px;
+  margin-right: auto;
+  display: none;
+}
+
+.edit_container {
+  display: flex;
+  width: 25%;
+  align-items: center;
+
+}
+
+.delete_container {
+  display: flex;
+  width: 25%;
+  align-items: center;
+}
+
+.positiontable_body.position_past {
+  display: flex;
+  flex-direction: column;
+}
+
+.positiontable_body>div {
+  display: flex;
+  justify-content: center;
+  height: 37px;
+  border-bottom: solid 1px rgb(127, 127, 207);
+}
+
+.position_edit_button {
+  margin: auto;
+  cursor: pointer;
+  background: rgb(217, 255, 192);
+  border: solid 2px rgb(12, 124, 22);
+  border-radius: 5px;
+  text-align: center;
+  font-size: 15px;
+  width: 44px;
+  height: 27px;
+}
+
+.position_edit_button:hover {
+  background: rgb(12, 124, 22);
+  color: white;
+}
+
+
+
+.admin_position_delete {
+  width: 100px;
+}
+
+.position_delete_button {
+  margin: auto;
+  cursor: pointer;
+  background: pink;
+  border: solid 2px red;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 15px;
+  width: 44px;
+  height: 27px;
+
+}
+
+.position_delete_button:hover {
+  background: red;
+  color: white;
+}
+
+.add_position {
+  width: 100px;
+  height: 30px;
+  border-radius: 4px;
+  border: solid 1px gray;
+}
+
+.position_addbutton {
+  margin-block: 30px;
+  background: #2ac02a;
+  width: 73px;
+  text-align: center;
+  padding: 3px;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+}
+
+.position_addbutton:hover {
+  background: #1c881c;
+}
+
+.positiontable_body.new {
+  display: flex;
+  margin-top: 12px;
+  height: 35px;
+  width: 215px;
+}
+
+.position_change_button {
+  margin-block: 30px;
+  background: #d4f9ff;
+  width: 145px;
+  text-align: center;
+  padding: 13px;
+  border-radius: 9px;
+  color: black;
+  border: solid 2px #66e1d6;
+  cursor: pointer;
+  display: none;
+  font-size: 20px;
+}
+
+.position_change_button:hover {
+  background: #347973;
+  color: white;
+}
+
+
+.groupusertable {
+  width: 500px;
+}
+
+.groupusertable_header {
+  display: flex;
+}
+
+.groupusertable_header>div {
+  background: rgb(245, 227, 217);
+  border-right: solid 1px white;
+  text-align: center;
+  height: 35px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.groupuser_name {
+  width: 33%;
+}
+
+.groupuser_select {
+  width: 90%;
+  height: 26px;
+  border: solid 1px #b8b6b6;
+  border-radius: 3px;
+}
+
+.errorselect {
+  border: solid 1px red !important;
+  background: rgb(255, 234, 238);
+}
+.errorselect option {
+  background: white;
+}
+
+.groupuser_position {
+  width: 33%;
+
+}
+
+.groupuser_delete {
+  width: 33%;
+
+}
+
+.groupuser_delete_button {
+  margin: auto;
+  cursor: pointer;
+  background: pink;
+  border: solid 2px red;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 15px;
+  width: 44px;
+  height: 27px;
+
+}
+
+.groupuser_delete_button:hover {
+  background: red;
+  color: white;
+}
+
+.groupuser_addbutton {
+  margin-block: 30px;
+  background: #2ac02a;
+  width: 73px;
+  text-align: center;
+  padding: 3px;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.groupuser_change_button {
+  margin-block: 21px;
+  margin-left: 32px;
+  background: #d4f9ff;
+  width: 110px;
+  text-align: center;
+  padding: 5px;
+  border-radius: 9px;
+  color: #0a0f1f;
+  border: solid 2px #66e1d6;
+  cursor: pointer;
+  display: none;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.groupuser_change_button:hover {
+  background: #347973;
+  color: white;
+}
+
+.groupusertable_body {}
+
+.dummy_table {
+  display: none !important;
+}
+
+.groupusertable_tr {
+  display: flex;
+  height: 42px;
+  justify-content: center;
+  align-items: center;
+  border-bottom: solid 1px rgb(127, 127, 207);
+}
+
 .past:hover>div {
   background: rgb(192, 192, 192);
   cursor: pointer;
@@ -1587,18 +1874,4 @@ background: white;
 
 .dateform {
   display: flex;
-}
-
-.checkform {
-  max-height: 370px;
-  overflow-x: auto;
-}
-
-
-
-.group_check_label {
-  height: 33px;
-  line-height: 33px;
-  display: inline-block;
-  border-bottom: solid 1px #c5c5c5;
 }
