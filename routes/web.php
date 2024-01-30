@@ -160,6 +160,7 @@ Route::prefix($prefix)->group(function () {
         // -------------------------------承認機能----------------------------------------------------
         if (Version::where('フロー', true)->first()) {
             Route::get('/workflow', [FlowController::class, 'workflow'])->name('workflow');
+            Route::post('/workflow', [FlowController::class, 'workflowpost'])->name('workflowpost');
             Route::get('/flowuserlist', [FlowController::class, 'flowuserlist'])->name('flowuserlist');
 
             //    グループの役職設定画面

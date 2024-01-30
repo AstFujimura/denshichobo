@@ -114,16 +114,16 @@ $(document).ready(function () {
       change_choice_number('select')
     }
   })
-// 選択人数指定が変わった時
+  // 選択人数指定が変わった時
   $('#group_choice_number').on("change", function () {
     change_choice_number('number')
   })
-// 承認者グループの役職選択の中のチェックボックスが変わった時
-  $(document).on("change",".post_choice",function(){
+  // 承認者グループの役職選択の中のチェックボックスが変わった時
+  $(document).on("change", ".post_choice", function () {
     positioninputcreate()
   })
-// 承認者グループの承認人数が変わった時
-  $('#group_authorizer_number').on("change", function(){
+  // 承認者グループの承認人数が変わった時
+  $('#group_authorizer_number').on("change", function () {
     change_group_authorizer_number()
   })
 
@@ -412,6 +412,30 @@ $(document).ready(function () {
 
 
 
-
-
+  $('#workflowform').on("submit", function (event) {
+    event.preventDefault()
+    var uniqueLastElements = new Set(); // 重複を許容しないSetを使用
+    $.each(arrays, function (key, values) {
+      $.each(values, function (index, value) {
+        $('<input>').attr({
+          type: 'hidden',
+          name: 'array' + key + '[]',
+          value: value
+        }).appendTo('.element_input');
+      });
+      var lastElement = values[values.length - 1];
+      uniqueLastElements.add(lastElement);
+    });
+    $('<input>').attr({
+      type: 'hidden',
+      name: 'arraycount',
+      value: Object.keys(arrays).length
+    }).appendTo('.element_input');
+    $('<input>').attr({
+      type: 'hidden',
+      name: 'lastelementcount',
+      value: uniqueLastElements.size
+    }).appendTo('.element_input');
+    this.submit()
+  })
 });
