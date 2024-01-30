@@ -753,7 +753,7 @@ function change_group_authorizer_number() {
 
 
 function makeinputelement(gridcolumn, gridrow, nowelementid, last = "none") {
-  $(".element_input").append('<input type="hidden" id="' + nowelementid + '" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '" data-authorizer = "person" data-person_required_number="all" data-group_parameter="0" data-group_required_number="0" data-select_method ="nolimit" >')
+  $(".element_input").append('<input type="hidden" id="' + nowelementid + '" class="element" data-column="' + gridcolumn + '" data-row="' + gridrow + '" data-last="' + last + '" data-authorizer = "person" data-person_required_number="all" data-group_parameter="0" data-group_required_number="1" data-select_method ="nolimit" >')
 }
 
 function reloadelement() {

@@ -207,7 +207,7 @@
     <input type="hidden" class="route" id="route" data-routecount="1">
     <input type="hidden" class="maxgrid" id="maxgrid" data-maxcolumn="1" data-maxrow="1">
     <input type="hidden" id="10000" class="element" data-column="1" data-row="1" data-last="none">
-    <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last" data-authorizer="person" data-person_required_number="all" data-person_required_number="all" data-group_parameter="0" data-group_required_number="0" data-select_method="nolimit">
+    <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last" data-authorizer="person" data-person_required_number="all" data-person_required_number="all" data-group_parameter="0" data-group_required_number="1" data-select_method="nolimit">
 
     <input type="hidden" class="line" data-startcolumn="1" data-startrow="1" data-endcolumn="1" data-endrow="2">
     <input type="hidden" id="focus" class="focus" data-id="">
