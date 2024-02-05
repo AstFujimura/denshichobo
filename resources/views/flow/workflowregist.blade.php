@@ -26,10 +26,10 @@
                         条件
                     </div>
                     <div class="accordion_menu">
-                        <div class="accordion_menu_title accordion_group">
+                        <div class="accordion_menu_title accordion_group accordion_menu_title_open">
                             グループ
                         </div>
-                        <div class="accordion_content">
+                        <div class="accordion_content accordion_content_open">
 
                             @foreach ($groups as $index=>$group)
                             <div>
@@ -41,10 +41,10 @@
 
                     </div>
                     <div class="accordion_menu">
-                        <div class="accordion_menu_title accordion_price">
+                        <div class="accordion_menu_title accordion_price accordion_menu_title_open">
                             金額
                         </div>
-                        <div class="accordion_content">
+                        <div class="accordion_content accordion_content_open">
                             <div class="flow_plice_box">
                                 <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price">円以上
                             </div>

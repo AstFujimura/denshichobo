@@ -38,13 +38,13 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
         <div class="iconmessage">Top</div>
     </div>
-    <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
+    <div class="headerIcon001" onclick="location.href='{{route('workflowmaster')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}" class="menuicon01">
-        <div class="iconmessage">ユーザ一覧</div>
+        <div class="iconmessage">ワークフローマスタ一覧</div>
     </div>
-    <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
+    <div class="headerIcon001" onclick="location.href='{{route('workflowregistget')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01">
-        <div class="iconmessage">ユーザー登録</div>
+        <div class="iconmessage">ワークフローマスタ登録</div>
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('admingroupregistGet')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01">
@@ -92,17 +92,17 @@
 
             </div>
             <a href="{{route('topGet')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}">
-                        </div>
-                        <div class="button1name01">
-                            電子帳簿システム
-                        </div>
-
+                <div class="button1element01">
+                    <div class="button1logo01">
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}">
+                    </div>
+                    <div class="button1name01">
+                        電子帳簿システム
                     </div>
 
-                </a>
+                </div>
+
+            </a>
             <div class="sidebarcontent01">
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
@@ -161,19 +161,8 @@
         </div>
         <main class="main01">
 
+            @yield('main')
 
-            <div class="maincontent01">
-                <nav class="navbar">
-                    @yield('menuebar')
-                </nav>
-                <div class="MenueBar">
-                    @yield('menue')
-                </div>
-                <div class="MainElement">
-                    @yield('main')
-                </div>
-
-            </div>
         </main>
 
 

@@ -15,10 +15,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('T_flow_points', function (Blueprint $table) {
+        Schema::create('t_flow_points', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('フロー地点ID');
-            $table->foreign('フロー地点ID')->references('id')->on('T_flow_points');
+            $table->foreign('フロー地点ID')->references('id')->on('t_flow_points');
             $table->integer('承認移行ステータス')->default(-1);
             $table->integer('承認ステータス')->default(-1);
 
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('T_flow_points');
+        Schema::dropIfExists('t_flow_points');
     }
 };

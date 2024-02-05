@@ -159,9 +159,32 @@ Route::prefix($prefix)->group(function () {
 
         // -------------------------------承認機能----------------------------------------------------
         if (Version::where('フロー', true)->first()) {
-            Route::get('/workflow', [FlowController::class, 'workflow'])->name('workflow');
-            Route::post('/workflow', [FlowController::class, 'workflowpost'])->name('workflowpost');
+            // ワークフロー登録
+            Route::get('/workflowregist', [FlowController::class, 'workflowregistget'])->name('workflowregistget');
+            Route::post('/workflowregist', [FlowController::class, 'workflowregistpost'])->name('workflowregistpost');
+            // ワークフロー登録時のユーザーの非同期通信先API
             Route::get('/flowuserlist', [FlowController::class, 'flowuserlist'])->name('flowuserlist');
+            // ワークフローのフロントエンドオブジェクトを返す非同期通信先API
+            Route::get('/flowobject/{id}', [FlowController::class, 'flowobject'])->name('flowobject');
+            // ワークフローのポスト前のユーザー名のチェックを行う非同期通信先API
+            Route::get('/flowusercheck', [FlowController::class, 'flowusercheck'])->name('flowusercheck');
+
+
+            // ワークフローメニュー画面
+            Route::get('/workflow', [FlowController::class, 'workflow'])->name('workflow');
+            // ワークフローマスタ一覧
+            Route::get('/workflow/master', [FlowController::class, 'workflowmaster'])->name('workflowmaster');
+            // ワークフローマスタ詳細
+            Route::get('/workflow/master/{id}', [FlowController::class, 'workflowmasterdetail'])->name('workflowmasterdetail');
+            // ワークフローマスタ編集
+            Route::get('/workflowedit/{id}', [FlowController::class, 'workfloweditget'])->name('workfloweditget');
+            // ワークフロー申請
+            Route::get('/workflow/application', [FlowController::class, 'workflowapplicationget'])->name('workflowapplicationget');
+            // 承認一覧
+            Route::get('/workflow/approval', [FlowController::class, 'workflowapproval'])->name('workflowapproval');
+
+
+
 
             //    グループの役職設定画面
             Route::get('/admin/groupposition/{id}', [AdminController::class, 'admingrouppositionGet'])->name('admingrouppositionGet');

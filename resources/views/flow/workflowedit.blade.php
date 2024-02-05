@@ -18,7 +18,7 @@
                         承認フロー名
                     </div>
                     <div>
-                        <input type="text" class="flow_name_text" name="flow_name" placeholder="(例)フロー1">
+                        <input type="text" class="flow_name_text" name="flow_name" placeholder="(例)フロー1" value="{{$flow_master->フロー名}}">
                     </div>
                 </div>
                 <div class="left_side_section">
@@ -26,14 +26,14 @@
                         条件
                     </div>
                     <div class="accordion_menu">
-                        <div class="accordion_menu_title accordion_group">
+                        <div class="accordion_menu_title accordion_group accordion_menu_title_open">
                             グループ
                         </div>
-                        <div class="accordion_content">
+                        <div class="accordion_content accordion_content_open">
 
                             @foreach ($groups as $index=>$group)
                             <div>
-                                <input type="checkbox" name="flow_group[]" id="flow_group{{ $loop->index + 1}}" value="{{$group->id}}">
+                                <input type="checkbox" name="flow_group[]" id="flow_group{{ $loop->index + 1}}" value="{{$group->id}}" {{$group->checked}}>
                                 <label for="flow_group{{ $loop->index + 1}}">{{$group->グループ名}}</label>
                             </div>
                             @endforeach
@@ -41,15 +41,15 @@
 
                     </div>
                     <div class="accordion_menu">
-                        <div class="accordion_menu_title accordion_price">
+                        <div class="accordion_menu_title accordion_price accordion_menu_title_open">
                             金額
                         </div>
-                        <div class="accordion_content">
+                        <div class="accordion_content accordion_content_open">
                             <div class="flow_plice_box">
-                                <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price">円以上
+                                <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price" value="{{$flow_master->金額下限条件}}">円以上
                             </div>
                             <div class="flow_plice_box">
-                                <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price">円未満
+                                <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price" value="{{$flow_master->金額上限条件}}">円未満
                             </div>
                         </div>
 
@@ -191,15 +191,41 @@
         <div class="MainElement">
             <h2 class="pagetitle">ワークフロー登録</h2>
             <div class="element_input">
+                <input type="hidden" name="edit" class="edit" id="edit" value="edit">
+                <input type="hidden" name="flow_master_id" class="flow_master_id" id="flow_master_id" value="{{$flow_master->id}}">
                 @foreach ($positions as $position)
                 <input type="hidden" class="position" data-groupid="{{$position->グループID}}" data-positionid="{{$position->id}}" data-position_count="{{$position->count}}" value="{{$position->役職}}">
                 @endforeach
                 <input type="hidden" class="route" id="route" name="route" data-routecount="1">
                 <input type="hidden" class="maxgrid" id="maxgrid" data-maxcolumn="1" data-maxrow="1">
-                <input type="hidden" id="10000" class="element" data-column="1" data-row="1" data-last="none">
-                <input type="hidden" id="10001" class="element" data-column="1" data-row="2" data-last="last" data-authorizer="person" data-person_required_number="all" data-person_parameter="0" data-person_required_number="all" data-group_parameter="0" data-group_required_number="1" data-select_method="nolimit">
+                @foreach ($flow_points as $flow_point)
+                <input type="hidden" id="{{$flow_point->id}}" class="element" data-column="{{$flow_point->column}}" data-row="{{$flow_point->row}}" data-last="none" data-authorizer="{{$flow_point->person_group}}" data-person_required_number="{{$flow_point->person_required}}" data-person_parameter="{{$flow_point->person_required}}" data-group_parameter="{{$flow_point->group_parameter}}" data-group_required_number="{{$flow_point->group_required}}" data-select_method="{{$flow_point->select_method}}">
+                @if ($flow_point->申請者選択数)
+                <input type="hidden" data-id="{{$flow_point->id}}" class="byapplicant" data-group_choice_number="{{$flow_point->申請者選択数}}">
+                @endif
+                @endforeach
+                @foreach ($flow_approvals as $flow_approval)
+                @if ($flow_approval->newgroup == "person")
+                <input type="hidden" data-id="{{$flow_approval->フロー地点ID}}" class="person" data-person_name="{{$flow_approval->name}}">
+                @endif
+                @if ($flow_approval->newgroup == "none")
+                <input type="hidden" data-id="{{$flow_approval->フロー地点ID}}" class="post" data-positionid="{{$flow_approval->役職ID}}">
+                @endif
+                @if ($flow_approval->newgroup == "newgroup_post")
+                <input type="hidden" data-id="{{$flow_approval->フロー地点ID}}" class="post" data-positionid="{{$flow_approval->役職ID}}">
+                <input type="hidden" data-id="{{$flow_approval->フロー地点ID}}" class="group" data-group_name="{{$flow_approval->グループ名}}" data-group_id="{{$flow_approval->グループID}}" data-group_count="">
+                @endif
+                @if ($flow_approval->newgroup == "newgroup_none_post")
+                <input type="hidden" data-id="{{$flow_approval->フロー地点ID}}" class="group" data-group_name="{{$flow_approval->グループ名}}" data-group_id="{{$flow_approval->グループID}}" data-group_count="">
 
-                <input type="hidden" class="line" data-startcolumn="1" data-startrow="1" data-endcolumn="1" data-endrow="2">
+                @endif
+
+                @endforeach
+                @foreach ($next_flow_points as $next_flow_point)
+                <input type="hidden" class="line" data-startcolumn="{{$next_flow_point->startcolumn}}" data-startrow="{{$next_flow_point->startrow}}" data-endcolumn="{{$next_flow_point->endcolumn}}" data-endrow="{{$next_flow_point->endrow}}">
+                @endforeach
+
+
                 <input type="hidden" id="focus" class="focus" data-id="">
 
             </div>

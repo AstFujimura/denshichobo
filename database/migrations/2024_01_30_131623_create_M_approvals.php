@@ -15,13 +15,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('M_approvals', function (Blueprint $table) {
+        Schema::create('m_approvals', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('フローマスタID');
             $table->unsignedBigInteger('フロー地点ID');
             $table->unsignedBigInteger('ユーザーID')->nullable();
             $table->unsignedBigInteger('グループID')->nullable();
             $table->unsignedBigInteger('役職ID')->nullable();
-            $table->foreign('フロー地点ID')->references('id')->on('users')->onDelete('cascade');
+            
+            $table->foreign('フローマスタID')->references('id')->on('m_flows')->onDelete('cascade');
+            $table->foreign('フロー地点ID')->references('id')->on('m_flow_points')->onDelete('cascade');
+            $table->foreign('ユーザーID')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('グループID')->references('id')->on('groups')->onDelete('cascade');
             $table->foreign('役職ID')->references('id')->on('positions')->onDelete('cascade');
 
@@ -38,6 +42,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('M_approvals');
+        Schema::dropIfExists('m_approvals');
     }
 };

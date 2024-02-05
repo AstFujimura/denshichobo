@@ -15,12 +15,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('M_flow_groups', function (Blueprint $table) {
+        Schema::create('m_flow_groups', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('フローマスタID');
             $table->unsignedBigInteger('グループID');
-            $table->foreign('フローマスタID')->references('id')->on('M_flows');
-            $table->foreign('グループID')->references('id')->on('groups');
+            $table->foreign('フローマスタID')->references('id')->on('m_flows')->onDelete('cascade');
+            $table->foreign('グループID')->references('id')->on('groups')->onDelete('cascade');
 
             $table->timestamps();
         });
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('M_flow_groups');
+        Schema::dropIfExists('m_flow_groups');
     }
 };

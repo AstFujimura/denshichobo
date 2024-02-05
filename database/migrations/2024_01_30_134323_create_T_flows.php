@@ -15,10 +15,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('T_flows', function (Blueprint $table) {
+        Schema::create('t_flows', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('フローID');
-            $table->foreign('フローID')->references('id')->on('M_flows');
+            $table->unsignedBigInteger('フローマスタID');
+            $table->foreign('フローマスタID')->references('id')->on('m_flows');
             $table->integer('ステータス')->default(1);
             $table->string('ファイルパス');
             $table->string('取引先');
@@ -40,6 +40,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('T_flows');
+        Schema::dropIfExists('t_flows');
     }
 };

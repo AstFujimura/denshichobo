@@ -177,10 +177,14 @@ function element_authorizer_reload(id) {
     if (authorizer_number == 0) {
       element.text("")
       $('.parameter').text('0')
+      inputelement.data("person_parameter", "0")
+      inputelement.attr("data-person_parameter", "0")
     }
     else {
       element.text(authorizer_number + "人")
       $('.parameter').text(authorizer_number)
+      inputelement.data("person_parameter", authorizer_number)
+      inputelement.attr("data-person_parameter", authorizer_number)
     }
   }
   else if (inputelement.data("authorizer") == "group") {
@@ -214,10 +218,21 @@ function change_detail(id) {
 // サーバーに非同期で通信してユーザー情報を取得する
 function ajax_flowuserlist(searchtext, inputtext) {
   var prefix = $('#prefix').val();
+  var duplicationarray = []
+  $(".person").each(function () {
+    duplicationarray.push($(this).data("person_name"))
+  })
+  duplicationarray = duplicationarray.filter(function (item) {
+    return item !== searchtext;
+  });
+
   $.ajax({
     url: prefix + '/flowuserlist',
     method: 'GET',
-    data: { search: searchtext },
+    data: {
+      search: searchtext,
+      duplicationarray: duplicationarray
+    },
     success: function (response) {
       inputtext.parent().find(".flow_user_list").empty();
 
@@ -300,6 +315,7 @@ function change_group() {
     }
   })
   element_authorizer_reload(focusid)
+  group_required_number_reload(focusid)
   group_select_method_reload(focusid)
   // 役職の一覧を更新
   positionreload()
@@ -666,7 +682,7 @@ function group_select_method_reload(id) {
 
 }
 
-function group_required_number_reload(id){
+function group_required_number_reload(id) {
   var inputelement = $('#' + id)
   var group_required_number = inputelement.data("group_required_number")
   $("#group_authorizer_number").val(group_required_number)

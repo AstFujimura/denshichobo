@@ -15,12 +15,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('T_approvals', function (Blueprint $table) {
+        Schema::create('t_approvals', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('フローテーブルID');
             $table->unsignedBigInteger('フロー地点ID');
-            $table->foreign('フローテーブルID')->references('id')->on('T_flows');
-            $table->foreign('フロー地点ID')->references('id')->on('T_flow_points');
+            $table->foreign('フローテーブルID')->references('id')->on('t_flows');
+            $table->foreign('フロー地点ID')->references('id')->on('t_flow_points');
             $table->integer('ステータス')->default(1);
             $table->text('コメント')->nullable();
 
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('T_approvals');
+        Schema::dropIfExists('t_approvals');
     }
 };

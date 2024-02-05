@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('M_flows', function (Blueprint $table) {
+        Schema::create('m_flows', function (Blueprint $table) {
             $table->id();
             $table->string('フロー名');
             $table->boolean('削除フラグ')->default(false);
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('金額上限条件')->default(2000000000);
             $table->boolean('承認可能状態')->default(false);
             $table->boolean('決裁地点数');
+            $table->text('フロントエンドオブジェクト');
             $table->timestamps();
         });
         
@@ -37,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('M_flows');
+        Schema::dropIfExists('m_flows');
     }
 };

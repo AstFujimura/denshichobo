@@ -1,5 +1,21 @@
 $(document).ready(function () {
 
+  var prefix = $('#prefix').val();
+
+  // 編集画面の時グループカウントをセレクトボックスから取得する
+  if ($('#edit').length != 0) {
+    $('.group').each(function () {
+      var group_count = $('.group_select').find('[data-group_id="' + $(this).data("group_id") + '"]').data("group_count")
+      $(this).data("group_count", group_count)
+      $(this).attr("data-group_count", group_count)
+    })
+  }
+
+
+
+
+
+
   // アコーディオンメニューを押したとき
   $(".accordion_menu_title").on("click", function () {
     $(this).toggleClass("accordion_menu_title_open")
@@ -43,7 +59,7 @@ $(document).ready(function () {
     $(this).addClass("person_text_focus")
   })
   // $(document).on("blur", ".person_text", function () {
-
+  //   var text = $(this).text()
   // })
   // フォーカスが当たっているときにkeydownイベントをリッスン
   $(document).keydown(function (e) {
@@ -219,7 +235,7 @@ $(document).ready(function () {
   $("#maxgrid").data("maxrow", Ycellcount + 1)
   // グリッドのセルの値を指定
   const cellwidth = 150
-  const cellheight = 50
+  const cellheight = 80
 
   // 空白のセルの値を指定
   const gapcellwidth = 40
@@ -232,10 +248,34 @@ $(document).ready(function () {
 
   reloadelement()
 
+  // オブジェクトの宣言
+  var arrays
+  // ワークフローの編集の場合
+  // 非同期通信でオブジェクトを取得する
+  if ($("#edit").length != 0) {
+    $.ajax({
+      url: prefix + '/flowobject/' + $("#flow_master_id").val(),
+      type: 'get',
+      dataType: 'json',
+      success: function (response) {
+        arrays = response
+      },
+      error: function () {
+        arrays = {
+          "1": ["1_1", "1_2"]
+        }
+      }
 
-  var arrays = {
-    "1": ["1_1", "1_2"]
+    })
   }
+  // 新規登録の場合
+  // 初期状態のオブジェクトを作成する
+  else {
+    arrays = {
+      "1": ["1_1", "1_2"]
+    }
+  }
+
 
   // 現在の最新のid番号を格納する
   var nowelementid = 10000
@@ -414,28 +454,122 @@ $(document).ready(function () {
 
   $('#workflowform').on("submit", function (event) {
     event.preventDefault()
-    var uniqueLastElements = new Set(); // 重複を許容しないSetを使用
-    $.each(arrays, function (key, values) {
-      $.each(values, function (index, value) {
-        $('<input>').attr({
-          type: 'hidden',
-          name: 'array' + key + '[]',
-          value: value
-        }).appendTo('.element_input');
-      });
-      var lastElement = values[values.length - 1];
-      uniqueLastElements.add(lastElement);
+    var userarray = []
+    $(".person").each(function () {
+      userarray.push($(this).data("person_name"))
+    })
+    $.ajax({
+      url: prefix + '/flowusercheck',
+      method: 'GET',
+      data: {
+        userarray: userarray
+      },
+      success: function (response) {
+        console.log(response)
+      }
     });
-    $('<input>').attr({
-      type: 'hidden',
-      name: 'arraycount',
-      value: Object.keys(arrays).length
-    }).appendTo('.element_input');
-    $('<input>').attr({
-      type: 'hidden',
-      name: 'lastelementcount',
-      value: uniqueLastElements.size
-    }).appendTo('.element_input');
-    this.submit()
+
+
+    // //-------------- arraysのinputタグを作成する-------------------------------
+
+    // var uniqueLastElements = new Set(); // 重複を許容しないSetを使用
+    // $('.arrayinfo').remove()
+    // $.each(arrays, function (key, values) {
+    //   $.each(values, function (index, value) {
+    //     $('<input>', {
+    //       type: 'hidden',
+    //       class: 'arrayinfo',
+    //       name: 'array' + key + '[]',
+    //       value: value
+    //     }).appendTo('.element_input');
+    //   });
+    //   var lastElement = values[values.length - 1];
+    //   uniqueLastElements.add(lastElement);
+    // });
+    // $('<input>', {
+    //   type: 'hidden',
+    //   class: 'arrayinfo',
+    //   name: 'arraycount',
+    //   value: Object.keys(arrays).length
+    // }).appendTo('.element_input');
+    // $('<input>', {
+    //   type: 'hidden',
+    //   class: 'arrayinfo',
+    //   name: 'lastelementcount',
+    //   value: uniqueLastElements.size
+    // }).appendTo('.element_input');
+
+
+    // // -----------------------------------------------------------------------------
+
+
+    // // フォームのデータを取得する
+    // var formData = new FormData($(this)[0]);
+    // formData.append('arrays', JSON.stringify(arrays));
+
+    // var elements = {}
+
+    // $('.element').each(function () {
+    //   var elementinfo_id = $(this).attr("id")
+    //   var elementinfo = {}
+    //   elementinfo.point = $(this).data('column') + "_" + $(this).data('row')
+    //   elementinfo.authorizer = $(this).data('authorizer')
+    //   if ($(this).data('authorizer') == "person") {
+    //     elementinfo.parameter = $(this).data('person_parameter')
+    //     // もし全員承認の場合は母数を数値として代入する
+    //     if ($(this).data('person_required_number') == "all") {
+    //       elementinfo.required_number = elementinfo.parameter
+    //     }
+    //     else {
+    //       elementinfo.required_number = $(this).data('person_required_number')
+    //     }
+    //   }
+    //   else if ($(this).data('authorizer') == "group") {
+    //     elementinfo.parameter = $(this).data('group_parameter')
+    //     elementinfo.required_number = $(this).data('group_required_number')
+    //   }
+    //   if (elementinfo.parameter >= elementinfo.required_number) {
+    //     elementinfo.approvable = true
+    //   }
+    //   else {
+    //     elementinfo.approvable = false
+    //   }
+
+    //   elementinfo.select_method = $(this).data('select_method')
+    //   var person_array = []
+    //   $('.person[data-id="' + elementinfo_id + '"]').each(function () {
+    //     person_array.push($(this).data("person_name"))
+    //   })
+    //   elementinfo.person_name = person_array
+    //   var group_id = $('.group[data-id="' + elementinfo_id + '"]').data("group_id")
+    //   elementinfo.group_id = group_id
+    //   var choice_number = $('.byapplicant[data-id="' + elementinfo_id + '"]').data("group_choice_number")
+    //   elementinfo.group_choice_number = choice_number
+    //   var positionarray = []
+    //   $('.post[data-id="' + elementinfo_id + '"]').each(function () {
+    //     positionarray.push($(this).data("positionid"))
+    //   })
+    //   elementinfo.position = positionarray
+    //   elements[elementinfo_id] = elementinfo;
+    // })
+    // formData.append('elements', JSON.stringify(elements));
+    // $.ajax({
+    //   url: prefix + '/workflowregist',
+    //   type: 'POST',
+    //   data: formData,
+    //   processData: false,
+    //   contentType: false,
+    //   headers: {
+    //     'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+    //   },
+    //   success: function (response) {
+    //     window.location.href = prefix + '/workflow/master'
+    //   },
+    //   error: function () {
+    //     console.error('laravelエラー');
+    //   }
+
+    // })
   })
+
 });

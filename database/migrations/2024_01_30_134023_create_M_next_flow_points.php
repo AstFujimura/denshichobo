@@ -15,10 +15,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('M_next_flow_points', function (Blueprint $table) {
+        Schema::create('m_next_flow_points', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('フローマスタID');
             $table->unsignedBigInteger('現フロー地点ID');
-            $table->foreign('現フロー地点ID')->references('id')->on('M_flow_points')->onDelete('cascade');
+            $table->foreign('フローマスタID')->references('id')->on('m_flows')->onDelete('cascade');
+            $table->foreign('現フロー地点ID')->references('id')->on('m_flow_points')->onDelete('cascade');
             $table->string('次フロントエンド表示ポイント');
 
             $table->timestamps();
@@ -34,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('M_next_flow_points');
+        Schema::dropIfExists('m_next_flow_points');
     }
 };
