@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Config;
 use App\Models\Document;
 use App\Models\File;
 use App\Models\Group;
@@ -14,6 +15,7 @@ use App\Models\M_next_flow_point;
 use App\Models\T_flow;
 use App\Models\T_flow_point;
 use App\Models\T_approval;
+use App\Models\T_flow_draft;
 use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,45 +33,153 @@ class FlowController extends Controller
         $searchtext = $request->input("search");
         $duplicationarray = $request->input("duplicationarray");
 
-        $prefix = config('prefix.prefix');
-        if ($prefix !== "") {
-            $prefix = "/" . $prefix;
+        if (!$duplicationarray) {
+            $users = User::where('name', 'like', '%' . $searchtext . '%')
+                ->where('削除', "")
+                ->get();
+        } else {
+            $users = User::where('name', 'like', '%' . $searchtext . '%')
+                ->whereNotIn('name', $duplicationarray)
+                ->where('削除', "")
+                ->get();
         }
-        $server = config('prefix.server');
-        $users = User::where('name', 'like', '%' . $searchtext . '%')
-            ->whereNotIn('name', $duplicationarray)
-            ->where('削除', "")
-            ->get();
+
         return response()->json($users);
     }
     public function flowusercheck(Request $request)
     {
         $userarray = $request->input("userarray");
-        // 重複を除いた新しい配列を作成
-        $uniqueArray = array_unique($userarray);
+        // 個人名入力がある場合
+        if ($userarray) {
+            // 重複を除いた新しい配列を作成
+            $uniqueArray = array_unique($userarray);
 
-        // 重複がないか確認
-        if (count($userarray) === count($uniqueArray)) {
-            $uniqueerror = false;
-        } else {
-            $uniqueerror = true;
-        }
+            // 重複がないか確認
+            if (count($userarray) === count($uniqueArray)) {
+                $uniqueerror = false;
+            } else {
+                $uniqueerror = true;
+            }
 
-        $noneuserarray = [];
-        foreach ($userarray as $user) {
-            $exsistinguser = User::where("name", $user)->first();
-            if (!$exsistinguser){
-                $noneuserarray[] = $user;
+            $noneuserarray = [];
+            foreach ($userarray as $user) {
+                $exsistinguser = User::where("name", $user)->first();
+                if (!$exsistinguser) {
+                    $noneuserarray[] = $user;
+                }
+            }
+            if (count($noneuserarray) == 0) {
+                $noneusererror = false;
+            } else {
+                $noneusererror = true;
             }
         }
-        if (count($noneuserarray) == 0){
-            $noneusererror = false;
-        }
+        // グループだけの場合
         else {
-            $noneusererror = true;
+            $uniqueerror = false;
+            $noneusererror = false;
+            $noneuserarray = [];
         }
 
-        return response()->json([$uniqueerror,$noneusererror,$noneuserarray]);
+
+        return response()->json([$uniqueerror, $noneusererror, $noneuserarray]);
+    }
+
+    public function viewonlyworkflow($id)
+    {
+        $flow_points = M_flow_point::where("フローマスタID", $id)
+            ->get();
+        $flow_point_object = [];
+        $maxcolumn = 1;
+        $maxrow = 1;
+        foreach ($flow_points as $flow_point) {
+            $point = $flow_point->フロントエンド表示ポイント;
+            // アンダースコア（_）をデリミタとして文字列を分割
+            $parts = explode("_", $point);
+            if ($maxcolumn < $parts[0]) {
+                $maxcolumn = $parts[0];
+            }
+            if ($maxrow < $parts[1]) {
+                $maxrow = $parts[1];
+            }
+
+            $flow_point_object[] = [
+                'column' => $parts[0],
+                'row' => $parts[1],
+                'required' => $flow_point->承認ポイント,
+                'parameter' => $flow_point->母数,
+                'person_group' => $flow_point->個人グループ,
+                // 他の属性があれば追加
+            ];
+        }
+
+        $next_flow_points = DB::table("m_next_flow_points")
+            ->select("m_next_flow_points.*", "m_flow_points.フロントエンド表示ポイント")
+            ->leftJoin("m_flow_points", "m_next_flow_points.現フロー地点ID", "=", "m_flow_points.id")
+            ->where("m_next_flow_points.フローマスタID", $id)
+            ->get();
+
+
+        $line_object = [];
+        foreach ($next_flow_points as $next_flow_point) {
+            $startpoint = $next_flow_point->フロントエンド表示ポイント;
+            $endpoint = $next_flow_point->次フロントエンド表示ポイント;
+            // アンダースコア（_）をデリミタとして文字列を分割
+            $startparts = explode("_", $startpoint);
+            $endparts = explode("_", $endpoint);
+
+            $line_object[] = [
+                'startcolumn' => $startparts[0],
+                'startrow' => $startparts[1],
+                'endcolumn' => $endparts[0],
+                'endrow' => $endparts[1],
+            ];
+        }
+
+
+        $approvals = DB::table("m_approvals")
+            ->select("m_approvals.*", "m_flow_points.*",  "users.name", "groups.グループ名","positions.役職",)
+            ->leftJoin("m_flow_points", "m_approvals.フロー地点ID", "=", "m_flow_points.id")
+            ->leftJoin("users", "m_approvals.ユーザーID", "=", "users.id")
+            ->leftJoin("groups", "m_approvals.グループID", "=", "groups.id")
+            ->leftJoin("positions", "m_approvals.役職ID", "=", "positions.id")
+            ->where("m_approvals.フローマスタID", $id)
+            ->get();
+        $approval_object = [];
+        foreach ($approvals as $approval) {
+            // アンダースコア（_）をデリミタとして文字列を分割
+            $parts = explode("_", $approval->フロントエンド表示ポイント);
+            $approval_object[] = [
+                'column' => $parts[0],
+                'row' => $parts[1],
+                'person_group' => $approval->個人グループ,
+                'user' => $approval->name,
+                'group' => $approval->グループ名,
+                'groupid' => $approval->グループID,
+                'position' => $approval->役職,
+                'id' => $approval->フローマスタID,
+            ];
+        }
+
+
+        return response()->json([$flow_point_object, $maxcolumn, $maxrow, $line_object, $approval_object]);
+    }
+    public function flowgrouplist($groupid)
+    {
+        $groups = DB::table("group_user")
+        ->select("group_user.*","users.*")
+        ->leftJoin("users","group_user.ユーザーID","=","users.id")
+        ->where("グループID",$groupid)
+        ->get();
+
+        $group_object = [];
+        foreach ($groups as $group) {
+            $group_object[] = [
+                'id' => $group->グループID,
+                'name' => $group->name,
+            ];
+        }
+        return response()->json($group_object);
     }
 
 
@@ -109,6 +219,7 @@ class FlowController extends Controller
         // 編集か新規登録かを判断する
         $regist_edit = $request->input("edit");
         $flow_master_id = $request->input("flow_master_id");
+        $pastid = false;
         if ($regist_edit == "edit") {
             $t_flow = T_flow::where("フローマスタID", $flow_master_id)
                 ->first();
@@ -120,6 +231,7 @@ class FlowController extends Controller
             }
             // フローのトランザクションデータがない場合はマスタデータの削除
             else {
+                $pastid = $flow_master_id;
                 $m_flow = M_flow::find($flow_master_id)->delete();
             }
         }
@@ -137,6 +249,10 @@ class FlowController extends Controller
         $lastelementcount = $request->input("lastelementcount");
 
         $flow_master = new M_flow();
+        if ($pastid) {
+            $flow_master->id = $pastid;
+        }
+
 
         $flow_master->フロー名 = $flow_name;
         if (!$flow_master) {
@@ -237,7 +353,7 @@ class FlowController extends Controller
                 }
             }
             // グループ(限定無し)の場合
-            else if ($flow_point->個人グループ == 2 || $flow_point->個人グループ == 3) {
+            else if ($flow_point->個人グループ == 2) {
 
                 $approval = new M_approval();
                 $approval->フローマスタID = $flow_master->id;
@@ -246,7 +362,7 @@ class FlowController extends Controller
                 $approval->save();
             }
             // グループ(申請者が選択)の場合
-            else if ($flow_point->個人グループ == 2 || $flow_point->個人グループ == 3) {
+            else if ($flow_point->個人グループ == 3) {
 
                 $approval = new M_approval();
                 $approval->フローマスタID = $flow_master->id;
@@ -294,6 +410,13 @@ class FlowController extends Controller
                         $next_flow_point->現フロー地点ID = $flow_point->id;
                         $next_flow_point->次フロントエンド表示ポイント = $array[$j + 1];
                         $next_flow_point->save();
+
+                        // 次のフロー地点の承認移行ポイントを1あげる
+                        $flow_point_next = M_flow_point::where("フローマスタID", $flow_master->id)
+                            ->where("フロントエンド表示ポイント", $next_flow_point->次フロントエンド表示ポイント)
+                            ->first();
+                        $flow_point_next->承認移行ポイント += 1;
+                        $flow_point_next->save();
                     }
                 }
                 // 配列の最後である場合
@@ -384,7 +507,7 @@ class FlowController extends Controller
             ->where("フローマスタID", $id)
             ->get();
 
-        $selectmethod = ["", "", "nolimit", "byapplicant", "postchoice"];
+        $selectmethod = ["nolimit", "nolimit", "nolimit", "byapplicant", "postchoice"];
 
         if ($flow_master) {
 
@@ -521,8 +644,89 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflow', compact("prefix", "server"));
+        return view('flow.workflowapplication', compact("prefix", "server"));
     }
+
+    public function workflowapplicationpost(Request $request)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+
+        $title = $request->input('title');
+        $company = $request->input('company');
+        $date = $request->input('date');
+        $price = $request->input('price');
+        $comment = $request->input('comment');
+        $file = $request->file('file');
+        $pastID = $this->generateRandomCode();
+
+        $extension = $file->getClientOriginalExtension();
+
+        $filename = Config::get('custom.file_upload_path');
+
+        $now = Carbon::now();
+        $currentTime = $now->format('YmdHis');
+        $filepath = $currentTime . '_' . $pastID;
+        //アップロードされたファイルに拡張子がない場合
+        if (!$extension) {
+            if (config('app.env') == 'production') {
+                // 本番環境用の設定
+            } else {
+                // 開発環境用の設定
+                copy($file->getRealPath(), $filename . "\\" . $filepath);
+            }
+            //extensionがnullになっているためエラー回避
+            $extension = "";
+        } else {
+            if (config('app.env') == 'production') {
+                // 本番環境用の設定
+            } else {
+                // 開発環境用の設定
+                copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+            }
+        }
+
+        // 同じ申請者による下書きは古いものは削除する
+        T_flow_draft::where("申請者ID", Auth::user()->id)->delete();
+
+        $new_t_flow = new T_flow_draft();
+        $new_t_flow->標題 = $title;
+        $new_t_flow->コメント = $comment;
+        $new_t_flow->ファイルパス = $filepath;
+        $new_t_flow->取引先 = $company;
+        $new_t_flow->金額 = $price;
+        $new_t_flow->日付 = $date;
+        $new_t_flow->申請者ID = Auth::user()->id;
+        $new_t_flow->過去データID = $pastID;
+        $new_t_flow->ファイル形式 = $extension;
+
+        $new_t_flow->save();
+
+
+
+
+        return redirect()->route('workflowchoiceget', ["id" => $new_t_flow->id]);
+    }
+
+    public function workflowchoiceget($id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        // $t_flow_draft = T_flow_draft::find($id);
+        $m_flows =  M_flow::all();
+        $server = config('prefix.server');
+        return view('flow.workflowchoice', compact("prefix", "server", "m_flows"));
+    }
+
+
+
+
+
     public function workflowapproval(Request $request)
     {
         $prefix = config('prefix.prefix');
@@ -531,5 +735,21 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         return view('flow.workflowapproval', compact("prefix", "server"));
+    }
+
+
+    //ランダムな8桁のstring型の数値を出力
+    private function generateRandomCode()
+    {
+        $code = mt_rand(10000000, 99999999);
+
+        while ($this->isCompanyCodeExists($code)) {
+            $code = mt_rand(10000000, 99999999);
+        }
+        return $code;
+    }
+    private function isCompanyCodeExists($code)
+    {
+        return File::where('過去データID', $code)->exists();
     }
 }

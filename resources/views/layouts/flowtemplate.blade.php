@@ -34,7 +34,7 @@
 </header>
 <div class="menu001">
 
-    <div class="headerIcon001" onclick="location.href='{{route('topGet')}}';">
+    <div class="headerIcon001" onclick="location.href='{{route('workflow')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
         <div class="iconmessage">Top</div>
     </div>
@@ -46,9 +46,9 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01">
         <div class="iconmessage">ワークフローマスタ登録</div>
     </div>
-    <div class="headerIcon001" onclick="location.href='{{route('admingroupregistGet')}}';">
+    <div class="headerIcon001" onclick="location.href='{{route('workflowapplicationget')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01">
-        <div class="iconmessage">グループ登録・編集</div>
+        <div class="iconmessage">ワークフロー申請</div>
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('admindocumentGet')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01">

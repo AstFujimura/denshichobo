@@ -243,6 +243,10 @@ $(document).ready(function () {
     event.preventDefault();
     $(this).addClass("dragover");
   });
+  $('.droparea').on('dragleave', function (event) {
+    event.preventDefault();
+    $(this).removeClass("dragover");
+  });
 
   $('.droparea').on('drop', function (event) {
     event.preventDefault();

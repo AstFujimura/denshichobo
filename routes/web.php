@@ -170,6 +170,11 @@ Route::prefix($prefix)->group(function () {
             Route::get('/flowusercheck', [FlowController::class, 'flowusercheck'])->name('flowusercheck');
 
 
+            // ワークフローの読み取り専用情報を返す非同期通信先API
+            Route::get('/viewonlyworkflow/{id}', [FlowController::class, 'viewonlyworkflow'])->name('viewonlyworkflow');
+            // ワークフローの読み取り専用フローの時のグループリストを返す非同期通信先API
+            Route::get('/flowgrouplist/{groupid}', [FlowController::class, 'flowgrouplist'])->name('flowgrouplist');
+
             // ワークフローメニュー画面
             Route::get('/workflow', [FlowController::class, 'workflow'])->name('workflow');
             // ワークフローマスタ一覧
@@ -180,6 +185,11 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflowedit/{id}', [FlowController::class, 'workfloweditget'])->name('workfloweditget');
             // ワークフロー申請
             Route::get('/workflow/application', [FlowController::class, 'workflowapplicationget'])->name('workflowapplicationget');
+            // ワークフロー申請
+            Route::post('/workflow/application', [FlowController::class, 'workflowapplicationpost'])->name('workflowapplicationpost');
+            // ワークフロー経路選択
+            Route::get('/workflow/choice/{id}', [FlowController::class, 'workflowchoiceget'])->name('workflowchoiceget');
+
             // 承認一覧
             Route::get('/workflow/approval', [FlowController::class, 'workflowapproval'])->name('workflowapproval');
 

@@ -60,6 +60,26 @@
     font-weight: bold;
 }
 
+.red {
+    color: red;
+}
+
+.errortextbox {
+    border: solid 2px red !important;
+    background: rgb(247, 229, 232);
+}
+
+.erroraccordion {
+    background: rgb(247, 229, 232);
+    margin-right: 50px;
+    border: solid 1px red;
+}
+
+.errorelement {
+    border: solid 2px red;
+    background: rgb(247, 229, 232);
+}
+
 .accordion_menu {
     margin-left: 20px;
 }
@@ -355,7 +375,7 @@
 
 .e {
     position: relative;
-    background: transparent;
+    /* background: transparent; */
     border: solid 2px gray;
     display: flex;
     justify-content: center;
@@ -523,12 +543,13 @@
 .flow_master_end_price {
     width: 12% !important;
 }
+
 .flow_master_edit,
-.flow_master_delete{
+.flow_master_delete {
     width: 10% !important;
 }
 
-.flow_master_edit_button{
+.flow_master_edit_button {
     width: 50px;
     padding: 3px;
     background: rgb(198, 253, 198);
@@ -538,7 +559,8 @@
     margin-inline: auto;
     cursor: pointer;
 }
-.flow_master_edit_button:hover{
+
+.flow_master_edit_button:hover {
     background: rgb(41, 182, 41);
     color: white;
 }
@@ -559,6 +581,7 @@
     border-bottom: solid 1px #aeaeb3;
     position: relative;
 }
+
 .flow_master_tr .flow_master_start_price,
 .flow_master_tr .flow_master_end_price {
     text-align: right;
@@ -570,4 +593,211 @@
     text-align: right;
     display: block;
     margin-top: -8px;
+}
+
+
+
+
+/* フロー申請 */
+
+.maincontent01 {
+    background: #f4faff;
+}
+
+.application_form_content {
+    display: flex;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.application_form_label {
+    margin-right: 20px;
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.application_form_text {
+    height: 30px;
+    width: 100%;
+    border: solid 1px rgb(165, 163, 163);
+    border-radius: 3px;
+}
+
+.flow_application_container {
+    background: white;
+    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    flex-direction: column;
+    width: 800px;
+    margin-inline: auto;
+    padding: 50px;
+    border-radius: 30px;
+    box-shadow: 1px 3px 5px 0 gray;
+}
+
+.flow_preview_area {
+    margin-left: 100px;
+    margin-block: 0px;
+    width: 800px;
+}
+
+.next_button {
+    background: rgb(47, 113, 255);
+    color: white;
+    width: 120px;
+    padding: 7px;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+}
+
+.next_button:hover {
+    background: rgb(0, 61, 192);
+}
+
+.flow_next_button {
+    margin-top: 30px;
+}
+
+.flex_content {
+    display: flex;
+}
+
+.text_long_content {
+    width: 500px;
+}
+
+.text_short_content {
+    width: 200px;
+}
+.text_area_content{
+    width: 500px;
+    height: 100px;
+}
+
+.flow_application_preview_container {
+    position: fixed;
+    z-index: 14;
+    background: white;
+    width: 60vw;
+    height: 90vh;
+    left: 50%;
+    top: 4%;
+    transform: translateX(-50%);
+    border-radius: 30px;
+    display: none;
+}
+
+.flow_application_gray {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: black;
+    opacity: 0.5;
+    z-index: 14;
+    display: none;
+}
+
+.flow_application_droparea {
+    height: 100px;
+    border: solid 3px rgb(187, 187, 187);
+    color: rgb(187, 187, 187);
+    text-align: center;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.dragover {
+    border: solid 3px rgb(216, 214, 114);
+}
+
+.file_input {
+    color: black;
+}
+
+.flow_application_preview_button {
+    margin-left: 30px;
+    margin-top: auto;
+    height: 30px;
+    line-height: 30px;
+    background: #68ad89;
+    border-radius: 3px;
+    padding: 5px 10px;
+    color: white;
+    display: none;
+    cursor: pointer;
+}
+
+.flow_application_preview_button:hover {
+    background: #407057;
+}
+
+.flow_application_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+/* 経路選択画面 */
+.flow_application_choice_form {
+    display: flex;
+}
+.flow_choice_container {
+    background: white;
+    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    flex-direction: column;
+    padding: 30px 50px;
+    border-radius: 30px;
+    box-shadow: 1px 3px 5px 0 gray;
+}
+
+.flow_choice_select{
+    width: 150px;
+    height: 30px;
+}
+
+.flow_choice_next_button {
+    margin-top: 30px;
+}
+/* メイン機能 */
+.view_grid {
+    position: relative;
+    display: grid;
+    font-size: 13px;
+}
+
+.approval_container{
+margin-block: auto;
+}
+
+.approval_number{
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+}
+.approval_img{
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+.position_class{
+    margin-top: 3px;
+    background: #de977d;
+    border-radius: 3px;
+    padding: 2px;
+    width: 90px;
+    text-align: center;
+    font-weight: bold;
+}
+.select_class{
+    width: 90px;
+    padding: 2px;
 }

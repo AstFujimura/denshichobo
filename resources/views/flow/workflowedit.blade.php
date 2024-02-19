@@ -15,25 +15,25 @@
             <div class="left_side_menu">
                 <div class="left_side_section">
                     <div class="left_side_content_title">
-                        承認フロー名
+                        承認フロー名<span class="red">　※</span>
                     </div>
                     <div>
-                        <input type="text" class="flow_name_text" name="flow_name" placeholder="(例)フロー1" value="{{$flow_master->フロー名}}">
+                        <input type="text" id="flow_name_text" class="flow_name_text" name="flow_name" placeholder="(例)フロー1" value="{{$flow_master->フロー名}}">
                     </div>
                 </div>
                 <div class="left_side_section">
                     <div class="left_side_content_title">
                         条件
                     </div>
-                    <div class="accordion_menu">
+                    <div class="accordion_menu accordion_menu_group">
                         <div class="accordion_menu_title accordion_group accordion_menu_title_open">
-                            グループ
+                            グループ<span class="red">　※</span>
                         </div>
                         <div class="accordion_content accordion_content_open">
 
                             @foreach ($groups as $index=>$group)
                             <div>
-                                <input type="checkbox" name="flow_group[]" id="flow_group{{ $loop->index + 1}}" value="{{$group->id}}" {{$group->checked}}>
+                                <input type="checkbox"  class="group_checkbox" name="flow_group[]" id="flow_group{{ $loop->index + 1}}" value="{{$group->id}}" {{$group->checked}}>
                                 <label for="flow_group{{ $loop->index + 1}}">{{$group->グループ名}}</label>
                             </div>
                             @endforeach

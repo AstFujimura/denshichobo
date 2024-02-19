@@ -1186,5 +1186,199 @@ function focus_right_side_menu(column, row) {
 
 }
 
+function errorcheck() {
+  var error = false
+  $(".errortextbox").removeClass("errortextbox")
+  $(".erroraccordion").removeClass("erroraccordion")
+  $(".errorelement").removeClass("errorelement")
+  var flow_name = $('#flow_name_text').val()
+  if (flow_name == "") {
+    $("#flow_name_text").addClass("errortextbox")
+
+    alert("承認フロー名を入力してください")
+    error = true
+  }
+  var isChecked = false;
+  $('.group_checkbox').each(function () {
+    if ($(this).is(':checked')) {
+      isChecked = true;
+      return false; // ループを中断
+    }
+  });
+  if (!isChecked) {
+    $('.accordion_menu_group').addClass('erroraccordion')
+    alert("グループのうち1つ以上にチェックを入れてください")
+    error = true
+  }
+
+  if ($(".none_icon").length != 0) {
+    $(".none_icon").parent().parent().parent().addClass("errorelement")
+    alert("条件を満たしていないフローがあります。")
+  }
+  return error
+}
+
+//ワークフロー申請の時の必須項目のチェック
+function flow_application_required_check() {
+
+}
+
+// 読み取り専用のgrid作成
+function createviewgrid(cellwidth, cellheight, gapcellwidth, gapcellheight) {
+  var Xcellcount = $("#maxgrid_column").val()
+  var Ycellcount = $("#maxgrid_row").val()
+  $(".view_grid").css({
+    "grid-template-columns": " 20px repeat(" + Xcellcount + ", " + cellwidth + "px " + cellwidth + "px " + gapcellwidth + "px)",
+    "grid-template-rows": "40px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
+  })
+}
 
 
+// 読み取り専用の要素作成
+function view_create_element(element_object) {
+  $(".e").remove()
+  $.each(element_object, function (index, array) {
+    var gridcolumn = array["column"]
+    var gridrow = array["row"]
+
+    $(".view_grid").append('<div class="grid' + gridcolumn + '_' + gridrow + ' e" id="' + gridcolumn + '_' + gridrow + '" data-column="' + gridcolumn + '" data-row="' + gridrow + '"></div>')
+    var Xstart = 3 * gridcolumn - 1
+    var Xend = 3 * gridcolumn + 1
+    var Ystart = 4 * gridrow - 2
+    var Yend = 4 * gridrow
+    $('.grid' + gridcolumn + '_' + gridrow).css({
+      'grid-column': Xstart + '/' + Xend,
+      'grid-row': Ystart + '/' + Yend,
+      'user-select': "none",
+      'z-index': "10"
+    })
+    // 申請者の場合
+    if (array["person_group"] == 0) {
+      $('.grid' + gridcolumn + '_' + gridrow).append(
+        '<div class="approval_container">申請者</div>'
+      )
+    }
+    // 個人の場合
+    else if (array["person_group"] == 1) {
+      $('.grid' + gridcolumn + '_' + gridrow).append(
+        '<div class="approval_img">' + person_icon() + '</div><div class="approval_container"></div><div class="approval_number">' + array["required"] + '人承認</div>'
+      )
+    }
+    // グループの場合
+    else {
+      $('.grid' + gridcolumn + '_' + gridrow).append(
+        '<div class="approval_img">' + group_icon() + '</div><div class="approval_container"></div><div class="approval_number">' + array["required"] + '人承認</div>'
+      )
+    }
+
+  });
+}
+
+// 読み取り専用の線作成
+function view_create_line(lineobject, cellwidth, cellheight, gapcellwidth, gapcellheight) {
+  $(".l").remove()
+  $.each(lineobject, function (index, array) {
+    var startcolumn = array["startcolumn"]
+    var startrow = array["startrow"]
+    var endcolumn = array["endcolumn"]
+    var endrow = array["endrow"]
+
+    var Xstart = 3 * startcolumn
+    var Xend = 3 * endcolumn
+    var Ystart = 4 * startrow
+    var Yend = 4 * endrow
+
+    var lineclass = 'line' + startcolumn + '_' + startrow + '_' + endcolumn + '_' + endrow
+
+    //ラインを引く要素の幅
+    // 幅は負の数にならないように絶対値をとる
+    var linewidth = Math.abs(((endcolumn - startcolumn) * 2 * cellwidth) + ((endcolumn - startcolumn) * 1 * gapcellwidth))
+    if (linewidth == 0) {
+      linewidth = 10
+    }
+
+    //ラインを引く要素の高さ
+    var lineheight = (endrow - startrow) * 2 * gapcellheight + (endrow - startrow - 1) * 2 * cellheight
+
+    // widthとheightとviewboxを格納する変数
+    var WidthHeightView = 'width="' + linewidth + 'px" height="' + lineheight + 'px" viewBox="0 0 ' + linewidth + ' ' + lineheight + '"'
+
+    $(".view_grid").append('<svg ' + WidthHeightView + '  class=" ' + lineclass + ' l ">' + createsvgpath(startcolumn, startrow, endcolumn, endrow, linewidth, lineheight, cellwidth, cellheight, gapcellwidth, gapcellheight) + '</svg>')
+    $('.' + lineclass).css({
+      'grid-column': Xstart + '/' + Xend,
+      'grid-row': Ystart + '/' + Yend,
+    })
+  })
+
+};
+
+function view_create_approval(approval_object) {
+  var prefix = $('#prefix').val();
+  $.each(approval_object, function (index, array) {
+    console.log(array)
+    var element = $('.grid' + array["column"] + '_' + array["row"])
+    var approval_container = element.find(".approval_container")
+
+    // 個人の場合
+    if (array["person_group"] == 1) {
+      approval_container.append('<div>' + array["user"] + '</div>')
+    }
+    // グループ　限定無しの場合
+    else if (array["person_group"] == 2) {
+      approval_container.append('<div class="group_class">' + array["group"] + '</div>')
+    }
+    // グループ　申請者が選択の場合
+    else if (array["person_group"] == 3) {
+      if (approval_container.find('.group_class').length === 0) {
+        approval_container.append('<div class="group_class">' + array["group"] + '</div>')
+      }
+      // 新しい select 要素を作成
+      var selectElement = $('<select>', {
+        'id': array["id"],
+        'name': array["id"],
+        'class': "select_class"
+      });
+
+      // オプションを追加
+      selectElement.append($('<option>', {
+        'value': ''
+      }));
+      console.log(prefix + '/flowgrouplist/' + array)
+      $.ajax({
+        url: prefix + '/flowgrouplist/' + array["groupid"],
+        type: 'get',
+        dataType: 'json',
+        success: function (response) {
+          
+          $.each(response, function (index, array) {
+            
+            selectElement.append($('<option>', {
+              'value': array["id"], // グループID
+              'text': array["name"] // グループ名
+            }));
+          })
+        },
+        error: function () {
+        }
+  
+      })
+
+      approval_container.append(
+        selectElement
+      )
+
+    }
+    // グループ　役職から選択の場合
+    else if (array["person_group"] == 4) {
+      if (approval_container.find('.group_class').length === 0) {
+        approval_container.append('<div class="group_class">' + array["group"] + '</div>')
+      }
+
+
+
+      approval_container.append('<div class="position_class">' + array["group"] + '</div>')
+    }
+  })
+
+
+}
