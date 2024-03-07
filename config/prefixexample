@@ -1,7 +1,0 @@
-<?php
-
-return [
-    'server' => 'cloud', // オンプレ環境かクラウド環境か
-    'prefix' => 'astec', // 保存先のフォルダパス
-];
-
