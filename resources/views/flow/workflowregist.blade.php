@@ -10,7 +10,7 @@
 @section('main')
 <form action="{{route('workflowregistpost')}}" method="post" id="workflowform" enctype="application/x-www-form-urlencoded">
     @csrf
-    <div class="maincontent01">
+    <div class="maincontent01 flowbackground">
         <div class="MenueBar">
             <div class="left_side_menu">
                 <div class="left_side_section">
@@ -134,29 +134,7 @@
                             <input type="radio" class="choice_method" name="choice_method" id="nolimit" checked>
                             <label for="nolimit">限定無し</label>
                         </div>
-                        <div>
-                            <input type="radio" class="choice_method" name="choice_method" id="byapplicant">
-                            <label for="byapplicant">申請者が選択</label>
-                        </div>
-                        <div class="choice_container">
-                            <div>
-                                選択可能人数
-                            </div>
-                            <div class="choice_content">
-                                <div>
-                                    <input type="radio" class="choice_limit" name="choice_limit" id="choice_limit1" checked>
-                                    <label for="choice_limit1">無制限</label>
-                                </div>
-                                <div>
-                                    <input type="radio" class="choice_limit" name="choice_limit" id="choice_limit2">
-                                    <label for="choice_limit2">選択人数指定</label>
-                                </div>
-                                <div class="autorizer_number_container" id="group_authorizer_number_container">
-                                    <input type="number" class="authorizer_number" id="group_choice_number"> 人
-                                </div>
-                            </div>
 
-                        </div>
 
                         <div>
                             <input type="radio" class="choice_method" name="choice_method" id="postchoice">

@@ -109,12 +109,12 @@ $(document).ready(function () {
         $('.post_choice_container').removeClass("post_choice_container_open")
         change_group_select_method("nolimit")
       }
-      // 申請者が選択にチェックされた場合
-      else if ($('#byapplicant').prop('checked')) {
-        $('.choice_container').addClass("choice_container_open")
-        $('.post_choice_container').removeClass("post_choice_container_open")
-        change_group_select_method("byapplicant")
-      }
+      // // 申請者が選択にチェックされた場合
+      // else if ($('#byapplicant').prop('checked')) {
+      //   $('.choice_container').addClass("choice_container_open")
+      //   $('.post_choice_container').removeClass("post_choice_container_open")
+      //   change_group_select_method("byapplicant")
+      // }
       // 役職から選択にチェックされた場合
       else if ($('#postchoice').prop('checked')) {
         $('.post_choice_container').addClass("post_choice_container_open")
@@ -123,21 +123,22 @@ $(document).ready(function () {
       }
     })
 
-    // 承認者_グループでの選択可能人数での無制限もしくは選択人数指定の場合の表示非表示
-    $('.choice_limit').on("change", function () {
-      if ($('#choice_limit1').prop('checked')) {
-        $('#group_authorizer_number_container').removeClass("autorizer_number_container_open")
-        change_choice_number('all')
-      }
-      else if ($('#choice_limit2').prop('checked')) {
-        $('#group_authorizer_number_container').addClass("autorizer_number_container_open")
-        change_choice_number('select')
-      }
-    })
-    // 選択人数指定が変わった時
-    $('#group_choice_number').on("change", function () {
-      change_choice_number('number')
-    })
+    // // 承認者_グループでの選択可能人数での無制限もしくは選択人数指定の場合の表示非表示
+    // $('.choice_limit').on("change", function () {
+    //   if ($('#choice_limit1').prop('checked')) {
+    //     $('#group_authorizer_number_container').removeClass("autorizer_number_container_open")
+    //     change_choice_number('all')
+    //   }
+    //   else if ($('#choice_limit2').prop('checked')) {
+    //     $('#group_authorizer_number_container').addClass("autorizer_number_container_open")
+    //     change_choice_number('select')
+    //   }
+    // })
+    // // 選択人数指定が変わった時
+    // $('#group_choice_number').on("change", function () {
+    //   change_choice_number('number')
+    // })
+
     // 承認者グループの役職選択の中のチェックボックスが変わった時
     $(document).on("change", ".post_choice", function () {
       positioninputcreate()
@@ -262,6 +263,8 @@ $(document).ready(function () {
         type: 'get',
         dataType: 'json',
         success: function (response) {
+          $("#route").data("routecount",Object.keys(response).length)
+          $("#route").attr("data-routecount",Object.keys(response).length)
           arrays = response
         },
         error: function () {
@@ -754,9 +757,39 @@ $(document).ready(function () {
       }
 
     })
+
+
+
   })
 
+  // 確認画面
+  if ($("#flow_confirm").length != 0) {
+    // グリッドのセルの値を指定
+    const cellwidth = 120
+    const cellheight = 60
 
+    // 空白のセルの値を指定
+    const gapcellwidth = 10
+    const gapcellheight = 10
+    var flow_id = $("#flowid").val()
+    $.ajax({
+      url: prefix + '/viewonlyworkflow/' + flow_id,
+      type: 'get',
+      dataType: 'json',
+      success: function (response) {
+        $("#maxgrid_column").val(response[1])
+        $("#maxgrid_row").val(response[2])
+        console.log(response)
+        createviewgrid(cellwidth, cellheight, gapcellwidth, gapcellheight)
+        view_create_element(response[0])
+        view_create_line(response[3], cellwidth, cellheight, gapcellwidth, gapcellheight)
+        view_create_approval(response[4])
+      },
+      error: function () {
+      }
+
+    })
+  }
 
 
 

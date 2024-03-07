@@ -19,6 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('標題');
             $table->text('コメント');
+            $table->unsignedBigInteger('フローマスタID')->nullable();
             $table->string('ファイルパス');
             $table->string('取引先');
             $table->integer('金額');

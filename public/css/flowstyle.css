@@ -18,9 +18,39 @@
     display: flex;
 }
 
+.flowbackground {
+    background: rgb(229 249 255);
+}
+
 .Mainelement {
     margin: 30px;
 }
+
+
+/* メインメニュー */
+.main_menu_container{
+
+}
+.main_general_container{
+
+}
+.main_general_content{
+
+}
+.main_general_button{
+background: blue;
+}
+.main_admin_button{
+
+}
+
+
+
+
+
+
+
+
 
 .gray {
     display: none;
@@ -371,6 +401,8 @@
     position: relative;
     display: grid;
     font-size: 13px;
+    background: white;
+    border-radius: 20px;
 }
 
 .e {
@@ -600,10 +632,6 @@
 
 /* フロー申請 */
 
-.maincontent01 {
-    background: #f4faff;
-}
-
 .application_form_content {
     display: flex;
     position: relative;
@@ -671,7 +699,8 @@
 .text_short_content {
     width: 200px;
 }
-.text_area_content{
+
+.text_area_content {
     width: 500px;
     height: 100px;
 }
@@ -745,50 +774,92 @@
 
 
 /* 経路選択画面 */
-.flow_application_choice_form {
+
+.back_button {
+    background: rgb(133, 133, 133);
+    color: white;
+    width: 120px;
+    padding: 7px;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+}
+
+.back_button:hover {
+    background: #444444;
+}
+
+.flow_choice_back_button {
+    height: 26px;
+    line-height: 26px;
+    margin-top: auto;
+    width: 101px;
+    font-size: 14px;
+    margin-left: 35px;
+}
+
+.flow_application_choice_form {}
+
+.flow_choice_select_container {
     display: flex;
 }
+
 .flow_choice_container {
     background: white;
     display: flex;
     grid-template-columns: repeat(2, 1fr);
-    flex-direction: column;
     padding: 30px 50px;
     border-radius: 30px;
     box-shadow: 1px 3px 5px 0 gray;
 }
 
-.flow_choice_select{
-    width: 150px;
+.flow_choice_annotation {
+    background: rgb(226 246 255);
+    color: #132f3b;
+    font-size: 14px;
+    height: 20px;
+    padding-inline: 30px;
+    margin-top: auto;
+    margin-left: 30px;
+}
+
+.flow_choice_select {
+    width: 200px;
     height: 30px;
+    border: 1px #999999 solid;
+    border-radius: 5px;
 }
 
 .flow_choice_next_button {
-    margin-top: 30px;
+    margin-top: auto;
+    height: 40px;
+    margin-left: 35px;
 }
-/* メイン機能 */
+
 .view_grid {
     position: relative;
     display: grid;
     font-size: 13px;
 }
 
-.approval_container{
-margin-block: auto;
+.approval_container {
+    margin-block: auto;
 }
 
-.approval_number{
+.approval_number {
     position: absolute;
     bottom: 2px;
     right: 5px;
 }
-.approval_img{
+
+.approval_img {
     position: absolute;
     top: 2px;
     left: 2px;
 }
 
-.position_class{
+.position_class {
     margin-top: 3px;
     background: #de977d;
     border-radius: 3px;
@@ -797,7 +868,66 @@ margin-block: auto;
     text-align: center;
     font-weight: bold;
 }
-.select_class{
+
+.select_class {
     width: 90px;
     padding: 2px;
+}
+
+/* 確認画面 */
+.flow_confirm_form {
+    display: flex;
+    justify-content: center;
+}
+
+.dicision_button {
+    background: rgb(78 195 24);
+    color: white;
+    width: 120px;
+    padding: 7px;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+}
+
+.dicision_button:hover {
+    background: rgb(51, 133, 13);
+}
+
+.flow_application_back_button {
+    height: 23px;
+    margin-top: auto;
+}
+
+.flow_application_button {
+    margin-left: 30px;
+    height: 50px;
+    font-size: 18px;
+    width: 187px;
+}
+
+.flow_meta_information_container {
+    background: white;
+    box-shadow: 2px 3px 9px 0 #adadad;
+    padding: 50px;
+    width: 500px;
+    border-radius: 30px;
+    margin-right: 32px;
+}
+
+
+.flow_confirm_container {
+    display: flex;
+    justify-content: center;
+}
+.flow_confirm_content{
+    display: flex;
+}
+.flow_confirm_label{
+    width: 200px;
+    margin-bottom: 26px;
+}
+.flow_confirm_element{
+    width: 475px;
 }

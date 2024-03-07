@@ -189,6 +189,15 @@ Route::prefix($prefix)->group(function () {
             Route::post('/workflow/application', [FlowController::class, 'workflowapplicationpost'])->name('workflowapplicationpost');
             // ワークフロー経路選択
             Route::get('/workflow/choice/{id}', [FlowController::class, 'workflowchoiceget'])->name('workflowchoiceget');
+            // ワークフロー経路選択ポスト
+            Route::post('/workflow/choice', [FlowController::class, 'workflowchoicepost'])->name('workflowchoicepost');
+            // ワークフロー確認画面
+            Route::get('/workflow/confirm/{id}', [FlowController::class, 'workflowconfirmget'])->name('workflowconfirmget');
+            // ワークフロー最終申請
+            Route::post('/workflow/confirm', [FlowController::class, 'workflowconfirmpost'])->name('workflowconfirmpost');
+
+
+
 
             // 承認一覧
             Route::get('/workflow/approval', [FlowController::class, 'workflowapproval'])->name('workflowapproval');

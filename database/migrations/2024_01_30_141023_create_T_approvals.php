@@ -18,11 +18,13 @@ return new class extends Migration
         Schema::create('t_approvals', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('フローテーブルID');
-            $table->unsignedBigInteger('フロー地点ID');
+            $table->unsignedBigInteger('フロー地点テーブルID');
             $table->foreign('フローテーブルID')->references('id')->on('t_flows');
-            $table->foreign('フロー地点ID')->references('id')->on('t_flow_points');
+            $table->foreign('フロー地点テーブルID')->references('id')->on('t_flow_points');
             $table->integer('ステータス')->default(1);
             $table->text('コメント')->nullable();
+            $table->unsignedBigInteger('ユーザーID');
+            $table->foreign('ユーザーID')->references('id')->on('users');
 
             $table->timestamps();
         });

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('取引先');
             $table->integer('金額');
             $table->date('日付');
-            $table->integer('再承認番号');
+            $table->integer('再承認番号')->default(1);
             $table->unsignedBigInteger('申請者ID');
             $table->foreign('申請者ID')->references('id')->on('users');
             $table->integer('過去データID');

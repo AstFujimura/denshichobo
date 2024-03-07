@@ -138,7 +138,7 @@ class FlowController extends Controller
 
 
         $approvals = DB::table("m_approvals")
-            ->select("m_approvals.*", "m_flow_points.*",  "users.name", "groups.グループ名","positions.役職",)
+            ->select("m_approvals.*", "m_flow_points.*",  "users.name", "groups.グループ名", "positions.役職",)
             ->leftJoin("m_flow_points", "m_approvals.フロー地点ID", "=", "m_flow_points.id")
             ->leftJoin("users", "m_approvals.ユーザーID", "=", "users.id")
             ->leftJoin("groups", "m_approvals.グループID", "=", "groups.id")
@@ -167,10 +167,10 @@ class FlowController extends Controller
     public function flowgrouplist($groupid)
     {
         $groups = DB::table("group_user")
-        ->select("group_user.*","users.*")
-        ->leftJoin("users","group_user.ユーザーID","=","users.id")
-        ->where("グループID",$groupid)
-        ->get();
+            ->select("group_user.*", "users.*")
+            ->leftJoin("users", "group_user.ユーザーID", "=", "users.id")
+            ->where("グループID", $groupid)
+            ->get();
 
         $group_object = [];
         foreach ($groups as $group) {
@@ -317,11 +317,13 @@ class FlowController extends Controller
                 } else if ($element["authorizer"] == "group") {
                     if ($element["select_method"] == "nolimit") {
                         $flow_point->個人グループ = 2;
-                    } else if ($element["select_method"] == "byapplicant") {
-                        $flow_point->個人グループ = 3;
+                    }
+                    //  else if ($element["select_method"] == "byapplicant") {
+                    //     $flow_point->個人グループ = 3;
 
-                        $flow_point->申請者選択数 = $element["group_choice_number"];
-                    } else if ($element["select_method"] == "postchoice") {
+                    //     $flow_point->申請者選択数 = $element["group_choice_number"];
+                    // } 
+                    else if ($element["select_method"] == "postchoice") {
                         $flow_point->個人グループ = 4;
                     }
                 }
@@ -361,15 +363,15 @@ class FlowController extends Controller
                 $approval->グループID = $element["group_id"];
                 $approval->save();
             }
-            // グループ(申請者が選択)の場合
-            else if ($flow_point->個人グループ == 3) {
+            // // グループ(申請者が選択)の場合
+            // else if ($flow_point->個人グループ == 3) {
 
-                $approval = new M_approval();
-                $approval->フローマスタID = $flow_master->id;
-                $approval->フロー地点ID = $flow_point->id;
-                $approval->グループID = $element["group_id"];
-                $approval->save();
-            }
+            //     $approval = new M_approval();
+            //     $approval->フローマスタID = $flow_master->id;
+            //     $approval->フロー地点ID = $flow_point->id;
+            //     $approval->グループID = $element["group_id"];
+            //     $approval->save();
+            // }
             // グループ(役職から選択)の場合
             else if ($flow_point->個人グループ == 4) {
                 foreach ($element["position"] as $position_id) {
@@ -720,9 +722,127 @@ class FlowController extends Controller
         // $t_flow_draft = T_flow_draft::find($id);
         $m_flows =  M_flow::all();
         $server = config('prefix.server');
-        return view('flow.workflowchoice', compact("prefix", "server", "m_flows"));
+
+        return view('flow.workflowchoice', compact("prefix", "server", "m_flows", "id"));
     }
 
+    public function workflowchoicepost(Request $request)
+    {
+
+        $draftid = $request->input("id");
+        $flowid = $request->input("flowid");
+        $draft = T_flow_draft::find($draftid);
+        $draft->フローマスタID = $flowid;
+        $draft->save();
+
+
+        return redirect()->route('workflowconfirmget', ["id" => $draft->id]);
+    }
+
+    public function workflowconfirmget($id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $draft = T_flow_draft::find($id);
+        $flowid = $draft->フローマスタID;
+
+        return view('flow.workflowconfirm', compact("prefix", "server", "draft", "id", "flowid"));
+    }
+    public function workflowconfirmpost(Request $request)
+    {
+        $draftid = $request->input("id");
+        $draft = T_flow_draft::find($draftid);
+
+        // フローのトランザクションテーブルを作成
+        $t_flow = new T_flow();
+        $t_flow->標題 = $draft->標題;
+        $t_flow->コメント = $draft->コメント;
+        $t_flow->フローマスタID = $draft->フローマスタID;
+        $t_flow->ステータス = 1;
+        $t_flow->ファイルパス = $draft->ファイルパス;
+        $t_flow->取引先 = $draft->取引先;
+        $t_flow->金額 = $draft->金額;
+        $t_flow->日付 = $draft->日付;
+        $t_flow->申請者ID = $draft->申請者ID;
+        $t_flow->過去データID = $draft->過去データID;
+        $t_flow->ファイル形式 = $draft->ファイル形式;
+        $t_flow->save();
+
+        $m_flow_points = M_flow_point::where("フローマスタID", $t_flow->フローマスタID)
+            ->get();
+        foreach ($m_flow_points as $m_flow_point) {
+            // フロー地点のトランザクションテーブルを作成
+            $new_t_flow_point = new T_flow_point();
+            $new_t_flow_point->フローテーブルID = $t_flow->id;
+            $new_t_flow_point->フロー地点ID = $m_flow_point->id;
+            $new_t_flow_point->承認移行ステータス = - ($m_flow_point->承認移行ポイント);
+            $new_t_flow_point->承認ステータス = - ($m_flow_point->承認ポイント);
+            $new_t_flow_point->save();
+
+            // 個人の場合
+            if ($m_flow_point->個人グループ == 1) {
+                $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
+                    ->get();
+
+                foreach ($m_approvals as $m_approval) {
+
+                    $t_approval = new T_approval();
+                    $t_approval->フローテーブルID = $t_flow->id;
+                    $t_approval->フロー地点テーブルID = $m_flow_point->id;
+                    $t_approval->ステータス = 1;
+                    $t_approval->ユーザーID = $m_approval->ユーザーID;
+                    $t_approval->save();
+                }
+            }
+            // グループ限定無しの場合
+            else if ($m_flow_point->個人グループ == 2) {
+                $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
+                    ->get();
+
+                foreach ($m_approvals as $m_approval) {
+                    $group_users = Group_User::where("グループID", $m_approval->グループID)
+                        ->get();
+
+                    foreach ($group_users as $group_user) {
+                        $t_approval = new T_approval();
+                        $t_approval->フローテーブルID = $t_flow->id;
+                        $t_approval->フロー地点テーブルID = $m_flow_point->id;
+                        $t_approval->ステータス = 1;
+                        $t_approval->ユーザーID = $group_user->ユーザーID;
+                        $t_approval->save();
+                    }
+                }
+            }
+            // 役職から選択の場合
+            else if ($m_flow_point->個人グループ == 4) {
+                $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
+                    ->get();
+
+                foreach ($m_approvals as $m_approval) {
+                    $group_users = Group_User::where("グループID", $m_approval->グループID)
+                        ->where("役職ID", $m_approval->役職ID)
+                        ->get();
+
+                    foreach ($group_users as $group_user) {
+                        $t_approval = new T_approval();
+                        $t_approval->フローテーブルID = $t_flow->id;
+                        $t_approval->フロー地点テーブルID = $m_flow_point->id;
+                        $t_approval->ステータス = 1;
+                        $t_approval->ユーザーID = $group_user->ユーザーID;
+                        $t_approval->save();
+                    }
+                }
+            }
+        }
+
+
+
+
+        return redirect()->route('workflowmaster');
+    }
 
 
 

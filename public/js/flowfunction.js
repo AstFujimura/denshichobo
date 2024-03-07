@@ -502,12 +502,12 @@ function change_group_select_method(method) {
     group_parameter_reload()
     group_select_method_reload(focusid)
   }
-  else if (method == "byapplicant") {
-    byapplicant_create()
-    group_parameter_reload()
-    group_select_method_reload(focusid)
+  // else if (method == "byapplicant") {
+  //   byapplicant_create()
+  //   group_parameter_reload()
+  //   group_select_method_reload(focusid)
 
-  }
+  // }
   else if (method == "postchoice") {
     positionreload()
     group_parameter_reload()
@@ -515,28 +515,32 @@ function change_group_select_method(method) {
   }
   change_icon(focusid)
 }
-// 承認者グループの申請者が選択をチェックした場合、inputに選択人数を作成する(デフォルトは無制限)
-// フォーカスがあたって要素の切り替わりの際にもこの関数が呼ばれるため
-// 既存のinput情報から選択可能人数のラジオボタンを選択する
-function byapplicant_create() {
-  // 現在選択中の要素のidを取得
-  var focusid = $("#focus").data("id")
 
-  if ($('input[class="byapplicant"][data-id = "' + focusid + '" ]').length == 0) {
-    $(".element_input").append(
-      '<input type="hidden" class="byapplicant" data-id = "' + focusid + '"  data-group_choice_number = "all" >'
-    )
-  }
 
-  var byapplicant = $('input[class="byapplicant"][data-id = "' + focusid + '" ]').data("group_choice_number")
-  if (byapplicant == "all") {
-    $('#choice_limit1').click()
-  }
-  else {
-    $('#choice_limit2').click()
-  }
+// // 承認者グループの申請者が選択をチェックした場合、inputに選択人数を作成する(デフォルトは無制限)
+// // フォーカスがあたって要素の切り替わりの際にもこの関数が呼ばれるため
+// // 既存のinput情報から選択可能人数のラジオボタンを選択する
+// function byapplicant_create() {
+//   // 現在選択中の要素のidを取得
+//   var focusid = $("#focus").data("id")
 
-}
+//   if ($('input[class="byapplicant"][data-id = "' + focusid + '" ]').length == 0) {
+//     $(".element_input").append(
+//       '<input type="hidden" class="byapplicant" data-id = "' + focusid + '"  data-group_choice_number = "all" >'
+//     )
+//   }
+
+//   var byapplicant = $('input[class="byapplicant"][data-id = "' + focusid + '" ]').data("group_choice_number")
+//   if (byapplicant == "all") {
+//     $('#choice_limit1').click()
+//   }
+//   else {
+//     $('#choice_limit2').click()
+//   }
+
+// }
+
+
 // 承認者グループのグループ名が変わった時と「役職から選択」にチェックがされたとき
 // inputの役職一覧からグループに該当する役職を並べて表示する
 // 表示された役職にinputの情報からチェックしていく
@@ -664,12 +668,12 @@ function group_select_method_reload(id) {
   // 要素のauthorizer_container(入れ物)を取得
   var group_select_method_container = $("#" + column + "_" + row).find(".group_select_method_container")
   group_select_method_container.html("")
-  if (inputelement.data("select_method") == "byapplicant") {
-    group_select_method_container.append(
-      '<div class="byapplicant_container">申請者が選択</div>'
-    )
-  }
-  else if (inputelement.data("select_method") == "postchoice") {
+  // if (inputelement.data("select_method") == "byapplicant") {
+  //   group_select_method_container.append(
+  //     '<div class="byapplicant_container">申請者が選択</div>'
+  //   )
+  // }
+  if (inputelement.data("select_method") == "postchoice") {
     var length = $('.post[data-id="' + id + '"]').length
     $('.post[data-id="' + id + '"]').each(function () {
       group_select_method_container.append(
@@ -691,53 +695,55 @@ function group_required_number_reload(id) {
 
 
 
-// 承認者グループ、申請者が選択の選択可能人数が変更された際、inputに情報を更新する
-function change_choice_number(status) {
-  var focusid = $("#focus").data("id")
-  var byapplicant = $('input[class="byapplicant"][data-id = "' + focusid + '" ]')
-  // 選択可能人数が無制限に変更されたとき
-  if (status == "all") {
-    byapplicant.data('group_choice_number', "all")
-    byapplicant.attr('data-group_choice_number', "all")
-  }
-  // 選択可能人数が「選択人数指定」に変更されたとき
-  // ※選択人数指定のデフォルトの値は1とするためラジオボタンが切り替わったときはテキストボックスも1に変更する
-  else if (status == "select") {
-    // フォーカスが当たって自動でラジオボタンが変更されたときもこの関数が実行されるため
-    // 現状の選択人数の値を確認してgroup_choice_numberがallつまり初期状態か無制限からの切り替えの場合実行
-    if (byapplicant.data('group_choice_number') == 'all') {
-      byapplicant.data('group_choice_number', "1")
-      byapplicant.attr('data-group_choice_number', "1")
+// // 承認者グループ、申請者が選択の選択可能人数が変更された際、inputに情報を更新する
+// function change_choice_number(status) {
+//   var focusid = $("#focus").data("id")
+//   var byapplicant = $('input[class="byapplicant"][data-id = "' + focusid + '" ]')
+//   // 選択可能人数が無制限に変更されたとき
+//   if (status == "all") {
+//     byapplicant.data('group_choice_number', "all")
+//     byapplicant.attr('data-group_choice_number', "all")
+//   }
+//   // 選択可能人数が「選択人数指定」に変更されたとき
+//   // ※選択人数指定のデフォルトの値は1とするためラジオボタンが切り替わったときはテキストボックスも1に変更する
+//   else if (status == "select") {
+//     // フォーカスが当たって自動でラジオボタンが変更されたときもこの関数が実行されるため
+//     // 現状の選択人数の値を確認してgroup_choice_numberがallつまり初期状態か無制限からの切り替えの場合実行
+//     if (byapplicant.data('group_choice_number') == 'all') {
+//       byapplicant.data('group_choice_number', "1")
+//       byapplicant.attr('data-group_choice_number', "1")
 
-      $('#group_choice_number').val("1")
-    }
+//       $('#group_choice_number').val("1")
+//     }
 
-  }
-  else if (status == 'number') {
-    // 選択人数指定が0以下の場合は値を1にする
-    if ($('#group_choice_number').val() < 1) {
-      byapplicant.data('group_choice_number', 1)
-      byapplicant.attr('data-group_choice_number', 1)
-      $('#group_choice_number').val("1")
-    }
-    // 選択人数指定が1以上の場合は値をそのまま入れる
-    else if ($('#group_choice_number').val() >= 1) {
-      byapplicant.data('group_choice_number', $('#group_choice_number').val())
-      byapplicant.attr('data-group_choice_number', $('#group_choice_number').val())
-    }
-    // inputに値がなかった場合は値を1にする
-    else {
-      byapplicant.data('group_choice_number', 1)
-      byapplicant.attr('data-group_choice_number', 1)
-      $('#group_choice_number').val("1")
-    }
+//   }
+//   else if (status == 'number') {
+//     // 選択人数指定が0以下の場合は値を1にする
+//     if ($('#group_choice_number').val() < 1) {
+//       byapplicant.data('group_choice_number', 1)
+//       byapplicant.attr('data-group_choice_number', 1)
+//       $('#group_choice_number').val("1")
+//     }
+//     // 選択人数指定が1以上の場合は値をそのまま入れる
+//     else if ($('#group_choice_number').val() >= 1) {
+//       byapplicant.data('group_choice_number', $('#group_choice_number').val())
+//       byapplicant.attr('data-group_choice_number', $('#group_choice_number').val())
+//     }
+//     // inputに値がなかった場合は値を1にする
+//     else {
+//       byapplicant.data('group_choice_number', 1)
+//       byapplicant.attr('data-group_choice_number', 1)
+//       $('#group_choice_number').val("1")
+//     }
 
-  }
-  group_parameter_reload()
-}
+//   }
+//   group_parameter_reload()
+// }
 // グループの承認人数が変更されたときにinputに情報を入れる
 // 母数を超えた時に処理を行う
 // 
+
+
 function change_group_authorizer_number() {
   var focusid = $("#focus").data("id")
 
@@ -1214,6 +1220,7 @@ function errorcheck() {
   if ($(".none_icon").length != 0) {
     $(".none_icon").parent().parent().parent().addClass("errorelement")
     alert("条件を満たしていないフローがあります。")
+    error = true
   }
   return error
 }
@@ -1327,47 +1334,47 @@ function view_create_approval(approval_object) {
     else if (array["person_group"] == 2) {
       approval_container.append('<div class="group_class">' + array["group"] + '</div>')
     }
-    // グループ　申請者が選択の場合
-    else if (array["person_group"] == 3) {
-      if (approval_container.find('.group_class').length === 0) {
-        approval_container.append('<div class="group_class">' + array["group"] + '</div>')
-      }
-      // 新しい select 要素を作成
-      var selectElement = $('<select>', {
-        'id': array["id"],
-        'name': array["id"],
-        'class': "select_class"
-      });
+    // // グループ　申請者が選択の場合
+    // else if (array["person_group"] == 3) {
+    //   if (approval_container.find('.group_class').length === 0) {
+    //     approval_container.append('<div class="group_class">' + array["group"] + '</div>')
+    //   }
+    //   // 新しい select 要素を作成
+    //   var selectElement = $('<select>', {
+    //     'id': array["id"],
+    //     'name': array["id"],
+    //     'class': "select_class"
+    //   });
 
-      // オプションを追加
-      selectElement.append($('<option>', {
-        'value': ''
-      }));
-      console.log(prefix + '/flowgrouplist/' + array)
-      $.ajax({
-        url: prefix + '/flowgrouplist/' + array["groupid"],
-        type: 'get',
-        dataType: 'json',
-        success: function (response) {
+    //   // オプションを追加
+    //   selectElement.append($('<option>', {
+    //     'value': ''
+    //   }));
+    //   console.log(prefix + '/flowgrouplist/' + array)
+    //   $.ajax({
+    //     url: prefix + '/flowgrouplist/' + array["groupid"],
+    //     type: 'get',
+    //     dataType: 'json',
+    //     success: function (response) {
           
-          $.each(response, function (index, array) {
+    //       $.each(response, function (index, array) {
             
-            selectElement.append($('<option>', {
-              'value': array["id"], // グループID
-              'text': array["name"] // グループ名
-            }));
-          })
-        },
-        error: function () {
-        }
+    //         selectElement.append($('<option>', {
+    //           'value': array["id"], // グループID
+    //           'text': array["name"] // グループ名
+    //         }));
+    //       })
+    //     },
+    //     error: function () {
+    //     }
   
-      })
+    //   })
 
-      approval_container.append(
-        selectElement
-      )
+    //   approval_container.append(
+    //     selectElement
+    //   )
 
-    }
+    // }
     // グループ　役職から選択の場合
     else if (array["person_group"] == 4) {
       if (approval_container.find('.group_class').length === 0) {

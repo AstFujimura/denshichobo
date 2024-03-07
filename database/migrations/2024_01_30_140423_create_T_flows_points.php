@@ -17,8 +17,10 @@ return new class extends Migration
     {
         Schema::create('t_flow_points', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('フローテーブルID');
+            $table->foreign('フローテーブルID')->references('id')->on('t_flows');
             $table->unsignedBigInteger('フロー地点ID');
-            $table->foreign('フロー地点ID')->references('id')->on('t_flow_points');
+            $table->foreign('フロー地点ID')->references('id')->on('m_flow_points');
             $table->integer('承認移行ステータス')->default(-1);
             $table->integer('承認ステータス')->default(-1);
 

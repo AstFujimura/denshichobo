@@ -24,7 +24,6 @@ return new class extends Migration
             $table->integer('個人グループ')->default(1);
             $table->boolean('承認可能状態')->default(true);
             $table->string('フロントエンド表示ポイント');
-            $table->string('申請者選択数')->nullable();
             $table->boolean('決裁地点')->default(false);
             $table->integer('母数')->default(0);
 
