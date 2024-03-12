@@ -15,9 +15,25 @@
 
         <div class="main_general_container">
             <div class="main_general_content">
-                <div class="main_general_button">
+                <a href="{{route('workflowapplicationget')}}" class="main_general_button">
                     ワークフロー申請
-                </div>
+                </a>
+                <a href="{{route('workflowapprovalview')}}" class="main_general_button">
+                    承認
+                </a>
+                <a href="{{route('workflowviewget')}}" class="main_general_button">
+                    申請一覧
+                </a>
+
+            </div>
+            <div class="main_admin_content">
+                <a href="{{route('workflowmaster')}}" class="main_admin_button">
+                    ワークフローマスタ一覧
+                </a>
+                <a href="{{route('workflowregistget')}}" class="main_admin_button">
+                    ワークフローマスタ登録
+                </a>
+
             </div>
         </div>
         <div class="main_admin_container">

@@ -3,6 +3,10 @@
     z-index: 13;
 }
 
+.main01 {
+    background: #ebebeb;
+}
+
 .menu001 {
     z-index: 13;
 }
@@ -28,20 +32,54 @@
 
 
 /* メインメニュー */
-.main_menu_container{
+.main_menu_container {}
 
+.main_general_container {
+    display: flex;
+    background: white;
+    padding: 40px;
+    max-width: 1000px;
+    border-radius: 29px;
 }
-.main_general_container{
 
-}
-.main_general_content{
+.main_general_content {}
 
+.main_general_button {
+    background: rgb(1 112 255);
+    padding: 12px;
+    margin: 0 100px 30px 0;
+    border-radius: 3px;
+    color: white;
+    text-align: center;
+    box-shadow: 2px 3px 0 0 #cbcbcb;
+    display: block;
 }
-.main_general_button{
-background: blue;
-}
-.main_admin_button{
 
+.main_general_button:hover {
+    background: rgb(2, 77, 175);
+    box-shadow: 1px -1px 2px 0 #cbcbcb;
+    top: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+.main_admin_button {
+    background: rgb(199 82 46);
+    padding: 12px;
+    margin: 0 30px 30px 0;
+    border-radius: 3px;
+    color: white;
+    text-align: center;
+    box-shadow: 2px 3px 0 0 #cbcbcb;
+    display: block;
+}
+
+.main_admin_button:hover {
+    background: rgb(109, 45, 25);
+    box-shadow: 1px -1px 2px 0 #cbcbcb;
+    top: 2px;
+    position: relative;
+    cursor: pointer;
 }
 
 
@@ -555,6 +593,14 @@ background: blue;
 
 /* フローマスタ一覧 */
 
+.flow_master_container {
+    background: white;
+    display: flex;
+    padding: 30px;
+    border-radius: 29px;
+    max-width: 1000px;
+}
+
 .flow_master_table {
     width: 1000px;
 }
@@ -565,10 +611,11 @@ background: blue;
 
 .flow_master_th>div {
     width: 20%;
-    background: rgb(158 233 255);
+    background: rgb(239 239 239);
     padding: 5px 10px;
     border-right: solid 1px white;
-    text-align: center;
+    color: #6f6f6f;
+    font-weight: bold;
 }
 
 .flow_master_start_price,
@@ -657,7 +704,6 @@ background: blue;
     grid-template-columns: repeat(2, 1fr);
     flex-direction: column;
     width: 800px;
-    margin-inline: auto;
     padding: 50px;
     border-radius: 30px;
     box-shadow: 1px 3px 5px 0 gray;
@@ -685,7 +731,8 @@ background: blue;
 }
 
 .flow_next_button {
-    margin-top: 30px;
+    margin-top: 30px;    
+    margin-inline: auto;
 }
 
 .flex_content {
@@ -768,7 +815,7 @@ background: blue;
 .flow_application_form {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    width: 900px;
 }
 
 
@@ -841,6 +888,10 @@ background: blue;
     position: relative;
     display: grid;
     font-size: 13px;
+    background: white;
+    margin-top: 30px;
+    border-radius: 30px;
+    padding: 32px;
 }
 
 .approval_container {
@@ -921,13 +972,104 @@ background: blue;
     display: flex;
     justify-content: center;
 }
-.flow_confirm_content{
+
+.flow_confirm_content {
     display: flex;
 }
-.flow_confirm_label{
+
+.flow_confirm_label {
     width: 200px;
     margin-bottom: 26px;
 }
-.flow_confirm_element{
+
+.flow_confirm_element {
     width: 475px;
+}
+
+/* 申請一覧 */
+
+.flow_view_container{
+    background: white;
+    padding: 40px;
+    max-width: 1000px;
+    border-radius: 29px;
+}
+
+.tab_container{
+    display: flex;
+    margin-left: 12px;
+}
+.flow_view_content{
+    padding: 30px;
+    border-radius: 8px;
+    background: white;
+    border: solid 1px #00b500;
+    top: -15px;
+    position: relative;
+}
+.flow_tab{
+    padding: 13px;
+    border-radius: 11px;
+    background: #f7f7f7;
+    width: 150px;
+    text-align: center;
+    border: solid 1px #bdbcbc;
+    margin-right: 16px;
+    height: 30px;
+    cursor: pointer;
+}
+.tab_focus{
+    background: #00b500;
+    color: white;
+    border: solid 1px #00b500;
+}
+.flow_view_table{
+
+}
+.flow_view_thead_tr{
+    display: flex;
+}
+.flow_view_tbody_tr{
+    display: flex;
+    border-bottom: solid 1px #a1a1a1;
+    padding-block: 13px;
+    cursor: pointer;
+}
+.flow_view_tbody_tr:hover{
+    background: #164955;
+    color: white !important;
+}
+.flow_view_th{
+    color: gray;
+}
+.flow_view_title{
+    width: 600px;
+}
+.flow_view_status{
+    width: 80px;
+}
+.flow_view_applicant{
+    width: 100px;
+}
+.flow_view_date{
+    width: 120px;
+}
+.ongoing{
+    color: #ff7a4a;
+    font-weight: bold;
+}
+.completion{
+    color: #008eff;
+    font-weight: bold; 
+}
+
+/* 承認 */
+.unapproved{
+    color: #ff7a4a;
+    font-weight: bold;
+}
+
+.approved{
+    color: #008eff;
+    font-weight: bold; 
 }

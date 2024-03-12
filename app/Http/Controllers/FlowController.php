@@ -836,18 +836,58 @@ class FlowController extends Controller
                     }
                 }
             }
+            // 申請者の場合
+            else if ($m_flow_point->個人グループ == 0) {
+                $m_approval = M_approval::where("フロー地点ID", $m_flow_point->id)->first();
+
+                $t_approval = new T_approval();
+                $t_approval->フローテーブルID = $t_flow->id;
+                $t_approval->フロー地点テーブルID = $m_flow_point->id;
+                $t_approval->ステータス = 4;
+                $t_approval->ユーザーID = Auth::id();
+                $t_approval->save();
+                $applicant_flow_point_id = $m_flow_point->id;
+            }
         }
 
+        $next_flow_points = M_next_flow_point::where("現フロー地点ID", $applicant_flow_point_id)
+            ->get();
+        foreach ($next_flow_points as $next_flow_point) {
+            //　申請者から初めの承認ポイントを取得
+            $t_flow_point = DB::table('t_flow_points')
+                ->select('t_flow_points.*', 'm_flow_points.フロントエンド表示ポイント')
+                ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
+                ->where('フロントエンド表示ポイント', $next_flow_point->次フロントエンド表示ポイント)
+                ->first();
 
-
+            $t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->id)
+                ->get();
+            foreach($t_approvals as $t_approval){
+                $t_approval->ステータス = 2;
+                $t_approval->save();
+            }
+        }
 
         return redirect()->route('workflowmaster');
     }
 
 
 
+    // 承認一覧
+    public function workflowapprovalview(Request $request)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
 
-    public function workflowapproval(Request $request)
+        
+
+        return view('flow.workflowapprovalview', compact("prefix", "server"));
+    }
+    // 承認一覧
+    public function workflowapproval(Request $request, $id)
     {
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
@@ -855,6 +895,17 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         return view('flow.workflowapproval', compact("prefix", "server"));
+    }
+
+
+    public function workflowviewget(Request $request)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        return view('flow.workflowview', compact("prefix", "server"));
     }
 
 

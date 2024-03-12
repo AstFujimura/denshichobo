@@ -196,11 +196,15 @@ Route::prefix($prefix)->group(function () {
             // ワークフロー最終申請
             Route::post('/workflow/confirm', [FlowController::class, 'workflowconfirmpost'])->name('workflowconfirmpost');
 
+            // ワークフロー申請一覧
+            Route::get('/workflow/view', [FlowController::class, 'workflowviewget'])->name('workflowviewget');
 
 
 
             // 承認一覧
-            Route::get('/workflow/approval', [FlowController::class, 'workflowapproval'])->name('workflowapproval');
+            Route::get('/workflow/approvalview', [FlowController::class, 'workflowapprovalview'])->name('workflowapprovalview');
+            // 承認(idはt_flowpointのid)
+            Route::get('/workflow/approval/{id}', [FlowController::class, 'workflowapproval'])->name('workflowapproval');
 
 
 

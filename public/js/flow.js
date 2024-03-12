@@ -263,8 +263,8 @@ $(document).ready(function () {
         type: 'get',
         dataType: 'json',
         success: function (response) {
-          $("#route").data("routecount",Object.keys(response).length)
-          $("#route").attr("data-routecount",Object.keys(response).length)
+          $("#route").data("routecount", Object.keys(response).length)
+          $("#route").attr("data-routecount", Object.keys(response).length)
           arrays = response
         },
         error: function () {
@@ -793,6 +793,11 @@ $(document).ready(function () {
 
 
 
+  // ---------申請一覧--------------------
 
+  $('.flow_tab').on("click", function () {
+    $('.tab_focus').removeClass('tab_focus')
+    $(this).addClass('tab_focus')
+  })
 
 });
