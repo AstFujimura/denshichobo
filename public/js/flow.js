@@ -217,9 +217,25 @@ $(document).ready(function () {
     // })
 
 
-
-
-
+    var scale = 1
+    // マスター登録画面の拡大縮小ボタンを押したとき
+    $('.zoom').on('click', function () {
+      if ($(this).attr("id") == "zoom_in") {
+        scale += 0.1
+      }
+      else if ($(this).attr("id") == "zoom_out") {
+        scale -= 0.1
+      }
+      console.log(scale)
+      scalechange(scale)
+    })
+    function scalechange(scale) {
+      var translate_percent = (1 - scale) * -50;
+      $(".grid").css({
+        'transform': 'scale(' + scale + ')',
+        'transform-origin': ' top left'
+      })
+    }
 
 
 
@@ -615,6 +631,38 @@ $(document).ready(function () {
     })
   }
 
+
+
+  // --------ワークフローマスタ一覧---------------------
+
+
+  $('.flow_master_delete_button').on('click', function () {
+    var flowname = $(this).parent().parent().find('.flow_master_flowname').text()
+    if (confirm("「" + flowname + "」を削除します。よろしいですか。")) {
+      window.location.href = $(this).data("location")
+    }
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // -------------ワークフロー申請----------------
 
   $('.flow_application_droparea').on('dragover', function (event) {
@@ -715,54 +763,75 @@ $(document).ready(function () {
     $('.flow_application_gray').hide()
   })
 
-  // フロー申請画面にてつぎへボタンを押してフォーム送信をする場合
-  $(".flow_application_form").on("submit", function () {
-    flow_application_required_check()
+  // エンターを押して次のフォームのフォーカスに移る
+  $('.application_form_text').keydown(function (event) {
+    if (event.keyCode === 13) { // エンターキーのキーコードは 13
+      event.preventDefault(); // デフォルトのエンターキーの動作を無効化
+
+
+      var currentIndex = $('.application_form_text').index(this);
+      var nextInput = $('.application_form_text').eq(currentIndex + 1);
+
+      if (nextInput.length === 0) {
+        $('.flow_application_form').submit(); // 最後の入力欄でエンターキーを押すとフォームが送信される
+
+      } else {
+        nextInput.focus(); // 次の入力欄にフォーカスを移動
+      }
+    }
   });
 
+  $('#application_form_date').on('blur', function () {
+    flow_application_date_format()
+  })
+
+  // フロー申請画面にてつぎへボタンを押してフォーム送信をする場合
+  $(".flow_application_form").on("submit", function (e) {
+    e.preventDefault()
+    // 必須項目のチェックを行う
+    if (!flow_application_required_check()) {
+      // 日付のフォーマットのチェックを行う
+      if (!flow_application_date_format()) {
+        this.submit()
+      }
+
+    }
+  });
+  $('#application_form_date').datepicker({
+    changeMonth: true,
+    changeYear: true,
+    duration: 300,
+    showAnim: 'show',
+    showOn: 'button', // 日付をボタンクリックでのみ表示する
+    buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
+    buttonImageOnly: true, // テキストを非表示にする
+  })
 
 
 
 
 
 
+  // -----------経路選択------------------
 
+
+  if ($("#flow_choice").length != 0) {
+    if ($('.flow_choice_select').val() != ""){
+      viewonlyworkflow(prefix,$('.flow_choice_select').val())
+    }
+  }
 
 
 
   // フロー選択
   $('.flow_choice_select').on('change', function () {
-    // グリッドのセルの値を指定
-    const cellwidth = 120
-    const cellheight = 60
-
-    // 空白のセルの値を指定
-    const gapcellwidth = 10
-    const gapcellheight = 10
-    var flow_id = $(this).val()
-    $.ajax({
-      url: prefix + '/viewonlyworkflow/' + flow_id,
-      type: 'get',
-      dataType: 'json',
-      success: function (response) {
-        $("#maxgrid_column").val(response[1])
-        $("#maxgrid_row").val(response[2])
-        console.log(response)
-        createviewgrid(cellwidth, cellheight, gapcellwidth, gapcellheight)
-        view_create_element(response[0])
-        view_create_line(response[3], cellwidth, cellheight, gapcellwidth, gapcellheight)
-        view_create_approval(response[4])
-      },
-      error: function () {
-      }
-
-    })
-
-
+    viewonlyworkflow(prefix,$(this).val())
 
   })
 
-  // 確認画面
+  
+
+  // -----------確認画面------------------
   if ($("#flow_confirm").length != 0) {
     // グリッドのセルの値を指定
     const cellwidth = 120
@@ -789,7 +858,26 @@ $(document).ready(function () {
       }
 
     })
+
+    $.ajax({
+      url: prefix + '/viewonlymetaworkflow/' + flow_id,
+      type: 'get',
+      dataType: 'json',
+      success: function (response) {
+        $('.view_condition_start_price_value').text(response["startprice"])
+        $('.view_condition_end_price_value').text(response["endprice"])
+        group_object_create(response["group_objects"]);
+        console.log(response)
+      },
+      error: function () {
+      }
+  
+    })
   }
+
+  $('.condition_accordion_trigger').on('click',function(){
+    $('.condition_accordion').toggleClass('condition_accordion_close')
+  })
 
 
 
@@ -798,6 +886,187 @@ $(document).ready(function () {
   $('.flow_tab').on("click", function () {
     $('.tab_focus').removeClass('tab_focus')
     $(this).addClass('tab_focus')
+
+    var tabname = $(this).data("tabname")
+    $('.open_tab').removeClass('open_tab')
+    $('.' + tabname).addClass('open_tab')
   })
+
+  // 承認画面
+  if ($("#approve_phase").length != 0) {
+    // グリッドのセルの値を指定
+    const cellwidth = 120
+    const cellheight = 60
+
+    // 空白のセルの値を指定
+    const gapcellwidth = 10
+    const gapcellheight = 10
+    var flow_id = $("#flowid").val()
+    $.ajax({
+      url: prefix + '/viewonlyworkflow/' + flow_id,
+      type: 'get',
+      dataType: 'json',
+      success: function (response) {
+        $("#maxgrid_column").val(response[1])
+        $("#maxgrid_row").val(response[2])
+        console.log(response)
+        createviewgrid(cellwidth, cellheight, gapcellwidth, gapcellheight)
+        view_create_element(response[0])
+        view_create_line(response[3], cellwidth, cellheight, gapcellwidth, gapcellheight)
+        view_create_approval(response[4])
+
+        add_status_message()
+      },
+      error: function () {
+      }
+
+    })
+  }
+
+
+
+
+  // -------承認----------------------
+
+  //ダウンロードボタンを押したとき
+  $('.approve_download').on('click', function () {
+    window.location.href = $(this).attr("id")
+  });
+
+  // プレビューボタンを押したとき
+  $("#approve_preview_button").on("click", function () {
+    $('.approve_preview_container').show()
+    $('.approve_gray').show()
+    var ID = $("#t_flowid").val();
+    if ($('#server').val() == "cloud") {
+      $.ajax({
+        url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
+        method: 'GET',
+        dataType: "json",
+        success: function (response) {
+          if (response.Type === 'application/pdf') {
+            var embed = $('<embed>');
+            embed.attr('src', response.path);
+            embed.attr('width', '100%');
+            embed.attr('height', '100%');
+            embed.attr('type', 'application/pdf');
+            embed.addClass('imgset');
+
+            $('.approve_preview_container').html(embed);
+          }
+          else if (response.Type.startsWith('image/')) {
+            var img = $('<img>');
+            img.attr('src', response.path);
+            img.attr('width', '100%');
+            img.attr('height', '100%');
+            img.addClass('imgset');
+
+            $('.approve_preview_container').html(img);
+          }
+        }
+      });
+    }
+    else {
+      $.ajax({
+        url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
+        method: 'GET',
+        xhrFields: {
+          responseType: 'blob' // ファイルをBlobとして受け取る
+        },
+        success: function (response) {
+          // 取得したファイルデータを使ってPDFを表示
+          var Url = URL.createObjectURL(response);
+          if (response.type === 'application/pdf') {
+            var embed = $('<embed>');
+            embed.attr('src', Url);
+            embed.attr('width', '100%');
+            embed.attr('height', '100%');
+            embed.attr('type', 'application/pdf');
+            embed.addClass('imgset');
+
+            $('.approve_preview_container').html(embed);
+          }
+          else if (response.type.startsWith('image/')) {
+            var img = $('<img>');
+            img.attr('src', Url);
+            img.attr('width', '100%');
+            img.attr('height', '100%');
+            img.addClass('imgset');
+
+            $('.approve_preview_container').html(img);
+          }
+
+
+        },
+        error: function (xhr, status, error) {
+          console.error(error); // エラー処理
+        }
+      });
+    }
+  })
+
+  // grayエリアをクリックしてプレビューを閉じるとき
+  $(".approve_gray").on("click", function () {
+    $('.approve_preview_container').hide()
+    $('.approve_gray').hide()
+  })
+
+  // 承認画面の場合
+  if ($('#approve_phase').length != 0) {
+    // 承認状況のリストをホバーした時にviewの要素の背景色を変化させる
+    $('.approve_condition_tbody_tr').hover(
+      function () {
+        // マウスが要素に入ったときの処理
+        // 例：要素の背景色を変更する
+        $(this).addClass('approve_hover');
+        var front_point = $(this).data("front_point")
+        $("#" + front_point).addClass("approve_hover")
+      },
+      function () {
+        // マウスが要素から出たときの処理
+        // 例：要素の背景色を元に戻す
+        $(this).removeClass('approve_hover');
+        var front_point = $(this).data("front_point")
+        $("#" + front_point).removeClass("approve_hover")
+      }
+    )
+
+    // 逆もしかり、viewの要素の背景色をホバーしたときにリストの背景色を変化させる
+    // eは動的に作成した要素であるため違う書き方をしている
+    $(document).on('mouseenter', '.e', function () {
+      // マウスが要素に入ったときの処理
+      console.log("aa");
+      $(this).addClass('approve_hover');
+      var front_point = $(this).attr("id");
+      $('[data-front_point="' + front_point + '"]').addClass("approve_hover");
+    });
+
+    $(document).on('mouseleave', '.e', function () {
+      // マウスが要素から出たときの処理
+      $(this).removeClass('approve_hover');
+      var front_point = $(this).attr("id");
+      $('[data-front_point="' + front_point + '"]').removeClass("approve_hover");
+    });
+
+    // 「承認する」ボタンを押したとき
+    $("#approvalbutton").on("click", function () {
+      $("#result").val("approve");
+      if (confirm("申請を承認します。よろしいですか")) {
+        $("#approve_form").submit();
+      }
+    })
+    // 「却下する」ボタンを押したとき
+    $("#rejectbutton").on("click", function () {
+      $("#result").val("reject");
+      if (confirm("申請を却下します。よろしいですか")) {
+        $("#approve_form").submit();
+      }
+    })
+
+
+
+
+  }
+
 
 });

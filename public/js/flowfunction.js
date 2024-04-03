@@ -1222,14 +1222,157 @@ function errorcheck() {
     alert("条件を満たしていないフローがあります。")
     error = true
   }
+
+  // 金額の値がどちらも入っておりかつ下限金額が上限金額を上回っているときにエラーメッセージをだす
+  if (parseFloat($('#start_flow_price').val()) > parseFloat($('#end_flow_price').val()) && $('#start_flow_price').val() != "" && $('#end_flow_price').val() != "") {
+    $("#start_flow_price").addClass("errortextbox")
+    $("#end_flow_price").addClass("errortextbox")
+    alert("金額の範囲が不正です")
+    error = true
+  }
+  if ($('#start_flow_price').val() < 0 || $('#start_flow_price').val() > 2000000000) {
+    $("#start_flow_price").addClass("errortextbox")
+    alert("下限金額は0円以上2,000,000,000円以下にしてください")
+    error = true
+  }
+  if ($('#end_flow_price').val() < 0 || $('#end_flow_price').val() > 2000000000) {
+    $("#end_flow_price").addClass("errortextbox")
+    alert("上限金額は0円以上2,000,000,000円以下にしてください")
+    error = true
+  }
   return error
 }
 
 //ワークフロー申請の時の必須項目のチェック
 function flow_application_required_check() {
-
+  var error = false
+  // データ属性にrequired= trueになっている要素を順番に参照
+  $('[data-required="true"]').each(function () {
+    // 初めにエラーのcssを削除
+    $(this).removeClass('errortextbox')
+    // もし空欄だった場合、エラーのcssを付与
+    if ($(this).val() == "") {
+      $(this).addClass('errortextbox')
+      error = true
+    }
+  })
+  if (error) {
+    alert("必須項目を入力してください")
+  }
+  return error
 }
 
+//ワークフロー申請の時の日付項目のチェック
+function flow_application_date_check() {
+  error = false
+  var datestr = $('#flow_application_date').val()
+  var specifiedDate = new Date(datestr)
+  // gettimeで1970年1月1日0:00からの時間をint型で取得できるため
+  // 数字でなかった場合(日付型になっていない場合)はisNaNがtrueとなる
+  if (isNaN(specifiedDate.getTime())){
+    $('#flow_application_date').addClass("errortextbox")
+    alert('日付が不正な形式です')
+    error = true
+  }
+  return error
+}
+// 日付の型に変更する
+function flow_application_date_format() {
+  var datestr = $('#application_form_date').val()
+  datestr = datestr.replaceAll("-","/")
+  console.log(datestr)
+  // 指定された日付
+  var specifiedDate = new Date(datestr);
+  // 現在の年号
+  var currentYear = new Date().getFullYear();
+
+  // 正規表現を使用して日付形式をチェックするパターン
+  var datePatternYear = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
+  var datePatternNoneYear = /^\d{1,2}\/\d{1,2}$/;
+
+  // 入力された文字列が日付形式であるかどうかを確認
+  if (datePatternYear.test(datestr)) {
+    if (isNaN(specifiedDate.getTime())){
+      $('#application_form_date').val("")
+    }
+    else {
+      $('#application_form_date').val(specifiedDate.toLocaleDateString())
+    }
+  }
+  else if (datePatternNoneYear.test(datestr)) {
+    // 月日を分断
+    var components = datestr.split('/');
+    // 現在の年号をつけた年月日を作成
+    var newDate = new Date(currentYear,components[0]-1,components[1])
+    if (isNaN(newDate.getTime())){
+      $('#application_form_date').val("")
+    }
+    else {
+      $('#application_form_date').val(newDate.toLocaleDateString())
+    }
+
+  }
+  else {
+    $('#application_form_date').val("")
+  }
+}
+
+
+// 読み取り専用のフローとメタ情報を表示する
+function viewonlyworkflow(prefix,flow_id) {
+  // グリッドのセルの値を指定
+  const cellwidth = 120
+  const cellheight = 60
+
+  // 空白のセルの値を指定
+  const gapcellwidth = 10
+  const gapcellheight = 10
+  $.ajax({
+    url: prefix + '/viewonlyworkflow/' + flow_id,
+    type: 'get',
+    dataType: 'json',
+    success: function (response) {
+      $("#maxgrid_column").val(response[1])
+      $("#maxgrid_row").val(response[2])
+      createviewgrid(cellwidth, cellheight, gapcellwidth, gapcellheight)
+      view_create_element(response[0])
+      view_create_line(response[3], cellwidth, cellheight, gapcellwidth, gapcellheight)
+      view_create_approval(response[4])
+    },
+    error: function () {
+    }
+
+  })
+
+  $.ajax({
+    url: prefix + '/viewonlymetaworkflow/' + flow_id,
+    type: 'get',
+    dataType: 'json',
+    success: function (response) {
+      var startprice = response["startprice"]
+      var endprice = response["endprice"]
+      if (startprice == "0"){
+        $('.view_condition_start_price_value').text("下限無し")
+      }
+      else{
+        $('.view_condition_start_price_value').text(response["startprice"])
+      }
+      if (endprice == "2000000000"){
+        $('.view_condition_end_price_value').text("上限無し")
+      }
+      else{
+        $('.view_condition_end_price_value').text(response["endprice"])
+      }
+      
+
+      group_object_create(response["group_objects"]);
+      console.log(response)
+    },
+    error: function () {
+    }
+
+  })
+}
 // 読み取り専用のgrid作成
 function createviewgrid(cellwidth, cellheight, gapcellwidth, gapcellheight) {
   var Xcellcount = $("#maxgrid_column").val()
@@ -1356,9 +1499,9 @@ function view_create_approval(approval_object) {
     //     type: 'get',
     //     dataType: 'json',
     //     success: function (response) {
-          
+
     //       $.each(response, function (index, array) {
-            
+
     //         selectElement.append($('<option>', {
     //           'value': array["id"], // グループID
     //           'text': array["name"] // グループ名
@@ -1367,7 +1510,7 @@ function view_create_approval(approval_object) {
     //     },
     //     error: function () {
     //     }
-  
+
     //   })
 
     //   approval_container.append(
@@ -1388,4 +1531,60 @@ function view_create_approval(approval_object) {
   })
 
 
+}
+
+function group_object_create(groupobjects){
+  $('.view_condition_group_element').html('')
+  $.each(groupobjects, function (index, object) {
+    $('.view_condition_group_element').append(
+      '<div class="view_condition_group">'+object+'</div>'
+    )
+  })
+}
+
+// 承認状況画面において結果のマークをviewに反映する
+function add_status_message() {
+  $(".e").each(function () {
+    var front_point = $(this).attr("id");
+    var each_status = $('[data-front_point="' + front_point + '"]').find(".approve_condition_status").text().trim()
+    var point_status = $('[data-front_point="' + front_point + '"]').data("point_status")
+    console.log(each_status)
+    // 申請の場合
+    if (each_status == "申請") {
+      var status_mark = $('<div>').text('申請')
+      status_mark.addClass('status_mark')
+      status_mark.addClass('applicant_mark')
+    }
+    // 今回の自分の場合
+    // else if (each_status == "承認待ち"){
+    //   var status_mark = $('<div>').text('承認待ち')
+    //   status_mark.addClass('status_mark')
+    //   status_mark.addClass('approve_wait_mark')
+    // }
+    // フロー地点で承認済みの場合
+    else if (point_status == 0) {
+      var status_mark = $('<div>').text('承認済')
+      status_mark.addClass('status_mark')
+      status_mark.addClass('approved_mark')
+    }
+    // フロー地点で却下の場合
+    else if (point_status == 999) {
+      var status_mark = $('<div>').text('却下')
+      status_mark.addClass('status_mark')
+      status_mark.addClass('reject_mark')
+    }
+    // フロー地点でまだ承認人数に達していない場合
+    else if (point_status < 0) {
+      // 承認者が1人以上いる場合
+      var approve_count = $('[data-front_point="' + front_point + '"]').find(".approve_condition_status[data-each_status='4']").length
+
+      // 承認人数に達していないが
+      if (approve_count != 0) {
+        var status_mark = $('<div>').text(approve_count + '人承認')
+        status_mark.addClass('status_mark')
+        status_mark.addClass('approve_ongoing_mark')
+      }
+    }
+    $(this).append(status_mark)
+  })
 }

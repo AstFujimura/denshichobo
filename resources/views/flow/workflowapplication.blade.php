@@ -15,21 +15,31 @@
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle">ワークフロー申請</h2>
+    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">ワークフロー申請</h2>
     <form action="{{route('workflowapplicationpost')}}" method="post" id="flow_application_form" class="flow_application_form" enctype="multipart/form-data">
         @csrf
+
         <div class="flow_application_container">
+            <div class="flow_application_button_content">
+                <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                    トップへもどる
+                </a>
+                <button class="next_button flow_next_button" id="flow_next_button">
+                    次へ
+                </button>
+            </div>
             <div class="application_form_content ">
                 <div class="application_form_label">
                     標題
                 </div>
-                <input type="text" name="title" class="application_form_text text_long_content">
+                <input type="text" name="title" id="application_form_title" class="application_form_text text_long_content" data-required="true">
             </div>
             <div class="application_form_content ">
                 <div class="application_form_label">
                     取引先
                 </div>
-                <input type="text" name="company" class="application_form_text text_long_content">
+                <input type="text" name="company" id="application_form_company" class="application_form_text text_long_content" data-required="true">
                 <!-- <div class="registtorihikisakiselect" id="torihikisakiselect"></div> -->
             </div>
 
@@ -37,19 +47,19 @@
                 <div class="application_form_label">
                     取引日
                 </div>
-                <input type="text" name="date" class="application_form_text text_short_content">
+                <input type="text" name="date" id="application_form_date" class="application_form_text text_short_content" data-required="true">
             </div>
             <div class="application_form_content ">
                 <div class="application_form_label">
                     金額
                 </div>
-                <input type="number" name="price" class="application_form_text text_short_content">
+                <input type="number" name="price" id="application_form_price" class="application_form_text text_short_content" data-required="true">
             </div>
             <div class="application_form_content ">
                 <div class="application_form_label">
                     コメント
                 </div>
-                <textarea name="comment" class="application_form_text text_area_content"></textarea>
+                <textarea name="comment" id="application_form_comment" class="application_form_text text_area_content" data-required="true"></textarea>
             </div>
             <div class="application_form_content">
                 <div class="application_form_label">
@@ -57,15 +67,13 @@
                 </div>
                 <div class="flow_application_droparea">
                     <p>ここにドラッグ＆ドロップ</p>
-                    <input type="file" name="file" id="file" class="file_input">
+                    <input type="file" name="file" id="file" class="file_input" data-required="true">
                 </div>
                 <div class="flow_application_preview_button">プレビュー</div>
             </div>
 
         </div>
-        <button class="next_button flow_next_button" id="flow_next_button">
-            次へ
-        </button>
+
 
 
 

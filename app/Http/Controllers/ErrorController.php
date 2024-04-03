@@ -44,4 +44,16 @@ class ErrorController extends Controller
         }
         
     }
+    public function workflowerrorGet(Request $request,$code)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        if ($code == 'A546815'){
+            $message = "すでに申請済です。新たに申請し直してください";
+            return view('error.workflowerror',compact("message",'prefix','server'));
+        }
+    }
 }

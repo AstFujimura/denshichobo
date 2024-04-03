@@ -169,7 +169,8 @@ Route::prefix($prefix)->group(function () {
             // ワークフローのポスト前のユーザー名のチェックを行う非同期通信先API
             Route::get('/flowusercheck', [FlowController::class, 'flowusercheck'])->name('flowusercheck');
 
-
+            // ワークフローの読み取り専用情報のうちメタ情報を返す非同期通信API
+            Route::get('/viewonlymetaworkflow/{id}', [FlowController::class, 'viewonlymetaworkflow'])->name('viewonlymetaworkflow');
             // ワークフローの読み取り専用情報を返す非同期通信先API
             Route::get('/viewonlyworkflow/{id}', [FlowController::class, 'viewonlyworkflow'])->name('viewonlyworkflow');
             // ワークフローの読み取り専用フローの時のグループリストを返す非同期通信先API
@@ -183,6 +184,8 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/master/{id}', [FlowController::class, 'workflowmasterdetail'])->name('workflowmasterdetail');
             // ワークフローマスタ編集
             Route::get('/workflowedit/{id}', [FlowController::class, 'workfloweditget'])->name('workfloweditget');
+            // ワークフローマスタ削除
+            Route::get('/workflowdelete/{id}', [FlowController::class, 'workflowdeleteget'])->name('workflowdeleteget');
             // ワークフロー申請
             Route::get('/workflow/application', [FlowController::class, 'workflowapplicationget'])->name('workflowapplicationget');
             // ワークフロー申請
@@ -198,13 +201,23 @@ Route::prefix($prefix)->group(function () {
 
             // ワークフロー申請一覧
             Route::get('/workflow/view', [FlowController::class, 'workflowviewget'])->name('workflowviewget');
+            // ワークフロー申請情報(idはt_flowsのid)
+            Route::get('/workflow/application/detail/{id}', [FlowController::class, 'workflowapplicationdetailget'])->name('workflowapplicationdetailget');
 
 
+
+
+            // ワークフローファイル閲覧API
+            Route::get('/workflow/img/{id}', [FlowController::class, 'flowimgget'])->name('flowimgget');
+            // ワークフローファイルダウンロード
+            Route::get('/workflow/download/{id}', [FlowController::class, 'flowdownload'])->name('flowdownload');
 
             // 承認一覧
             Route::get('/workflow/approvalview', [FlowController::class, 'workflowapprovalview'])->name('workflowapprovalview');
-            // 承認(idはt_flowpointのid)
-            Route::get('/workflow/approval/{id}', [FlowController::class, 'workflowapproval'])->name('workflowapproval');
+            // 承認(idはt_approvalsのid)
+            Route::get('/workflow/approval/{id}', [FlowController::class, 'workflowapprovalget'])->name('workflowapprovalget');
+            // 承認ポスト
+            Route::post('/workflow/approval', [FlowController::class, 'workflowapprovalpost'])->name('workflowapprovalpost');
 
 
 
@@ -222,6 +235,9 @@ Route::prefix($prefix)->group(function () {
 
             //    グループの役職削除API
             Route::get('/admin/grouppositiondelete/{id}', [AdminController::class, 'admingrouppositiondeleteGet'])->name('admingrouppositiondeleteGet');
+
+            //    ワークフローエラーコード
+            Route::get('/workflowerror/{code}', [ErrorController::class, 'workflowerrorGet'])->name('workflowerrorGet');
         }
     });
 });

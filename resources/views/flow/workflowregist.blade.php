@@ -11,6 +11,11 @@
 <form action="{{route('workflowregistpost')}}" method="post" id="workflowform" enctype="application/x-www-form-urlencoded">
     @csrf
     <div class="maincontent01 flowbackground">
+        <!-- <div class="meta_flow_container">
+            <div class="meta_flow_content">
+
+            </div>
+        </div> -->
         <div class="MenueBar">
             <div class="left_side_menu">
                 <div class="left_side_section">
@@ -166,8 +171,8 @@
                 </div>
             </div>
         </div>
-        <div class="MainElement">
-            <h2 class="pagetitle">ワークフロー登録</h2>
+        <div class="MainElement flow_master_element">
+            <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/master_regist.svg') }}" alt="" class="title_icon">ワークフロー登録</h2>
             <div class="element_input">
                 <input type="hidden" name="edit" class="regist" id="regist" value="regist">
                 @foreach ($positions as $position)
@@ -186,9 +191,17 @@
 
 
 
+            <div class="grid_container">
+                <div class="zoom_in_out">
 
-            <div class="grid">
+                    <img src="{{ asset($prefix.'/'.'img/zoom_in.svg')}}" class="zoom" id="zoom_in">
+                    <img src="{{ asset($prefix.'/'.'img/zoom_out.svg')}}" class="zoom" id="zoom_out">
+
+                </div>
+                <div class="grid">
+                </div>
             </div>
+
 
         </div>
     </div>

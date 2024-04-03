@@ -4,7 +4,36 @@
 }
 
 .main01 {
-    background: #ebebeb;
+    background: rgb(225 225 225);
+    padding-bottom: 75px;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.pagetitle{
+    margin-top: 20px;
+    border-bottom: solid 1px #adadad;
+    padding: 12px;
+    color: #454545;
+    background: #f9f9f9;
+    display: flex;
+}
+
+.button1name01{
+    display: flex;
+    align-items: center;
+    color: #4c4c4c;
+}
+.long_str{
+    font-size: 13px;
+}
+
+.flow_right_icon{
+    width: 31px;
+}
+.title_icon{
+    width: 31px;
+    margin-inline: 10px;
 }
 
 .menu001 {
@@ -15,6 +44,8 @@
     width: 250px;
     height: 100vh;
     margin-right: 25px;
+    position: fixed;
+    z-index: 12;
 }
 
 .maincontent01 {
@@ -23,66 +54,138 @@
 }
 
 .flowbackground {
-    background: rgb(229 249 255);
+    background: rgb(225 225 225);
+}
+
+.meta_flow_container {
+    background: rgb(194, 194, 194);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 11;
+}
+
+.meta_flow_content {
+    background: white;
+    width: 1000px;
+    height: 500px;
+    border-radius: 50px;
+    margin-top: 30px;
+    margin-left: 30px;
 }
 
 .Mainelement {
-    margin: 30px;
+    padding: 30px;
+    background: rgb(225 225 225);
+}
+
+.flow_master_element {
+    margin-left: 300px;
+}
+
+.flow_error_container {
+    padding-left: 30px;
 }
 
 
 /* メインメニュー */
-.main_menu_container {}
-
-.main_general_container {
-    display: flex;
+.main_menu_container {
     background: white;
-    padding: 40px;
-    max-width: 1000px;
-    border-radius: 29px;
+    border-radius: 30px;
 }
 
-.main_general_content {}
+.main_general_container {
+    padding: 40px;
+    max-width: 1000px;
+}
+
+.main_general_title{
+    border-bottom: solid 1px #0b5eb2;
+    font-size: 20px;
+    font-weight: bold;
+    color: #004b8e;
+}
+
+.main_general_content {
+    display: grid;
+    justify-content: center;
+    margin-top: 10px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
 
 .main_general_button {
-    background: rgb(1 112 255);
-    padding: 12px;
-    margin: 0 100px 30px 0;
-    border-radius: 3px;
-    color: white;
+    background: white;
     text-align: center;
-    box-shadow: 2px 3px 0 0 #cbcbcb;
-    display: block;
+    box-shadow: 2px 3px 7px 0 #7e7a7a;
+    display: flex;
+    width: 300px;
+    height: 150px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    margin-inline: auto;
+    cursor: pointer;
+}
+.flow_title_icon{
+    width: 72px;
+}
+.main_button_title{
+    color: #6b6b6b;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 8px;
 }
 
 .main_general_button:hover {
-    background: rgb(2, 77, 175);
-    box-shadow: 1px -1px 2px 0 #cbcbcb;
-    top: 2px;
+    box-shadow: 1px 1px 0px 0px #e3e3e3;
+    background: #f3fbff;
     position: relative;
-    cursor: pointer;
+    top: 2px;
+    transition: all 0.1s;
+}
+.main_admin_container {
+    padding: 40px;
+    max-width: 1000px;
+}
+
+.main_admin_content {
+    display: grid;
+    justify-content: center;
+    margin-top: 10px;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 .main_admin_button {
-    background: rgb(199 82 46);
-    padding: 12px;
-    margin: 0 30px 30px 0;
-    border-radius: 3px;
-    color: white;
+    background: white;
     text-align: center;
-    box-shadow: 2px 3px 0 0 #cbcbcb;
-    display: block;
-}
-
-.main_admin_button:hover {
-    background: rgb(109, 45, 25);
-    box-shadow: 1px -1px 2px 0 #cbcbcb;
-    top: 2px;
-    position: relative;
+    box-shadow: 2px 3px 7px 0 #7e7a7a;
+    display: flex;
+    width: 300px;
+    height: 150px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    margin-inline: auto;
     cursor: pointer;
 }
 
+.main_admin_button:hover {
+    box-shadow: 1px 1px 0px 0px #e3e3e3;
+    background: #fff9f9;
+    position: relative;
+    top: 2px;
+    transition: all 0.1s;
+}
 
+.main_admin_title{
+    border-bottom: solid 1px #b20b0b;
+    font-size: 20px;
+    font-weight: bold;
+    color: #8e0000;
+}
 
 
 
@@ -95,7 +198,6 @@
     position: fixed;
     width: 100vw;
     height: 100vh;
-    background: gray;
     opacity: 0.5;
     top: 0;
     left: 0;
@@ -105,7 +207,7 @@
 .left_side_menu {
     width: 250px;
     height: 100vh;
-    background: #dfdede;
+    background: #f7f7f7;
     margin-right: 25px;
     position: fixed;
     top: 0;
@@ -236,7 +338,7 @@
 .right_side_menu {
     width: 250px;
     height: 100vh;
-    background: #dfdede;
+    background: #f7f7f7;
     position: fixed;
     top: 0;
     right: -290px;
@@ -435,12 +537,34 @@
 
 
 /* メイン機能 */
+
+.grid_container {
+
+    background: white;
+    border-radius: 20px;
+    max-width: 1250px;
+    overflow-x: auto;
+    padding: 20px;
+}
+
+.zoom_in_out {
+    margin-left: 20px;
+    width: 100px;
+    margin-top: 20px;
+    margin-right: auto;
+    display: flex;
+}
+
+.zoom {
+    width: 50px;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
 .grid {
     position: relative;
     display: grid;
     font-size: 13px;
-    background: white;
-    border-radius: 20px;
 }
 
 .e {
@@ -451,6 +575,12 @@
     justify-content: center;
     font-size: 13px;
     overflow-x: auto;
+    border-radius: 10px;
+}
+
+.grid .e:hover {
+    cursor: pointer;
+    background: #e5f8ff;
 }
 
 .flow_img_box {
@@ -550,7 +680,7 @@
 }
 
 .focus {
-    border: solid 5px rgb(0, 255, 85);
+    border: solid 5px rgb(161 201 174);
 }
 
 .grid_content {
@@ -565,6 +695,7 @@
     color: rgb(202, 202, 202);
     font-size: 16px;
     text-align: center;
+    border-radius: 10px;
 }
 
 .l {
@@ -577,16 +708,20 @@
 }
 
 .blue {
-    border: solid 5px blue;
+    border: solid 5px rgb(105, 105, 255);
 }
 
 .workflow_submit_button {
     cursor: pointer;
-    background: rgb(206, 205, 205);
-    padding: 3px;
-    border: solid 1px gray;
+    background: rgb(0 113 255);
+    border: solid 0;
     width: 100px;
     text-align: center;
+    padding: 8px;
+    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 
@@ -630,17 +765,33 @@
 
 .flow_master_edit_button {
     width: 50px;
-    padding: 3px;
-    background: rgb(198, 253, 198);
-    border: solid 2px green;
+    padding: 6px;
+    background: rgb(141 195 141);
     border-radius: 3px;
     text-align: center;
     margin-inline: auto;
     cursor: pointer;
+    color: white;
 }
 
 .flow_master_edit_button:hover {
-    background: rgb(41, 182, 41);
+    background: rgb(58 117 58);
+    color: white;
+}
+
+.flow_master_delete_button {
+    width: 50px;
+    padding: 6px;
+    background: rgb(195, 141, 141);
+    border-radius: 3px;
+    text-align: center;
+    margin-inline: auto;
+    cursor: pointer;
+    color: white;
+}
+
+.flow_master_delete_button:hover {
+    background: rgb(117, 58, 58);
     color: white;
 }
 
@@ -682,13 +833,13 @@
 .application_form_content {
     display: flex;
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 25px;
+    margin-left: 50px;
 }
 
 .application_form_label {
     margin-right: 20px;
-    width: 150px;
-    margin-bottom: 20px;
+    width: 100px;
 }
 
 .application_form_text {
@@ -704,11 +855,17 @@
     grid-template-columns: repeat(2, 1fr);
     flex-direction: column;
     width: 800px;
-    padding: 50px;
     border-radius: 30px;
-    box-shadow: 1px 3px 5px 0 gray;
-}
+    overflow: hidden;
 
+}
+.flow_application_button_content{
+    height: 80px;
+    display: flex;
+    align-items: center;
+}
+.flow_next_button {
+}
 .flow_preview_area {
     margin-left: 100px;
     margin-block: 0px;
@@ -724,16 +881,14 @@
     text-align: center;
     cursor: pointer;
     border: none;
+    height: 38px;
 }
 
 .next_button:hover {
     background: rgb(0, 61, 192);
 }
 
-.flow_next_button {
-    margin-top: 30px;    
-    margin-inline: auto;
-}
+
 
 .flex_content {
     display: flex;
@@ -821,20 +976,28 @@
 
 
 /* 経路選択画面 */
-
+.button_icon{
+    width: 20px;
+    margin-inline: 3px;
+}
 .back_button {
-    background: rgb(133, 133, 133);
-    color: white;
-    width: 120px;
-    padding: 7px;
+    background: #ffdbb1;
+    color: #824704;
     border-radius: 3px;
     text-align: center;
     cursor: pointer;
-    border: none;
+    margin-inline: 30px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    height: 38px;
+    padding: 0 10px;
 }
 
 .back_button:hover {
-    background: #444444;
+    background: #daba96;
 }
 
 .flow_choice_back_button {
@@ -884,14 +1047,109 @@
     margin-left: 35px;
 }
 
+.flow_choice_view_container {
+    display: flex;
+    background: white;
+    border-radius: 30px;
+    margin-top: 30px;
+    padding: 32px;
+}
+
+.view_meta_container {
+    width: 400px;
+}
+
+.view_condition_title {
+    font-size: 20px;
+    border-bottom: solid 1px #bab5b5;
+    color: #002d8c;
+    font-weight: bold;
+}
+
+.view_condition_group_content {
+    margin-top: 25px;
+    margin-left: 10px;
+}
+
+.view_condition_group_title {
+    margin-bottom: 10px;
+    background: #f6e7e7;
+    padding: 5px;
+    color: #404040;
+}
+
+.view_condition_group_element {}
+
+.view_condition_group {
+    margin-left: 10px;
+    max-width: 200px;
+    padding: 5px;
+    border-radius: 3px;
+    border: solid 1px #b5b5b5;
+    align-items: center;
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.view_condition_group::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background: #bcbcbc;
+    position: static;
+    display: block;
+    margin-right: 10px;
+    margin-left: 8px;
+}
+
+.view_condition_price_content {
+    margin-top: 25px;
+    margin-left: 10px;
+}
+
+.view_condition_price_title {
+    margin-bottom: 10px;
+    background: #e7f6f4;
+    padding: 5px;
+    color: #404040;
+
+}
+
+.view_condition_start_price {
+    margin-left: 10px;
+    display: flex;
+}
+
+.view_condition_end_price {
+    margin-left: 10px;
+    display: flex;
+}
+
+.view_condition_start_price_value {
+    text-align: right;
+    width: 120px;
+    margin-left: 20px;
+    border-bottom: solid 1px #c4b0b0;
+    margin-bottom: 10px;
+    padding-inline: 10px;
+    height: 22px;
+}
+
+.view_condition_end_price_value {
+    text-align: right;
+    width: 120px;
+    margin-left: 20px;
+    border-bottom: solid 1px #c4b0b0;
+    margin-bottom: 10px;
+    padding-inline: 10px;
+    height: 22px;
+}
+
 .view_grid {
     position: relative;
     display: grid;
     font-size: 13px;
-    background: white;
-    margin-top: 30px;
-    border-radius: 30px;
-    padding: 32px;
 }
 
 .approval_container {
@@ -926,9 +1184,66 @@
 }
 
 /* 確認画面 */
+
+.flow_confirm_view_container {
+    display: block;
+    background: white;
+    border-radius: 30px;
+    padding: 32px;
+    min-width: 540px;
+}
+
+.condition_accordion_trigger {
+    margin-left: 10px;
+    margin-top: 20px;
+    background: #e3e3e3;
+    padding: 5px 0px 5px 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.condition_accordion_trigger:hover {
+    background: rgb(209, 209, 209)
+}
+
+.condition_accordion_trigger::before {
+    content: "";
+    width: 16px;
+    height: 2px;
+    background: gray;
+    position: absolute;
+    right: 13px;
+    top: 18px;
+}
+
+.condition_accordion_trigger::after {
+    content: "";
+    width: 2px;
+    height: 16px;
+    background: gray;
+    position: absolute;
+    right: 20px;
+    top: 11px;
+}
+
+.condition_accordion {
+    margin-left: 10px;
+    padding: 0 7px;
+    border: solid 1px #d0cdcd;
+}
+
+.condition_accordion_close {
+    height: 0;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.condition_accordion .view_condition_group_content {
+    margin-top: 10px;
+}
+
 .flow_confirm_form {
     display: flex;
-    justify-content: center;
 }
 
 .dicision_button {
@@ -958,10 +1273,17 @@
     width: 187px;
 }
 
+.view_application_title {
+    margin-bottom: 24px;
+    font-size: 20px;
+    border-bottom: solid 1px #bab5b5;
+    color: #002d8c;
+    font-weight: bold;
+}
+
 .flow_meta_information_container {
     background: white;
-    box-shadow: 2px 3px 9px 0 #adadad;
-    padding: 50px;
+    padding: 32px;
     width: 500px;
     border-radius: 30px;
     margin-right: 32px;
@@ -970,16 +1292,20 @@
 
 .flow_confirm_container {
     display: flex;
-    justify-content: center;
 }
 
 .flow_confirm_content {
     display: flex;
+    align-items: center;
+    height: 45px;
+    border-bottom: solid 1px #d8d8d8;
+    margin-block: 17px;
+    margin-inline: 20px;
 }
 
 .flow_confirm_label {
     width: 200px;
-    margin-bottom: 26px;
+    color: gray;
 }
 
 .flow_confirm_element {
@@ -988,18 +1314,19 @@
 
 /* 申請一覧 */
 
-.flow_view_container{
+.flow_view_container {
     background: white;
     padding: 40px;
-    max-width: 1000px;
+    max-width: 1200px;
     border-radius: 29px;
 }
 
-.tab_container{
+.tab_container {
     display: flex;
     margin-left: 12px;
 }
-.flow_view_content{
+
+.flow_view_content {
     padding: 30px;
     border-radius: 8px;
     background: white;
@@ -1007,7 +1334,8 @@
     top: -15px;
     position: relative;
 }
-.flow_tab{
+
+.flow_tab {
     padding: 13px;
     border-radius: 11px;
     background: #f7f7f7;
@@ -1018,58 +1346,563 @@
     height: 30px;
     cursor: pointer;
 }
-.tab_focus{
+
+.tab_focus {
     background: #00b500;
     color: white;
     border: solid 1px #00b500;
 }
-.flow_view_table{
 
+.ongoing_tab {
+    display: none;
 }
-.flow_view_thead_tr{
+
+.approved_tab {
+    display: none;
+}
+
+.reject_tab {
+    display: none;
+}
+
+
+.flow_view_table {}
+
+.flow_view_thead_tr {
     display: flex;
 }
-.flow_view_tbody_tr{
+
+.flow_view_tbody_tr {
     display: flex;
     border-bottom: solid 1px #a1a1a1;
     padding-block: 13px;
     cursor: pointer;
+    color: black;
 }
-.flow_view_tbody_tr:hover{
+
+.flow_view_tbody_tr:hover {
     background: #164955;
     color: white !important;
 }
-.flow_view_th{
+
+.flow_view_th {
     color: gray;
 }
-.flow_view_title{
+
+.flow_view_title {
     width: 600px;
 }
-.flow_view_status{
-    width: 80px;
+
+.flow_view_status {
+    width: 132px;
 }
-.flow_view_applicant{
+
+.flow_view_applicant {
     width: 100px;
 }
-.flow_view_date{
+
+.flow_view_date {
     width: 120px;
 }
-.ongoing{
+
+.ongoing {
     color: #ff7a4a;
     font-weight: bold;
 }
-.completion{
+
+.completion {
     color: #008eff;
-    font-weight: bold; 
+    font-weight: bold;
+}
+
+/* 承認一覧 */
+.unapproved {
+    color: #ff7a4a;
+    font-weight: bold;
+}
+
+.approved {
+    color: #008eff;
+    font-weight: bold;
+}
+
+.approvable_tab {
+    display: none;
+}
+
+.approved_tab {
+    display: none;
+}
+
+.rejected_tab {
+    display: none;
+}
+
+.open_tab {
+    display: block !important;
+}
+
+.none_data_message {
+    text-align: center;
+    padding-block: 5px;
+    color: #434343;
+    font-weight: bold;
 }
 
 /* 承認 */
-.unapproved{
+
+.approval_sub_title {
+    margin-bottom: 24px;
+    font-size: 20px;
+    border-bottom: solid 1px #bab5b5;
+    color: #002d8c;
+    font-weight: bold;
+}
+
+.approve_tab {
+    display: none;
+}
+
+.approve_condition_tab {
+    display: none;
+}
+
+
+
+.approve_container {
+    margin: 30px;
+    display: flex;
+}
+
+.approve_person_icon {
+    width: 35px;
+    margin-right: 10px;
+}
+
+.approve_content {
+    display: flex;
+    margin-block: 24px;
+    border-bottom: solid 1px #c4bfbf;
+    padding-block: 6px;
+    align-items: center;
+}
+
+.applicant_info {
+    display: flex;
+    align-items: center;
+    background: #e6e3e3;
+    padding: 8px;
+    border-radius: 7px;
+    max-width: 405px;
+}
+
+.approve_application_info_container {}
+
+.approve_content_title {
+    width: 100px;
+    color: gray;
+}
+
+.approve_content_element {
+    width: 300px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.approve_decision_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.rejectbutton {
+    background: #de3131;
+    color: white;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    width: 160px;
+    text-align: center;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-block: 10px;
+}
+
+
+.rejectbutton:hover {
+    background: #8f2121;
+}
+
+.approve_authorizer_container {
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.approvalbutton {
+    background: #31bbde;
+    color: white;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    width: 160px;
+    text-align: center;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-block: 10px;
+}
+
+.approvalbutton:hover {
+    background: #1a6375;
+}
+
+.approve_comment_container {
+
+    margin-bottom: 20px;
+    margin-left: 30px
+}
+
+.approvecomment {
+    width: 500px;
+    height: 150px;
+    font-size: 16px;
+    font-family: inherit;
+    border: solid 1px #adaaaa;
+    border-radius: 6px;
+}
+
+.approve_approved_container {
+    width: 430px;
+}
+
+.approve_approved_status {
+    background: #ffdddd;
+    color: #ff4242;
+    width: 100px;
+    padding: 7px;
+    border-radius: 3px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.approve_reject_status {
+    background: #ff4242;
+    color: white;
+    width: 100px;
+    padding: 7px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.approve_approved_comment_title {
+    width: 145px;
+    color: gray;
+}
+
+.approve_approved_comment_container {
+    display: flex;
+    margin-top: 27px;
+}
+
+.approve_approved_comment {
+    width: 348px;
+    margin-left: 10px;
+}
+
+
+.approve_condition_container {
+    display: flex;
+}
+
+
+
+.approve_condition_table {
+    margin: 40px;
+}
+
+.approve_condition_thead_tr {
+    display: flex;
+}
+
+.approve_condition_tbody_tr {
+    display: flex;
+    border-bottom: solid 1px #a1a1a1;
+    padding-block: 13px;
+    cursor: pointer;
+    color: black;
+}
+
+
+.approve_condition_th {
+    color: gray;
+}
+
+.approve_condition_name {
+    width: 110px;
+}
+
+.approve_condition_status {
+    width: 75px;
+}
+
+.approve_condition_date {
+    width: 110px;
+}
+
+.applicant_status {
+    color: #897c06;
+    font-weight: bold;
+}
+
+.approved_status {
     color: #ff7a4a;
     font-weight: bold;
 }
 
-.approved{
-    color: #008eff;
-    font-weight: bold; 
+.approve_wait_status {
+    color: #4a92ff;
+    font-weight: bold;
+}
+
+.reject_status {
+    color: #ffffff;
+    font-weight: bold;
+    background: red;
+    width: 35px;
+    padding: 2px 15px;
+    border-radius: 3px;
+    margin-right: 10px;
+}
+
+.approve_hover {
+    background: #e0edff;
+}
+
+.status_mark {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+}
+
+.reject_mark {
+    color: #ffffff;
+    font-weight: bold;
+    background: red;
+    padding: 5px 15px;
+    border-radius: 3px;
+    font-size: 20px;
+}
+
+
+.applicant_mark {
+
+    border-radius: 23px;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 20px;
+    background: #ffebaa;
+    color: #afb34b;
+    font-weight: bold;
+    border: solid 2px #afb34b;
+}
+
+.approve_wait_mark {
+    border-radius: 23px;
+    width: 76px;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 16px;
+    background: #ddf5ff;
+    color: #4b84b3;
+    font-weight: bold;
+    border: solid 2px #4b84b3;
+}
+
+.approve_ongoing_mark {
+    border-radius: 23px;
+    width: 76px;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 16px;
+    background: #ffebdd;
+    color: #b3764b;
+    font-weight: bold;
+    border: solid 2px #b3764b;
+}
+
+.approved_mark {
+    border-radius: 23px;
+    width: 71px;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 19px;
+    background: #ffdddd;
+    color: #ff4242;
+    font-weight: bold;
+    border: solid 2px #ff3131;
+}
+
+
+
+.approve_flow_status>.view_grid {
+    position: relative;
+    display: grid;
+    font-size: 13px;
+    background: white;
+    border-radius: 30px;
+    margin-left: 100px;
+    margin-top: 0;
+    padding: 0;
+}
+
+.approve_preview_button {
+    margin-top: auto;
+    height: 30px;
+    line-height: 30px;
+    background: #68ad89;
+    border-radius: 3px;
+    padding: 5px 10px;
+    color: white;
+    cursor: pointer;
+    width: 100px;
+    text-align: center;
+    top: 0;
+    margin-right: 20px;
+}
+
+.approve_preview_button:hover {
+    background: #406954;
+}
+
+.approve_gray {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: black;
+    opacity: 0.5;
+    z-index: 14;
+    display: none;
+}
+
+.approve_preview_container {
+    position: fixed;
+    z-index: 14;
+    background: white;
+    width: 60vw;
+    height: 90vh;
+    left: 50%;
+    top: 4%;
+    transform: translateX(-50%);
+    border-radius: 30px;
+    display: none;
+}
+
+.approve_download {
+    height: 25px;
+    padding: 3px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.approve_download:hover {
+    background: rgb(221, 221, 221);
+}
+
+/* 申請内容 */
+
+.application_cancel_container {
+    width: 500px;
+    display: flex;
+    justify-content: center;
+}
+
+.application_cancel_button {
+    width: 200px;
+    background: red;
+    padding: 10px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+
+.application_cancel_button:hover {
+    background: rgb(170, 1, 1);
+}
+
+.application_status_container {
+    width: 500px;
+    height: 75px;
+}
+
+.application_status_ongoing {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0c8dc6;
+    margin-left: 20px;
+}
+
+.application_status_rejected {
+    font-size: 24px;
+    font-weight: bold;
+    color: yellow;
+    margin-left: 20px;
+    width: 103px;
+    background: #616161;
+    text-align: center;
+}
+
+.application_status_approved {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f76d9b;
+    margin-left: 20px;
+}
+
+.tameru_button {
+    background: #9acd5e;
+    width: 200px;
+    font-size: 20px;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 30px;
+    margin-top: 15px;
+}
+
+.tameru_button:hover {
+    background: #6a8d41;
+    
+}
+
+.tameru_content {
+    margin-left: 20px;
+}
+
+.tameru_status_title {
+    color: gray;
+}
+
+.tameru_status {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.unsaved {
+    color: #0052a9;
+}
+
+.saved {
+    color: #f76d9b;
 }

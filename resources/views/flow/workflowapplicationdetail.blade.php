@@ -11,11 +11,11 @@
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle" id="approve_phase"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/approve.svg') }}" alt="" class="title_icon">承認</h2>
+    <h2 class="pagetitle" id="approve_phase"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application_view.svg') }}" alt="" class="title_icon">申請内容</h2>
     <div class="flow_view_container">
         <div class="tab_container">
             <div class="flow_tab tab_focus" data-tabname="approve_tab">
-                承認内容
+                申請内容
             </div>
             <div class="flow_tab" data-tabname="approve_condition_tab">
                 承認状況
@@ -81,56 +81,71 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="approve_authorizer_container">
-                        @if ($t_approval->ステータス == 2)
                         <div class="approval_sub_title">
-                            承認操作
+                            申請ステータス
                         </div>
-                        <form action="{{route('workflowapprovalpost')}}" method="post" id="approve_form" class="approve_form" enctype="multipart/form-data">
-                            @csrf
-                            <div class="approve_comment_container">
-                                <div>承認者コメント</div>
-                                <textarea class="approvecomment" name="approvecomment" id="approvecomment"></textarea>
-                            </div>
-                            <div class="approve_decision_container">
-                                <div class="rejectbutton" id="rejectbutton">
-                                    却下する
-                                </div>
-                                <div class="approvalbutton" id="approvalbutton">
-                                    承認する
-                                </div>
-                            </div>
-                            <input type="hidden" name="approval_id" value="{{$t_approval->id}}">
-                            <input type="hidden" name="result" id="result" value="">
+                        @if ($flow_table->ステータス == 1)
+                        <div class="application_status_container">
 
-                        </form>
-                        @else
-                        <div class="approval_sub_title">
-                            承認結果
-                        </div>
-                        <div class="approve_approved_container">
-                            @if ($t_approval->ステータス == 4)
-                            <div class="approve_approved_status">
-                                承認
+                            <div class="application_status_ongoing">
+                                進行中
                             </div>
-                            @elseif ($t_approval->ステータス == 5)
-                            <div class="approve_reject_status">
+                        </div>
+                        <div class="approval_sub_title">
+                            申請取り消し操作
+                        </div>
+                        <div class="application_cancel_container">
+
+                            <div class="application_cancel_button" id="application_cancel_button">
+                                申請取り消し
+                            </div>
+                        </div>
+
+                        @elseif ($flow_table->ステータス == 2)
+                        <div class="application_status_container">
+
+                            <div class="application_status_rejected">
                                 却下
                             </div>
-                            @endif
-                            <div class="approve_approved_comment_container">
-                                <div class="approve_approved_comment_title">
-                                    承認者コメント:
-                                </div>
-                                <div class="approve_approved_comment">
-                                    {{$t_approval->コメント}}
-                                </div>
+                        </div>
+                        @elseif ($flow_table->ステータス == 3)
+                        <div class="application_status_container">
+
+                            <div class="application_status_approved">
+                                決裁済
+                            </div>
+                        </div>
+                        <div class="approval_sub_title">
+                            TAMERU
+                        </div>
+                        <div class="tameru_container">
+                            <div class="tameru_content">
+                                <span class="tameru_status_title">現在のステータス:</span> <span class="tameru_status unsaved">未保存</span>
+                            </div>
+                            <div class="tameru_button">
+                                TAMERUに保存
+                            </div>
+                        </div>
+                        @elseif ($flow_table->ステータス == 4)
+                        <div class="application_status_container">
+
+                            <div class="application_status_approved">
+                                決裁済
+                            </div>
+                        </div>
+                        <div class="approval_sub_title">
+                            TAMERU
+                        </div>
+                        <div class="tameru_container">
+                            <div class="tameru_content">
+                                <span class="tameru_status_title">現在のステータス:</span> <span class="tameru_status saved">保存済</span>
                             </div>
                         </div>
                         @endif
-
                     </div>
+
+
                 </div>
             </div>
             <div class="approve_condition_tab">
@@ -170,16 +185,7 @@
                             </div>
                         </div>
                         @endforeach
-                        <!-- <div class="approve_condition_tbody_tr" data-front_point="{{$t_approval->フロントエンド表示ポイント}}">
-                            <div class="approve_condition_td approve_condition_name">
-                                {{$t_approval->name}}
-                            </div>
-                            <div class="approve_condition_td approve_condition_status approve_wait_status">
-                                承認待ち
-                            </div>
-                            <div class="approve_condition_td approve_condition_date">
-                            </div>
-                        </div> -->
+
                     </div>
                     <div class="approve_flow_status">
                         <div class="view_grid">

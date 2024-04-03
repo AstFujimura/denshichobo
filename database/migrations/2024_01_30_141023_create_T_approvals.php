@@ -19,8 +19,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('フローテーブルID');
             $table->unsignedBigInteger('フロー地点テーブルID');
-            $table->foreign('フローテーブルID')->references('id')->on('t_flows');
-            $table->foreign('フロー地点テーブルID')->references('id')->on('t_flow_points');
+            $table->foreign('フローテーブルID')->references('id')->on('t_flows')->onDelete('cascade');
+            $table->foreign('フロー地点テーブルID')->references('id')->on('t_flow_points')->onDelete('cascade');
             $table->integer('ステータス')->default(1);
             $table->text('コメント')->nullable();
             $table->unsignedBigInteger('ユーザーID');

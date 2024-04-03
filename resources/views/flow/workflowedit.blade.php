@@ -33,7 +33,7 @@
 
                             @foreach ($groups as $index=>$group)
                             <div>
-                                <input type="checkbox"  class="group_checkbox" name="flow_group[]" id="flow_group{{ $loop->index + 1}}" value="{{$group->id}}" {{$group->checked}}>
+                                <input type="checkbox" class="group_checkbox" name="flow_group[]" id="flow_group{{ $loop->index + 1}}" value="{{$group->id}}" {{$group->checked}}>
                                 <label for="flow_group{{ $loop->index + 1}}">{{$group->グループ名}}</label>
                             </div>
                             @endforeach
@@ -46,10 +46,19 @@
                         </div>
                         <div class="accordion_content accordion_content_open">
                             <div class="flow_plice_box">
+                                @if ($flow_master->金額下限条件 == 0)
+                                <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price" value="">円以上
+                                @else
                                 <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price" value="{{$flow_master->金額下限条件}}">円以上
+                                @endif
                             </div>
                             <div class="flow_plice_box">
-                                <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price" value="{{$flow_master->金額上限条件}}">円未満
+                                @if ($flow_master->金額上限条件 == 2000000000)
+                                <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price" value="">円以下
+                                @else
+                                <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price" value="{{$flow_master->金額上限条件}}">円以下
+                                @endif
+
                             </div>
                         </div>
 
@@ -166,8 +175,8 @@
                 </div>
             </div>
         </div>
-        <div class="MainElement">
-            <h2 class="pagetitle">ワークフロー登録</h2>
+        <div class="MainElement flow_master_element">
+            <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/master_regist.svg') }}" alt="" class="title_icon">ワークフロー編集</h2>
             <div class="element_input">
                 <input type="hidden" name="edit" class="edit" id="edit" value="edit">
                 <input type="hidden" name="flow_master_id" class="flow_master_id" id="flow_master_id" value="{{$flow_master->id}}">
@@ -209,14 +218,18 @@
             </div>
 
 
+            <div class="grid_container">
+                <div class="zoom_in_out">
 
+                    <img src="{{ asset($prefix.'/'.'img/zoom_in.svg')}}" class="zoom" id="zoom_in">
+                    <img src="{{ asset($prefix.'/'.'img/zoom_out.svg')}}" class="zoom" id="zoom_out">
 
+                </div>
+                <div class="grid">
+                </div>
 
-            <div class="grid">
             </div>
-
         </div>
-    </div>
 </form>
 @endsection
 

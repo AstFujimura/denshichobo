@@ -15,7 +15,7 @@
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle" id="flow_confirm">確認画面</h2>
+    <h2 class="pagetitle" id="flow_confirm"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">確認画面</h2>
     <form action="{{route('workflowconfirmpost')}}" method="post" id="flow_application_choice_form" class="flow_confirm_form" enctype="multipart/form-data">
         @csrf
         <input type="hidden" value="{{$id}}" name="id">
@@ -32,6 +32,9 @@
     </form>
     <div class="flow_confirm_container">
         <div class="flow_meta_information_container">
+            <div class="view_application_title">
+                申請情報
+            </div>
             <div class="flow_confirm_content">
                 <div class="flow_confirm_label">
                     標題
@@ -77,8 +80,40 @@
 
 
         </div>
-        <div class="view_grid">
+        <div class="flow_confirm_view_container">
 
+            <div class="view_meta_container">
+                <div class="view_condition_title">
+                    経路情報
+                </div>
+                <div class="condition_accordion_trigger">
+                    条件詳細
+                </div>
+                <div class="condition_accordion condition_accordion_close">
+                    <div class="view_condition_group_content">
+                        <div class="view_condition_group_title">
+                            申請者グループ
+                        </div>
+                        <div class="view_condition_group_element">
+
+                        </div>
+                    </div>
+                    <div class="view_condition_price_content">
+                        <div class="view_condition_price_title">
+                            金額
+                        </div>
+                        <div class="view_condition_start_price">
+                            下限金額: <span class="view_condition_start_price_value"></span>
+                        </div>
+                        <div class="view_condition_end_price">
+                            上限金額: <span class="view_condition_end_price_value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="view_grid">
+
+            </div>
         </div>
 
     </div>

@@ -12,8 +12,11 @@
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/flowstyle.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/jquery-ui.css') }}">
     <script src="{{ asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
     <script src="{{ asset(config('prefix.prefix').'/'.'jquery/laravelui.js')}}"></script>
+    <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui.js')}}"></script>
+    <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui_ja.js')}}"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
     </noscript>
@@ -38,22 +41,28 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
         <div class="iconmessage">Top</div>
     </div>
+    <div class="headerIcon001" onclick="location.href='{{route('workflowapplicationget')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application.svg') }}" class="menuicon01">
+        <div class="iconmessage">ワークフロー申請</div>
+    </div>
+    <div class="headerIcon001" onclick="location.href='{{route('workflowapprovalview')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_approve.svg') }}" class="menuicon01">
+        <div class="iconmessage">承認</div>
+    </div>
+    <div class="headerIcon001" onclick="location.href='{{route('workflowviewget')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application_view.svg') }}" class="menuicon01">
+        <div class="iconmessage">申請一覧</div>
+    </div>
     <div class="headerIcon001" onclick="location.href='{{route('workflowmaster')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}" class="menuicon01">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="menuicon01">
         <div class="iconmessage">ワークフローマスタ一覧</div>
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('workflowregistget')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="menuicon01">
         <div class="iconmessage">ワークフローマスタ登録</div>
     </div>
-    <div class="headerIcon001" onclick="location.href='{{route('workflowapplicationget')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01">
-        <div class="iconmessage">ワークフロー申請</div>
-    </div>
-    <div class="headerIcon001" onclick="location.href='{{route('admindocumentGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01">
-        <div class="iconmessage">書類管理</div>
-    </div>
+
+
     <div class="headerIcon001" onclick="window.open('{{route('question')}}', '_blank');">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
         <div class="iconmessage">ヘルプ</div>
@@ -91,13 +100,13 @@
                 </div>
 
             </div>
-            <a href="{{route('topGet')}}" class="button1_01">
+            <a href="{{route('workflow')}}" class="button1_01">
                 <div class="button1element01">
                     <div class="button1logo01">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}">
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="flow_right_icon">
                     </div>
                     <div class="button1name01">
-                        電子帳簿システム
+                        ワークフロー
                     </div>
 
                 </div>
@@ -107,22 +116,22 @@
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                            ユーザー一覧
+                            ワークフロー申請
                         </div>
 
                     </div>
 
                 </a>
-                <a href="{{route('adminregistGet')}}" class="button1_01">
+                <a href="{{route('workflowapprovalview')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_approve.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                            ユーザー追加
+                            承認
                         </div>
 
                     </div>
@@ -130,13 +139,37 @@
                 </a>
 
 
-                <a href="{{route('admindocumentGet')}}" class="button1_01">
+                <a href="{{route('workflowviewget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application_view.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                            書類管理
+                        申請一覧
+                        </div>
+
+                    </div>
+
+                </a>
+                <a href="{{route('workflowmaster')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="flow_right_icon">
+                        </div>
+                        <div class="button1name01 long_str">
+                        ワークフローマスタ一覧
+                        </div>
+
+                    </div>
+
+                </a>
+                <a href="{{route('workflowviewget')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="flow_right_icon">
+                        </div>
+                        <div class="button1name01 long_str">
+                        ワークフローマスタ登録
                         </div>
 
                     </div>
@@ -146,7 +179,7 @@
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/open_door_line.svg') }}">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/open_door_line.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
                             ログアウト
