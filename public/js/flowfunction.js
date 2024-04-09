@@ -784,9 +784,7 @@ function reloadelement() {
   $(".element").each(function () {
     var gridcolumn = $(this).data("column")
     var gridrow = $(this).data("row")
-    var last = $(this).data("last")
-    console.log(gridcolumn, gridrow)
-    createelement(gridcolumn, gridrow, last)
+    createelement(gridcolumn, gridrow)
     if ($(this).data('authorizer') == "person") {
       personreload($(this).attr("id"))
     }
@@ -797,10 +795,89 @@ function reloadelement() {
 }
 
 
+// 要素を削除する(要素の行と列を引数に)
+// 削除済のarraysを返す(削除できない場合は変更なしでarraysを返す)
+function e_delete(column, row, arrays) {
 
+
+  // 初めの地点だった場合は削除しない(1_2の地点)
+  if (column == 1 && row == 2) {
+    alert('初めのフロー地点は削除できません')
+  }
+  else {
+    // 削除できるかの判定(deleteerrorがtrueの場合は削除できない)
+    var deleteerror = false
+
+    // 削除する要素の次につながる線をeach文で取得
+    // 削除する要素が最後の場合はeach文で拾わないため必然的にdeleteerrorはfalseになる
+    $('.line[data-startcolumn=' + column + '][data-startrow=' + row + ']').each(function () {
+      var endcolumn = $(this).data('endcolumn')
+      var endrow = $(this).data('endrow')
+      // 削除する要素の次の要素が削除する要素にしかつながっていない場合
+      if ($('.line[data-endcolumn=' + endcolumn + '][data-endrow=' + endrow + ']').length == 1) {
+        deleteerror = true
+      }
+    })
+    // 削除できない場合
+    if (deleteerror) {
+      alert('次のフロー地点への経路が確保できないためこの要素は削除できません。')
+    }
+    // 削除できる場合
+    else {
+      if (confirm('本当にこのフロー地点を削除しますか')) {
+        arrays = delete_exe(column, row, arrays)
+        console.log(arrays)
+      }
+    }
+  }
+
+  return arrays
+}
+function delete_exe(column, row, arrays) {
+  // idを取得
+  var e_id = $('.element[data-column=' + column + '][data-row=' + row + ']').attr('id')
+  if ($('#focus').data('id') == e_id) {
+    var defaultid = $('.element[data-column = "1"][data-row = "2"]').attr('id')
+    $('#focus').data('id', defaultid)
+    $('#focus').attr('data-id', defaultid)
+  }
+  // 要素の消去
+  $('.element[data-column=' + column + '][data-row=' + row + ']').remove()
+  // 削除要素からのびる線を削除
+  $('.line[data-startcolumn=' + column + '][data-startrow=' + row + ']').remove()
+  // 削除要素へのびる線を削除
+  $('.line[data-endcolumn=' + column + '][data-endrow=' + row + ']').remove()
+  // 削除要素に関連する情報を削除
+  $('input[data-id=' + e_id + ']').remove()
+
+  // arraysの変更
+  for (var key in arrays) {
+    var index = arrays[key].indexOf(column + '_' + row);
+    // 要素がある場合
+    if (index !== -1) {
+      if (index === arrays[key].length - 1 && index != 1) {
+        // 要素が最後にあり、かつ2番目でない(1_1→2_2のように二つしかないような場合を除く)その要素のみを削除
+        arrays[key].splice(index, 1);
+      } else {
+        // 要素が最後以外にある場合はその行を削除
+        delete arrays[key];
+      }
+    }
+  }
+
+  newarrays = {}
+
+  var index = 1;
+  for (var key in arrays) {
+    newarrays[index] = arrays[key]
+    index++
+  }
+  console.log(newarrays)
+  return newarrays
+}
 
 // 要素を作成する
-function createelement(gridcolumn, gridrow, last = "none", status = "add") {
+function createelement(gridcolumn, gridrow, status = "add") {
 
 
   $(".grid").append('<div class="grid' + gridcolumn + '_' + gridrow + ' e" id="' + gridcolumn + '_' + gridrow + '" data-column="' + gridcolumn + '" data-row="' + gridrow + '"></div>')
@@ -815,9 +892,7 @@ function createelement(gridcolumn, gridrow, last = "none", status = "add") {
     'z-index': "10"
   })
 
-  if (last == "last") {
-    $('.grid' + gridcolumn + '_' + gridrow).addClass("last")
-  }
+
 
   // 1_1の場合は申請者
   if (gridcolumn == 1 && gridrow == 1) {
@@ -827,18 +902,15 @@ function createelement(gridcolumn, gridrow, last = "none", status = "add") {
   }
   // それ以外
   else {
-    console.log($(".element"))
     if ($('input[data-column = "' + gridcolumn + '"][data-row = "' + gridrow + '"]').data('authorizer') == 'person') {
       $('.grid' + gridcolumn + '_' + gridrow).append(
-        '<div class="flow_img_box"><div class="flow_img_element">' + person_icon() + '</div><div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div><div class="detail_container"><div class="detail_element"></div></div>'
+        '<div class="e_delete">×</div><div class="flow_img_box"><div class="flow_img_element">' + person_icon() + '</div><div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div><div class="detail_container"><div class="detail_element"></div></div>'
       )
-      console.log('個人')
     }
     else if ($('input[data-column = "' + gridcolumn + '"][data-row = "' + gridrow + '"]').data('authorizer') == 'group') {
       $('.grid' + gridcolumn + '_' + gridrow).append(
-        '<div class="flow_img_box"><div class="flow_img_element">' + group_icon() + '</div><div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div><div class=detail_container><div class="detail_element"></div></div>'
+        '<div class="e_delete">×</div><div class="flow_img_box"><div class="flow_img_element">' + group_icon() + '</div><div class="element_authorizer_number"></div></div><div class="authorizer_container"><div class="none_setting">未設定</div></div><div class=detail_container><div class="detail_element"></div></div>'
       )
-      console.log('グループ')
     }
 
   }
@@ -1269,7 +1341,7 @@ function flow_application_date_check() {
   var specifiedDate = new Date(datestr)
   // gettimeで1970年1月1日0:00からの時間をint型で取得できるため
   // 数字でなかった場合(日付型になっていない場合)はisNaNがtrueとなる
-  if (isNaN(specifiedDate.getTime())){
+  if (isNaN(specifiedDate.getTime())) {
     $('#flow_application_date').addClass("errortextbox")
     alert('日付が不正な形式です')
     error = true
@@ -1279,7 +1351,7 @@ function flow_application_date_check() {
 // 日付の型に変更する
 function flow_application_date_format() {
   var datestr = $('#application_form_date').val()
-  datestr = datestr.replaceAll("-","/")
+  datestr = datestr.replaceAll("-", "/")
   console.log(datestr)
   // 指定された日付
   var specifiedDate = new Date(datestr);
@@ -1292,7 +1364,7 @@ function flow_application_date_format() {
 
   // 入力された文字列が日付形式であるかどうかを確認
   if (datePatternYear.test(datestr)) {
-    if (isNaN(specifiedDate.getTime())){
+    if (isNaN(specifiedDate.getTime())) {
       $('#application_form_date').val("")
     }
     else {
@@ -1303,8 +1375,8 @@ function flow_application_date_format() {
     // 月日を分断
     var components = datestr.split('/');
     // 現在の年号をつけた年月日を作成
-    var newDate = new Date(currentYear,components[0]-1,components[1])
-    if (isNaN(newDate.getTime())){
+    var newDate = new Date(currentYear, components[0] - 1, components[1])
+    if (isNaN(newDate.getTime())) {
       $('#application_form_date').val("")
     }
     else {
@@ -1317,9 +1389,14 @@ function flow_application_date_format() {
   }
 }
 
-
+function viewonlyreset() {
+  $('.view_condition_group_element').html("")
+  $('.view_condition_start_price_value').text("")
+  $('.view_condition_end_price_value').text("")
+  $('.view_grid').html("")
+}
 // 読み取り専用のフローとメタ情報を表示する
-function viewonlyworkflow(prefix,flow_id) {
+function viewonlyworkflow(prefix, flow_id) {
   // グリッドのセルの値を指定
   const cellwidth = 120
   const cellheight = 60
@@ -1351,19 +1428,19 @@ function viewonlyworkflow(prefix,flow_id) {
     success: function (response) {
       var startprice = response["startprice"]
       var endprice = response["endprice"]
-      if (startprice == "0"){
+      if (startprice == "0") {
         $('.view_condition_start_price_value').text("下限無し")
       }
-      else{
+      else {
         $('.view_condition_start_price_value').text(response["startprice"])
       }
-      if (endprice == "2000000000"){
+      if (endprice == "2000000000") {
         $('.view_condition_end_price_value').text("上限無し")
       }
-      else{
+      else {
         $('.view_condition_end_price_value').text(response["endprice"])
       }
-      
+
 
       group_object_create(response["group_objects"]);
       console.log(response)
@@ -1533,11 +1610,11 @@ function view_create_approval(approval_object) {
 
 }
 
-function group_object_create(groupobjects){
+function group_object_create(groupobjects) {
   $('.view_condition_group_element').html('')
   $.each(groupobjects, function (index, object) {
     $('.view_condition_group_element').append(
-      '<div class="view_condition_group">'+object+'</div>'
+      '<div class="view_condition_group">' + object + '</div>'
     )
   })
 }
@@ -1587,4 +1664,38 @@ function add_status_message() {
     }
     $(this).append(status_mark)
   })
+
+
+
+
+}
+
+// メール設定の必須項目のチェック
+
+//ワークフロー申請の時の必須項目のチェック
+function mail_setting_required_check(status) {
+  var error = false
+  if (status == "test") {
+    // テスト送信の場合は受信用メールアドレスも必須項目とする
+    $('#mail_setting_test_mail').data('required', 'true')
+    $('#mail_setting_test_mail').attr('data-required', 'true')
+  }
+
+  // データ属性にrequired= trueになっている要素を順番に参照
+  $('[data-required="true"]').each(function () {
+    // 初めにエラーのcssを削除
+    $(this).removeClass('errortextbox')
+    // もし空欄だった場合、エラーのcssを付与
+    if ($(this).val() == "") {
+      $(this).addClass('errortextbox')
+      error = true
+    }
+  })
+  if (error) {
+    alert("必須項目を入力してください")
+  }
+  // エラーメッセージ表示後に受信用メールアドレスを任意にしておく
+  $('#mail_setting_test_mail').data('required', 'false')
+  $('#mail_setting_test_mail').attr('data-required', 'false')
+  return error
 }

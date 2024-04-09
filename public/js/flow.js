@@ -148,6 +148,14 @@ $(document).ready(function () {
       change_group_authorizer_number()
     })
 
+    // 要素の消去
+    $(document).on('click', '.e_delete', function () {
+      arrays = e_delete($(this).parent().data('column'), $(this).parent().data('row'), arrays)
+      reloadelement()
+      reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
+      $("#route").data("routecount", Object.keys(arrays).length)
+    })
+
     // クリックしたときの場所により判定を行う
     // 要素をクリックしたとき、それ以外の時で挙動を分ける
     $(document).on('click', function (event) {
@@ -433,7 +441,6 @@ $(document).ready(function () {
           if (linedata[1] < linedata[3]) {
             makeinputline(linedata[0], linedata[1], linedata[2], linedata[3])
             reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
-            $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
             arrays = searchAndUpdateArrays(linedata[0] + "_" + linedata[1], linedata[2] + "_" + linedata[3], arrays)
             console.log(arrays)
           }
@@ -462,11 +469,7 @@ $(document).ready(function () {
         makeinputline(linedata[0], linedata[1], linedata[2], linedata[3])
         reloadline(cellwidth, cellheight, gapcellwidth, gapcellheight)
 
-        $("#" + linedata[0] + '_' + linedata[1]).removeClass("last")
-        $("#" + linedata[2] + '_' + linedata[3]).addClass("last")
-        $(".last").each(function () {
-          console.log($(this).attr("id"))
-        })
+
         // 要素のinputタグを作成
         makeinputelement(linedata[2], linedata[3], nowelementid)
         // 最新の要素idを1増やす
@@ -816,8 +819,14 @@ $(document).ready(function () {
 
 
   if ($("#flow_choice").length != 0) {
-    if ($('.flow_choice_select').val() != ""){
-      viewonlyworkflow(prefix,$('.flow_choice_select').val())
+    if ($('.flow_choice_select').val() != "") {
+      viewonlyworkflow(prefix, $('.flow_choice_select').val())
+      $('.unselected').hide()
+      $('.selected').show()
+    }
+    else {
+      $('.unselected').show()
+      $('.selected').hide()
     }
   }
 
@@ -825,11 +834,29 @@ $(document).ready(function () {
 
   // フロー選択
   $('.flow_choice_select').on('change', function () {
-    viewonlyworkflow(prefix,$(this).val())
-
+    viewonlyworkflow(prefix, $(this).val())
+    if ($('.flow_choice_select').val() != "") {
+      $('.unselected').hide()
+      $('.selected').show()
+    }
+    else {
+      viewonlyreset()
+      $('.unselected').show()
+      $('.selected').hide()
+    }
   })
 
-  
+  $('#flow_application_choice_form').on('submit', function (e) {
+    e.preventDefault()
+    if ($('.flow_choice_select').val() != "") {
+      this.submit()
+    }
+    else {
+      alert('経路を選択してください')
+    }
+  })
+
+
 
   // -----------確認画面------------------
   if ($("#flow_confirm").length != 0) {
@@ -871,11 +898,11 @@ $(document).ready(function () {
       },
       error: function () {
       }
-  
+
     })
   }
 
-  $('.condition_accordion_trigger').on('click',function(){
+  $('.condition_accordion_trigger').on('click', function () {
     $('.condition_accordion').toggleClass('condition_accordion_close')
   })
 
@@ -1068,5 +1095,70 @@ $(document).ready(function () {
 
   }
 
+
+
+  // ---------メール設定--------------------
+  // エンターを押して次のフォームのフォーカスに移る
+  $('.mail_setting_form_text').keydown(function (event) {
+    if (event.keyCode === 13) { // エンターキーのキーコードは 13
+      event.preventDefault(); // デフォルトのエンターキーの動作を無効化
+
+
+      var currentIndex = $('.mail_setting_form_text').index(this);
+      var nextInput = $('.mail_setting_form_text').eq(currentIndex + 1);
+
+      if (nextInput.length === 0) {
+        $('#mail_setting_post').submit(); // 最後の入力欄でエンターキーを押すとフォームが送信される
+
+      } else {
+        nextInput.focus(); // 次の入力欄にフォーカスを移動
+      }
+    }
+  });
+
+  $('#mail_setting_mail').on('blur', function () {
+    $('#mail_setting_username').val($(this).val())
+  })
+  $('#mail_setting_post').on('submit', function (e) {
+    e.preventDefault()
+    if (!mail_setting_required_check('regist')) {
+      this.submit()
+    }
+  })
+
+
+  $('.test_send_button').on('click', function () {
+    if (!mail_setting_required_check('test')) {
+
+      const formData = new FormData();
+
+      //フォームの内容をformdataにappendしてデータの作成
+      formData.append('name', $("#mail_setting_name").val()),
+        formData.append('mail', $("#mail_setting_mail").val()),
+        formData.append('host', $("#mail_setting_host").val()),
+        formData.append('port', $("#mail_setting_port").val()),
+        formData.append('username', $("#mail_setting_username").val()),
+        formData.append('password', $("#mail_setting_password").val()),
+        formData.append('test_mail', $("#mail_setting_test_mail").val())
+
+      $.ajax({
+        url: prefix + '/workflow/mail/test',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+          'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+        },
+        success: function (response) {
+          alert(response)
+        },
+        error: function () {
+          window.location.href = prefix + '/workflowerror/E53827';
+        }
+
+      })
+    }
+  })
 
 });

@@ -96,7 +96,7 @@
 
 .main_general_container {
     padding: 40px;
-    max-width: 1000px;
+    max-width: 1100px;
 }
 
 .main_general_title{
@@ -110,7 +110,8 @@
     display: grid;
     justify-content: center;
     margin-top: 10px;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 15px;
 }
 
 
@@ -119,7 +120,7 @@
     text-align: center;
     box-shadow: 2px 3px 7px 0 #7e7a7a;
     display: flex;
-    width: 300px;
+    width: 250px;
     height: 150px;
     flex-direction: column;
     justify-content: center;
@@ -147,14 +148,15 @@
 }
 .main_admin_container {
     padding: 40px;
-    max-width: 1000px;
+    max-width: 1100px;
 }
 
 .main_admin_content {
     display: grid;
     justify-content: center;
     margin-top: 10px;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 15px;
 }
 
 .main_admin_button {
@@ -162,7 +164,7 @@
     text-align: center;
     box-shadow: 2px 3px 7px 0 #7e7a7a;
     display: flex;
-    width: 300px;
+    width: 250px;
     height: 150px;
     flex-direction: column;
     justify-content: center;
@@ -577,6 +579,21 @@
     overflow-x: auto;
     border-radius: 10px;
 }
+.e_delete{
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    font-size: 18px;
+    background: #7c7c7c;
+    color: white;
+    width: 26px;
+    text-align: center;
+    border-radius: 4px;
+}
+.e_delete:hover{
+    background: #ff7b7b;
+    color: white;
+}
 
 .grid .e:hover {
     cursor: pointer;
@@ -855,7 +872,6 @@
     grid-template-columns: repeat(2, 1fr);
     flex-direction: column;
     width: 800px;
-    border-radius: 30px;
     overflow: hidden;
 
 }
@@ -978,7 +994,7 @@
 /* 経路選択画面 */
 .button_icon{
     width: 20px;
-    margin-inline: 3px;
+    margin-inline: 5px;
 }
 .back_button {
     background: #ffdbb1;
@@ -999,39 +1015,51 @@
 .back_button:hover {
     background: #daba96;
 }
-
+.flow_choice_button_container{
+    display: flex;
+    height: 80px;
+    align-items: center;
+}
 .flow_choice_back_button {
-    height: 26px;
+    /* height: 26px;
     line-height: 26px;
-    margin-top: auto;
     width: 101px;
     font-size: 14px;
-    margin-left: 35px;
+    margin-left: 35px; */
 }
 
-.flow_application_choice_form {}
+.flow_application_choice_form {
+    background: white;
+}
 
 .flow_choice_select_container {
     display: flex;
+    width: 100%;
 }
 
 .flow_choice_container {
-    background: white;
     display: flex;
-    grid-template-columns: repeat(2, 1fr);
-    padding: 30px 50px;
-    border-radius: 30px;
-    box-shadow: 1px 3px 5px 0 gray;
+    padding: 17px 35px;
 }
 
 .flow_choice_annotation {
-    background: rgb(226 246 255);
-    color: #132f3b;
+
     font-size: 14px;
+    font-weight: bold;
     height: 20px;
-    padding-inline: 30px;
+    padding: 10px 20px;
     margin-top: auto;
     margin-left: 30px;
+    display: flex;
+    border-radius: 5px;
+}
+.unselected{
+    background: rgb(255 230 157);
+    color: #4b371b;
+}
+.selected{
+    background: rgb(228 255 225);
+    color: #5ba857;
 }
 
 .flow_choice_select {
@@ -1042,21 +1070,20 @@
 }
 
 .flow_choice_next_button {
-    margin-top: auto;
     height: 40px;
     margin-left: 35px;
 }
 
 .flow_choice_view_container {
     display: flex;
-    background: white;
-    border-radius: 30px;
-    margin-top: 30px;
+    background: #f0f7ff;
     padding: 32px;
 }
 
 .view_meta_container {
     width: 400px;
+    background: white;
+    padding: 20px;
 }
 
 .view_condition_title {
@@ -1146,6 +1173,11 @@
     height: 22px;
 }
 
+.view_grid_container{
+    background: white;
+    padding: 30px;
+}
+
 .view_grid {
     position: relative;
     display: grid;
@@ -1187,10 +1219,13 @@
 
 .flow_confirm_view_container {
     display: block;
-    background: white;
     border-radius: 30px;
     padding: 32px;
     min-width: 540px;
+}
+.flow_confirm_meta_container {
+    width: 400px;
+    background: white;
 }
 
 .condition_accordion_trigger {
@@ -1244,6 +1279,10 @@
 
 .flow_confirm_form {
     display: flex;
+    margin: 0;
+    height: 80px;
+    background: white;
+    align-items: center;
 }
 
 .dicision_button {
@@ -1262,15 +1301,16 @@
 }
 
 .flow_application_back_button {
-    height: 23px;
-    margin-top: auto;
+
 }
 
 .flow_application_button {
     margin-left: 30px;
-    height: 50px;
     font-size: 18px;
-    width: 187px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 20px;
 }
 
 .view_application_title {
@@ -1292,6 +1332,7 @@
 
 .flow_confirm_container {
     display: flex;
+    background: white;
 }
 
 .flow_confirm_content {
@@ -1905,4 +1946,57 @@
 
 .saved {
     color: #f76d9b;
+}
+
+/* メール設定 */
+.mail_setting_container{
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+}
+.mail_setting_button_content{
+    display: flex;
+}
+.mail_setting_main_content{
+    display: flex;
+}
+.mail_setting_section{
+    margin-right: 80px;
+}
+.mail_setting_subtitle{
+    margin-block: 30px 10px;
+    color: #3d3d3d;
+    border-bottom: solid 1px #c3c3c3;
+    width: 500px;
+}
+.mail_setting_form_content{
+
+}
+.mail_setting_form_label{
+    font-size: 13px;
+}
+.mail_setting_form_text{
+    height: 30px;
+    border: solid gray 1px;
+    border-radius: 3px;
+}
+.mail_setting_test_send_content{
+    display: flex;
+}
+.test_send_button{
+    background: rgb(79, 212, 79);
+    color: white;
+    margin-left: 30px;
+    padding-inline: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 2px;
+    font-size: 14px;
+}
+.test_send_button:hover{
+    background: rgb(44, 121, 44);
+}
+.text_semilong_content{
+    width: 300px;
 }

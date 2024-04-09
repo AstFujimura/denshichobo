@@ -21,10 +21,12 @@
         <input type="hidden" value="{{$id}}" name="id">
         <input type="hidden" value="{{$flowid}}" id="flowid">
 
-        <div class="back_button flow_application_back_button">
+        <a href="{{route('workflowchoiceget',['id' => $id])}}" class="back_button flow_application_back_button">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
             もどる
-        </div>
+        </a>
         <button class="dicision_button flow_application_button" id="flow_next_button">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/button/application.svg') }}" alt="" class="button_icon">
             申請
         </button>
 
@@ -82,7 +84,7 @@
         </div>
         <div class="flow_confirm_view_container">
 
-            <div class="view_meta_container">
+            <div class="flow_confirm_meta_container">
                 <div class="view_condition_title">
                     経路情報
                 </div>

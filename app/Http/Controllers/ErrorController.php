@@ -55,5 +55,10 @@ class ErrorController extends Controller
             $message = "すでに申請済です。新たに申請し直してください";
             return view('error.workflowerror',compact("message",'prefix','server'));
         }
+        $server = config('prefix.server');
+        if ($code == 'E53827'){
+            $message = "予期せぬエラーが発生しました";
+            return view('error.workflowerror',compact("message",'prefix','server'));
+        }
     }
 }

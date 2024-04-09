@@ -186,6 +186,17 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflowedit/{id}', [FlowController::class, 'workfloweditget'])->name('workfloweditget');
             // ワークフローマスタ削除
             Route::get('/workflowdelete/{id}', [FlowController::class, 'workflowdeleteget'])->name('workflowdeleteget');
+            // メール設定
+            Route::get('/workflow/mail', [FlowController::class, 'mailsettingget'])->name('mailsettingget');
+            // メール送信
+            Route::post('/workflow/mail', [FlowController::class, 'mailsettingpost'])->name('mailsettingpost');
+            // テストメール送信
+            Route::post('/workflow/mail/test', [FlowController::class, 'mailsettingtestsend'])->name('mailsettingtestsend');
+
+
+
+
+
             // ワークフロー申請
             Route::get('/workflow/application', [FlowController::class, 'workflowapplicationget'])->name('workflowapplicationget');
             // ワークフロー申請

@@ -11,6 +11,7 @@ use App\Models\M_approval;
 use App\Models\M_flow;
 use App\Models\M_flow_group;
 use App\Models\M_flow_point;
+use App\Models\M_mail;
 use App\Models\M_next_flow_point;
 use App\Models\T_flow;
 use App\Models\T_flow_point;
@@ -22,9 +23,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
+
+
 use Carbon\Carbon;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Response;
+
+use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\DB;
 
@@ -479,15 +485,21 @@ class FlowController extends Controller
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
-        $server = config('prefix.server');
-        $flow_master = M_flow::where("削除フラグ", false)
-            ->get();
-        $flow_groups = DB::table("m_flow_groups")
-            ->select("m_flow_groups.*", "groups.グループ名")
-            ->leftJoin("groups", "groups.id", "=", "m_flow_groups.グループID")
-            ->get();
+        //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
+        if (Auth::user()->管理 == "管理") {
 
-        return view('flow.workflowmaster', compact("prefix", "server", "flow_master", "flow_groups"));
+            $server = config('prefix.server');
+            $flow_master = M_flow::where("削除フラグ", false)
+                ->get();
+            $flow_groups = DB::table("m_flow_groups")
+                ->select("m_flow_groups.*", "groups.グループ名")
+                ->leftJoin("groups", "groups.id", "=", "m_flow_groups.グループID")
+                ->get();
+
+            return view('flow.workflowmaster', compact("prefix", "server", "flow_master", "flow_groups"));
+        } else {
+            return redirect()->route('workflow');
+        }
     }
     // ワークフロー詳細
     public function workflowmasterdetail(Request $request)
@@ -497,191 +509,307 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflowmasterdetail', compact("prefix", "server"));
+        if (Auth::user()->管理 == "管理") {
+            return view('flow.workflowmasterdetail', compact("prefix", "server"));
+        } else {
+            return redirect()->route('workflow');
+        }
     }
     // ワークフロー編集
     public function workfloweditget($id)
+    {
+
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+
+        if (Auth::user()->管理 == "管理") {
+
+            $groups = Group::where('id', ">", 100000)
+                ->get();
+            // チェックされているグループを確認して値を入れる
+            foreach ($groups as $group) {
+                $flow_group = M_flow_group::where("フローマスタID", $id)
+                    ->where("グループID", $group->id)
+                    ->first();
+                if ($flow_group) {
+                    $group->checked = "checked";
+                } else {
+                    $group->checked = "";
+                }
+            }
+
+            $flow_master = M_flow::find($id);
+            $flow_points = M_flow_point::where("フローマスタID", $id)
+                ->get();
+
+            $flow_approvals = DB::table('m_approvals')
+                ->select("m_approvals.*", "users.name", "groups.グループ名", "positions.役職")
+                ->leftJoin("users", "m_approvals.ユーザーID", "=", "users.id")
+                ->leftJoin("groups", "m_approvals.グループID", "=", "groups.id")
+                ->leftJoin("positions", "m_approvals.役職ID", "=", "positions.id")
+                ->where("フローマスタID", $id)
+                ->get();
+
+            $selectmethod = ["nolimit", "nolimit", "nolimit", "byapplicant", "postchoice"];
+
+            if ($flow_master) {
+
+                // ------------フロー地点-----------------
+                foreach ($flow_points as $flow_point) {
+                    $point = $flow_point->フロントエンド表示ポイント;
+
+                    // アンダースコア（_）をデリミタとして文字列を分割
+                    $parts = explode("_", $point);
+
+                    // 分割された部分をそれぞれ変数に代入
+                    $flow_point->column = $parts[0];
+                    $flow_point->row = $parts[1];
+                    if ($flow_point->column == 1 && $flow_point->row == 1) {
+                        $flow_point->id = 10000;
+                    }
+                    // 個人の場合
+                    if ($flow_point->個人グループ == 1) {
+                        $flow_point->person_group = "person";
+                        $flow_point->person_parameter = $flow_point->母数;
+                        $flow_point->group_parameter = 0;
+                        $flow_point->person_required = $flow_point->承認ポイント;
+                        $flow_point->group_required = 0;
+                    }
+                    // グループの場合 
+                    else if ($flow_point->個人グループ >= 2) {
+                        $flow_point->person_group = "group";
+                        $flow_point->person_parameter = 0;
+                        $flow_point->group_parameter = $flow_point->母数;
+                        $flow_point->group_required = $flow_point->承認ポイント;
+                        $flow_point->person_required = 0;
+                    }
+                    // 申請者の場合
+                    else {
+                        $flow_point->person_group = 0;
+                        $flow_point->person_parameter = 0;
+                        $flow_point->group_parameter = 0;
+                        $flow_point->group_required = 0;
+                        $flow_point->person_required = 0;
+                    }
+                    $flow_point->select_method = $selectmethod[$flow_point->個人グループ];
+                }
+
+                // -----------------------------
+
+                // ------------承認マスタ-----------------
+
+                // 承認マスタのがグループIDの場合、役職IDにも値がある可能性があるため
+                // nowgroupに新しいグループIDを入れていき既存のグループIDであれば新たに作成しない
+                $nowgroup = 0;
+                foreach ($flow_approvals as $flow_approval) {
+                    if ($flow_approval->ユーザーID) {
+                        $flow_approval->newgroup = "person";
+                    } else if ($flow_approval->グループID) {
+                        // nowgroupと該当のグループIDが一致した場合(２つ目以降の役職のレコードの場合)
+                        if ($nowgroup == $flow_approval->グループID) {
+                            $flow_approval->newgroup = "none";
+                        }
+                        // 新しいグループIDかつ役職IDがない場合(限定無し、申請者が選択の場合)
+                        else if ($nowgroup != $flow_approval->グループID && $flow_approval->役職ID) {
+                            $flow_approval->newgroup = "newgroup_post";
+                        }
+                        // 新しいグループかつ役職IDがある場合(1つ目の役職のレコードの場合)
+                        else {
+                            $flow_approval->newgroup = "newgroup_none_post";
+                        }
+                        $nowgroup = $flow_approval->グループID;
+                    }
+                    if ($flow_approval->役職ID) {
+                    }
+                }
+
+                // -----------------------------
+
+
+                // ------------次フロー地点マスタ-----------------
+
+                $next_flow_points = DB::table("m_next_flow_points")
+                    ->select("m_next_flow_points.*", "m_flow_points.フロントエンド表示ポイント")
+                    ->leftJoin("m_flow_points", "m_next_flow_points.現フロー地点ID", "=", "m_flow_points.id")
+                    ->where("m_next_flow_points.フローマスタID", $id)
+                    ->get();
+
+                foreach ($next_flow_points as $next_flow_point) {
+                    $nowpoint = $next_flow_point->フロントエンド表示ポイント;
+                    $nextpoint = $next_flow_point->次フロントエンド表示ポイント;
+
+                    // アンダースコア（_）をデリミタとして文字列を分割
+                    $nowparts = explode("_", $nowpoint);
+                    $nextparts = explode("_", $nextpoint);
+
+                    // 分割された部分をそれぞれ変数に代入
+                    $next_flow_point->startcolumn = $nowparts[0];
+                    $next_flow_point->startrow = $nowparts[1];
+                    $next_flow_point->endcolumn = $nextparts[0];
+                    $next_flow_point->endrow = $nextparts[1];
+                }
+
+                // -----------------------------
+
+                // -----------グループユーザーマスタ------------------
+
+                // グループのselectボックスに入れる値を格納する
+                foreach ($groups as $group) {
+                    $count = Group_User::where("グループID", $group->id)
+                        ->count();
+                    $group->count = $count;
+                }
+                $positions = Position::all();
+
+                // -----------------------------
+
+                // ---------------役職マスタ--------------
+
+                // 役職についている人が何人いるかを中間テーブルから取得して新たなカラムとして付与
+                foreach ($positions as $position) {
+                    $positioncount = Group_User::where("役職ID", $position->id)
+                        ->count();
+                    $position->count = $positioncount;
+                }
+
+                // -----------------------------
+
+
+                return view('flow.workflowedit', compact("prefix", "server", "groups", "positions", "flow_master", "flow_points", "flow_approvals", "next_flow_points"));
+            } else {
+                return view('flow.notfoundworkflow', compact("prefix", "server"));
+            }
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+    // ワークフロー削除
+    public function workflowdeleteget($id)
+    {
+        if (Auth::user()->管理 == "管理") {
+            $t_flow = T_flow::where("フローマスタID", $id)
+                ->first();
+            $t_flow_draft = T_flow_draft::where("フローマスタID", $id)
+                ->first();
+            $m_flow = M_flow::find($id);
+            // フローのトランザクションデータおよび下書きデータが存在する場合は
+            // レコードを削除せず削除フラグをたてる
+            if ($t_flow || $t_flow_draft) {
+                $m_flow->削除フラグ = true;
+                $m_flow->save();
+            } else {
+                $m_flow->delete();
+            }
+
+            return redirect()->route('workflowmaster');
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+
+    // メール設定
+    public function mailsettingget(Request $request)
     {
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        $groups = Group::where('id', ">", 100000)
-            ->get();
-        // チェックされているグループを確認して値を入れる
-        foreach ($groups as $group) {
-            $flow_group = M_flow_group::where("フローマスタID", $id)
-                ->where("グループID", $group->id)
-                ->first();
-            if ($flow_group) {
-                $group->checked = "checked";
-            } else {
-                $group->checked = "";
-            }
-        }
+        //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
+        if (Auth::user()->管理 == "管理") {
 
-        $flow_master = M_flow::find($id);
-        $flow_points = M_flow_point::where("フローマスタID", $id)
-            ->get();
-
-        $flow_approvals = DB::table('m_approvals')
-            ->select("m_approvals.*", "users.name", "groups.グループ名", "positions.役職")
-            ->leftJoin("users", "m_approvals.ユーザーID", "=", "users.id")
-            ->leftJoin("groups", "m_approvals.グループID", "=", "groups.id")
-            ->leftJoin("positions", "m_approvals.役職ID", "=", "positions.id")
-            ->where("フローマスタID", $id)
-            ->get();
-
-        $selectmethod = ["nolimit", "nolimit", "nolimit", "byapplicant", "postchoice"];
-
-        if ($flow_master) {
-
-            // ------------フロー地点-----------------
-            foreach ($flow_points as $flow_point) {
-                $point = $flow_point->フロントエンド表示ポイント;
-
-                // アンダースコア（_）をデリミタとして文字列を分割
-                $parts = explode("_", $point);
-
-                // 分割された部分をそれぞれ変数に代入
-                $flow_point->column = $parts[0];
-                $flow_point->row = $parts[1];
-                if ($flow_point->column == 1 && $flow_point->row == 1) {
-                    $flow_point->id = 10000;
-                }
-                // 個人の場合
-                if ($flow_point->個人グループ == 1) {
-                    $flow_point->person_group = "person";
-                    $flow_point->person_parameter = $flow_point->母数;
-                    $flow_point->group_parameter = 0;
-                    $flow_point->person_required = $flow_point->承認ポイント;
-                    $flow_point->group_required = 0;
-                }
-                // グループの場合 
-                else if ($flow_point->個人グループ >= 2) {
-                    $flow_point->person_group = "group";
-                    $flow_point->person_parameter = 0;
-                    $flow_point->group_parameter = $flow_point->母数;
-                    $flow_point->group_required = $flow_point->承認ポイント;
-                    $flow_point->person_required = 0;
-                }
-                // 申請者の場合
-                else {
-                    $flow_point->person_group = 0;
-                    $flow_point->person_parameter = 0;
-                    $flow_point->group_parameter = 0;
-                    $flow_point->group_required = 0;
-                    $flow_point->person_required = 0;
-                }
-                $flow_point->select_method = $selectmethod[$flow_point->個人グループ];
-            }
-
-            // -----------------------------
-
-            // ------------承認マスタ-----------------
-
-            // 承認マスタのがグループIDの場合、役職IDにも値がある可能性があるため
-            // nowgroupに新しいグループIDを入れていき既存のグループIDであれば新たに作成しない
-            $nowgroup = 0;
-            foreach ($flow_approvals as $flow_approval) {
-                if ($flow_approval->ユーザーID) {
-                    $flow_approval->newgroup = "person";
-                } else if ($flow_approval->グループID) {
-                    // nowgroupと該当のグループIDが一致した場合(２つ目以降の役職のレコードの場合)
-                    if ($nowgroup == $flow_approval->グループID) {
-                        $flow_approval->newgroup = "none";
-                    }
-                    // 新しいグループIDかつ役職IDがない場合(限定無し、申請者が選択の場合)
-                    else if ($nowgroup != $flow_approval->グループID && $flow_approval->役職ID) {
-                        $flow_approval->newgroup = "newgroup_post";
-                    }
-                    // 新しいグループかつ役職IDがある場合(1つ目の役職のレコードの場合)
-                    else {
-                        $flow_approval->newgroup = "newgroup_none_post";
-                    }
-                    $nowgroup = $flow_approval->グループID;
-                }
-                if ($flow_approval->役職ID) {
-                }
-            }
-
-            // -----------------------------
-
-
-            // ------------次フロー地点マスタ-----------------
-
-            $next_flow_points = DB::table("m_next_flow_points")
-                ->select("m_next_flow_points.*", "m_flow_points.フロントエンド表示ポイント")
-                ->leftJoin("m_flow_points", "m_next_flow_points.現フロー地点ID", "=", "m_flow_points.id")
-                ->where("m_next_flow_points.フローマスタID", $id)
-                ->get();
-
-            foreach ($next_flow_points as $next_flow_point) {
-                $nowpoint = $next_flow_point->フロントエンド表示ポイント;
-                $nextpoint = $next_flow_point->次フロントエンド表示ポイント;
-
-                // アンダースコア（_）をデリミタとして文字列を分割
-                $nowparts = explode("_", $nowpoint);
-                $nextparts = explode("_", $nextpoint);
-
-                // 分割された部分をそれぞれ変数に代入
-                $next_flow_point->startcolumn = $nowparts[0];
-                $next_flow_point->startrow = $nowparts[1];
-                $next_flow_point->endcolumn = $nextparts[0];
-                $next_flow_point->endrow = $nextparts[1];
-            }
-
-            // -----------------------------
-
-            // -----------グループユーザーマスタ------------------
-
-            // グループのselectボックスに入れる値を格納する
-            foreach ($groups as $group) {
-                $count = Group_User::where("グループID", $group->id)
-                    ->count();
-                $group->count = $count;
-            }
-            $positions = Position::all();
-
-            // -----------------------------
-
-            // ---------------役職マスタ--------------
-
-            // 役職についている人が何人いるかを中間テーブルから取得して新たなカラムとして付与
-            foreach ($positions as $position) {
-                $positioncount = Group_User::where("役職ID", $position->id)
-                    ->count();
-                $position->count = $positioncount;
-            }
-
-            // -----------------------------
-
-
-            return view('flow.workflowedit', compact("prefix", "server", "groups", "positions", "flow_master", "flow_points", "flow_approvals", "next_flow_points"));
+            $M_mail = M_mail::first();
+            
+            return view('mail.mailsetting', compact("prefix", "server","M_mail"));
         } else {
-            return view('flow.notfoundworkflow', compact("prefix", "server"));
+            return redirect()->route('workflow');
         }
     }
-    // ワークフロー削除
-    public function workflowdeleteget($id)
+    // メール送信
+    public function mailsettingpost(Request $request)
     {
-        $t_flow = T_flow::where("フローマスタID", $id)
-            ->first();
-        $t_flow_draft = T_flow_draft::where("フローマスタID", $id)
-            ->first();
-        $m_flow = M_flow::find($id);
-        // フローのトランザクションデータおよび下書きデータが存在する場合は
-        // レコードを削除せず削除フラグをたてる
-        if ($t_flow || $t_flow_draft) {
-            $m_flow->削除フラグ = true;
-            $m_flow->save();
-        } else {
-            $m_flow->delete();
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
         }
+        $server = config('prefix.server');
+        //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
+        if (Auth::user()->管理 == "管理") {
+            $name = $request->input("name");
+            $mail = $request->input("mail");
+            $host = $request->input("host");
+            $port = $request->input("port");
+            $username = $request->input("username");
+            $password = $request->input("password");
+            $encryptedPassword = Crypt::encryptString($password);
+            $test_mail = $request->input("test_mail");
 
-        return redirect()->route('workflowmaster');
+            $M_mail = M_mail::first();
+            // メール設定がすでにされている場合(変更時)
+            if ($M_mail){
+                $M_mail->name = $name;
+                $M_mail->mail = $mail;
+                $M_mail->host = $host;
+                $M_mail->port = $port;
+                $M_mail->username = $username;
+                $M_mail->password = $encryptedPassword;
+                $M_mail->test_mail = $test_mail;
+                $M_mail->save();
+            }
+            // メール設定が初めての場合
+            else {
+                $new_M_mail = new M_mail();
+                $new_M_mail->name = $name;
+                $new_M_mail->mail = $mail;
+                $new_M_mail->host = $host;
+                $new_M_mail->port = $port;
+                $new_M_mail->username = $username;
+                $new_M_mail->password = $encryptedPassword;
+                $new_M_mail->test_mail = $test_mail;
+                $new_M_mail->save();
+            }
+        }
     }
+    // テストメール送信
+    public function mailsettingtestsend(Request $request)
+    {
+        if (Auth::user()->管理 == "管理") {
+            $name = $request->input("name");
+            $mail = $request->input("mail");
+            $host = $request->input("host");
+            $port = $request->input("port");
+            $username = $request->input("username");
+            $password = $request->input("password");
+            $test_mail = $request->input("test_mail");
+
+            $mailConfig = [
+                'driver' => 'smtp',
+                'host' => $host,
+                'port' => $port,
+                'username' => $username,
+                'password' => $password,
+                'encryption' => 'tls',
+            ];
+
+            config(['mail' => $mailConfig]);
+            try {
+                Mail::send('mail.testmail', [], function ($message) use ($test_mail, $mail, $name) {
+                    $message->to($test_mail)
+                        ->subject('ワークフローシステムからのテスト送信')
+                        ->from($mail, $name);
+                });
+                return response()->json('送信しました');
+                // return redirect()->route('workflow');
+            } catch (\Exception) {
+                return response()->json('送信できませんでした');
+            }
+        }
+    }
+
+
     public function workflowapplicationget(Request $request)
     {
         $prefix = config('prefix.prefix');

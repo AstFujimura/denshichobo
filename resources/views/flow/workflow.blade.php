@@ -10,12 +10,12 @@
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">メニュー</h2>
+    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">トップ</h2>
     <div class="main_menu_container">
 
         <div class="main_general_container">
             <div class="main_general_title">
-                一般メニュー
+                メニュー
             </div>
             <div class="main_general_content">
 
@@ -41,6 +41,7 @@
             </div>
 
         </div>
+        @if (Auth::user()->管理 == "管理")
         <div class="main_admin_container">
             <div class="main_admin_title">
                 管理メニュー
@@ -62,9 +63,24 @@
                         ワークフローマスタ登録
                     </div>
                 </a>
+                <a href="{{route('mailsettingget')}}" class="main_admin_button">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/mail.svg') }}" alt="" class="flow_title_icon">
+
+                    <div class="main_button_title">
+                        メール設定
+                    </div>
+                </a>
+                <a href="{{route('workflowregistget')}}" class="main_admin_button">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/setting.svg') }}" alt="" class="flow_title_icon">
+
+                    <div class="main_button_title">
+                        その他設定
+                    </div>
+                </a>
 
             </div>
         </div>
+        @endif
     </div>
 </div>
 @endsection

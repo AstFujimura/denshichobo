@@ -67,7 +67,7 @@
                     </div>
                     <div>
                         <input type="radio" name="mailpoint" id="mailpoint1">
-                        <label for="mailpoint1">最終承認ポイントでの送信</label>
+                        <label for="mailpoint1">全承認ポイントでの送信</label>
                     </div>
                     <div>
                         <input type="radio" name="mailpoint" id="mailpoint2">
@@ -159,7 +159,7 @@
                             <label for="section_mailpoint1">承認通知メールを送信</label>
                         </div>
                     </div>
-                    <div class="right_side_section">
+                    <!-- <div class="right_side_section">
                         <div class="right_side_content_title">
                             その他設定
                         </div>
@@ -167,7 +167,7 @@
                             <input type="radio" name="omission" id="omission1">
                             <label for="omission1">承認時に以降のフローを省略する選択</label>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
