@@ -39,7 +39,7 @@
                     <input type="radio" name="category" id="payment" class="category_input">
                     <label for="payment" class="category_element">
                         <div class="category_check"></div>
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/category/payment.svg') }}" alt="" class="category_icon">
+                        <!-- <img src="{{ asset(config('prefix.prefix').'/'.'img/category/payment.svg') }}" alt="" class="category_icon"> -->
                         <div class="category_name">
                             支払い承認
                         </div>
@@ -47,7 +47,7 @@
                     <input type="radio" name="category" id="expenses" class="category_input">
                     <label for="expenses" class="category_element">
                         <div class="category_check"></div>
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/category/expenses.svg') }}" alt="" class="category_icon">
+                        <!-- <img src="{{ asset(config('prefix.prefix').'/'.'img/category/expenses.svg') }}" alt="" class="category_icon"> -->
                         <div class="category_name">
                             経費精算
                         </div>

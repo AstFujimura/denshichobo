@@ -70,11 +70,11 @@
                         メール設定
                     </div>
                 </a>
-                <a href="{{route('workflowregistget')}}" class="main_admin_button">
+                <a href="{{route('categoryget')}}" class="main_admin_button">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/setting.svg') }}" alt="" class="flow_title_icon">
 
                     <div class="main_button_title">
-                        その他設定
+                        カテゴリ設定
                     </div>
                 </a>
 

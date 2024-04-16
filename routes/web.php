@@ -192,7 +192,14 @@ Route::prefix($prefix)->group(function () {
             Route::post('/workflow/mail', [FlowController::class, 'mailsettingpost'])->name('mailsettingpost');
             // テストメール送信
             Route::post('/workflow/mail/test', [FlowController::class, 'mailsettingtestsend'])->name('mailsettingtestsend');
-
+            // カテゴリ設定
+            Route::get('/workflow/category', [FlowController::class, 'categoryget'])->name('categoryget');
+            //カテゴリ名変更の非同期通信API
+            Route::get('/workflow/category/change/{id}/{value}', [FlowController::class, 'categorychangeget'])->name('categorychangeget');
+            //カテゴリ詳細変更
+            Route::get('/workflow/category/detail/{id}', [FlowController::class, 'categorydetailget'])->name('categorydetailget');
+            //カテゴリ詳細変更ポスト
+            Route::post('/workflow/category/detail', [FlowController::class, 'categorydetailpost'])->name('categorydetailpost');
 
 
 

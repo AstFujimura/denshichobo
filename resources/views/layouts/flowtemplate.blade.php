@@ -61,7 +61,10 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="menuicon01">
         <div class="iconmessage">ワークフローマスタ登録</div>
     </div>
-
+    <div class="headerIcon001" onclick="location.href='{{route('categoryget')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="menuicon01">
+        <div class="iconmessage">カテゴリ設定</div>
+    </div>
 
     <div class="headerIcon001" onclick="window.open('{{route('question')}}', '_blank');">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
@@ -170,6 +173,18 @@
                         </div>
                         <div class="button1name01 long_str">
                         ワークフローマスタ登録
+                        </div>
+
+                    </div>
+
+                </a>
+                <a href="{{route('categoryget')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="flow_right_icon">
+                        </div>
+                        <div class="button1name01">
+                        カテゴリ設定
                         </div>
 
                     </div>

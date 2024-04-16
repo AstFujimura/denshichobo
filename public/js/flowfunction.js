@@ -1699,3 +1699,87 @@ function mail_setting_required_check(status) {
   $('#mail_setting_test_mail').attr('data-required', 'false')
   return error
 }
+
+
+// カテゴリ名を変更する時のバリデーションチェック
+function category_validate_check(value) {
+  var error = false
+  $('.category_setting_name').each(function () {
+    if ($(this).text().trim() == value) {
+      error = true
+      alert('カテゴリ名が重複しているため変更できません。')
+      return error
+    }
+  })
+  return error
+}
+
+// デフォルトのカテゴリの選択をdisableにする
+// 削除ボタンも消去する
+function change_disable() {
+
+  $('.category_detail_optional_content').each(function () {
+
+    if ($(this).attr('data-id') <= 6) {
+      $(this).find(".category_detail_optional_select").attr('disabled', true)
+      $(this).find(".category_detail_optional_number").attr('disabled', true)
+
+      $(this).find('.category_detail_optional_delete_button').removeClass('display_flex')
+    }
+    else {
+      $(this).find(".category_detail_optional_select").attr('disabled', false)
+      $(this).find(".category_detail_optional_number").attr('disabled', false)
+      $(this).find('.category_detail_optional_delete_button').addClass('display_flex')
+    }
+  })
+}
+
+// 並べ替えた時にその順番をinputの格納
+function change_items_order() {
+  var order = ""
+  $('.category_detail_optional_content').each(function () {
+    if (order == "") {
+      order = $(this).data('id')
+    }
+    else {
+      order += '_' + $(this).data('id')
+    }
+  })
+  $('#order').val(order)
+}
+
+// 既存の項目の削除リストをinputに登録
+function delete_items(delete_id) {
+  var deleteitems = $('#delete').val()
+
+  if (deleteitems == "") {
+    deleteitems = delete_id
+  }
+  else {
+    deleteitems += '_' + delete_id
+  }
+  $('#delete').val(deleteitems)
+}
+
+// 最大の値のinputタグを表示するかどうか
+// status: change→そのページ内で型が変更された場合
+//         new→ページで初めて表示される場合
+function max_input_reload(element, status) {
+  if (element.val() == 1) {
+    element.parent().parent().find('.category_detail_optional_number').attr('type', 'number')
+    // 変更される時はデフォルトで文字列は30にしておく
+    if (status == "change") {
+      element.parent().parent().find('.category_detail_optional_number').val(30)
+    }
+  }
+  else if (element.val() == 2) {
+    element.parent().parent().find('.category_detail_optional_number').attr('type', 'number')
+    // 変更される時はデフォルトで数値は20億にしておく
+    if (status == "change") {
+      element.parent().parent().find('.category_detail_optional_number').val(2000000000)
+    }
+  }
+  else {
+    element.parent().parent().find('.category_detail_optional_number').attr('type', 'hidden')
+  }
+}

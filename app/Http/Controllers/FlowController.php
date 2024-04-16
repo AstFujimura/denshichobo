@@ -8,11 +8,13 @@ use App\Models\File;
 use App\Models\Group;
 use App\Models\Group_User;
 use App\Models\M_approval;
+use App\Models\M_category;
 use App\Models\M_flow;
 use App\Models\M_flow_group;
 use App\Models\M_flow_point;
 use App\Models\M_mail;
 use App\Models\M_next_flow_point;
+use App\Models\M_optional;
 use App\Models\T_flow;
 use App\Models\T_flow_point;
 use App\Models\T_approval;
@@ -722,8 +724,8 @@ class FlowController extends Controller
         if (Auth::user()->管理 == "管理") {
 
             $M_mail = M_mail::first();
-            
-            return view('mail.mailsetting', compact("prefix", "server","M_mail"));
+
+            return view('mail.mailsetting', compact("prefix", "server", "M_mail"));
         } else {
             return redirect()->route('workflow');
         }
@@ -749,7 +751,7 @@ class FlowController extends Controller
 
             $M_mail = M_mail::first();
             // メール設定がすでにされている場合(変更時)
-            if ($M_mail){
+            if ($M_mail) {
                 $M_mail->name = $name;
                 $M_mail->mail = $mail;
                 $M_mail->host = $host;
@@ -776,6 +778,11 @@ class FlowController extends Controller
     // テストメール送信
     public function mailsettingtestsend(Request $request)
     {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
         if (Auth::user()->管理 == "管理") {
             $name = $request->input("name");
             $mail = $request->input("mail");
@@ -809,6 +816,185 @@ class FlowController extends Controller
         }
     }
 
+    // カテゴリ設定
+    public function categoryget(Request $request)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        if (Auth::user()->管理 == "管理") {
+            $m_categories = M_category::all();
+
+            return view('flow.workflowcategory', compact("prefix", "server", "m_categories"));
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+    // カテゴリ名変更非同期通信API
+    public function categorychangeget($id, $value)
+    {
+        if (Auth::user()->管理 == "管理") {
+            try {
+                $m_category = M_category::find($id);
+                $m_category->カテゴリ名 = $value;
+                $m_category->save();
+                return response()->json('変更');
+            } catch (\Exception) {
+                return response()->json('エラーが発生しました');
+            }
+        } else {
+            return response()->json('権限がありません');
+        }
+    }
+    // カテゴリ詳細変更
+    public function categorydetailget(Request $request, $id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        if (Auth::user()->管理 == "管理") {
+            $m_category = M_category::find($id);
+
+            $order = $m_category->項目順;
+            $annotation = $m_category->注釈;
+
+            // アンダースコア（_）をデリミタとして文字列を分割
+            $parts = explode("_", $order);
+
+            $items = array();
+            foreach ($parts as $part) {
+                $columns = array();
+                $columns["id"] = $part;
+                if ($part == 1) {
+                    $columns["項目名"] = $m_category->標題 ?? "標題";
+                    $columns["型"] = 1;
+                    $columns["最大"] = 30;
+                    $columns["必須項目"] = "true";
+                } else if ($part == 2) {
+                    $columns["項目名"] = $m_category->取引先 ?? "取引先";
+                    $columns["型"] = 1;
+                    $columns["最大"] = 30;
+                    $columns["必須項目"] = "true";
+                } else if ($part == 3) {
+                    $columns["項目名"] = $m_category->取引日 ?? "取引日";
+                    $columns["型"] = 3;
+                    $columns["最大"] = "";
+                    $columns["必須項目"] = "true";
+                } else if ($part == 4) {
+                    $columns["項目名"] = $m_category->金額 ?? "金額";
+                    $columns["型"] = 2;
+                    $columns["最大"] = 2000000000;
+                    $columns["必須項目"] = "true";
+                } else if ($part == 5) {
+                    $columns["項目名"] = $m_category->コメント ?? "コメント";
+                    $columns["型"] = 1;
+                    $columns["最大"] = 250;
+                    $columns["必須項目"] = "true";
+                } else if ($part == 6) {
+                    $columns["項目名"] = $m_category->請求書 ?? "請求書";
+                    $columns["型"] = 4;
+                    $columns["最大"] = "";
+                    $columns["必須項目"] = "true";
+                } else {
+                    $m_optional = M_optional::find($part);
+                    $columns["項目名"] = $m_optional->項目名;
+                    $columns["型"] = $m_optional->型;
+                    $columns["最大"] = $m_optional->文字制限;
+                    $columns["必須項目"] = $m_optional->必須;
+                }
+
+                $items[] = $columns;
+            }
+
+            return view('flow.workflowcategorydetail', compact("prefix", "server", "m_category", "items", "order","annotation", "id"));
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+
+    // カテゴリ詳細変更ポスト
+    public function categorydetailpost(Request $request)
+    {
+        if (Auth::user()->管理 == "管理") {
+
+            $category_id = $request->input('id');
+            $m_category = M_category::find($category_id);
+            $order = $request->input('order');
+            $official_order = "";
+            // アンダースコア（_）をデリミタとして文字列を分割
+            $parts = explode("_", $order);
+            foreach ($parts as $part) {
+                if ($part == 1) {
+                    $m_category->標題 = $request->input("name_" . $part . "");
+                } else if ($part == 2) {
+                    $m_category->取引先 = $request->input("name_" . $part . "");
+                } else if ($part == 3) {
+                    $m_category->取引日 = $request->input("name_" . $part . "");
+                } else if ($part == 4) {
+                    $m_category->金額 = $request->input("name_" . $part . "");
+                } else if ($part == 5) {
+                    $m_category->コメント = $request->input("name_" . $part . "");
+                } else if ($part == 6) {
+                    $m_category->請求書 = $request->input("name_" . $part . "");
+                } else {
+                    // 新規に追加された項目
+                    // 新規に追加されたものは50000以上としている
+                    if ($part >= 50000){
+                        $new_m_optional = new M_optional();
+                        $new_m_optional->id = $this->next_optional_id();
+                        $new_m_optional->カテゴリマスタID = $category_id;
+                        $new_m_optional->項目名 = $request->input("name_" . $part . "");
+                        $new_m_optional->型 = $request->input("type_" . $part . "");
+                        $new_m_optional->文字制限 = $request->input("max_" . $part . "");
+                        $new_m_optional->必須 = $request->input("required_" . $part . "");
+                        $new_m_optional->save();
+                        $part = $new_m_optional->id;
+                    }
+                    // 既存の項目かつデフォルトではないもの
+                    else {
+                        $m_optional = M_optional::find($part);
+                        if($m_optional){
+                            $m_optional->項目名 = $request->input("name_" . $part . "");
+                            $m_optional->型 = $request->input("type_" . $part . "");
+                            $m_optional->文字制限 = $request->input("max_" . $part . "");
+                            $m_optional->必須 = $request->input("required_" . $part . "");
+                            $m_optional->save();
+                        }
+                    }
+                }
+                if ($official_order == ""){
+                    $official_order = $part;
+                }
+                else {
+                    $official_order = $official_order."_".$part;
+                }
+                $m_category->項目順 = $official_order;
+                $m_category->注釈 = $request->input('annotation');
+                $m_category->save();
+            }
+            return redirect()->route('categorydetailget', ["id" => $category_id]);
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+    
+    //　次に指定すべきidを返す
+    // 任意項目マスタ(m_optionals)のidは1000からのインクリメントとしている
+    private function next_optional_id()
+    {
+        $max_id = M_optional::max('id');
+        if ($max_id < 1000){
+            $next_id = 1000;
+        }
+        else {
+            $next_id = $max_id + 1;
+        }
+        return $next_id;
+    }
 
     public function workflowapplicationget(Request $request)
     {

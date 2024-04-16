@@ -1161,4 +1161,157 @@ $(document).ready(function () {
     }
   })
 
+
+  $('.category_pen_icon').on('click', function () {
+    // 表示されているdivを非表示にする
+    $(this).parent().find('.category_setting_name').hide()
+    var inputelement = $(this).parent().find('.category_setting_input')
+    // inputをhiddenからtextに変え、フォーカスを当てる
+    inputelement.attr('type', 'text').focus()
+    // 文字数を取得して最後にカーソルを移動させる
+    var len = inputelement.val().length
+    inputelement[0].setSelectionRange(len, len)
+  })
+  // フォーカスが外れた時
+  $('.category_setting_input').on('blur', function () {
+    // 名称に変更があった時
+    // かつ空欄でない時
+    if ($(this).val() != $(this).parent().find('.category_setting_name').text().trim() && $(this).val() != "") {
+
+      // カテゴリ名が有効である場合
+      if (!category_validate_check($(this).val())) {
+        // 変更を承認した時
+        // 非同期でカテゴリ名を変更する
+        if (confirm('「' + $(this).parent().find('.category_setting_name').text().trim() + '」を「' + $(this).val() + '」に変更しますか。')) {
+          $.ajax({
+            url: prefix + '/workflow/category/change/' + $(this).attr('name') + '/' + $(this).val(),
+            type: 'GET',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+              if (response == "変更") {
+                window.location.href = prefix + '/workflow/category';
+              }
+              else {
+                alert(response)
+                window.location.href = prefix + '/workflow/category';
+              }
+            },
+            error: function () {
+              window.location.href = prefix + '/workflowerror/E53827';
+            }
+
+          })
+
+        }
+        // 変更を承認しなかったときinputの文字をもとに戻す
+        else {
+          $(this).val($(this).parent().find('.category_setting_name').text().trim())
+        }
+      }
+      // カテゴリ名が無効である場合inputの文字をもとに戻す
+      else {
+        $(this).val($(this).parent().find('.category_setting_name').text().trim())
+      }
+    }
+    // 空欄を元の文字に戻す
+    else {
+      $(this).val($(this).parent().find('.category_setting_name').text().trim())
+    }
+    $(this).parent().find('.category_setting_name').show()
+    $(this).attr('type', 'hidden')
+  })
+
+
+  // フォーカスに当たった状態でエンターキーが押されたらフォーカスを外す
+  $(document).on('keydown', function (event) {
+    if (event.which === 13) { // Enter キーが押された場合
+      if ($(document.activeElement).hasClass('category_setting_input')) {
+        // フォーカスが当たっている場合
+        $(document.activeElement).blur()
+      }
+    }
+  });
+  //カテゴリ要素をクリックしたとき
+  $('.category_setting_content').on('click', function (event) {
+    // 名称変更ボタンとインプット要素をクリックしたときは除く
+    if ($(event.target).closest('.category_pen_icon').length > 0 || $(event.target).closest('.category_setting_input').length > 0) {
+      return;
+    }
+    window.location.href = prefix + '/workflow/category/detail/' + $(this).data("category_id");
+  })
+
+
+  if ($('#category_detail').length != 0) {
+    $(".category_detail_sortable").sortable(
+      {
+        update: function () {
+          change_items_order()
+        }
+      });
+
+    // セレクトボックスのデフォルトの値を合わせる
+    $('.category_detail_optional_select').each(function () {
+      var data_type = $(this).data("type")
+      $(this).find('option[value=' + data_type + ']').attr('selected', true)
+
+    })
+    // 型をひとつづつ確認
+    $('.type').each(function () {
+      max_input_reload($(this), "new")
+    })
+
+    // デフォルトの項目を選択不可にする
+    // 削除ボタンも消去する
+    change_disable()
+
+
+
+    // 追加ボタンを押したときの動作
+    $('#category_detail_optional_add_button').on('click', function () {
+      // 要素をクローンする
+      var clonedElement = $('.category_detail_optional_content').first().clone();
+      var maxid = $('#optional_max').val()
+      clonedElement.data('id', maxid)
+      clonedElement.attr('data-id', maxid)
+      // インプットのname属性を適切なIDに変更する
+      clonedElement.find(".input_element").each(function () {
+        var name = $(this).attr("name")
+        var replacedString = name.replace(/\d+/g, maxid);
+        $(this).attr("name", replacedString)
+        // 項目名は空欄にする
+        if ($(this).attr('type') == "text") {
+          $(this).val('')
+        }
+      });
+
+
+      maxid = parseInt(maxid) + 1
+      $('#optional_max').val(maxid)
+
+      // クローンされた要素を追加する
+      $('.category_detail_sortable').append(clonedElement);
+      change_disable()
+      // 再度順番並び替え
+      change_items_order()
+
+    })
+
+    // 型のセレクトボックスが変更されたときの動作
+    $(document).on('change', '.category_detail_optional_type .category_detail_optional_select', function () {
+      max_input_reload($(this), "change")
+
+    })
+
+    $(document).on('click', '.category_detail_optional_delete_button', function () {
+      var id = $(this).parent().parent().data('id')
+      if (id < 50000) {
+        // 既存の項目の削除リストをinputに登録
+        delete_items(id)
+      }
+      $(this).parent().parent().remove()
+      // 再度順番並び替え
+      change_items_order()
+    })
+  }
 });
