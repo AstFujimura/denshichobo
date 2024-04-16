@@ -4,6 +4,19 @@ $(document).ready(function () {
 
   // ワークフローマスタ登録・編集画面の時
   if ($('#edit').length != 0 || $('#regist').length != 0) {
+    // 画面表示時に画面サイズを取得してgridcontainerの幅を修正
+    grid_resize()
+    $(window).on("resize", function () {
+      // 画面サイズ変更時に画面サイズを取得してgridcontainerの幅を修正
+      grid_resize()
+    });
+    function grid_resize() {
+      var screenWidth = $(window).width();
+      var grid_max_width = screenWidth - 715
+      $('.grid_container').css({
+        "max-width": grid_max_width + "px"
+      })
+    }
 
 
     // 編集画面の時グループカウントをセレクトボックスから取得する
@@ -263,12 +276,12 @@ $(document).ready(function () {
     $("#maxgrid").data("maxcolumn", Xcellcount + 1)
     $("#maxgrid").data("maxrow", Ycellcount + 1)
     // グリッドのセルの値を指定
-    const cellwidth = 150
-    const cellheight = 80
+    const cellwidth = 130
+    const cellheight = 60
 
     // 空白のセルの値を指定
-    const gapcellwidth = 40
-    const gapcellheight = 15
+    const gapcellwidth = 30
+    const gapcellheight = 10
 
     // 画面表示された段階でグリッドを作成
     creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight)

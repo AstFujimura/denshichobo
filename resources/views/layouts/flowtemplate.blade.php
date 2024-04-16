@@ -55,11 +55,11 @@
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('workflowmaster')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="menuicon01">
-        <div class="iconmessage">ワークフローマスタ一覧</div>
+        <div class="iconmessage">経路マスタ一覧</div>
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('workflowregistget')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="menuicon01">
-        <div class="iconmessage">ワークフローマスタ登録</div>
+        <div class="iconmessage">経路マスタ登録</div>
     </div>
     <div class="headerIcon001" onclick="location.href='{{route('categoryget')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="menuicon01">
@@ -159,8 +159,8 @@
                         <div class="button1logo01">
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="flow_right_icon">
                         </div>
-                        <div class="button1name01 long_str">
-                        ワークフローマスタ一覧
+                        <div class="button1name01">
+                        経路マスタ一覧
                         </div>
 
                     </div>
@@ -171,8 +171,8 @@
                         <div class="button1logo01">
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="flow_right_icon">
                         </div>
-                        <div class="button1name01 long_str">
-                        ワークフローマスタ登録
+                        <div class="button1name01">
+                        経路マスタ登録
                         </div>
 
                     </div>

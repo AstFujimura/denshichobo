@@ -17,7 +17,7 @@ function creategrid(cellwidth, cellheight, gapcellwidth, gapcellheight) {
   var Ycellcount = $("#maxgrid").data("maxrow")
   $(".grid").css({
     "grid-template-columns": " 20px repeat(" + Xcellcount + ", " + cellwidth + "px " + cellwidth + "px " + gapcellwidth + "px)",
-    "grid-template-rows": "40px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
+    "grid-template-rows": "20px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
   })
 }
 
@@ -39,7 +39,7 @@ function modifygrid(maxcolumn, maxrow, cellwidth, cellheight, gapcellwidth, gapc
   }
   $(".grid").css({
     "grid-template-columns": " 20px repeat(" + Xcellcount + ", " + cellwidth + "px " + cellwidth + "px " + gapcellwidth + "px)",
-    "grid-template-rows": "40px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
+    "grid-template-rows": "20px repeat(" + Ycellcount + ", " + cellheight + "px " + cellheight + "px " + gapcellheight + "px " + gapcellheight + "px)"
   })
 }
 
@@ -1269,6 +1269,15 @@ function errorcheck() {
   $(".errortextbox").removeClass("errortextbox")
   $(".erroraccordion").removeClass("erroraccordion")
   $(".errorelement").removeClass("errorelement")
+
+  var category_name = $('#category_name_text').val()
+  if (category_name == "") {
+    $("#category_name_text").addClass("errortextbox")
+
+    alert("カテゴリーを選択してください")
+    error = true
+  }
+
   var flow_name = $('#flow_name_text').val()
   if (flow_name == "") {
     $("#flow_name_text").addClass("errortextbox")
@@ -1276,6 +1285,7 @@ function errorcheck() {
     alert("承認フロー名を入力してください")
     error = true
   }
+
   var isChecked = false;
   $('.group_checkbox').each(function () {
     if ($(this).is(':checked')) {

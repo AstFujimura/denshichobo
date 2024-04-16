@@ -227,6 +227,7 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
+        $categories = M_category::all();
         $groups = Group::where('id', ">", 100000)
             ->get();
         foreach ($groups as $group) {
@@ -241,13 +242,18 @@ class FlowController extends Controller
                 ->count();
             $position->count = $positioncount;
         }
-        return view('flow.workflowregist', compact("prefix", "server", "groups", "positions"));
+        return view('flow.workflowregist', compact("prefix", "server","categories", "groups", "positions"));
     }
     public function workflowregistpost(Request $request)
     {
         // 編集か新規登録かを判断する
         $regist_edit = $request->input("edit");
         $flow_master_id = $request->input("flow_master_id");
+        // 編集する際トランザクションデータの有無によってマスタを削除するかを判定する
+        // もしあった場合は削除フラグをたてるが、ない場合はそのマスタのIDを取得してから
+        // 削除を行う。(これにより外部キー接続していたレコードも消去される)
+        // そして取得したIDを再度使用して新たなレコードを作成する。
+        // それを格納するための変数: pastid
         $pastid = false;
         if ($regist_edit == "edit") {
             $t_flow = T_flow::where("フローマスタID", $flow_master_id)
@@ -269,6 +275,7 @@ class FlowController extends Controller
         }
 
         // -------------フローマスタ-----------------------------
+        $category_id = $request->input("flow_category");
         $flow_name = $request->input("flow_name");
         $flow_groups = $request->input("flow_group");
         $start_flow_price = $request->input("start_flow_price");
@@ -285,7 +292,9 @@ class FlowController extends Controller
             $flow_master->id = $pastid;
         }
 
-
+        $flow_master->カテゴリマスタID = $category_id;
+        $m_category = M_category::find($category_id);
+        $flow_master->項目順 = $m_category->項目順;
         $flow_master->フロー名 = $flow_name;
         if (!$flow_master) {
             $flow_groups->グループ条件 = false;
@@ -529,6 +538,7 @@ class FlowController extends Controller
 
         if (Auth::user()->管理 == "管理") {
 
+            
             $groups = Group::where('id', ">", 100000)
                 ->get();
             // チェックされているグループを確認して値を入れる
@@ -544,6 +554,15 @@ class FlowController extends Controller
             }
 
             $flow_master = M_flow::find($id);
+            $categories = M_category::all();
+            foreach ($categories as $category) {
+                if ($category->id == $flow_master->カテゴリマスタID){
+                    $category->selected = "selected";
+                }
+                else {
+                    $category->selected = "";
+                }
+            }
             $flow_points = M_flow_point::where("フローマスタID", $id)
                 ->get();
 
@@ -680,7 +699,7 @@ class FlowController extends Controller
                 // -----------------------------
 
 
-                return view('flow.workflowedit', compact("prefix", "server", "groups", "positions", "flow_master", "flow_points", "flow_approvals", "next_flow_points"));
+                return view('flow.workflowedit', compact("prefix", "server","categories", "groups", "positions", "flow_master", "flow_points", "flow_approvals", "next_flow_points"));
             } else {
                 return view('flow.notfoundworkflow', compact("prefix", "server"));
             }

@@ -1,3 +1,7 @@
+body {
+    background: rgb(225 225 225);
+}
+
 .header001 {
     background: rgb(142, 214, 216) !important;
     z-index: 13;
@@ -5,19 +9,18 @@
 
 .main01 {
     background: rgb(225 225 225);
-    padding-bottom: 75px;
     display: block;
     width: 100%;
-    height: 100%;
 }
 
 .pagetitle {
-    margin-top: 20px;
+    margin-block: 15px;
     border-bottom: solid 1px #adadad;
     padding: 12px;
     color: #454545;
     background: #f9f9f9;
     display: flex;
+    width: 1000px;
 }
 
 .button1name01 {
@@ -44,13 +47,13 @@
     z-index: 13;
 }
 
-.MenueBar {
+/* .MenueBar {
     width: 250px;
     height: 100vh;
     margin-right: 25px;
     position: fixed;
     z-index: 12;
-}
+} */
 
 .maincontent01 {
     padding-left: 0;
@@ -78,13 +81,14 @@
     margin-left: 30px;
 }
 
+
 .Mainelement {
-    padding: 30px;
+    padding: 10px 30px;
     background: rgb(225 225 225);
 }
 
 .flow_master_element {
-    margin-left: 300px;
+    /* margin-left: 300px; */
 }
 
 .flow_error_container {
@@ -212,15 +216,18 @@
     left: 0;
     z-index: 13;
 }
+.flow_main_master_container{
+    display: flex;
+}
 
 .left_side_menu {
     width: 250px;
-    height: 100vh;
+    /* height: 100vh; */
     background: #f7f7f7;
     margin-right: 25px;
-    position: fixed;
+    /* position: fixed; */
     top: 0;
-    padding-top: 150px;
+    padding-top: 30px;
     padding-left: 20px;
     z-index: 12;
     font-size: 12px;
@@ -338,29 +345,35 @@
     height: 30px;
     border: solid 1px rgb(180, 180, 180);
     border-radius: 3px;
+    width: 180px;
 }
 
 
 
 /* 右側サイドメニュー */
 
+
 .right_side_menu {
     width: 250px;
-    height: 100vh;
+    height: auto;
     background: #f7f7f7;
     position: fixed;
-    top: 0;
-    right: -290px;
-    padding-top: 150px;
+    right: -300px;
+    padding-top: 50px;
     padding-left: 20px;
     padding-right: 20px;
     font-size: 12px;
     transition: all 0.2s;
     z-index: 12;
+    border: solid 6px rgb(161 201 174);
+    border-radius: 18px;
+    box-shadow: 4px 8px 6px 0 #aca2a2;
 }
 
 .right_side_menu_open {
-    right: 0px;
+    right: -24px;
+    position: relative;
+    top: 0;
 }
 
 .right_side_menu_top {
@@ -551,15 +564,17 @@
 
     background: white;
     border-radius: 20px;
-    max-width: 1250px;
+    max-height: 557px;
     overflow-x: auto;
     padding: 20px;
+    position: relative;
+    transition: all 0.2s;
 }
 
 .zoom_in_out {
     margin-left: 20px;
     width: 100px;
-    margin-top: 20px;
+    margin-top: 0px;
     margin-right: auto;
     display: flex;
 }
@@ -736,18 +751,31 @@
 .blue {
     border: solid 5px rgb(105, 105, 255);
 }
-
+.flow_master_button_container{
+    width: 1000px;
+    height: 55px;
+    padding-bottom: 10px;
+    background: #fbfbfb;
+    align-items: end;
+    display: flex;
+    margin-bottom: 7px;
+    border-bottom: solid 1px #c0bdbd;
+    padding-inline: 12px;
+}
 .workflow_submit_button {
     cursor: pointer;
-    background: rgb(0 113 255);
+    background: rgb(41, 175, 41);
     border: solid 0;
-    width: 100px;
+    width: 160px;
     text-align: center;
     padding: 8px;
     border-radius: 5px;
     color: white;
     font-size: 18px;
     font-weight: bold;
+}
+.workflow_submit_button:hover{
+    background: rgb(20, 80, 20);
 }
 
 
