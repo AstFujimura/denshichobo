@@ -200,6 +200,8 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/category/detail/{id}', [FlowController::class, 'categorydetailget'])->name('categorydetailget');
             //カテゴリ詳細変更ポスト
             Route::post('/workflow/category/detail', [FlowController::class, 'categorydetailpost'])->name('categorydetailpost');
+            // カテゴリ情報の非同期通信API
+            Route::get('/workflow/category/info/{id}', [FlowController::class, 'categoryinfoget'])->name('categoryinfoget');
 
 
 

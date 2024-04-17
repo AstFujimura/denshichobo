@@ -242,7 +242,7 @@ class FlowController extends Controller
                 ->count();
             $position->count = $positioncount;
         }
-        return view('flow.workflowregist', compact("prefix", "server","categories", "groups", "positions"));
+        return view('flow.workflowregist', compact("prefix", "server", "categories", "groups", "positions"));
     }
     public function workflowregistpost(Request $request)
     {
@@ -538,7 +538,7 @@ class FlowController extends Controller
 
         if (Auth::user()->管理 == "管理") {
 
-            
+
             $groups = Group::where('id', ">", 100000)
                 ->get();
             // チェックされているグループを確認して値を入れる
@@ -556,10 +556,9 @@ class FlowController extends Controller
             $flow_master = M_flow::find($id);
             $categories = M_category::all();
             foreach ($categories as $category) {
-                if ($category->id == $flow_master->カテゴリマスタID){
+                if ($category->id == $flow_master->カテゴリマスタID) {
                     $category->selected = "selected";
-                }
-                else {
+                } else {
                     $category->selected = "";
                 }
             }
@@ -699,7 +698,7 @@ class FlowController extends Controller
                 // -----------------------------
 
 
-                return view('flow.workflowedit', compact("prefix", "server","categories", "groups", "positions", "flow_master", "flow_points", "flow_approvals", "next_flow_points"));
+                return view('flow.workflowedit', compact("prefix", "server", "categories", "groups", "positions", "flow_master", "flow_points", "flow_approvals", "next_flow_points"));
             } else {
                 return view('flow.notfoundworkflow', compact("prefix", "server"));
             }
@@ -929,7 +928,7 @@ class FlowController extends Controller
                 $items[] = $columns;
             }
 
-            return view('flow.workflowcategorydetail', compact("prefix", "server", "m_category", "items", "order","annotation", "id"));
+            return view('flow.workflowcategorydetail', compact("prefix", "server", "m_category", "items", "order", "annotation", "id"));
         } else {
             return redirect()->route('workflow');
         }
@@ -962,7 +961,7 @@ class FlowController extends Controller
                 } else {
                     // 新規に追加された項目
                     // 新規に追加されたものは50000以上としている
-                    if ($part >= 50000){
+                    if ($part >= 50000) {
                         $new_m_optional = new M_optional();
                         $new_m_optional->id = $this->next_optional_id();
                         $new_m_optional->カテゴリマスタID = $category_id;
@@ -976,7 +975,7 @@ class FlowController extends Controller
                     // 既存の項目かつデフォルトではないもの
                     else {
                         $m_optional = M_optional::find($part);
-                        if($m_optional){
+                        if ($m_optional) {
                             $m_optional->項目名 = $request->input("name_" . $part . "");
                             $m_optional->型 = $request->input("type_" . $part . "");
                             $m_optional->文字制限 = $request->input("max_" . $part . "");
@@ -985,11 +984,10 @@ class FlowController extends Controller
                         }
                     }
                 }
-                if ($official_order == ""){
+                if ($official_order == "") {
                     $official_order = $part;
-                }
-                else {
-                    $official_order = $official_order."_".$part;
+                } else {
+                    $official_order = $official_order . "_" . $part;
                 }
                 $m_category->項目順 = $official_order;
                 $m_category->注釈 = $request->input('annotation');
@@ -1000,21 +998,97 @@ class FlowController extends Controller
             return redirect()->route('workflow');
         }
     }
-    
+
     //　次に指定すべきidを返す
     // 任意項目マスタ(m_optionals)のidは1000からのインクリメントとしている
     private function next_optional_id()
     {
         $max_id = M_optional::max('id');
-        if ($max_id < 1000){
+        if ($max_id < 1000) {
             $next_id = 1000;
-        }
-        else {
+        } else {
             $next_id = $max_id + 1;
         }
         return $next_id;
     }
-
+    // カテゴリ情報の非同期通信API
+    public function categoryinfoget(Request $request, $id)
+    {
+        $category_object = [];
+        $m_category = M_category::find($id);
+        $m_optionals = M_optional::where("カテゴリマスタID",$id);
+        $order = $m_category->項目順;
+        $parts = explode("_", $order);
+        foreach ($parts as $part){
+            if ($part == 1){
+                $item = [
+                    "id" => $part,
+                    "項目名" => $m_category->標題 ?? "標題", 
+                    "型" => 1,
+                    "最大" => 30,
+                    "必須項目" => "true"
+                ];
+            } 
+            else if ($part == 2){
+                $item = [
+                    "id" => $part,
+                    "項目名" => $m_category->取引先 ?? "取引先", 
+                    "型" => 1,
+                    "最大" => 30,
+                    "必須項目" => "true"
+                ];
+            } 
+            else if ($part == 3){
+                $item = [
+                    "id" => $part,
+                    "項目名" => $m_category->取引日 ?? "取引日", 
+                    "型" => 3,
+                    "最大" => "",
+                    "必須項目" => "true"
+                ];
+            } 
+            else if ($part == 4){
+                $item = [
+                    "id" => $part,
+                    "項目名" => $m_category->金額 ?? "金額", 
+                    "型" => 2,
+                    "最大" => 2000000000,
+                    "必須項目" => "true"
+                ];
+            } 
+            else if ($part == 5){
+                $item = [
+                    "id" => $part,
+                    "項目名" => $m_category->コメント ?? "コメント", 
+                    "型" => 1,
+                    "最大" => 250,
+                    "必須項目" => "true"
+                ];
+            } 
+            else if ($part == 6){
+                $item = [
+                    "id" => $part,
+                    "項目名" => $m_category->請求書 ?? "請求書", 
+                    "型" => 4,
+                    "最大" => "",
+                    "必須項目" => "true"
+                ];
+            }
+            else {
+                $m_optional = M_optional::find($part);
+                $item = [
+                    "id" => $part,
+                    "項目名" => $m_optional->項目名, 
+                    "型" => $m_optional->型,
+                    "最大" => $m_optional->文字制限,
+                    "必須項目" => $m_optional->必須
+                ];
+            }
+            $category_object[] = $item;
+            
+        }
+        return response()->json($category_object);
+    }
     public function workflowapplicationget(Request $request)
     {
         $prefix = config('prefix.prefix');
@@ -1022,7 +1096,8 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflowapplication', compact("prefix", "server"));
+        $m_categories = M_category::all();
+        return view('flow.workflowapplication', compact("prefix", "server","m_categories"));
     }
 
     public function workflowapplicationpost(Request $request)
@@ -1032,6 +1107,9 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
+        $category_id = $request->input('category');
+        $m_category = M_category::find($category_id);
+        
 
         $title = $request->input('title');
         $company = $request->input('company');

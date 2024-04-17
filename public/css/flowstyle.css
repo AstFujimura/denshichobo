@@ -915,6 +915,19 @@ body {
     margin-bottom: 10px;
 }
 
+
+.flow_application_area{
+
+}
+.flow_application_area_message{
+    font-size: 22px;
+    font-weight: bold;
+    color: #b4b4b4;
+    margin-top: 35px;
+    margin-left: 10px;
+}
+
+
 .category_element {
     position: relative;
     display: flex;

@@ -681,20 +681,50 @@ $(document).ready(function () {
 
   // -------------ワークフロー申請----------------
 
-  $('.flow_application_droparea').on('dragover', function (event) {
+$('.category_input').on('change',function(){
+  $.ajax({
+    url: prefix + '/workflow/category/info/' + $(this).val(),
+    type: 'get',
+    dataType: 'json',
+    success: function (response) {
+      $('.flow_application_area').html('')
+      $.each(response, function (index, array) {
+        application_input_item(array)
+        
+      })
+
+      $('.application_form_date').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        duration: 300,
+        showAnim: 'show',
+        showOn: 'button', // 日付をボタンクリックでのみ表示する
+        buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
+        buttonImageOnly: true, // テキストを非表示にする
+      })
+
+
+    },
+    error: function () {
+    }
+
+  })
+})
+
+  $(document).on('dragover','.flow_application_droparea', function (event) {
     event.preventDefault();
     $(this).addClass("dragover");
   });
-  $('.flow_application_droparea').on('dragleave', function (event) {
+  $(document).on('dragleave','.flow_application_droparea', function (event) {
     event.preventDefault();
     $(this).removeClass("dragover");
   });
 
-  $('.flow_application_droparea').on('drop', function (event) {
+  $(document).on('drop','.flow_application_droparea', function (event) {
     event.preventDefault();
     $(this).removeClass("dragover");
     var File = event.originalEvent.dataTransfer.files[0];
-    $('#file').prop("files", event.originalEvent.dataTransfer.files);
+    $(this).find(".file_input").prop("files", event.originalEvent.dataTransfer.files);
     // ファイルのタイプを取得
     var fileType = File.type;
 
@@ -729,7 +759,7 @@ $(document).ready(function () {
 
   // ドラッグアンドドロップではなくクリックからファイルを選択して
   // ファイルを変更したとき
-  $('#file').change(function () {
+  $(document).on('change','.file_input',function () {
     var input = this;
 
     if (input.files && input.files[0]) {
@@ -768,7 +798,7 @@ $(document).ready(function () {
   });
 
   // プレビューボタンを押したとき
-  $(".flow_application_preview_button").on("click", function () {
+  $(document).on("click",".flow_application_preview_button", function () {
     $('.flow_application_preview_container').show()
     $('.flow_application_gray').show()
   })
@@ -780,7 +810,7 @@ $(document).ready(function () {
   })
 
   // エンターを押して次のフォームのフォーカスに移る
-  $('.application_form_text').keydown(function (event) {
+  $(document).on("keydown",'.application_form_text',function (event) {
     if (event.keyCode === 13) { // エンターキーのキーコードは 13
       event.preventDefault(); // デフォルトのエンターキーの動作を無効化
 
@@ -797,8 +827,8 @@ $(document).ready(function () {
     }
   });
 
-  $('#application_form_date').on('blur', function () {
-    flow_application_date_format()
+  $(document).on('blur','.application_form_date', function () {
+    flow_application_date_format($(this))
   })
 
   // フロー申請画面にてつぎへボタンを押してフォーム送信をする場合
@@ -806,22 +836,11 @@ $(document).ready(function () {
     e.preventDefault()
     // 必須項目のチェックを行う
     if (!flow_application_required_check()) {
-      // 日付のフォーマットのチェックを行う
-      if (!flow_application_date_format()) {
-        this.submit()
-      }
+      this.submit()
 
     }
   });
-  $('#application_form_date').datepicker({
-    changeMonth: true,
-    changeYear: true,
-    duration: 300,
-    showAnim: 'show',
-    showOn: 'button', // 日付をボタンクリックでのみ表示する
-    buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
-    buttonImageOnly: true, // テキストを非表示にする
-  })
+
 
 
 

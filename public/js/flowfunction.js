@@ -1359,8 +1359,8 @@ function flow_application_date_check() {
   return error
 }
 // 日付の型に変更する
-function flow_application_date_format() {
-  var datestr = $('#application_form_date').val()
+function flow_application_date_format(element) {
+  var datestr = element.val()
   datestr = datestr.replaceAll("-", "/")
   console.log(datestr)
   // 指定された日付
@@ -1375,10 +1375,10 @@ function flow_application_date_format() {
   // 入力された文字列が日付形式であるかどうかを確認
   if (datePatternYear.test(datestr)) {
     if (isNaN(specifiedDate.getTime())) {
-      $('#application_form_date').val("")
+      element.val("")
     }
     else {
-      $('#application_form_date').val(specifiedDate.toLocaleDateString())
+      element.val(specifiedDate.toLocaleDateString())
     }
   }
   else if (datePatternNoneYear.test(datestr)) {
@@ -1387,15 +1387,15 @@ function flow_application_date_format() {
     // 現在の年号をつけた年月日を作成
     var newDate = new Date(currentYear, components[0] - 1, components[1])
     if (isNaN(newDate.getTime())) {
-      $('#application_form_date').val("")
+      element.val("")
     }
     else {
-      $('#application_form_date').val(newDate.toLocaleDateString())
+      element.val(newDate.toLocaleDateString())
     }
 
   }
   else {
-    $('#application_form_date').val("")
+    element.val("")
   }
 }
 
@@ -1792,4 +1792,45 @@ function max_input_reload(element, status) {
   else {
     element.parent().parent().find('.category_detail_optional_number').attr('type', 'hidden')
   }
+}
+function application_input_item(item) {
+  console.log(item["id"])
+
+  var content = `<div class="application_form_content">
+    <div class="application_form_label">
+    `+ item["項目名"] + `
+    </div>`
+
+  switch (item["型"]) {
+    case 1:
+      if (item["最大"] <= 100) {
+        content += `<input type="text" name="item` + item["id"] + `" id="" class="application_form_text text_long_content" data-required="` + item["必須項目"] + `">`
+      }
+      else {
+        content += `<textarea name="item` + item["id"] + `" id="" class="application_form_text text_area_content" data-required="` + item["必須項目"] + `"></textarea>`
+      }
+      break;
+    case 2:
+      content += `<input type="number" name="item` + item["id"] + `" id="" class="application_form_text text_short_content" data-required="` + item["必須項目"] + `">`
+      break;
+    case 3:
+      content += `<input type="text" name="item` + item["id"] + `" id="" class="application_form_text application_form_date text_short_content" data-required="` + item["必須項目"] + `">`
+
+      break;
+    case 4:
+      content += `
+      <div class="flow_application_droparea">
+      <p>ここにドラッグ＆ドロップ</p>
+      <input type="file" name="item` + item["id"] + `" id="" class="file_input" data-required="` + item["必須項目"] + `">
+      </div>
+      <div class="flow_application_preview_button">プレビュー</div>
+      `
+      break;
+    // 他の条件に対する処理を追加できます
+    default:
+    // デフォルトの処理
+  }
+
+  content += '</div>'
+  $('.flow_application_area').append(content)
 }
