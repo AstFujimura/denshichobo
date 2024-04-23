@@ -204,7 +204,8 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/category/info/{id}', [FlowController::class, 'categoryinfoget'])->name('categoryinfoget');
             //カテゴリ承認設定
             Route::get('/workflow/category/approval/setting/{id}', [FlowController::class, 'categoryapprovalsettingget'])->name('categoryapprovalsettingget');
-           
+            //カテゴリ承認設定ポスト
+            Route::post('/workflow/category/approval/setting', [FlowController::class, 'categoryapprovalsettingpost'])->name('categoryapprovalsettingpost');
 
 
 

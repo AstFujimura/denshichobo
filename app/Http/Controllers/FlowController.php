@@ -1020,8 +1020,14 @@ class FlowController extends Controller
                 }
             }
 
-            return view('flow.workflowcategory_approval', compact("prefix", "server", "categories"));
+            return view('flow.workflowcategory_approval', compact("prefix", "server","id", "categories"));
         }
+    }
+    
+    // カテゴリ承認設定ポスト
+    public function categoryapprovalsettingpost(Request $request)
+    {
+        
     }
 
 

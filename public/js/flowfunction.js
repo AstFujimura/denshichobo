@@ -1947,7 +1947,7 @@ function displayPdf(pdfData) {
       }
 
       pdf.getPage(pageNum).then(function (page) {
-        var scaleMain = 1.3;
+        var scaleMain = 1;
         var scalePage = 0.3;
         var viewportMain = page.getViewport({ scale: scaleMain });
         var viewportPage = page.getViewport({ scale: scalePage });
@@ -1973,7 +1973,9 @@ function displayPdf(pdfData) {
         };
 
         page.render(renderContextMain).promise.then(function () {
-          pdfViewer.append(canvasMain);
+          var canvas_container =$('<div class="canvas_container" data-page="'+pageNum+'"></div>').get(0)
+          canvas_container.append(canvasMain);
+          pdfViewer.append(canvas_container);
         });
 
         page.render(renderContextPage).promise.then(function () {
