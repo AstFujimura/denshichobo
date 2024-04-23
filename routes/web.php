@@ -202,7 +202,9 @@ Route::prefix($prefix)->group(function () {
             Route::post('/workflow/category/detail', [FlowController::class, 'categorydetailpost'])->name('categorydetailpost');
             // カテゴリ情報の非同期通信API
             Route::get('/workflow/category/info/{id}', [FlowController::class, 'categoryinfoget'])->name('categoryinfoget');
-
+            //カテゴリ承認設定
+            Route::get('/workflow/category/approval/setting/{id}', [FlowController::class, 'categoryapprovalsettingget'])->name('categoryapprovalsettingget');
+           
 
 
 

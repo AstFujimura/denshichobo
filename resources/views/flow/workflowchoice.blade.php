@@ -22,7 +22,7 @@
             <a href="{{route('workflowapplicationget')}}" class="back_button flow_choice_back_button" id="flow_next_button">
                 <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
                 もどる
-</a>
+            </a>
             <button class="next_button flow_choice_next_button" id="flow_next_button">
                 次へ
             </button>
@@ -31,7 +31,7 @@
         <input type="hidden" value="{{$id}}" name="id">
         <div class="flow_choice_select_container">
             <div class="flow_choice_container">
-                <select class="flow_choice_select" name="flowid">
+                <select class="flow_choice_select" name="m_flow_id">
                     <option></option>
                     @foreach($m_flows as $m_flow)
                     <option value="{{$m_flow->id}}">{{$m_flow->フロー名}}</option>

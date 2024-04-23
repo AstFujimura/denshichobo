@@ -21,7 +21,13 @@ return new class extends Migration
             $table->foreign('フローテーブルID')->references('id')->on('t_flows')->onDelete('cascade');
             $table->unsignedBigInteger('任意項目マスタID');
             $table->foreign('任意項目マスタID')->references('id')->on('m_optionals')->onDelete('cascade');
-            $table->string('値');
+            $table->text('文字列')->nullable();
+            $table->integer('数値')->nullable();
+            $table->date('日付')->nullable();
+            $table->string('ファイルパス')->nullable();
+            $table->string('ファイル形式')->nullable();
+            $table->boolean('bool')->nullable();
+            $table->boolean('金額条件')->default(false);
             $table->timestamps();
         });
 

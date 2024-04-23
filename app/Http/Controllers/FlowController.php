@@ -20,6 +20,7 @@ use App\Models\T_flow_point;
 use App\Models\T_approval;
 use App\Models\T_flow_draft;
 use App\Models\Position;
+use App\Models\T_optional;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -887,43 +888,14 @@ class FlowController extends Controller
             foreach ($parts as $part) {
                 $columns = array();
                 $columns["id"] = $part;
-                if ($part == 1) {
-                    $columns["項目名"] = $m_category->標題 ?? "標題";
-                    $columns["型"] = 1;
-                    $columns["最大"] = 30;
-                    $columns["必須項目"] = "true";
-                } else if ($part == 2) {
-                    $columns["項目名"] = $m_category->取引先 ?? "取引先";
-                    $columns["型"] = 1;
-                    $columns["最大"] = 30;
-                    $columns["必須項目"] = "true";
-                } else if ($part == 3) {
-                    $columns["項目名"] = $m_category->取引日 ?? "取引日";
-                    $columns["型"] = 3;
-                    $columns["最大"] = "";
-                    $columns["必須項目"] = "true";
-                } else if ($part == 4) {
-                    $columns["項目名"] = $m_category->金額 ?? "金額";
-                    $columns["型"] = 2;
-                    $columns["最大"] = 2000000000;
-                    $columns["必須項目"] = "true";
-                } else if ($part == 5) {
-                    $columns["項目名"] = $m_category->コメント ?? "コメント";
-                    $columns["型"] = 1;
-                    $columns["最大"] = 250;
-                    $columns["必須項目"] = "true";
-                } else if ($part == 6) {
-                    $columns["項目名"] = $m_category->請求書 ?? "請求書";
-                    $columns["型"] = 4;
-                    $columns["最大"] = "";
-                    $columns["必須項目"] = "true";
-                } else {
-                    $m_optional = M_optional::find($part);
-                    $columns["項目名"] = $m_optional->項目名;
-                    $columns["型"] = $m_optional->型;
-                    $columns["最大"] = $m_optional->文字制限;
-                    $columns["必須項目"] = $m_optional->必須;
-                }
+
+                $m_optional = M_optional::find($part);
+                $columns["項目名"] = $m_optional->項目名;
+                $columns["型"] = $m_optional->型;
+                $columns["最大"] = $m_optional->最大;
+                $columns["必須項目"] = $m_optional->必須;
+                $columns["デフォルト"] = $m_optional->デフォルト;
+                $columns["金額条件"] = ($m_optional->金額条件 !== 0) ? "checked" : null;
 
                 $items[] = $columns;
             }
@@ -938,55 +910,55 @@ class FlowController extends Controller
     public function categorydetailpost(Request $request)
     {
         if (Auth::user()->管理 == "管理") {
-
             $category_id = $request->input('id');
             $m_category = M_category::find($category_id);
             $order = $request->input('order');
+            // 新規追加された場合項目のidが仮の形(50000以上)のものになっているため
+            // DBに登録してそのidを取得したものを使用して正式なものをofficial_orderに格納する
             $official_order = "";
             // アンダースコア（_）をデリミタとして文字列を分割
             $parts = explode("_", $order);
+            // 金額条件を一旦すべてnullにしておく
+            M_optional::where('カテゴリマスタID', $category_id)->update(['金額条件' => false]);
             foreach ($parts as $part) {
-                if ($part == 1) {
-                    $m_category->標題 = $request->input("name_" . $part . "");
-                } else if ($part == 2) {
-                    $m_category->取引先 = $request->input("name_" . $part . "");
-                } else if ($part == 3) {
-                    $m_category->取引日 = $request->input("name_" . $part . "");
-                } else if ($part == 4) {
-                    $m_category->金額 = $request->input("name_" . $part . "");
-                } else if ($part == 5) {
-                    $m_category->コメント = $request->input("name_" . $part . "");
-                } else if ($part == 6) {
-                    $m_category->請求書 = $request->input("name_" . $part . "");
-                } else {
-                    // 新規に追加された項目
-                    // 新規に追加されたものは50000以上としている
-                    if ($part >= 50000) {
-                        $new_m_optional = new M_optional();
-                        $new_m_optional->id = $this->next_optional_id();
-                        $new_m_optional->カテゴリマスタID = $category_id;
-                        $new_m_optional->項目名 = $request->input("name_" . $part . "");
-                        $new_m_optional->型 = $request->input("type_" . $part . "");
-                        $new_m_optional->文字制限 = $request->input("max_" . $part . "");
-                        $new_m_optional->必須 = $request->input("required_" . $part . "");
-                        $new_m_optional->save();
-                        $part = $new_m_optional->id;
+                // 新規に追加された項目
+                // 新規に追加されたものは50000以上としている
+                if ($part >= 50000) {
+                    $new_m_optional = new M_optional();
+                    $new_m_optional->カテゴリマスタID = $category_id;
+                    $new_m_optional->項目名 = $request->input("name_" . $part . "");
+                    $new_m_optional->型 = $request->input("type_" . $part . "");
+                    $new_m_optional->最大 = $request->input("max_" . $part . "");
+                    $new_m_optional->必須 = $request->input("required_" . $part . "");
+                    // 金額条件に合致するものはtrueにする
+                    if ($request->input('price') == $part) {
+                        $new_m_optional->金額条件 = true;
                     }
-                    // 既存の項目かつデフォルトではないもの
-                    else {
-                        $m_optional = M_optional::find($part);
-                        if ($m_optional) {
-                            $m_optional->項目名 = $request->input("name_" . $part . "");
-                            $m_optional->型 = $request->input("type_" . $part . "");
-                            $m_optional->文字制限 = $request->input("max_" . $part . "");
-                            $m_optional->必須 = $request->input("required_" . $part . "");
-                            $m_optional->save();
+                    $new_m_optional->save();
+                    $part = $new_m_optional->id;
+                }
+                // 既存の項目
+                else {
+                    $m_optional = M_optional::find($part);
+                    if ($m_optional) {
+                        $m_optional->項目名 = $request->input("name_" . $part . "");
+                        // 項目の標題はdisableとなっておりinputに値が入っていないため
+                        $m_optional->型 = $request->input("type_" . $part . "") ?? 1;
+                        $m_optional->最大 = $request->input("max_" . $part . "") ?? 30;
+                        $m_optional->必須 = $request->input("required_" . $part . "") ?? 1;
+                        // 金額条件に合致するものはtrueにする
+                        if ($request->input('price') == $part) {
+                            $m_optional->金額条件 = true;
                         }
+                        $m_optional->save();
                     }
                 }
+                // 最初
                 if ($official_order == "") {
                     $official_order = $part;
-                } else {
+                }
+                // 二番目以降
+                else {
                     $official_order = $official_order . "_" . $part;
                 }
                 $m_category->項目順 = $official_order;
@@ -999,96 +971,64 @@ class FlowController extends Controller
         }
     }
 
-    //　次に指定すべきidを返す
-    // 任意項目マスタ(m_optionals)のidは1000からのインクリメントとしている
-    private function next_optional_id()
-    {
-        $max_id = M_optional::max('id');
-        if ($max_id < 1000) {
-            $next_id = 1000;
-        } else {
-            $next_id = $max_id + 1;
-        }
-        return $next_id;
-    }
     // カテゴリ情報の非同期通信API
     public function categoryinfoget(Request $request, $id)
     {
         $category_object = [];
         $m_category = M_category::find($id);
-        $m_optionals = M_optional::where("カテゴリマスタID",$id);
+        $m_optionals = M_optional::where("カテゴリマスタID", $id);
         $order = $m_category->項目順;
         $parts = explode("_", $order);
-        foreach ($parts as $part){
-            if ($part == 1){
-                $item = [
-                    "id" => $part,
-                    "項目名" => $m_category->標題 ?? "標題", 
-                    "型" => 1,
-                    "最大" => 30,
-                    "必須項目" => "true"
-                ];
-            } 
-            else if ($part == 2){
-                $item = [
-                    "id" => $part,
-                    "項目名" => $m_category->取引先 ?? "取引先", 
-                    "型" => 1,
-                    "最大" => 30,
-                    "必須項目" => "true"
-                ];
-            } 
-            else if ($part == 3){
-                $item = [
-                    "id" => $part,
-                    "項目名" => $m_category->取引日 ?? "取引日", 
-                    "型" => 3,
-                    "最大" => "",
-                    "必須項目" => "true"
-                ];
-            } 
-            else if ($part == 4){
-                $item = [
-                    "id" => $part,
-                    "項目名" => $m_category->金額 ?? "金額", 
-                    "型" => 2,
-                    "最大" => 2000000000,
-                    "必須項目" => "true"
-                ];
-            } 
-            else if ($part == 5){
-                $item = [
-                    "id" => $part,
-                    "項目名" => $m_category->コメント ?? "コメント", 
-                    "型" => 1,
-                    "最大" => 250,
-                    "必須項目" => "true"
-                ];
-            } 
-            else if ($part == 6){
-                $item = [
-                    "id" => $part,
-                    "項目名" => $m_category->請求書 ?? "請求書", 
-                    "型" => 4,
-                    "最大" => "",
-                    "必須項目" => "true"
-                ];
-            }
-            else {
-                $m_optional = M_optional::find($part);
-                $item = [
-                    "id" => $part,
-                    "項目名" => $m_optional->項目名, 
-                    "型" => $m_optional->型,
-                    "最大" => $m_optional->文字制限,
-                    "必須項目" => $m_optional->必須
-                ];
-            }
+        foreach ($parts as $part) {
+            $m_optional = M_optional::find($part);
+            $item = [
+                "id" => $part,
+                "項目名" => $m_optional->項目名,
+                "型" => $m_optional->型,
+                "最大" => $m_optional->最大,
+                "必須" => $m_optional->必須
+            ];
+
             $category_object[] = $item;
-            
         }
         return response()->json($category_object);
     }
+
+    // カテゴリ承認設定
+    public function categoryapprovalsettingget(Request $request, $id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        if (Auth::user()->管理 == "管理") {
+            $categories = [];
+            $m_category = M_category::find($id);
+            $order = $m_category->項目順;
+            // アンダースコア（_）をデリミタとして文字列を分割
+            $parts = explode("_", $order);
+            foreach ($parts as $part) {
+                $m_optional = M_optional::find($part);
+                if ($m_optional->型 != 4) {
+                    $item = [
+                        "id" => $part,
+                        "項目名" => $m_optional->項目名,
+                    ];
+
+                    $categories[] = $item;
+                }
+            }
+
+            return view('flow.workflowcategory_approval', compact("prefix", "server", "categories"));
+        }
+    }
+
+
+
+
+
+
     public function workflowapplicationget(Request $request)
     {
         $prefix = config('prefix.prefix');
@@ -1097,7 +1037,7 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         $m_categories = M_category::all();
-        return view('flow.workflowapplication', compact("prefix", "server","m_categories"));
+        return view('flow.workflowapplication', compact("prefix", "server", "m_categories"));
     }
 
     public function workflowapplicationpost(Request $request)
@@ -1107,62 +1047,69 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
+
+        // フローテーブルを作成 (ステータスはデフォルトで0→下書き状態)
+        $new_t_flow = new T_flow();
+        $new_t_flow->申請者ID = Auth::id();
+        $pastID = $this->generateRandomCode();
+        $new_t_flow->過去データID = $pastID;
+
+
+
         $category_id = $request->input('category');
         $m_category = M_category::find($category_id);
-        
+        // 項目順を取得
+        $order = $m_category->項目順;
+        // アンダースコア（_）をデリミタとして文字列を分割
+        $parts = explode("_", $order);
 
-        $title = $request->input('title');
-        $company = $request->input('company');
-        $date = $request->input('date');
-        $price = $request->input('price');
-        $comment = $request->input('comment');
-        $file = $request->file('file');
-        $pastID = $this->generateRandomCode();
-
-        $extension = $file->getClientOriginalExtension();
-
-        $filename = Config::get('custom.file_upload_path');
-
-        $now = Carbon::now();
-        $currentTime = $now->format('YmdHis');
-        $filepath = $currentTime . '_' . $pastID;
-        //アップロードされたファイルに拡張子がない場合
-        if (!$extension) {
-            if (config('app.env') == 'production') {
-                // 本番環境用の設定
-            } else {
-                // 開発環境用の設定
-                copy($file->getRealPath(), $filename . "\\" . $filepath);
-            }
-            //extensionがnullになっているためエラー回避
-            $extension = "";
-        } else {
-            if (config('app.env') == 'production') {
-                // 本番環境用の設定
-            } else {
-                // 開発環境用の設定
-                copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-            }
-        }
-
-        // 同じ申請者による下書きは古いものは削除する
-        T_flow_draft::where("申請者ID", Auth::user()->id)->delete();
-
-        $new_t_flow = new T_flow_draft();
-        $new_t_flow->標題 = $title;
-        $new_t_flow->コメント = $comment;
-        $new_t_flow->ファイルパス = $filepath;
-        $new_t_flow->取引先 = $company;
-        $new_t_flow->金額 = $price;
-        $new_t_flow->日付 = $date;
-        $new_t_flow->申請者ID = Auth::user()->id;
-        $new_t_flow->過去データID = $pastID;
-        $new_t_flow->ファイル形式 = $extension;
-
+        // partsの一つ目の要素が標題であるためそれを格納
+        $new_t_flow->標題 = $request->input("item" . $parts[0]);
         $new_t_flow->save();
+        foreach ($parts as $part) {
+            $m_optional = M_optional::find($part);
+            $t_optional = new T_optional();
+            $t_optional->フローテーブルID = $new_t_flow->id;
+            $t_optional->任意項目マスタID = $m_optional->id;
+            $t_optional->金額条件 = $m_optional->金額条件;
+            if ($m_optional->型 == 1) {
+                $t_optional->文字列 = $request->input("item" . $part);
+            } else if ($m_optional->型 == 2) {
+                $t_optional->数値 = $request->input("item" . $part);
+            } else if ($m_optional->型 == 3) {
+                $t_optional->日付 = $request->input("item" . $part);
+            } else if ($m_optional->型 == 4) {
+                $file = $request->file("item" . $part);
+                $pastID = $this->generateRandomCode();
+                $extension = $file->getClientOriginalExtension();
+                $filename = Config::get('custom.file_upload_path');
+                $now = Carbon::now();
+                $currentTime = $now->format('YmdHis');
+                $filepath = $currentTime . '_' . $pastID;
+                //アップロードされたファイルに拡張子がない場合
+                if (!$extension) {
+                    if (config('app.env') == 'production') {
+                        // 本番環境用の設定
+                    } else {
+                        // 開発環境用の設定
+                        copy($file->getRealPath(), $filename . "\\" . $filepath);
+                    }
+                    //extensionがnullになっているためエラー回避
+                    $extension = "";
+                } else {
+                    if (config('app.env') == 'production') {
+                        // 本番環境用の設定
+                    } else {
+                        // 開発環境用の設定
+                        copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+                    }
+                }
 
-
-
+                $t_optional->ファイルパス = $filepath;
+                $t_optional->ファイル形式 = $extension;
+            }
+            $t_optional->save();
+        }
 
         return redirect()->route('workflowchoiceget', ["id" => $new_t_flow->id]);
     }
@@ -1174,13 +1121,13 @@ class FlowController extends Controller
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
-        $t_flow_draft = T_flow_draft::find($id);
+        $t_optional = T_optional::where("金額条件", true)->first();
         $groupIds = Group_User::where('ユーザーID', Auth::id())->pluck('グループID')->toArray();
         $m_flows = DB::table('m_flows')
             ->leftJoin('m_flow_groups', 'm_flows.id', '=', 'm_flow_groups.フローマスタID')
             ->whereIn('m_flow_groups.グループID', $groupIds)
-            ->where('金額下限条件', '<=', $t_flow_draft->金額)
-            ->where('金額上限条件', '>=', $t_flow_draft->金額)
+            ->where('金額下限条件', '<=', $t_optional->数値 ?? 2000000000)
+            ->where('金額上限条件', '>=', $t_optional->数値 ?? 0)
             ->where('削除フラグ', false)
             ->select('m_flows.*')
             ->distinct() // 重複を取り除く
@@ -1194,13 +1141,13 @@ class FlowController extends Controller
     public function workflowchoicepost(Request $request)
     {
 
-        $draftid = $request->input("id");
-        $flowid = $request->input("flowid");
-        $draft = T_flow_draft::find($draftid);
-        if ($draft) {
-            $draft->フローマスタID = $flowid;
-            $draft->save();
-            return redirect()->route('workflowconfirmget', ["id" => $draft->id]);
+        $t_flow_id = $request->input("id");
+        $m_flow_id = $request->input("m_flow_id");
+        $t_flow = T_flow::find($t_flow_id);
+        if ($t_flow) {
+            $t_flow->フローマスタID = $m_flow_id;
+            $t_flow->save();
+            return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
         } else {
             return redirect()->route('workflowerrorGet', ["code" => "A546815"]);;
         }
@@ -1213,30 +1160,42 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        $draft = T_flow_draft::find($id);
-        $flowid = $draft->フローマスタID;
+        $t_optionals = $this->application_items($id);
 
-        return view('flow.workflowconfirm', compact("prefix", "server", "draft", "id", "flowid"));
+        return view('flow.workflowconfirm', compact("prefix", "server", "id", "t_optionals"));
+    }
+    // フローテーブルを引数として項目の情報のレコードを返す
+    private function application_items($id)
+    {
+        $t_optionals = T_optional::where("フローテーブルID", $id)->get();
+
+        foreach ($t_optionals as $t_optional) {
+            $m_optional = M_optional::find($t_optional->任意項目マスタID);
+            $t_optional->項目名 = $m_optional->項目名;
+            if ($m_optional->型 == 1) {
+                $t_optional->値 = $t_optional->文字列;
+            } else if ($m_optional->型 == 2) {
+                $t_optional->値 = $t_optional->数値;
+            } else if ($m_optional->型 == 3) {
+                $t_optional->値 = $t_optional->日付;
+            } else if ($m_optional->型 == 4) {
+                // viewでファイルの場合は違う表示をするので以下の値を入れておいてviewでif文の分岐
+                $t_optional->値 = "file_regist_2545198";
+            } else if ($m_optional->型 == 5) {
+                $t_optional->値 = $t_optional->bool;
+            }
+        }
+        return $t_optionals;
     }
     public function workflowconfirmpost(Request $request)
     {
-        $draftid = $request->input("id");
-        $draft = T_flow_draft::find($draftid);
-        $m_flow = M_flow::find($draft->フローマスタID);
+        $flow_id = $request->input("id");
+        $t_flow = T_flow::find($flow_id);
+        $m_flow = M_flow::find($t_flow->フローマスタID);
 
         // フローのトランザクションテーブルを作成
-        $t_flow = new T_flow();
-        $t_flow->標題 = $draft->標題;
-        $t_flow->コメント = $draft->コメント;
-        $t_flow->フローマスタID = $m_flow->id;
+
         $t_flow->ステータス = 1;
-        $t_flow->ファイルパス = $draft->ファイルパス;
-        $t_flow->取引先 = $draft->取引先;
-        $t_flow->金額 = $draft->金額;
-        $t_flow->日付 = $draft->日付;
-        $t_flow->申請者ID = $draft->申請者ID;
-        $t_flow->過去データID = $draft->過去データID;
-        $t_flow->ファイル形式 = $draft->ファイル形式;
         $t_flow->決裁地点数 = $m_flow->決裁地点数;
         $t_flow->save();
 
@@ -1341,7 +1300,6 @@ class FlowController extends Controller
                 $t_approval->save();
             }
         }
-        $draft->delete();
         return redirect()->route('workflowmaster');
     }
 
@@ -1354,31 +1312,69 @@ class FlowController extends Controller
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
+
+        $m_categories = M_category::all();
+        $users = DB::table('t_flows')
+            ->select('users.id as user_id', 'users.name')
+            ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
+            ->distinct()
+            ->get();
+
+
+
+        $title = $request->input('title');
+        $category = $request->input('category');
+        $user = $request->input('user');
+        $start_day = $request->input('start_day');
+        $end_day = $request->input('end_day');
+        $status = $request->input('status') ? $request->input('status') : "approvable_tab";
+
         $server = config('prefix.server');
         $approvables =  DB::table('t_approvals')
-            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 't_approvals.id as approval_id')
+            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
             ->leftJoin('t_flows', 't_approvals.フローテーブルID', '=', 't_flows.id')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where('ユーザーID', Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 2)
             ->get();
 
         $approveds =  DB::table('t_approvals')
-            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 't_approvals.id as approval_id')
+            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
             ->leftJoin('t_flows', 't_approvals.フローテーブルID', '=', 't_flows.id')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where('ユーザーID', Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 4)
             ->get();
         $rejecteds =  DB::table('t_approvals')
-            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 't_approvals.id as approval_id')
+            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
             ->leftJoin('t_flows', 't_approvals.フローテーブルID', '=', 't_flows.id')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where('ユーザーID', Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 5)
             ->get();
 
-        return view('flow.workflowapprovalview', compact("prefix", "server", "approvables", "approveds", "rejecteds"));
+        return view('flow.workflowapprovalview', compact("prefix", "server", "users", "m_categories", "status", "title", "category", "user", "start_day", "end_day", "approvables", "approveds", "rejecteds"));
     }
     // 承認
     // idは承認テーブルのid
@@ -1397,12 +1393,11 @@ class FlowController extends Controller
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
             ->where("t_approvals.id", $id)
             ->first();
+        $t_optionals =  $this->application_items($t_approval->フローテーブルID);
+        $t_flow = T_flow::find($t_approval->フローテーブルID);
 
-        $flow_table =  DB::table('t_flows')
-            ->select('t_flows.*', 't_flows.id as t_flow_id', 'users.name')
-            ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
-            ->where('t_flows.id', $t_approval->フローテーブルID)
-            ->first();
+
+        $user = User::find($t_flow->申請者ID);
 
         $past_approvals = DB::table('t_approvals')
             ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス")
@@ -1414,11 +1409,11 @@ class FlowController extends Controller
                     ->orWhere('ステータス', 4)
                     ->orWhere('ステータス', 5);
             })
-            ->where('t_flow_points.フローテーブルID', $flow_table->t_flow_id)
+            ->where('t_flow_points.フローテーブルID', $t_flow->id)
             ->orderBy('承認日', 'asc')
             ->get();
 
-        return view('flow.workflowapproval', compact("prefix", "server", "flow_table", "t_approval", "past_approvals"));
+        return view('flow.workflowapproval', compact("prefix", "server", "t_flow", "user", "t_optionals", "t_approval", "past_approvals"));
     }
     public function workflowapprovalpost(Request $request)
     {
@@ -1507,12 +1502,36 @@ class FlowController extends Controller
 
     public function workflowviewget(Request $request)
     {
+        $m_categories = M_category::all();
+        $users = DB::table('t_flows')
+            ->select('users.id as user_id', 'users.name')
+            ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
+            ->distinct()
+            ->get();
+
+
+        $title = $request->input('title');
+        $category = $request->input('category');
+        $user = $request->input('user');
+        $start_day = $request->input('start_day');
+        $end_day = $request->input('end_day');
+        $status = $request->input('status') ? $request->input('status') : "ongoing_tab";
+
+
         $t_flows_ongoing = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where("申請者ID", Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where("ステータス", 1)
             ->get();
+
         foreach ($t_flows_ongoing as $t_flow_ongoing) {
             $t_flow_points_ongoing = T_flow_point::where("フローテーブルID", $t_flow_ongoing->flow_id)->get();
             // フロー地点数をカウント、申請者も含まれるのでマイナス1
@@ -1523,17 +1542,31 @@ class FlowController extends Controller
 
 
         $t_flows_reject = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where("申請者ID", Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where("ステータス", 2)
             ->get();
 
         // 決裁済かるTAMERUに保存、未保存どちらのレコードも取得
         $t_flows_approved = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where("申請者ID", Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where(function ($query) {
                 $query->where("ステータス", 3)
                     ->orwhere("ステータス", 4);
@@ -1546,15 +1579,21 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflowview', compact("prefix", "server", "t_flows_ongoing", "t_flows_reject", "t_flows_approved"));
+        return view('flow.workflowview', compact("prefix", "server", "users", "m_categories", "status", "title", "category", "user", "start_day", "end_day", "t_flows_ongoing", "t_flows_reject", "t_flows_approved"));
     }
     public function workflowapplicationdetailget($id)
     {
-        $flow_table =  DB::table('t_flows')
-            ->select('t_flows.*', 't_flows.id as t_flow_id', 'users.name')
-            ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
-            ->where('t_flows.id', $id)
-            ->first();
+        // $flow_table =  DB::table('t_flows')
+        //     ->select('t_flows.*', 't_flows.id as t_flow_id', 'users.name')
+        //     ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
+        //     ->where('t_flows.id', $id)
+        //     ->first();
+
+        $t_optionals =  $this->application_items($id);
+        $t_flow = T_flow::find($id);
+
+
+        $user = User::find($t_flow->申請者ID);
 
         $past_approvals = DB::table('t_approvals')
             ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス")
@@ -1566,7 +1605,7 @@ class FlowController extends Controller
                     ->orWhere('ステータス', 4)
                     ->orWhere('ステータス', 5);
             })
-            ->where('t_flow_points.フローテーブルID', $flow_table->t_flow_id)
+            ->where('t_flow_points.フローテーブルID', $id)
             ->orderBy('承認日', 'asc')
             ->get();
 
@@ -1577,12 +1616,12 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflowapplicationdetail', compact("prefix", "server", "flow_table", "past_approvals"));
+        return view('flow.workflowapplicationdetail', compact("prefix", "server", "t_flow", "user", "t_optionals", "past_approvals"));
     }
 
     public function flowimgget($id)
     {
-        $img = T_flow::where('id', $id)->first();
+        $img = T_optional::find($id);
 
 
 
@@ -1637,7 +1676,7 @@ class FlowController extends Controller
     public function flowdownload($id)
 
     {
-        $file = T_flow::where('id', $id)->first();
+        $file = T_optional::find($id);
         if (config('prefix.server') == "cloud") {
 
             if ($file->ファイル形式 == "") {
@@ -1681,6 +1720,6 @@ class FlowController extends Controller
     }
     private function isCompanyCodeExists($code)
     {
-        return File::where('過去データID', $code)->exists();
+        return T_flow::where('過去データID', $code)->exists();
     }
 }

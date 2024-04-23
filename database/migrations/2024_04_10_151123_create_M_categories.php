@@ -20,12 +20,6 @@ return new class extends Migration
             $table->string('カテゴリ名');
             $table->string('注釈')->nullable();
             $table->string('項目順')->nullable();
-            $table->string('標題')->nullable();
-            $table->string('取引先')->nullable();
-            $table->string('取引日')->nullable();
-            $table->string('金額')->nullable();
-            $table->string('コメント')->nullable();
-            $table->string('請求書')->nullable();
 
             $table->timestamps();
         });

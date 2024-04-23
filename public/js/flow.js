@@ -681,47 +681,50 @@ $(document).ready(function () {
 
   // -------------ワークフロー申請----------------
 
-$('.category_input').on('change',function(){
-  $.ajax({
-    url: prefix + '/workflow/category/info/' + $(this).val(),
-    type: 'get',
-    dataType: 'json',
-    success: function (response) {
-      $('.flow_application_area').html('')
-      $.each(response, function (index, array) {
-        application_input_item(array)
-        
-      })
+  $('.category_input').on('change', function () {
+    $.ajax({
+      url: prefix + '/workflow/category/info/' + $(this).val(),
+      type: 'get',
+      dataType: 'json',
+      success: function (response) {
+        $('.flow_application_area').html('')
+        $.each(response, function (index, array) {
+          application_input_item(array)
 
-      $('.application_form_date').datepicker({
-        changeMonth: true,
-        changeYear: true,
-        duration: 300,
-        showAnim: 'show',
-        showOn: 'button', // 日付をボタンクリックでのみ表示する
-        buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
-        buttonImageOnly: true, // テキストを非表示にする
-      })
+        })
+
+        $('.application_form_date').datepicker({
+          changeMonth: true,
+          changeYear: true,
+          duration: 300,
+          showAnim: 'show',
+          showOn: 'button', // 日付をボタンクリックでのみ表示する
+          buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
+          buttonImageOnly: true, // テキストを非表示にする
+        })
 
 
-    },
-    error: function () {
-    }
+      },
+      error: function () {
+      }
 
+    })
   })
-})
+  //ファイルが登録されたときにその項目のIDをkeyにイメージを含んだ要素をimgobjectに格納する
+  var imgobject = {};
 
-  $(document).on('dragover','.flow_application_droparea', function (event) {
+  $(document).on('dragover', '.flow_application_droparea', function (event) {
     event.preventDefault();
     $(this).addClass("dragover");
   });
-  $(document).on('dragleave','.flow_application_droparea', function (event) {
+  $(document).on('dragleave', '.flow_application_droparea', function (event) {
     event.preventDefault();
     $(this).removeClass("dragover");
   });
 
-  $(document).on('drop','.flow_application_droparea', function (event) {
+  $(document).on('drop', '.flow_application_droparea', function (event) {
     event.preventDefault();
+    var item_id = $(this).find('.file_input').data('id')
     $(this).removeClass("dragover");
     var File = event.originalEvent.dataTransfer.files[0];
     $(this).find(".file_input").prop("files", event.originalEvent.dataTransfer.files);
@@ -732,8 +735,8 @@ $('.category_input').on('change',function(){
     if (fileType.startsWith("image/")) {
       var reader = new FileReader();
       reader.onload = function (e) {
-        $('.flow_application_preview_container').html('<img src="' + e.target.result + '" class="">');
-        // $('.previewarea').addClass("previewopen");
+        imgobject[item_id] = '<img src="' + e.target.result + '" class="">'
+        // $('.flow_application_preview_container').html();
       };
       reader.readAsDataURL(File);
       $('.flow_application_preview_button').show()
@@ -747,27 +750,30 @@ $('.category_input').on('change',function(){
       embed.attr('width', '100%');
       embed.attr('height', '100%'); // 適切な高さを指定
 
-      $('.flow_application_preview_container').html(embed);
-      // $('.previewarea').addClass("previewopen");
-      $('.flow_application_preview_button').show()
+      imgobject[item_id] = embed
+      // $('.flow_application_preview_container').html(embed);
+
+      $(this).parent().find('.flow_application_preview_button').show()
 
     }
     else {
-      $('.flow_application_preview_button').hide()
+      $(this).parent().find('.flow_application_preview_button').hide()
     }
   });
 
   // ドラッグアンドドロップではなくクリックからファイルを選択して
   // ファイルを変更したとき
-  $(document).on('change','.file_input',function () {
+  $(document).on('change', '.file_input', function () {
     var input = this;
+    var item_id = $(this).data('id')
 
     if (input.files && input.files[0]) {
       if (this.files[0].type.startsWith("image/")) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
-          $('.flow_application_preview_container').html('<img src="' + e.target.result + '" class="previewImage">');
+          imgobject[item_id] = '<img src="' + e.target.result + '" class="">'
+          // $('.flow_application_preview_container').html('<img src="' + e.target.result + '" class="previewImage">');
           // $('.previewarea').addClass("previewopen");
         };
 
@@ -782,14 +788,14 @@ $('.category_input').on('change',function(){
         embed.attr('src', pdfUrl);
         embed.attr('width', '100%');
         embed.attr('height', '100%'); // 適切な高さを指定
+        imgobject[item_id] = embed
+        // $('.flow_application_preview_container').html(embed);
 
-        $('.flow_application_preview_container').html(embed);
-        // $('.previewarea').addClass("previewopen");
-        $('.flow_application_preview_button').show()
+        $(this).parent().parent().find('.flow_application_preview_button').show()
       }
 
       else {
-        $('.flow_application_preview_button').hide()
+        $(this).parent().parent().find('.flow_application_preview_button').hide()
       }
 
 
@@ -798,8 +804,12 @@ $('.category_input').on('change',function(){
   });
 
   // プレビューボタンを押したとき
-  $(document).on("click",".flow_application_preview_button", function () {
+  $(document).on("click", ".flow_application_preview_button", function () {
     $('.flow_application_preview_container').show()
+    $('.flow_application_gray').show()
+    var item_id = $(this).data('id')
+    console.log(imgobject)
+    $('.flow_application_preview_container').html(imgobject[item_id])
     $('.flow_application_gray').show()
   })
 
@@ -810,7 +820,7 @@ $('.category_input').on('change',function(){
   })
 
   // エンターを押して次のフォームのフォーカスに移る
-  $(document).on("keydown",'.application_form_text',function (event) {
+  $(document).on("keydown", '.application_form_text', function (event) {
     if (event.keyCode === 13) { // エンターキーのキーコードは 13
       event.preventDefault(); // デフォルトのエンターキーの動作を無効化
 
@@ -827,7 +837,7 @@ $('.category_input').on('change',function(){
     }
   });
 
-  $(document).on('blur','.application_form_date', function () {
+  $(document).on('blur', '.application_form_date', function () {
     flow_application_date_format($(this))
   })
 
@@ -949,6 +959,7 @@ $('.category_input').on('change',function(){
     var tabname = $(this).data("tabname")
     $('.open_tab').removeClass('open_tab')
     $('.' + tabname).addClass('open_tab')
+    $('#status').val(tabname)
   })
 
   // 承認画面
@@ -982,7 +993,51 @@ $('.category_input').on('change',function(){
     })
   }
 
+  // -------承認一覧----------------------
+  if ($('.flow_search_box').length != 0) {
 
+    // セレクトボックスのデフォルトの値を合わせる
+    $('select').each(function () {
+      var data_id = $(this).data("id")
+      if (data_id) {
+        $(this).find('option[value=' + data_id + ']').attr('selected', true)
+      }
+
+
+    })
+
+    $('.search_form_date').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      duration: 300,
+      showAnim: 'show',
+      showOn: 'button', // 日付をボタンクリックでのみ表示する
+      buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
+      buttonImageOnly: true, // テキストを非表示にする
+    })
+    $(document).on('blur', '.search_form_date', function () {
+      flow_application_date_format($(this))
+    })
+    $('.flow_search_input').keydown(function (event) {
+      if (event.keyCode === 13) { // エンターキーのキーコードは 13
+        event.preventDefault(); // デフォルトのエンターキーの動作を無効化
+
+
+        var currentIndex = $('.flow_search_input').index(this);
+        var nextInput = $('.flow_search_input').eq(currentIndex + 1);
+
+        if (nextInput.length === 0) {
+          // 申請日が最後のためエンターを押したときにフォーカスが外れる前に
+          // submitされてしまうため明示的にフォーカスを外して日付のフォーマットを行う
+          $('.flow_search_input').blur()
+          $('#search_form').submit(); // 最後の入力欄でエンターキーを押すとフォームが送信される
+
+        } else {
+          nextInput.focus(); // 次の入力欄にフォーカスを移動
+        }
+      }
+    });
+  }
 
 
   // -------承認----------------------
@@ -993,75 +1048,12 @@ $('.category_input').on('change',function(){
   });
 
   // プレビューボタンを押したとき
-  $("#approve_preview_button").on("click", function () {
+  $(".approve_preview_button").on("click", function () {
     $('.approve_preview_container').show()
     $('.approve_gray').show()
-    var ID = $("#t_flowid").val();
-    if ($('#server').val() == "cloud") {
-      $.ajax({
-        url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
-        method: 'GET',
-        dataType: "json",
-        success: function (response) {
-          if (response.Type === 'application/pdf') {
-            var embed = $('<embed>');
-            embed.attr('src', response.path);
-            embed.attr('width', '100%');
-            embed.attr('height', '100%');
-            embed.attr('type', 'application/pdf');
-            embed.addClass('imgset');
+    var ID = $(this).data("id");
+    preview_img_get(prefix, ID)
 
-            $('.approve_preview_container').html(embed);
-          }
-          else if (response.Type.startsWith('image/')) {
-            var img = $('<img>');
-            img.attr('src', response.path);
-            img.attr('width', '100%');
-            img.attr('height', '100%');
-            img.addClass('imgset');
-
-            $('.approve_preview_container').html(img);
-          }
-        }
-      });
-    }
-    else {
-      $.ajax({
-        url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
-        method: 'GET',
-        xhrFields: {
-          responseType: 'blob' // ファイルをBlobとして受け取る
-        },
-        success: function (response) {
-          // 取得したファイルデータを使ってPDFを表示
-          var Url = URL.createObjectURL(response);
-          if (response.type === 'application/pdf') {
-            var embed = $('<embed>');
-            embed.attr('src', Url);
-            embed.attr('width', '100%');
-            embed.attr('height', '100%');
-            embed.attr('type', 'application/pdf');
-            embed.addClass('imgset');
-
-            $('.approve_preview_container').html(embed);
-          }
-          else if (response.type.startsWith('image/')) {
-            var img = $('<img>');
-            img.attr('src', Url);
-            img.attr('width', '100%');
-            img.attr('height', '100%');
-            img.addClass('imgset');
-
-            $('.approve_preview_container').html(img);
-          }
-
-
-        },
-        error: function (xhr, status, error) {
-          console.error(error); // エラー処理
-        }
-      });
-    }
   })
 
   // grayエリアをクリックしてプレビューを閉じるとき
@@ -1094,7 +1086,6 @@ $('.category_input').on('change',function(){
     // eは動的に作成した要素であるため違う書き方をしている
     $(document).on('mouseenter', '.e', function () {
       // マウスが要素に入ったときの処理
-      console.log("aa");
       $(this).addClass('approve_hover');
       var front_point = $(this).attr("id");
       $('[data-front_point="' + front_point + '"]').addClass("approve_hover");
@@ -1204,6 +1195,13 @@ $('.category_input').on('change',function(){
     var len = inputelement.val().length
     inputelement[0].setSelectionRange(len, len)
   })
+
+  $('.category_approval_setting_icon').on('click', function () {
+    // 表示されているdivを非表示にする
+    var data_id = $(this).parent().data('category_id')
+    window.location.href = prefix + '/workflow/category/approval/setting/' + data_id;
+  })
+
   // フォーカスが外れた時
   $('.category_setting_input').on('blur', function () {
     // 名称に変更があった時
@@ -1266,21 +1264,18 @@ $('.category_input').on('change',function(){
   });
   //カテゴリ要素をクリックしたとき
   $('.category_setting_content').on('click', function (event) {
-    // 名称変更ボタンとインプット要素をクリックしたときは除く
-    if ($(event.target).closest('.category_pen_icon').length > 0 || $(event.target).closest('.category_setting_input').length > 0) {
+    // 名称変更ボタンと承認設定ボタンとインプット要素をクリックしたときは除く
+    if ($(event.target).closest('.category_pen_icon').length > 0 || $(event.target).closest('.category_approval_setting_icon').length > 0 || $(event.target).closest('.category_setting_input').length > 0) {
       return;
     }
     window.location.href = prefix + '/workflow/category/detail/' + $(this).data("category_id");
   })
 
 
+  // カテゴリ詳細編集ページ
   if ($('#category_detail').length != 0) {
-    $(".category_detail_sortable").sortable(
-      {
-        update: function () {
-          change_items_order()
-        }
-      });
+    sortable_reload()
+
 
     // セレクトボックスのデフォルトの値を合わせる
     $('.category_detail_optional_select').each(function () {
@@ -1291,6 +1286,7 @@ $('.category_input').on('change',function(){
     // 型をひとつづつ確認
     $('.type').each(function () {
       max_input_reload($(this), "new")
+      price_condition_check($(this))
     })
 
     // デフォルトの項目を選択不可にする
@@ -1306,6 +1302,9 @@ $('.category_input').on('change',function(){
       var maxid = $('#optional_max').val()
       clonedElement.data('id', maxid)
       clonedElement.attr('data-id', maxid)
+
+      clonedElement.data('default', 0)
+      clonedElement.attr('data-default', 0)
       // インプットのname属性を適切なIDに変更する
       clonedElement.find(".input_element").each(function () {
         var name = $(this).attr("name")
@@ -1316,7 +1315,9 @@ $('.category_input').on('change',function(){
           $(this).val('')
         }
       });
-
+      clonedElement.find("label").attr("for", "radio" + maxid)
+      clonedElement.find("[name='price']").attr("id", "radio" + maxid)
+      clonedElement.find("[name='price']").val(maxid)
 
       maxid = parseInt(maxid) + 1
       $('#optional_max').val(maxid)
@@ -1326,12 +1327,14 @@ $('.category_input').on('change',function(){
       change_disable()
       // 再度順番並び替え
       change_items_order()
-
+      sortable_reload()
     })
 
     // 型のセレクトボックスが変更されたときの動作
     $(document).on('change', '.category_detail_optional_type .category_detail_optional_select', function () {
       max_input_reload($(this), "change")
+      price_condition_check($(this))
+      check_reset($(this))
 
     })
 
@@ -1345,5 +1348,164 @@ $('.category_input').on('change',function(){
       // 再度順番並び替え
       change_items_order()
     })
+    $(document).on('change', '[name="price"]', function () {
+      $select_element = $(this).val()
+      $('[name="price"]').each(function () {
+        if ($(this).val() != $select_element) {
+          $(this).prop("checked", false)
+        }
+      })
+    })
   }
+
+
+  // -----承認設定------------------------
+
+
+  $(document).on('change', '#approval_setting_issue', function (event) {
+    if ($(this).prop('checked')) {
+      $('.approval_setting_droparea').removeClass("display_none");
+    }
+    else {
+      $('.approval_setting_droparea').addClass("display_none");
+    }
+
+  });
+  // $(document).on('change', '#approval_setting_file', function (event) {
+  //   $('.approcal_setting_detail_button').removeClass("display_none");
+  // });
+
+  $(document).on('dragover', '.approval_setting_droparea', function (event) {
+    event.preventDefault();
+    $(this).addClass("dragover");
+  });
+  $(document).on('dragleave', '.approval_setting_droparea', function (event) {
+    event.preventDefault();
+    $(this).removeClass("dragover");
+  });
+  $(document).on('change', '#approval_setting_file', function (event) {
+
+    var input = this;
+
+    if (input.files && input.files[0]) {
+      if (this.files[0].type === "application/pdf") {
+        $('.approcal_setting_detail_button').removeClass("display_none");
+        var file = input.files[0];
+        var fileReader = new FileReader();
+
+        fileReader.onload = function () {
+          var typedarray = new Uint8Array(this.result);
+          displayPdf(typedarray);
+        };
+
+        fileReader.readAsArrayBuffer(file);
+      }
+      // PDF以外は受け付けない
+      else {
+        $(this).val("")
+        alert('pdfをインポートしてください')
+        $('.approcal_setting_detail_button').addClass("display_none");
+      }
+
+    }
+  });
+
+  $(document).on('drop', '.approval_setting_droparea', function (event) {
+    event.preventDefault();
+    $(this).removeClass("dragover");
+    var File = event.originalEvent.dataTransfer.files[0];
+    // ファイルのタイプを取得
+    var fileType = File.type;
+    // PDFがインポートされた場合
+    if (fileType === "application/pdf") {
+      $(this).find(".file_input").prop("files", event.originalEvent.dataTransfer.files);
+      $('.approcal_setting_detail_button').removeClass("display_none");
+      var file = event.target.files[0];
+      var fileReader = new FileReader();
+
+      fileReader.onload = function () {
+        var typedarray = new Uint8Array(this.result);
+        displayPdf(typedarray);
+      };
+
+      fileReader.readAsArrayBuffer(file);
+    }
+    // PDF以外は受け付けない
+    else {
+      alert('pdfをインポートしてください')
+      $('.approcal_setting_detail_button').addClass("display_none");
+    }
+  })
+
+  $(document).on('click', ".approcal_setting_detail_button", function () {
+    $('.approval_setting_detail_container').removeClass("display_none");
+  })
+
+  $(document).on('click', ".preview_control_close_button", function () {
+    $('.approval_setting_detail_container').addClass("display_none");
+  })
+
+
+
+  var dragging = false; // ドラッグ中かどうかのフラグ
+  var offsetX, offsetY; // ドラッグ開始位置と要素の左上端との差
+  var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
+
+  $(document).on("click", ".pdf_canvas", function (event) {
+    var parentOffset = $('.preview_main_container').offset();
+
+    var left = event.pageX - parentOffset.left;
+    var top = event.pageY - parentOffset.top;
+
+    // 新しい要素を生成し、位置を設定
+    var testlelement = $("<div class='testelement'></div>");
+    testlelement.css({
+      position: "absolute",
+      top: top,
+      left: left
+    });
+
+    // 生成した要素をbody要素に追加
+    $(".preview_main_container").append(testlelement);
+  });
+
+
+  // 要素をクリックしたときの処理
+  $(document).on("mousedown", ".testelement", function (event) {
+    dragging = true; // ドラッグ開始
+    var element = $(this);
+    var position = element.position();
+    offsetX = event.pageX - position.left;
+    offsetY = event.pageY - position.top;
+
+
+    // ドラッグ中に選択された要素の振る舞いを変更する場合は、ここにコードを追加
+
+    // ドラッグ中に選択された要素のスタイルを変更する例
+    element.css({
+      cursor: "move", // カーソルを移動アイコンに変更
+      opacity: 0.5 // 要素を半透明にする
+    });
+  });
+
+  // ドラッグ中の処理
+  $(document).on("mousemove", function (event) {
+    if (dragging) {
+        // ドラッグ中の座標を取得し、要素を移動
+        nowX = event.pageX - offsetX;
+        nowY = event.pageY - offsetY;
+        $(".testelement").css({ left: nowX, top: nowY });
+    }
+  });
+
+  // ドラッグ終了時の処理
+  $(document).on("mouseup", function () {
+    if (dragging) {
+      dragging = false; // ドラッグ終了
+      $(".testelement").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
+    }
+  });
+
+
+
 });

@@ -18,8 +18,7 @@
     <h2 class="pagetitle" id="flow_confirm"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">確認画面</h2>
     <form action="{{route('workflowconfirmpost')}}" method="post" id="flow_application_choice_form" class="flow_confirm_form" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" value="{{$id}}" name="id">
-        <input type="hidden" value="{{$flowid}}" id="flowid">
+        <input type="hidden" value="{{$id}}" name="id" id="flowid">
 
         <a href="{{route('workflowchoiceget',['id' => $id])}}" class="back_button flow_application_back_button">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
@@ -37,49 +36,19 @@
             <div class="view_application_title">
                 申請情報
             </div>
+            @foreach ($t_optionals as $t_optional)
             <div class="flow_confirm_content">
                 <div class="flow_confirm_label">
-                    標題
+                    {{$t_optional->項目名}}
                 </div>
                 <div class="flow_confirm_element">
-                    {{$draft->標題}}
+                    @if ($t_optional->値 == "file_regist_2545198")
+                    @else
+                    {{$t_optional->値}}
+                    @endif
                 </div>
             </div>
-            <div class="flow_confirm_content">
-                <div class="flow_confirm_label">
-                    取引先
-                </div>
-                <div class="flow_confirm_element">
-                    {{$draft->取引先}}
-                </div>
-            </div>
-            <div class="flow_confirm_content">
-                <div class="flow_confirm_label">
-                    日付
-                </div>
-                <div class="flow_confirm_element">
-                    {{$draft->日付}}
-                </div>
-            </div>
-            <div class="flow_confirm_content">
-                <div class="flow_confirm_label">
-                    金額
-                </div>
-                <div class="flow_confirm_element">
-                    {{$draft->金額}}
-                </div>
-            </div>
-            <div class="flow_confirm_content">
-                <div class="flow_confirm_label">
-                    コメント
-                </div>
-                <div class="flow_confirm_element">
-                    {{$draft->コメント}}
-                </div>
-            </div>
-
-
-
+            @endforeach
 
         </div>
         <div class="flow_confirm_view_container">

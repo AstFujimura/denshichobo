@@ -1329,7 +1329,7 @@ function errorcheck() {
 function flow_application_required_check() {
   var error = false
   // データ属性にrequired= trueになっている要素を順番に参照
-  $('[data-required="true"]').each(function () {
+  $('[data-required="1"]').each(function () {
     // 初めにエラーのcssを削除
     $(this).removeClass('errortextbox')
     // もし空欄だった場合、エラーのcssを付与
@@ -1730,7 +1730,7 @@ function change_disable() {
 
   $('.category_detail_optional_content').each(function () {
 
-    if ($(this).attr('data-id') <= 6) {
+    if ($(this).attr('data-default') == true) {
       $(this).find(".category_detail_optional_select").attr('disabled', true)
       $(this).find(".category_detail_optional_number").attr('disabled', true)
 
@@ -1804,26 +1804,26 @@ function application_input_item(item) {
   switch (item["型"]) {
     case 1:
       if (item["最大"] <= 100) {
-        content += `<input type="text" name="item` + item["id"] + `" id="" class="application_form_text text_long_content" data-required="` + item["必須項目"] + `">`
+        content += `<input type="text" name="item` + item["id"] + `" id="" class="application_form_text text_long_content" data-required="` + item["必須"] + `">`
       }
       else {
-        content += `<textarea name="item` + item["id"] + `" id="" class="application_form_text text_area_content" data-required="` + item["必須項目"] + `"></textarea>`
+        content += `<textarea name="item` + item["id"] + `" id="" class="application_form_text text_area_content" data-required="` + item["必須"] + `"></textarea>`
       }
       break;
     case 2:
-      content += `<input type="number" name="item` + item["id"] + `" id="" class="application_form_text text_short_content" data-required="` + item["必須項目"] + `">`
+      content += `<input type="number" name="item` + item["id"] + `" id="" class="application_form_text text_short_content" data-required="` + item["必須"] + `">`
       break;
     case 3:
-      content += `<input type="text" name="item` + item["id"] + `" id="" class="application_form_text application_form_date text_short_content" data-required="` + item["必須項目"] + `">`
+      content += `<input type="text" name="item` + item["id"] + `" id="" class="application_form_text application_form_date text_short_content" data-required="` + item["必須"] + `">`
 
       break;
     case 4:
       content += `
       <div class="flow_application_droparea">
       <p>ここにドラッグ＆ドロップ</p>
-      <input type="file" name="item` + item["id"] + `" id="" class="file_input" data-required="` + item["必須項目"] + `">
+      <input type="file" name="item` + item["id"] + `" data-id="` + item["id"] + `" class="file_input" data-required="` + item["必須"] + `">
       </div>
-      <div class="flow_application_preview_button">プレビュー</div>
+      <div class="flow_application_preview_button" data-id ="` + item["id"] + `" >プレビュー</div>
       `
       break;
     // 他の条件に対する処理を追加できます
@@ -1833,4 +1833,160 @@ function application_input_item(item) {
 
   content += '</div>'
   $('.flow_application_area').append(content)
+}
+
+function sortable_reload() {
+  $(".category_detail_sortable").sortable(
+    {
+      items: "[data-default='0']",
+      update: function () {
+        change_items_order()
+      }
+    });
+}
+
+function price_condition_check(element) {
+  if (element.val() == 2){
+    element.parent().parent().find('.category_detail_optional_price_label').removeClass("display_none")
+  }
+  else {
+    element.parent().parent().find('.category_detail_optional_price_label').addClass("display_none")
+  }
+  
+}
+function check_reset(element) {
+  if (element.val() != 2){
+    element.parent().parent().find('[name="price"]').prop("checked",false)
+  }
+  
+}
+
+// プレビューボタンを押したときにそのイメージを取得する
+// IDにはt_optionalのidが入る
+function preview_img_get(prefix,ID){
+  if ($('#server').val() == "cloud") {
+    $.ajax({
+      url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
+      method: 'GET',
+      dataType: "json",
+      success: function (response) {
+        if (response.Type === 'application/pdf') {
+          var embed = $('<embed>');
+          embed.attr('src', response.path);
+          embed.attr('width', '100%');
+          embed.attr('height', '100%');
+          embed.attr('type', 'application/pdf');
+          embed.addClass('imgset');
+
+          $('.approve_preview_container').html(embed);
+        }
+        else if (response.Type.startsWith('image/')) {
+          var img = $('<img>');
+          img.attr('src', response.path);
+          img.attr('width', '100%');
+          img.attr('height', '100%');
+          img.addClass('imgset');
+
+          $('.approve_preview_container').html(img);
+        }
+      }
+    });
+  }
+  else {
+    $.ajax({
+      url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
+      method: 'GET',
+      xhrFields: {
+        responseType: 'blob' // ファイルをBlobとして受け取る
+      },
+      success: function (response) {
+        // 取得したファイルデータを使ってPDFを表示
+        var Url = URL.createObjectURL(response);
+        if (response.type === 'application/pdf') {
+          var embed = $('<embed>');
+          embed.attr('src', Url);
+          embed.attr('width', '100%');
+          embed.attr('height', '100%');
+          embed.attr('type', 'application/pdf');
+          embed.addClass('imgset');
+
+          $('.approve_preview_container').html(embed);
+        }
+        else if (response.type.startsWith('image/')) {
+          var img = $('<img>');
+          img.attr('src', Url);
+          img.attr('width', '100%');
+          img.attr('height', '100%');
+          img.addClass('imgset');
+
+          $('.approve_preview_container').html(img);
+        }
+
+
+      },
+      error: function (xhr, status, error) {
+        console.error(error); // エラー処理
+      }
+    });
+  }
+}
+
+
+function displayPdf(pdfData) {
+  pdfjsLib.getDocument({ data: pdfData }).promise.then(function (pdf) {
+    var totalPages = pdf.numPages;
+    var pdfViewer = $('.preview_main_container');
+    var pdf_page_Viewer = $('.preview_pages_container');
+    pdfViewer.empty();
+    pdf_page_Viewer.empty();
+
+    // 各ページを順番に処理するための再帰関数を定義
+    function processPage(pageNum) {
+      if (pageNum > totalPages) {
+        return; // 最後のページを描画したら終了
+      }
+
+      pdf.getPage(pageNum).then(function (page) {
+        var scaleMain = 1.3;
+        var scalePage = 0.3;
+        var viewportMain = page.getViewport({ scale: scaleMain });
+        var viewportPage = page.getViewport({ scale: scalePage });
+
+        var canvasMain = $('<canvas class="pdf_canvas"></canvas>').get(0);
+        var contextMain = canvasMain.getContext('2d');
+        canvasMain.height = viewportMain.height;
+        canvasMain.width = viewportMain.width;
+
+        var canvasPage = $('<canvas class="pdf_page_view"></canvas>').get(0);
+        var contextPage = canvasPage.getContext('2d');
+        canvasPage.height = viewportPage.height;
+        canvasPage.width = viewportPage.width;
+
+        var renderContextMain = {
+          canvasContext: contextMain,
+          viewport: viewportMain
+        };
+
+        var renderContextPage = {
+          canvasContext: contextPage,
+          viewport: viewportPage
+        };
+
+        page.render(renderContextMain).promise.then(function () {
+          pdfViewer.append(canvasMain);
+        });
+
+        page.render(renderContextPage).promise.then(function () {
+          pdf_page_Viewer.append(canvasPage).append('<div class="pagenum">' + pageNum + '</div>');
+
+          // 次のページを処理
+          processPage(pageNum + 1);
+        });
+      });
+    }
+
+    // 最初のページから処理を開始
+    processPage(1);
+  });
+  
 }

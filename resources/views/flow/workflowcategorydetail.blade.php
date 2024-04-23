@@ -20,9 +20,8 @@
         <input type="hidden" name="optional_max" id="optional_max" value="50000">
         <div class="category_detail_container">
             <div class="category_detail_button_content">
-                <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
-                    もどる
+                <a href="{{route('categoryget')}}" class="back_button " id="flow_next_button">
+                    カテゴリ一覧へもどる
                 </a>
                 <button class="change_button" id="flow_next_button">
                     変更
@@ -55,6 +54,9 @@
                     <div class="category_detail_optional_required">
                         必須項目
                     </div>
+                    <div class="category_detail_optional_price">
+                        金額条件
+                    </div>
                     <div class="category_detail_optional_delete">
                         削除
                     </div>
@@ -63,7 +65,7 @@
                 <div class="category_detail_sortable">
 
                     @foreach ($items as $item)
-                    <div class="category_detail_optional_content" data-id="{{$item['id']}}">
+                    <div class="category_detail_optional_content" data-id="{{$item['id']}}" data-default="{{$item['デフォルト']}}">
                         <div class="category_detail_optional_column">
                             <input name="name_{{$item['id']}}" type="text" class="category_detail_optional_text input_element" value="{{$item['項目名']}}">
                         </div>
@@ -85,8 +87,13 @@
                                 <option value="2">任意</option>
                             </select>
                         </div>
+                        <div class="category_detail_optional_price">
+                            <label for="radio{{$item['id']}}" class="category_detail_optional_price_label">
+                                <input name="price" type="checkbox" id="radio{{$item['id']}}" value="{{$item['id']}}" {{$item['金額条件']}}>
+                            </label>
+                        </div>
                         <div class="category_detail_optional_delete">
-                            <div data-="" class="category_detail_optional_delete_button">
+                            <div class="category_detail_optional_delete_button">
                                 ×
                             </div>
                         </div>

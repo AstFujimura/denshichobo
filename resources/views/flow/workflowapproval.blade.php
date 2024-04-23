@@ -13,6 +13,12 @@
 
     <h2 class="pagetitle" id="approve_phase"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/approve.svg') }}" alt="" class="title_icon">承認</h2>
     <div class="flow_view_container">
+        <div class="flow_application_button_content">
+            <a href="{{route('workflowapprovalview')}}" class="back_button " id="flow_next_button">
+               承認一覧へもどる
+            </a>
+        </div>
+
         <div class="tab_container">
             <div class="flow_tab tab_focus" data-tabname="approve_tab">
                 承認内容
@@ -29,57 +35,23 @@
                             申請情報
                         </div>
                         <div class="applicant_info">
-                            <img class="approve_person_icon" src="{{ asset(config('prefix.prefix').'/'.'img/person.svg') }}">申請者 : {{$flow_table->name}}
+                            <img class="approve_person_icon" src="{{ asset(config('prefix.prefix').'/'.'img/person.svg') }}">申請者 : {{$user->name}}
                         </div>
+                        @foreach ($t_optionals as $t_optional)
                         <div class="approve_content">
                             <div class="approve_content_title">
-                                標題
+                                {{$t_optional->項目名}}
                             </div>
                             <div class="approve_content_element">
-                                {{$flow_table->標題}}
+                                @if ($t_optional->値 == "file_regist_2545198")
+                                <div class="approve_preview_button" data-id="{{$t_optional->id}}">プレビュー</div>
+                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$t_optional->id}}">
+                                @else
+                                {{$t_optional->値}}
+                                @endif
                             </div>
                         </div>
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                取引先
-                            </div>
-                            <div class="approve_content_element">
-                                {{$flow_table->取引先}}
-                            </div>
-                        </div>
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                取引日
-                            </div>
-                            <div class="approve_content_element">
-                                {{$flow_table->日付}}
-                            </div>
-                        </div>
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                金額
-                            </div>
-                            <div class="approve_content_element">
-                                {{$flow_table->金額}}
-                            </div>
-                        </div>
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                コメント
-                            </div>
-                            <div class="approve_content_element">
-                                {{$flow_table->コメント}}
-                            </div>
-                        </div>
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                請求書
-                            </div>
-                            <div class="approve_content_element">
-                                <div class="approve_preview_button" id="approve_preview_button">プレビュー</div>
-                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$flow_table->t_flow_id}}">
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
 
                     <div class="approve_authorizer_container">
@@ -191,8 +163,8 @@
 
         </div>
     </div>
-    <input type="hidden" value="{{$flow_table->id}}" id="t_flowid">
-    <input type="hidden" value="{{$flow_table->フローマスタID}}" id="flowid">
+    <input type="hidden" value="{{$t_flow->id}}" id="t_flowid">
+    <input type="hidden" value="{{$t_flow->フローマスタID}}" id="flowid">
     <div class="element_input">
         <input type="hidden" id="maxgrid_column">
         <input type="hidden" id="maxgrid_row">

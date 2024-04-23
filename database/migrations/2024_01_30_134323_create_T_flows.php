@@ -18,21 +18,15 @@ return new class extends Migration
         Schema::create('t_flows', function (Blueprint $table) {
             $table->id();
             $table->string('標題');
-            $table->text('コメント');
-            $table->unsignedBigInteger('フローマスタID');
+            $table->unsignedBigInteger('フローマスタID')->nullable();
             $table->foreign('フローマスタID')->references('id')->on('m_flows')->onDelete('cascade');
-            $table->integer('ステータス')->default(1);
-            $table->string('ファイルパス');
-            $table->string('取引先');
-            $table->integer('金額');
-            $table->date('日付');
+            $table->integer('ステータス')->default(0);
             $table->integer('再承認番号')->default(1);
             $table->unsignedBigInteger('申請者ID');
             $table->foreign('申請者ID')->references('id')->on('users');
             $table->integer('過去データID');
-            $table->string('ファイル形式');
             $table->integer('決裁数')->default(0);
-            $table->integer('決裁地点数');
+            $table->integer('決裁地点数')->default(1);
 
 
             $table->timestamps();

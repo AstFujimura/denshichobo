@@ -58,47 +58,7 @@
                             カテゴリを選択すると<br>
                             申請項目が表示されます
                         </div>
-                        <!-- <div class="application_form_content ">
-                            <div class="application_form_label">
-                                標題
-                            </div>
-                            <input type="text" name="title" id="application_form_title" class="application_form_text text_long_content" data-required="true">
-                        </div>
-                        <div class="application_form_content ">
-                            <div class="application_form_label">
-                                取引先
-                            </div>
-                            <input type="text" name="company" id="application_form_company" class="application_form_text text_long_content" data-required="true">
-                        </div>
-
-                        <div class="application_form_content ">
-                            <div class="application_form_label">
-                                取引日
-                            </div>
-                            <input type="text" name="date" id="application_form_date" class="application_form_text text_short_content" data-required="true">
-                        </div>
-                        <div class="application_form_content ">
-                            <div class="application_form_label">
-                                金額
-                            </div>
-                            <input type="number" name="price" id="application_form_price" class="application_form_text text_short_content" data-required="true">
-                        </div>
-                        <div class="application_form_content ">
-                            <div class="application_form_label">
-                                コメント
-                            </div>
-                            <textarea name="comment" id="application_form_comment" class="application_form_text text_area_content" data-required="true"></textarea>
-                        </div>
-                        <div class="application_form_content">
-                            <div class="application_form_label">
-                                請求書
-                            </div>
-                            <div class="flow_application_droparea">
-                                <p>ここにドラッグ＆ドロップ</p>
-                                <input type="file" name="file" id="file" class="file_input" data-required="true">
-                            </div>
-                            <div class="flow_application_preview_button">プレビュー</div>
-                        </div> -->
+                    
                     </div>
                 </div>
             </div>

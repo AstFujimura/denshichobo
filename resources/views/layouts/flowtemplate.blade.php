@@ -17,6 +17,7 @@
     <script src="{{ asset(config('prefix.prefix').'/'.'jquery/laravelui.js')}}"></script>
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui.js')}}"></script>
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui_ja.js')}}"></script>
+    <script src="{{asset(config('prefix.prefix').'/'.'jquery/pdf.js')}}"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
     </noscript>
