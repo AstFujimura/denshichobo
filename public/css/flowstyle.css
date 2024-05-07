@@ -1,3 +1,43 @@
+@font-face {
+    font-family: 'HGR教科書体';
+    src: url('../font/HGR教科書体.TTC');
+}
+
+@font-face {
+    font-family: 'HGR行書体';
+    src: url('../font/HGR行書体.TTC');
+}
+
+@font-face {
+    font-family: 'HG正楷書体';
+    src: url('../font/HG正楷書体.TTF');
+}
+
+@font-face {
+    font-family: 'HGゴシック体';
+    src: url('../font/HGゴシック体.TTC');
+}
+
+@font-face {
+    font-family: 'HGR明朝体';
+    src: url('../font/HGR明朝体.TTC');
+}
+
+@font-face {
+    font-family: 'arial';
+    src: url('../font/arial.ttf');
+}
+
+@font-face {
+    font-family: 'HK隷書体';
+    src: url('../font/HK隷書.ttf');
+}
+
+@font-face {
+    font-family: '毛筆体';
+    src: url('../font/毛筆体.ttf');
+}
+
 body {
     background: rgb(225 225 225);
 }
@@ -2538,10 +2578,38 @@ body {
 
 .approval_setting_content {
     display: flex;
+    align-items: center;
+}
+
+.approval_setting_change_file {
+    display: flex;
+    background: #d6d6d6;
+    width: 150px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    margin: 10px 20px;
+    cursor: pointer;
+}
+
+.approval_setting_change_file:hover {
+    background: #aaa8a8;
+}
+
+.approval_setting_registed {
+    margin-left: 30px;
+    background: rgb(229 255 189);
+    width: 149px;
+    display: flex;
+    padding: 5px 19px;
+    font-size: 14px;
+    color: #084008;
+    font-weight: bold;
+    border-radius: 3px;
 }
 
 .approval_setting_droparea {
     margin-top: 20px;
+    margin-left: 20px;
     height: 100px;
     border: solid 3px rgb(187, 187, 187);
     color: rgb(187, 187, 187);
@@ -2563,13 +2631,32 @@ body {
     align-items: center;
     height: 30px;
     cursor: pointer;
-    margin-left: 190px;
+    margin-left: 20px;
     margin-top: 13px;
 }
+
+.disable {
+    border: solid 1px rgb(189, 189, 189);
+    background: gainsboro;
+    color: gray;
+}
+
 
 .approcal_setting_detail_button:hover {
     background: rgb(39, 150, 253);
     color: white;
+}
+
+.disable:hover {
+    border: solid 1px rgb(189, 189, 189);
+    background: gainsboro;
+    color: gray
+}
+
+.disable:hover {
+    border: solid 1px rgb(189, 189, 189);
+    background: gainsboro;
+    color: gray
 }
 
 .approval_setting_detail_container {
@@ -2604,8 +2691,9 @@ body {
     height: 100px;
     background: red;
 }
-.optional_item{
-    border: solid 1px black;
+
+.optional_item {
+    border: solid 1px gainsboro;
 }
 
 
@@ -2631,7 +2719,7 @@ body {
     height: 40px;
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-top: 20px;
     cursor: pointer;
     border-radius: 5px 5px 0 0;
     transition: all 0.4s;
@@ -2640,12 +2728,50 @@ body {
 .preview_control_item:hover {
     background: rgb(228, 249, 252);
     transition: all 0.4s;
+
 }
 
 .preview_control_item:hover .preview_control_plus {
     background: #19214e;
     color: #ffffff;
     transition: all 0.4s;
+}
+
+.preview_test_str {
+    display: flex;
+    width: 200px;
+    margin-inline: auto;
+    align-items: center;
+    height: 40px;
+}
+
+.preview_test_str:hover {
+    background: #fff4ef;
+}
+
+.preview_test_str_input {
+    height: 30px;
+    border: solid 1px rgb(228, 227, 227);
+    width: 160px;
+    margin-inline: auto;
+}
+
+.preview_item_batsu {
+    background: #dc3737;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    border-radius: 30px;
+    margin-inline: auto;
+    cursor: pointer;
+}
+
+.preview_item_batsu:hover {
+    background: #831f1f;
 }
 
 .preview_control_plus {
@@ -2680,19 +2806,21 @@ body {
     align-items: center;
     cursor: pointer;
 }
-.preview_control_close_button:hover{
-    
+
+.preview_control_close_button:hover {
+
     background: #618f22;
 }
-.canvas_container{
+
+.canvas_container {
     position: relative;
     margin-top: 30px;
     margin-inline: auto;
     width: auto;
     display: table;
 }
-.pdf_canvas {
-}
+
+.pdf_canvas {}
 
 .pdf_page_view {
     display: block;
@@ -2705,4 +2833,171 @@ body {
 .pagenum {
     display: flex;
     justify-content: center;
+}
+
+/* 印鑑設定 */
+.flow_stamp_button_content {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 2px 12px;
+    width: 1000px;
+}
+
+.stamp_regist_button {
+    cursor: pointer;
+    background: rgb(41, 175, 41);
+    border: solid 0;
+    width: 160px;
+    text-align: center;
+    padding: 8px;
+    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.stamp_regist_button:hover {
+    background: rgb(32, 128, 32);
+}
+
+.flow_stamp_main_container {
+    display: flex;
+    height: 557px;
+    margin-top: 30px;
+}
+
+.flow_stamp_left_container {
+    width: 300px;
+    background: white;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+.flow_stamp_middle_container {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.flow_stamp_right_container {
+    padding-block: 30px;
+    width: 500px;
+    margin-left: 10px;
+    background: white;
+    border-radius: 20px;
+    overflow-y: auto;
+}
+
+.flow_stamp_letter_content {
+    width: 500px;
+    margin-inline: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.flow_stamp_lettter_change_button {
+    margin-left: 20px;
+    background: #2b86ff;
+    height: 20px;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.flow_stamp_lettter_change_button:hover {
+    background: #1f5aa7;
+}
+
+.flow_stamp_letter {
+    height: 50px;
+    width: 200px;
+    font-size: 20px;
+    border: solid 1px rgb(187, 187, 187);
+    border-radius: 3px;
+    margin-block: 20px;
+}
+
+.flow_stamp_preview {
+    background: white;
+    margin-inline: auto;
+    width: 400px;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stamp_canvas {
+    margin: auto;
+
+}
+
+.flow_stamp_font_container {
+    margin-left: 30px;
+}
+
+.flow_stamp_right_subtitle {
+    margin-bottom: 5px;
+}
+
+.flow_stamp_font_select {
+    height: 30px;
+    border: solid 1px gainsboro;
+    width: 150px;
+}
+
+.flow_stamp_font_property {
+    margin-left: 20px;
+    margin-top: 10px;
+    display: flex;
+}
+
+.flow_stamp_bold_button {
+    margin-left: 10px;
+    border: solid 1px rgb(182, 182, 182);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    padding: 0px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.flow_stamp_bold_button:hover {}
+
+.flow_font_size_title {
+    margin-left: 20px;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.stamp_slider {
+    margin-left: 20px;
+    width: 200px;
+}
+
+
+.flow_stamp_str_container {
+    margin-top: 10px;
+    margin-left: 30px;
+}
+.stamp_str{
+    position: absolute;
+}
+
+
+/* テスト */
+.test_div {
+    position: absolute;
+    font-size: 300px;
+    font-family: HGR行書体;
+    transform: scale(1, 0.8);
+    top: 0;
+    left: 30;
+    line-height: 240px;
+    height: 240px;
 }

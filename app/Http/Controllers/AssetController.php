@@ -27,6 +27,10 @@ class AssetController extends Controller
     {
         return $this->getResponse('icon', $file, 'image/x-icon');
     }
+    public function font($file)
+    {
+        return $this->getResponse('font', $file, 'font/ttf');
+    }
 
     public function img($file)
     {

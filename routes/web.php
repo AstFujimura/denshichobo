@@ -50,6 +50,9 @@ Route::prefix($prefix)->group(function () {
     // 画像フォルダへのルーティング
     Route::get('/icon/{file}', [AssetController::class, 'icon'])->where('file', '.*ico');
 
+    // フォントフォルダへのルーティング
+    Route::get('/font/{file}', [AssetController::class, 'font'])->where('file', '.*\.(TTC|TTF)');
+
 
     //  ログインページ
     Route::get('login', [LoginController::class, 'loginGet'])->name('loginGet');
@@ -206,7 +209,9 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/category/approval/setting/{id}', [FlowController::class, 'categoryapprovalsettingget'])->name('categoryapprovalsettingget');
             //カテゴリ承認設定ポスト
             Route::post('/workflow/category/approval/setting', [FlowController::class, 'categoryapprovalsettingpost'])->name('categoryapprovalsettingpost');
-
+            //承認用紙のpdfのapi
+            Route::get('/workflow/approval/setting/img/{id}', [FlowController::class, 'approvalsettingpdf'])->name('approvalsettingpdf');
+            
 
 
             // ワークフロー申請
@@ -226,6 +231,11 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/view', [FlowController::class, 'workflowviewget'])->name('workflowviewget');
             // ワークフロー申請情報(idはt_flowsのid)
             Route::get('/workflow/application/detail/{id}', [FlowController::class, 'workflowapplicationdetailget'])->name('workflowapplicationdetailget');
+
+            // 印鑑設定
+            Route::get('/workflow/stamp', [FlowController::class, 'workflowstampget'])->name('workflowstampget');
+            // 印鑑設定ポスト
+            Route::post('/workflow/stamp', [FlowController::class, 'workflowstamppost'])->name('workflowstamppost');
 
 
 

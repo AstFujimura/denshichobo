@@ -37,7 +37,12 @@
                         申請一覧
                     </div>
                 </a>
-
+                <a href="{{route('workflowstampget')}}" class="main_general_button">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="flow_title_icon">
+                    <div class="main_button_title">
+                        印鑑設定
+                    </div>
+                </a>
             </div>
 
         </div>

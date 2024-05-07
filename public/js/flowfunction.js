@@ -1846,24 +1846,24 @@ function sortable_reload() {
 }
 
 function price_condition_check(element) {
-  if (element.val() == 2){
+  if (element.val() == 2) {
     element.parent().parent().find('.category_detail_optional_price_label').removeClass("display_none")
   }
   else {
     element.parent().parent().find('.category_detail_optional_price_label').addClass("display_none")
   }
-  
+
 }
 function check_reset(element) {
-  if (element.val() != 2){
-    element.parent().parent().find('[name="price"]').prop("checked",false)
+  if (element.val() != 2) {
+    element.parent().parent().find('[name="price"]').prop("checked", false)
   }
-  
+
 }
 
 // プレビューボタンを押したときにそのイメージを取得する
 // IDにはt_optionalのidが入る
-function preview_img_get(prefix,ID){
+function preview_img_get(prefix, ID) {
   if ($('#server').val() == "cloud") {
     $.ajax({
       url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
@@ -1933,7 +1933,7 @@ function preview_img_get(prefix,ID){
 
 
 function displayPdf(pdfData) {
-  pdfjsLib.getDocument({ data: pdfData }).promise.then(function (pdf) {
+  return pdfjsLib.getDocument({ data: pdfData }).promise.then(function (pdf) {
     var totalPages = pdf.numPages;
     var pdfViewer = $('.preview_main_container');
     var pdf_page_Viewer = $('.preview_pages_container');
@@ -1943,10 +1943,10 @@ function displayPdf(pdfData) {
     // 各ページを順番に処理するための再帰関数を定義
     function processPage(pageNum) {
       if (pageNum > totalPages) {
-        return; // 最後のページを描画したら終了
+        return Promise.resolve(); // 最後のページを描画したら終了
       }
 
-      pdf.getPage(pageNum).then(function (page) {
+      return pdf.getPage(pageNum).then(function (page) {
         var scaleMain = 1;
         var scalePage = 0.3;
         var viewportMain = page.getViewport({ scale: scaleMain });
@@ -1956,11 +1956,13 @@ function displayPdf(pdfData) {
         var contextMain = canvasMain.getContext('2d');
         canvasMain.height = viewportMain.height;
         canvasMain.width = viewportMain.width;
-
+        $('#width').val(canvasMain.width * 0.352)
+        $('#height').val(canvasMain.height * 0.352)
         var canvasPage = $('<canvas class="pdf_page_view"></canvas>').get(0);
         var contextPage = canvasPage.getContext('2d');
         canvasPage.height = viewportPage.height;
         canvasPage.width = viewportPage.width;
+
 
         var renderContextMain = {
           canvasContext: contextMain,
@@ -1973,7 +1975,7 @@ function displayPdf(pdfData) {
         };
 
         page.render(renderContextMain).promise.then(function () {
-          var canvas_container =$('<div class="canvas_container" data-page="'+pageNum+'"></div>').get(0)
+          var canvas_container = $('<div class="canvas_container" data-page="' + pageNum + '"></div>').get(0)
           canvas_container.append(canvasMain);
           pdfViewer.append(canvas_container);
         });
@@ -1982,7 +1984,7 @@ function displayPdf(pdfData) {
           pdf_page_Viewer.append(canvasPage).append('<div class="pagenum">' + pageNum + '</div>');
 
           // 次のページを処理
-          processPage(pageNum + 1);
+          return processPage(pageNum + 1);
         });
       });
     }
@@ -1990,5 +1992,295 @@ function displayPdf(pdfData) {
     // 最初のページから処理を開始
     processPage(1);
   });
-  
+
+}
+
+// pointerを追加するときにデフォルトのinput要素の作成
+function pointer_input_create(optional_id, pointer_num) {
+  var input_pointer_array = $('<input type="hidden">')
+  input_pointer_array.attr('name', 'pointer_array[]')
+  input_pointer_array.attr('data-pointer_id', pointer_num)
+  input_pointer_array.val(pointer_num)
+  $('#inputs').append(input_pointer_array)
+  canvas_width = $(".canvas_container[data-page='1']").width()
+
+  var vararray = [
+    ["optional_id", optional_id],
+    ["top", 30],
+    ["left", canvas_width / 2],
+    ["font_size", 16],
+    ["font", null],
+    ["page", 1],
+  ]
+  vararray.forEach(element => {
+    var input_element = $('<input type="hidden">')
+    input_element.attr('name', element[0] + pointer_num)
+    input_element.attr('data-prop', element[0])
+    input_element.attr('data-pointer_id', pointer_num)
+    input_element.val(element[1] ?? element[1] | "")
+    $('#inputs').append(input_element)
+  });
+
+}
+
+function fillTextWithWrap(ctx, text, x, y, maxWidth, lineHeight) {
+  var words = text.split(' ');
+  var line = '';
+  var yPosition = y;
+
+  for (var i = 0; i < words.length; i++) {
+    var testLine = line + words[i] + ' ';
+    var metrics = ctx.measureText(testLine);
+    var testWidth = metrics.width;
+
+    if (testWidth > maxWidth && i > 0) {
+      ctx.fillText(line, x, yPosition);
+      line = words[i] + ' ';
+      yPosition += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+
+  ctx.fillText(line, x, yPosition);
+}
+
+function approval_setting_pdf(prefix, ID) {
+  if ($('#server').val() == "cloud") {
+    $.ajax({
+      url: prefix + '/workflow/approval/setting/img/' + ID, // データを取得するURLを指定
+      method: 'GET',
+      dataType: "json",
+      success: function (response) {
+        if (response.Type === 'application/pdf') {
+          // 今後コード書く
+        }
+      }
+    });
+  }
+  else {
+    $.ajax({
+      url: prefix + '/workflow/approval/setting/img/' + ID, // データを取得するURLを指定
+      method: 'GET',
+      xhrFields: {
+        responseType: 'blob' // ファイルをBlobとして受け取る
+      },
+      success: function (response) {
+        // Blobオブジェクトからファイルを生成
+        var file = new File([response], 'filename.pdf', { type: 'application/pdf' });
+
+        // FileReaderを使用してファイルを読み込む
+        var fileReader = new FileReader();
+        fileReader.onload = function () {
+          // 読み込んだバイナリデータをUint8Arrayに変換
+          var arrayBuffer = this.result;
+          var uint8Array = new Uint8Array(arrayBuffer);
+
+          // Uint8Arrayを処理する
+          displayPdf(uint8Array)
+        };
+        fileReader.readAsArrayBuffer(file);
+      },
+      error: function (xhr, status, error) {
+        console.error(error); // エラー処理
+      }
+    });
+  }
+}
+
+
+function pointer_create(pointer_num, pointertext, page) {
+  if ($('.optional_item[data-pointer_id="' + pointer_num + '"]').length == 0) {
+
+
+    var item_element = $("<canvas class='optional_item' data-pointer_id='" + pointer_num + "'></canvas>");
+    // Canvasの幅と高さを設定
+    item_element.attr('width', 100);
+    item_element.attr('height', 30);
+    var ctx = item_element.get(0).getContext('2d')
+    ctx.width = 1000;
+    ctx.height = 300;
+
+
+    ctx.font = $('[name="font_size' + pointer_num + '"]').val() + 'pt gosic';
+    ctx.fillText(pointertext, 0, 20)
+    // fillTextWithWrap(ctx, pointertext, 0, 20, 200, 20); // テキストを改行しながら描画
+
+    item_element.css({
+      position: "absolute",
+      top: $('[name="top' + pointer_num + '"]').val() + "px",
+      left: $('[name="left' + pointer_num + '"]').val() + "px",
+    });
+    $(".canvas_container[data-page='" + page + "']").append(item_element);
+  }
+}
+
+function approval_setting_submit_check() {
+  var error = false
+  if ($('#status').val() == "error") {
+    error = true
+  }
+  else if ($('#status').val() == "change") {
+    if (!$('#approval_setting_file').val()) {
+      error = true
+    }
+  }
+  return error
+}
+
+function optimal_size(str_num, index, xy, size) {
+  var x, y
+  if (xy == "x") {
+    x = 200 - (size / 2)
+    return x
+  }
+  else if (xy == "y") {
+    if (index == 1) {
+      return 0
+    }
+    else if (index == 2) {
+      return 240
+    }
+  }
+
+}
+
+function str_container_create() {
+  var letter = $('#flow_stamp_letter').val()
+  var letter_length = letter.length
+  if (letter_length == $("#letter_length").val()) {
+    for (var i = 0; i < letter_length; i++) {
+      var currentChar = letter[i];
+      $('.flow_stamp_right_subtitle[data-str_num="' + i + '"]').text(currentChar)
+      $('.flow_stamp_char[data-str_num="' + i + '"]').val(currentChar)
+      var str_div = $('.stamp_str[data-str_num="' + i + '"]')
+      str_div.text(currentChar)
+    }
+  }
+  else {
+    $('.flow_stamp_str_container').remove()
+    $('.stamp_str').remove()
+    for (var i = 0; i < letter_length; i++) {
+      var currentChar = letter[i];
+      var x = optimal_size(letter_length, i + 1, "x", $('.font_size_slider').val())
+      var y = optimal_size(letter_length, i + 1, "y", $('.font_size_slider').val())
+      var str_container = `
+      <div class="flow_stamp_str_container">
+        <div class="flow_stamp_right_subtitle" data-str_num="`+ i + `">
+            `+ currentChar + `
+        </div>
+        <input type="hidden" class="flow_stamp_char" name="char`+ i + `" value="` + currentChar + `" data-str_num="` + i + `">
+        <div class="flow_font_size_title">
+            X方向
+        </div>
+        <input type="range" name="x`+ i + `" min="-50" max="450" value="` + x + `" step="1" class="stamp_slider x_slider" data-str_num="` + i + `">
+        <div class="flow_font_size_title">
+            Y方向
+        </div>
+        <input type="range" name="y`+ i + `" min="-50" max="450" value="` + y + `" step="1" class="stamp_slider y_slider" data-str_num="` + i + `">
+      </div>
+      `
+      $('.letter_container').append(str_container)
+      var str_div = $("<div>").attr('class', "stamp_str").attr('data-str_num', i)
+      str_div.text(currentChar)
+
+
+      if ($('.flow_stamp_font_select').val() == "毛筆体") {
+        var correction = $('.font_size_slider').val() / 100 * 6 + 1
+      }
+      else {
+        var correction = 0
+      }
+      var scale = 1 - $('.scale_slider').val()
+      $('#aspect').val(scale)
+      str_div.css({
+        "font-size": $('.font_size_slider').val(),
+        "left": $('.x_slider[data-str_num="' + i + '"]').val(),
+        "top": $('.y_slider[data-str_num="' + i + '"]').val() * scale - correction,
+        "line-height": $('.font_size_slider').val() * scale + "px",
+        "height": $('.font_size_slider').val(),
+        "transform": "scale(1," + scale + ")",
+        "color": "red",
+        "font-family": $('#flow_stamp_font_select').val()
+
+      })
+      $('.flow_stamp_preview').append(str_div)
+
+    }
+    // stamp_preview_create()
+  }
+  $("#letter_length").val(letter_length)
+}
+// function stamp_preview_create(){
+//   $('.flow_stamp_str_container').each(function(){
+//     var str_id = $(this).find('.flow_stamp_right_subtitle').data("str_num")
+//     var str = $(this).find('.flow_stamp_right_subtitle').text()
+//     var str_div = $("<div>").attr('class', "stamp_str").attr('data-str_num',str_id)
+//     str_div.text(str)
+//     $(".flow_stamp_preview").append(str_div)
+//   })
+// }
+function stamp_preview_reload() {
+  $('.flow_stamp_str_container').each(function () {
+    var str_id = $(this).find('.flow_stamp_right_subtitle').data("str_num")
+    // var str = $(this).find('.flow_stamp_right_subtitle').text()
+    var x = $(this).find('.x_slider').val()
+    var y = $(this).find('.y_slider').val()
+    var str_div = $('.stamp_str[data-str_num="' + str_id + '"]')
+
+    if ($('.flow_stamp_font_select').val() == "毛筆体") {
+      var correction = $('.font_size_slider').val() / 100 * 6 + 1
+    }
+    else {
+      var correction = 0
+    }
+    var scale = 1 - $('.scale_slider').val()
+    $('#aspect').val(scale)
+    str_div.css({
+      "font-size": $('.font_size_slider').val(),
+      "left": x,
+      "top": y * scale - correction,
+      "line-height": $('.font_size_slider').val() * scale + "px",
+      "height": $('.font_size_slider').val(),
+      "transform": "scale(1," + scale + ")",
+      "color": "red",
+      "font-family": $('#flow_stamp_font_select').val()
+    })
+
+    $(".flow_stamp_preview").append(str_div)
+  })
+}
+function str_reload() {
+
+}
+function create_stamp_img() {
+  return new Promise(function (resolve, reject) {
+    var fonturl = $('#' + $("#flow_stamp_font_select").val()).val()
+
+    var font = new FontFace('font', 'url(' + fonturl + ')')
+    font.load().then(function (loadedFont) {
+      document.fonts.add(loadedFont);
+      var canvas = $('#stamp_canvas')
+      var context = canvas[0].getContext("2d")
+      context.font = $('.font_size_slider').val() + "px font";
+      context.fillStyle = "red"
+      context.scale(1, $('#aspect').val()); // 水平方向に拡大、垂直方向に縮小
+      context.textBaseline = "top";
+      $('.flow_stamp_str_container').each(function () {
+        context.fillText(
+          $(this).find('.flow_stamp_right_subtitle').text().trim(),
+          $(this).find('.x_slider').val(),
+          $(this).find('.y_slider').val(),
+        )
+      })
+      // Canvasを画像ファイルとして保存
+      var imageData = canvas[0].toDataURL("image/png"); // PNG形式で画像データを取得
+      resolve(imageData);
+      
+
+    })
+  }).catch(function (error) {
+    // フォントの読み込みに失敗した場合はreject()でエラーを返す
+    reject(error);
+  });
 }

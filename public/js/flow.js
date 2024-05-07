@@ -1364,36 +1364,88 @@ $(document).ready(function () {
 
   // -----承認設定------------------------
 
+  if ($('#approval_setting').length != 0) {
 
-  $(document).on('change', '#approval_setting_issue', function (event) {
-    if ($(this).prop('checked')) {
-      $('.approval_setting_droparea').removeClass("display_none");
-    }
-    else {
-      $('.approval_setting_droparea').addClass("display_none");
+    if ($('#approval_setting_issue').prop("checked")) {
+      var ID = $('#category_id').val()
+      approval_setting_pdf(prefix, ID)
     }
 
-  });
-  // $(document).on('change', '#approval_setting_file', function (event) {
-  //   $('.approcal_setting_detail_button').removeClass("display_none");
-  // });
-
-  $(document).on('dragover', '.approval_setting_droparea', function (event) {
-    event.preventDefault();
-    $(this).addClass("dragover");
-  });
-  $(document).on('dragleave', '.approval_setting_droparea', function (event) {
-    event.preventDefault();
-    $(this).removeClass("dragover");
-  });
-  $(document).on('change', '#approval_setting_file', function (event) {
-
-    var input = this;
-
-    if (input.files && input.files[0]) {
-      if (this.files[0].type === "application/pdf") {
+    // 承認用紙を発行するのチェックが変わった時
+    $(document).on('change', '#approval_setting_issue', function (event) {
+      if ($(this).prop('checked')) {
+        $('.approval_setting_droparea').removeClass("display_none");
         $('.approcal_setting_detail_button').removeClass("display_none");
-        var file = input.files[0];
+        if ($('#approval_setting_file').prop('files').length == 0) {
+          $('.approcal_setting_detail_button').addClass("disable");
+          $('#status').val("error")
+        }
+      }
+      else {
+        $('.approval_setting_droparea').addClass("display_none");
+        $('.approval_setting_change_file').addClass("display_none");
+        $('.approcal_setting_detail_button').addClass("display_none");
+        $('#status').val("empty")
+      }
+
+    });
+    // $(document).on('change', '#approval_setting_file', function (event) {
+    //   $('.approcal_setting_detail_button').removeClass("display_none");
+    // });
+
+    $(document).on('dragover', '.approval_setting_droparea', function (event) {
+      event.preventDefault();
+      $(this).addClass("dragover");
+    });
+    $(document).on('dragleave', '.approval_setting_droparea', function (event) {
+      event.preventDefault();
+      $(this).removeClass("dragover");
+    });
+
+    $(document).on('change', '#approval_setting_file', function (event) {
+
+      var input = this;
+
+      if (input.files && input.files[0]) {
+        if (this.files[0].type === "application/pdf") {
+          $('.approcal_setting_detail_button').removeClass("disable");
+          var file = input.files[0];
+          var fileReader = new FileReader();
+
+          fileReader.onload = function () {
+            var typedarray = new Uint8Array(this.result);
+            displayPdf(typedarray);
+          };
+
+          fileReader.readAsArrayBuffer(file);
+          $('#status').val('change')
+        }
+        // PDF以外は受け付けない
+        else {
+          $(this).val("")
+          alert('pdfをインポートしてください')
+          $('.approcal_setting_detail_button').addClass("disable");
+        }
+
+      }
+      pointer_reset()
+
+    });
+    function pointer_reset() {
+      $('.preview_item_batsu').click()
+    }
+
+    $(document).on('drop', '.approval_setting_droparea', function (event) {
+      event.preventDefault();
+      $(this).removeClass("dragover");
+      var File = event.originalEvent.dataTransfer.files[0];
+      // ファイルのタイプを取得
+      var fileType = File.type;
+      // PDFがインポートされた場合
+      if (fileType === "application/pdf") {
+        $(this).find(".file_input").prop("files", event.originalEvent.dataTransfer.files);
+        $('.approcal_setting_detail_button').removeClass("disable");
+        var file = event.target.files[0];
         var fileReader = new FileReader();
 
         fileReader.onload = function () {
@@ -1402,178 +1454,215 @@ $(document).ready(function () {
         };
 
         fileReader.readAsArrayBuffer(file);
+        $('#status').val('change')
       }
       // PDF以外は受け付けない
       else {
-        $(this).val("")
         alert('pdfをインポートしてください')
         $('.approcal_setting_detail_button').addClass("display_none");
       }
-
-    }
-  });
-
-  $(document).on('drop', '.approval_setting_droparea', function (event) {
-    event.preventDefault();
-    $(this).removeClass("dragover");
-    var File = event.originalEvent.dataTransfer.files[0];
-    // ファイルのタイプを取得
-    var fileType = File.type;
-    // PDFがインポートされた場合
-    if (fileType === "application/pdf") {
-      $(this).find(".file_input").prop("files", event.originalEvent.dataTransfer.files);
-      $('.approcal_setting_detail_button').removeClass("display_none");
-      var file = event.target.files[0];
-      var fileReader = new FileReader();
-
-      fileReader.onload = function () {
-        var typedarray = new Uint8Array(this.result);
-        displayPdf(typedarray);
-      };
-
-      fileReader.readAsArrayBuffer(file);
-    }
-    // PDF以外は受け付けない
-    else {
-      alert('pdfをインポートしてください')
-      $('.approcal_setting_detail_button').addClass("display_none");
-    }
-  })
-
-  $(document).on('click', ".approcal_setting_detail_button", function () {
-    $('.approval_setting_detail_container').removeClass("display_none");
-  })
-
-  $(document).on('click', ".preview_control_close_button", function () {
-    $('.approval_setting_detail_container').addClass("display_none");
-  })
-
-
-
-  var dragging = false; // ドラッグ中かどうかのフラグ
-  var offsetX, offsetY; // ドラッグ開始位置と要素の左上端との差
-  var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
-
-  // $(document).on("click", ".pdf_canvas", function (event) {
-
-  //   var parentOffset = $('.preview_main_container').offset();
-
-  //   var left = event.pageX - parentOffset.left;
-  //   var top = event.pageY - parentOffset.top;
-
-  //   // 新しい要素を生成し、位置を設定
-  //   var testlelement = $("<div class='testelement'></div>");
-  //   testlelement.css({
-  //     position: "absolute",
-  //     top: top,
-  //     left: left
-  //   });
-
-  //   // 生成した要素をbody要素に追加
-  //   $(".preview_main_container").append(testlelement);
-  // });
-  $("#category_approval_setting_form").on('submit', function (event) {
-    event.preventDefault();
-    $('.optional_item').each(function () {
-      var canvas = $(this).get(0)
-      // Canvasを画像データURLに変換
-      var imageDataURL = canvas.toDataURL("image/png");
-
-      var img = $('<input>');
-      img.val(imageDataURL);
-      img.attr('name', 'img');
-      img.attr('type', 'hidden');
-
-      var img_top = $('<input>');
-      img_top.val($(this).position().top);
-      img_top.attr('name', 'top');
-
-      $('#inputs').append(img).append(img_top)
+      pointer_reset()
     })
-    this.submit()
-  })
-  $(document).on('click', '.preview_control_item', function () {
-    var item_element = $("<canvas class='optional_item'></canvas>");
-    // Canvasの幅と高さを設定
-    item_element.attr('width', 100);
-    item_element.attr('height', 30);
-    var ctx = item_element.get(0).getContext('2d')
 
-    var text = $(this).find(".preview_control_item_title").text();
-    ctx.font = '16px gosic';
-    fillTextWithWrap(ctx, text, 0, 20, 200, 20); // テキストを改行しながら描画
-    canvas_width = $(".canvas_container[data-page='1']").width()
-    canvas_height = $(".canvas_container[data-page='1']").height()
-    item_element.css({
-      position: "absolute",
-      top: "30px",
-      left: canvas_width / 2,
-    });
-    $(".canvas_container[data-page='1']").append(item_element);
-  })
+    $(document).on('click', ".approcal_setting_detail_button", function () {
+      $('.approval_setting_detail_container').removeClass("display_none");
+      $('[name="pointer_array[]"]').each(function () {
+        var pointer_num = $(this).val()
+        var pointertext = $('.preview_test_str[data-pointer_id="' + pointer_num + '"]').find('.preview_test_str_input').val()
+        var page = $('[name="page' + pointer_num + '"]').val()
+        pointer_create(pointer_num, pointertext, page)
+      })
+    })
 
-  function fillTextWithWrap(ctx, text, x, y, maxWidth, lineHeight) {
-    var words = text.split(' ');
-    var line = '';
-    var yPosition = y;
+    $(document).on('click', ".preview_control_close_button", function () {
+      $('.approval_setting_detail_container').addClass("display_none");
+    })
 
-    for (var i = 0; i < words.length; i++) {
-      var testLine = line + words[i] + ' ';
-      var metrics = ctx.measureText(testLine);
-      var testWidth = metrics.width;
 
-      if (testWidth > maxWidth && i > 0) {
-        ctx.fillText(line, x, yPosition);
-        line = words[i] + ' ';
-        yPosition += lineHeight;
-      } else {
-        line = testLine;
+
+    var dragging = false; // ドラッグ中かどうかのフラグ
+    var offsetX, offsetY; // ドラッグ開始位置と要素の左上端との差
+    var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
+
+    // $(document).on("click", ".pdf_canvas", function (event) {
+
+    //   var parentOffset = $('.preview_main_container').offset();
+
+    //   var left = event.pageX - parentOffset.left;
+    //   var top = event.pageY - parentOffset.top;
+
+    //   // 新しい要素を生成し、位置を設定
+    //   var testlelement = $("<div class='testelement'></div>");
+    //   testlelement.css({
+    //     position: "absolute",
+    //     top: top,
+    //     left: left
+    //   });
+
+    //   // 生成した要素をbody要素に追加
+    //   $(".preview_main_container").append(testlelement);
+    // });
+    $("#category_approval_setting_form").on('submit', function (event) {
+      event.preventDefault();
+      if (approval_setting_submit_check()) {
+        alert('PDFファイルをインポートしてください')
       }
-    }
+      else {
+        if (parseInt($('#width').val()) > parseInt($('#height').val())) {
+          $('#p_l').val('L')
+        }
+        else {
+          $('#p_l').val('P')
+        }
 
-    ctx.fillText(line, x, yPosition);
+        $('.optional_item').each(function () {
+          var canvas = $(this).get(0)
+
+          var top_input = $('input[data-prop="top"][data-pointer_id="' + $(this).data('pointer_id') + '"]');
+          top_input.val($(this).css('top').replace("px", ""));
+
+          var left_input = $('input[data-prop="left"][data-pointer_id="' + $(this).data('pointer_id') + '"]');
+          left_input.val($(this).css('left').replace("px", ""));
+
+        })
+        this.submit()
+      }
+    })
+    $(document).on('click', '.preview_control_item', function () {
+
+      var pointer_num = $('#pointer_num').val()
+      var pointertext = $(this).find(".preview_control_item_title").text();
+      // ここは後程変える
+      var page = 1
+
+      pointer_input_create($(this).data('optional_id'), pointer_num)
+      pointer_create(pointer_num, pointertext, page)
+
+
+      var item_pointer =
+        $(`<div class="preview_test_str" data-pointer_id="` + pointer_num + `">
+      <input type="text" class="preview_test_str_input" value="`+ pointertext + `">
+      <div class="preview_item_batsu">×</div>
+    </div>`)
+      item_pointer.insertAfter($(this))
+
+
+
+      pointer_num = parseInt(pointer_num) + 1
+      $('#pointer_num').val(pointer_num)
+
+    })
+
+    $(document).on('click', '.preview_item_batsu', function () {
+      var pointer_id = $(this).parent().data("pointer_id")
+      $("[data-pointer_id='" + pointer_id + "']").remove()
+    })
+
+
+    // 要素をクリックしたときの処理
+    $(document).on("mousedown", ".optional_item", function (event) {
+      dragging = true; // ドラッグ開始
+      $(this).data("dragging", true)
+      $(this).attr("data-dragging", true)
+      var element = $(this);
+      var position = element.position();
+      offsetX = event.pageX - position.left;
+      offsetY = event.pageY - position.top;
+
+
+      // ドラッグ中に選択された要素の振る舞いを変更する場合は、ここにコードを追加
+
+      // ドラッグ中に選択された要素のスタイルを変更する例
+      element.css({
+        cursor: "move", // カーソルを移動アイコンに変更
+        opacity: 0.5 // 要素を半透明にする
+      });
+    });
+
+    // ドラッグ中の処理
+    $(document).on("mousemove", function (event) {
+      if (dragging) {
+        // ドラッグ中の座標を取得し、要素を移動
+        nowX = event.pageX - offsetX;
+        nowY = event.pageY - offsetY;
+        $(".optional_item[data-dragging='true']").css({ left: nowX, top: nowY });
+      }
+    });
+
+    // ドラッグ終了時の処理
+    $(document).on("mouseup", function () {
+      if (dragging) {
+        dragging = false; // ドラッグ終了
+        $(".optional_item[data-dragging='true']").data("dragging", false)
+        $(".optional_item[data-dragging='true']").attr("data-dragging", false)
+        $(".optional_item").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
+      }
+    });
   }
 
-  // 要素をクリックしたときの処理
-  $(document).on("mousedown", ".optional_item", function (event) {
-    dragging = true; // ドラッグ開始
-    $(this).data("dragging", true)
-    $(this).attr("data-dragging", true)
-    var element = $(this);
-    var position = element.position();
-    offsetX = event.pageX - position.left;
-    offsetY = event.pageY - position.top;
 
+  // ----------印鑑設定-------------------
+  var fonturl = $('#font').val()
 
-    // ドラッグ中に選択された要素の振る舞いを変更する場合は、ここにコードを追加
+  // var font = new FontFace('HGR', 'url(' + fonturl + ')')
+  // font.load().then(function (loadedFont) {
+  //   document.fonts.add(loadedFont);
+    var canvas = $("<canvas>").attr("id", "stamp_canvas").attr("class", "stamp_canvas").attr("width", 400).attr("height", 400);
+    var context = canvas[0].getContext("2d"); // 2Dコンテキストを取得
+    var centerX = canvas[0].width / 2; // 中心のX座標
+    var centerY = canvas[0].height / 2; // 中心のY座標
+    var radius = 195; // 円の半径
+    var startAngle = 0; // 開始角度
+    var endAngle = Math.PI * 2; // 終了角度（360度）
+    var anticlockwise = false; // 反時計回り
 
-    // ドラッグ中に選択された要素のスタイルを変更する例
-    element.css({
-      cursor: "move", // カーソルを移動アイコンに変更
-      opacity: 0.5 // 要素を半透明にする
-    });
-  });
-
-  // ドラッグ中の処理
-  $(document).on("mousemove", function (event) {
-    if (dragging) {
-      // ドラッグ中の座標を取得し、要素を移動
-      nowX = event.pageX - offsetX;
-      nowY = event.pageY - offsetY;
-      $(".optional_item[data-dragging='true']").css({ left: nowX, top: nowY });
-    }
-  });
-
-  // ドラッグ終了時の処理
-  $(document).on("mouseup", function () {
-    if (dragging) {
-      dragging = false; // ドラッグ終了
-      $(".optional_item[data-dragging='true']").data("dragging", false)
-      $(".optional_item[data-dragging='true']").attr("data-dragging", false)
-      $(".optional_item").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
-    }
-  });
+    context.beginPath(); // パスの開始
+    context.arc(centerX, centerY, radius, startAngle, endAngle, anticlockwise); // 円を描く
+    context.strokeStyle = 'red'; // 塗りつぶしの色を赤に設定
+    context.lineWidth = 10; // 輪郭の幅を設定
+    context.stroke(); // 輪郭を描く
+    context.closePath(); // パスの終了
+    context.save();
+    // context.font = "245px HGR";
+    // context.fillStyle = "red"
+    // context.scale(1, 0.8); // 水平方向に拡大、垂直方向に縮小
+    // context.textBaseline = "top";
+    // context.fillText('藤', centerX - 100, 0)
+    // context.fillText('村', centerX - 122, 240)
+    $(".flow_stamp_preview").append(canvas[0])
 
 
 
+    // Canvasを画像ファイルとして保存
+    // var imageData = canvas[0].toDataURL("image/png"); // PNG形式で画像データを取得
+    // var link = document.createElement('a'); // a要素を作成
+    // link.download = 'canvas_image.png'; // ダウンロード時のファイル名を指定
+    // link.href = imageData; // 画像データをリンク先に設定
+    // link.click(); // リンクをクリックしてダウンロードを開始
+
+  
+  $('.flow_stamp_bold_button').on('click', function () {
+
+  })
+
+  $('.flow_stamp_lettter_change_button').on('click', function () {
+    str_container_create()
+
+  })
+  $(document).on("input",'.stamp_slider',function(){
+    stamp_preview_reload()
+  })
+  $('.flow_stamp_font_select').on('change', function () {
+    stamp_preview_reload()
+
+  })
+  $("#stamp_regist").on('submit',function(event){
+
+    event.preventDefault()
+
+    create_stamp_img().then(function(imageData){
+      $("#stamp_img").val(imageData);
+      $("#stamp_regist")[0].submit();
+    })
+  })
 });

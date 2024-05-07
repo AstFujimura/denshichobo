@@ -54,6 +54,10 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application_view.svg') }}" class="menuicon01">
         <div class="iconmessage">申請一覧</div>
     </div>
+    <div class="headerIcon001" onclick="location.href='{{route('workflowstampget')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_stamp.svg') }}" class="menuicon01">
+        <div class="iconmessage">印鑑設定</div>
+    </div>
     <div class="headerIcon001" onclick="location.href='{{route('workflowmaster')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="menuicon01">
         <div class="iconmessage">経路マスタ一覧</div>
@@ -149,7 +153,7 @@
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application_view.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                        申請一覧
+                            申請一覧
                         </div>
 
                     </div>
@@ -161,7 +165,7 @@
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                        経路マスタ一覧
+                            経路マスタ一覧
                         </div>
 
                     </div>
@@ -173,7 +177,19 @@
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                        経路マスタ登録
+                            経路マスタ登録
+                        </div>
+
+                    </div>
+
+                </a>
+                <a href="{{route('workflowstampget')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_stamp.svg') }}" class="flow_right_icon">
+                        </div>
+                        <div class="button1name01">
+                            印鑑設定
                         </div>
 
                     </div>
@@ -185,7 +201,7 @@
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                        カテゴリ設定
+                            カテゴリ設定
                         </div>
 
                     </div>

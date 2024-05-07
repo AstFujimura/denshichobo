@@ -18,7 +18,7 @@
     <h2 class="pagetitle" id="flow_confirm"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">確認画面</h2>
     <form action="{{route('workflowconfirmpost')}}" method="post" id="flow_application_choice_form" class="flow_confirm_form" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" value="{{$id}}" name="id" id="flowid">
+        <input type="hidden" value="{{$flowid}}" name="id" id="flowid">
 
         <a href="{{route('workflowchoiceget',['id' => $id])}}" class="back_button flow_application_back_button">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">

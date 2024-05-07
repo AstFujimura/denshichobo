@@ -15,6 +15,9 @@ use App\Models\M_flow_point;
 use App\Models\M_mail;
 use App\Models\M_next_flow_point;
 use App\Models\M_optional;
+use App\Models\M_pointer;
+use App\Models\M_stamp;
+use App\Models\M_stamp_char;
 use App\Models\T_flow;
 use App\Models\T_flow_point;
 use App\Models\T_approval;
@@ -27,7 +30,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Crypt;
-
+use TCPDF;
+use setasign\Fpdi\TcpdfFpdi;
+use \TCPDF_FONTS;
 
 use Carbon\Carbon;
 use Aws\S3\S3Client;
@@ -36,6 +41,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\DB;
+use setasign\Fpdi\Tcpdf\Fpdi;
 
 class FlowController extends Controller
 {
@@ -1003,32 +1009,149 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         if (Auth::user()->管理 == "管理") {
-            $categories = [];
+            $m_optionals = [];
             $m_category = M_category::find($id);
+            $m_category->status = $m_category->発行 ? "none_change" : "empty";
             $order = $m_category->項目順;
             // アンダースコア（_）をデリミタとして文字列を分割
             $parts = explode("_", $order);
             foreach ($parts as $part) {
                 $m_optional = M_optional::find($part);
+                $m_pointers = M_pointer::where('任意項目マスタID', $part)->get();
                 if ($m_optional->型 != 4) {
                     $item = [
                         "id" => $part,
                         "項目名" => $m_optional->項目名,
+                        "pointers" => $m_pointers,
                     ];
 
-                    $categories[] = $item;
+                    $m_optionals[] = $item;
                 }
             }
 
-            return view('flow.workflowcategory_approval', compact("prefix", "server","id", "categories"));
+            return view('flow.workflowcategory_approval', compact("prefix", "server", "id", "m_category", "m_optionals"));
         }
     }
-    
+
     // カテゴリ承認設定ポスト
     public function categoryapprovalsettingpost(Request $request)
     {
-        
+
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $category_id = $request->input('category_id');
+        $m_category = M_category::find($category_id);
+        if ($request->input("status") == "empty") {
+            $m_category->発行 = false;
+            $m_category->ファイルパス = null;
+            $m_category->縦 = 0;
+            $m_category->横 = 0;
+            $m_category->縦横 = null;
+        } else {
+            $pointers = $request->pointer_array;
+
+            M_pointer::where("カテゴリマスタID", $category_id)->delete();
+            if ($pointers) {
+                foreach ($pointers as $pointer) {
+                    $new_m_pointer = new M_pointer();
+                    if ($pointer < 10000) {
+                        // 過去に登録してあったIDは明示的にidを振る
+                        // 新規のものは自動インクリメントのため明示しない
+                        $new_m_pointer->id = $pointer;
+                    }
+                    $new_m_pointer->カテゴリマスタID = $category_id;
+                    $new_m_pointer->任意項目マスタID = $request->input('optional_id' . $pointer);
+                    $new_m_pointer->top = $request->input('top' . $pointer);
+                    $new_m_pointer->left = $request->input('left' . $pointer);
+                    $new_m_pointer->フォントサイズ = $request->input('font_size' . $pointer);
+                    // $new_m_pointer->フォント = $request->input('font'.$pointer);
+                    $new_m_pointer->ページ = $request->input('page' . $pointer);
+                    $new_m_pointer->save();
+                }
+            }
+
+
+
+            if ($request->input("status") == "change") {
+
+                // 入力されたPDFデータを取得
+                $pdfData = $request->file('pdf');
+
+                $width = $request->input('width');
+
+                $height = $request->input('height');
+                // 縦横の情報
+                $p_l = $request->input('p_l');
+
+
+                $now = Carbon::now();
+                $currentTime = $now->format('YmdHis');
+                $randomID = $this->generateRandomCode();
+
+                $pdffilename = $currentTime . '_' . $randomID . '.pdf';
+                $pdfpath = Config::get('custom.file_upload_path') . '\\' . $pdffilename;
+                copy($pdfData->getRealPath(), $pdfpath);
+
+
+                $m_category->ファイルパス = $pdffilename;
+                $m_category->発行 = true;
+                $m_category->縦 = $width;
+                $m_category->横 = $height;
+                $m_category->縦横 = $p_l;
+
+                
+            }
+        }
+        $m_category->save();
+        return redirect()->route('categoryapprovalsettingget', ['id' => $category_id]);
+
+        // -----------以降はテストで作成したコードのため後で消す-----------------
+
+        // TCPDFでPDFを作成し、画像を追加する
+        $pdf = new Fpdi();
+
+
+        $pdf->AddPage($p_l, [$width, $height]);
+
+
+        // 入力されたPDFデータを新しいPDFに結合
+        $pdf->setSourceFile($pdfpath);
+        $tplIdx = $pdf->importPage(1);
+        $size = $pdf->getTemplateSize($tplIdx);
+        $pdf->useTemplate($tplIdx); // サイズ調整が必要かもしれません
+
+        // // 画像データを一時的なファイルに保存する（任意）
+        // $imagePath = public_path('images/temp_image.png');
+        // if (!file_exists(dirname($imagePath))) { // ディレクトリが存在しない場合は作成
+        //     mkdir(dirname($imagePath), 0777, true);
+        // }
+        // file_put_contents($imagePath, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imageData)));
+
+        // dd(($left*0.0847));
+        // $pdf->Image($imagePath, , $top,100,30); // 適切な座標とサイズに調整する
+        // $pdf->Image($imgpath, $left * 0.35264, $top * 0.35264, 0, 0, '', '', '', false);
+        // TTFファイルのパスを指定して追加
+        // dd(asset($prefix.'/font/HGR教科書体.TTC'));
+
+
+        $pdf->SetFont('msungstdlight', '', 14); // フォントを設定
+        $pdf->Text(0, 0, '標題');
+        // PDFをダウンロードまたは表示する
+        // $pdf->Output('output.pdf', 'D'); // ダウンロード
+        $pdf->Output('output.pdf', 'I'); // ブラウザに表示
     }
+
+    // private function pdfsize($pdfpath)
+    // {
+    //     $pdf = new Fpdi();
+    //     $pdf->setSourceFile($pdfpath);
+    //     $tplIdx = $pdf->importPage(1);
+    //     $size = $pdf->getTemplateSize($tplIdx);
+    //     $pdfsize = [$size["width"] > $size["height"] ? "L" : "P",[$size["width"],$size["height"]]]; 
+    //     return $pdfsize;
+    // }
 
 
 
@@ -1167,8 +1290,9 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         $t_optionals = $this->application_items($id);
+        $flowid = T_flow::find($id)->フローマスタID;
 
-        return view('flow.workflowconfirm', compact("prefix", "server", "id", "t_optionals"));
+        return view('flow.workflowconfirm', compact("prefix", "server", "id", "flowid", "t_optionals"));
     }
     // フローテーブルを引数として項目の情報のレコードを返す
     private function application_items($id)
@@ -1421,6 +1545,44 @@ class FlowController extends Controller
 
         return view('flow.workflowapproval', compact("prefix", "server", "t_flow", "user", "t_optionals", "t_approval", "past_approvals"));
     }
+    public function approvalsettingpdf($id)
+    {
+        $img = M_category::find($id);
+
+
+
+        $filepath = $img->ファイルパス;
+
+
+        if (config('prefix.server') == "cloud") {
+            // S3バケットの情報
+            $bucket = 'astdocs.com';
+            $key = $filepath;
+            $expiration = '+1 hour'; // 有効期限
+
+            $s3Client = new S3Client([
+                'region' => 'ap-northeast-1',
+                'version' => 'latest',
+            ]);
+
+            $command = $s3Client->getCommand('GetObject', [
+                'Bucket' => $bucket,
+                'Key' => $key
+            ]);
+            // 署名付きURLを生成
+            $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+        } else {
+            $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
+        }
+
+
+
+        if (config('prefix.server') == "cloud") {
+            return response()->json(['path' => $path, 'Type' => 'application/pdf']);
+        } else {
+            return response()->file($path, ['Content-Type' => 'application/pdf']);
+        }
+    }
     public function workflowapprovalpost(Request $request)
     {
         $approval_id = $request->input("approval_id");
@@ -1625,6 +1787,39 @@ class FlowController extends Controller
         return view('flow.workflowapplicationdetail', compact("prefix", "server", "t_flow", "user", "t_optionals", "past_approvals"));
     }
 
+    public function workflowstampget()
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        return view('flow.workflowstamp', compact("prefix", "server"));
+   
+    }
+    public function workflowstamppost(Request $request)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        dd($request->all());
+        $letter_length = $request->input("letter_length");
+        $m_stamp = M_stamp::where('ユーザーID',Auth::id())->first();
+        $m_stamp->フォント = $request->input("font");
+        $m_stamp->フォントサイズ = $request->input("font_size");
+        $m_stamp->縦横比 = $request->input("aspect");
+        if ($m_stamp){
+            M_stamp_char::where('はんこマスタID',$m_stamp->id)->delete();
+        }
+
+        for ($i = 0; $i < $letter_length ; $i++) {
+
+        }
+        return redirect()->route('workflow');
+   
+    }
     public function flowimgget($id)
     {
         $img = T_optional::find($id);
