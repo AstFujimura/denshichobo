@@ -2574,11 +2574,12 @@ body {
 
 .approval_setting_container {
     margin-left: 30px;
+    display: flex;
 }
 
 .approval_setting_content {
-    display: flex;
-    align-items: center;
+    /* display: flex;
+    align-items: center; */
 }
 
 .approval_setting_change_file {
@@ -2587,7 +2588,7 @@ body {
     width: 150px;
     padding: 4px 10px;
     border-radius: 3px;
-    margin: 10px 20px;
+    margin: 0px 20px;
     cursor: pointer;
 }
 
@@ -2608,8 +2609,7 @@ body {
 }
 
 .approval_setting_droparea {
-    margin-top: 20px;
-    margin-left: 20px;
+    margin: 0px 20px;
     height: 100px;
     border: solid 3px rgb(187, 187, 187);
     color: rgb(187, 187, 187);
@@ -2631,8 +2631,7 @@ body {
     align-items: center;
     height: 30px;
     cursor: pointer;
-    margin-left: 20px;
-    margin-top: 13px;
+    margin-top: auto;
 }
 
 .disable {
@@ -2706,7 +2705,7 @@ body {
 }
 
 .preview_control_items {
-    margin-top: 30px;
+    margin-top: 10px;
     max-height: 60vh;
     overflow-y: auto;
 }
@@ -2788,6 +2787,15 @@ body {
     margin-inline: 7px;
 }
 
+.stamp_check_container{
+    background: #dee7c3;
+    padding-block: 10px;
+}
+.stamp_check_content{
+    display: flex;
+    margin-left: 40px;
+    margin-block: 10px;
+}
 .preview_control_button_container {
     background: #eef8ff;
     flex-grow: 1;

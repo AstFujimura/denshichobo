@@ -15,7 +15,7 @@
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="title_icon">印鑑設定</h2>
+    <h2 class="pagetitle" id="stamp_setting"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="title_icon">印鑑設定</h2>
     <form action="{{route('workflowstamppost')}}" id="stamp_regist" class="stamp_regist" method="post" enctype="multipart/form-data">
         @csrf
         <div class="flow_stamp_button_content">
@@ -33,7 +33,11 @@
         </div> -->
             <div class="flow_stamp_middle_container">
                 <div class="flow_stamp_letter_content">
-                    <input type="text" class="flow_stamp_letter" id="flow_stamp_letter" placeholder="(例) 佐藤">
+                    @if ($m_stamp)
+                    <input type="text" class="flow_stamp_letter" id="flow_stamp_letter" placeholder="(例) 佐藤" value="{{$m_stamp->文字}}">
+                    @else
+                    <input type="text" class="flow_stamp_letter" id="flow_stamp_letter" placeholder="(例) 佐藤" value="">
+                    @endif
                     <div class="flow_stamp_lettter_change_button">
                         変更
                     </div>
@@ -49,37 +53,66 @@
 
                     <div class="flow_stamp_font_property">
                         <select class="flow_stamp_font_select" name="font" id="flow_stamp_font_select">
+                            @if ($m_stamp)
+                            <option value="毛筆体" {{$m_stamp->フォント == "毛筆体" ? 'selected' : ''}}>毛筆体</option>
+                            <option value="HG正楷書体" {{$m_stamp->フォント == "HG正楷書体" ? 'selected' : ''}}>楷書体</option>
+                            <option value="HGゴシック体" {{$m_stamp->フォント == "HGゴシック体" ? 'selected' : ''}}>ゴシック</option>
+                            <option value="HGR明朝体" {{$m_stamp->フォント == "HGR明朝体" ? 'selected' : ''}}>明朝</option>
+                            @else
                             <option value="毛筆体">毛筆体</option>
                             <option value="HG正楷書体">楷書体</option>
                             <option value="HGゴシック体">ゴシック</option>
                             <option value="HGR明朝体">明朝</option>
+
+                            @endif
                         </select>
                     </div>
                     <div class="flow_font_size_title">
                         フォントサイズ
                     </div>
+                    @if ($m_stamp)
+                    <input type="range" name="font_size" min="0" max="400" value="{{$m_stamp->フォントサイズ}}" step="1" class="stamp_slider font_size_slider">
+                    @else
                     <input type="range" name="font_size" min="0" max="400" value="245" step="1" class="stamp_slider font_size_slider">
+                    @endif
+
                     <div class="flow_font_size_title">
                         縦横比
                     </div>
+                    @if ($m_stamp)
+                    <input type="range" min="-1" max="0.8" value="{{$m_stamp->縦横比}}" step="0.01" class="stamp_slider scale_slider">
+                    @else
                     <input type="range" min="-1" max="0.8" value="0.2" step="0.01" class="stamp_slider scale_slider">
+                    @endif
+
                     <input type="hidden" name="aspect" id="aspect" value="">
                 </div>
                 <div class="letter_container">
+                @if ($m_stamp)
+                    <input type="hidden" id="letter_length" value="{{$m_stamp->文字数}}" name="letter_length">
+                    @else
                     <input type="hidden" id="letter_length" value="0" name="letter_length">
-                    <!-- <div class="flow_stamp_str_container">
-                    <div class="flow_stamp_right_subtitle" data-str_num="0">
-                        藤
+                    @endif
+                    
+                    @if ($m_stamp)
+                    @foreach($m_stamp_chars as $m_stamp_char)
+                    <div class="flow_stamp_str_container">
+                        <div class="flow_stamp_right_subtitle" data-str_num="{{$loop->index}}">
+                            {{$m_stamp_char->文字}}
+                        </div>
+                        <input type="hidden" class="flow_stamp_char" name="char{{$loop->index}}" value="{{$m_stamp_char->文字}}" data-str_num="{{$loop->index}}">
+                        <div class="flow_font_size_title">
+                            X方向
+                        </div>
+                        <input type="range" name="x{{$loop->index}}" min="-50" max="450" value="{{$m_stamp_char->left}}" step="1" class="stamp_slider x_slider" data-str_num="{{$loop->index}}">
+                        <div class="flow_font_size_title">
+                            Y方向
+                        </div>
+                        <input type="range" name="y{{$loop->index}}" min="-50" max="450" value="{{$m_stamp_char->top}}" step="1" class="stamp_slider y_slider" data-str_num="{{$loop->index}}">
                     </div>
-                    <div class="flow_font_size_title">
-                        X方向
-                    </div>
-                    <input type="range" min="0" max="100" value="75" step="1" class="font_size_slider">
-                    <div class="flow_font_size_title">
-                        Y方向
-                    </div>
-                    <input type="range" min="0" max="100" step="1" class="font_size_slider">
-                </div> -->
+                    @endforeach
+                    @endif
+
                 </div>
             </div>
         </div>

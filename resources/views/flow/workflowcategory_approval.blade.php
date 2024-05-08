@@ -67,6 +67,18 @@
                     @endforeach
                     @endforeach
                 </div>
+                <div class="stamp_check_container">
+                    <div class="stamp_check_content">
+
+                        <input type="checkbox" name="approval_stamp" id="approval_stamp" {{$m_category->承認印 ? 'checked' : ''}}>
+                        <label class="approval_setting_element" for="approval_stamp">承認印を必須にする。</label>
+                    </div>
+                    <div class="stamp_check_content">
+
+                        <input type="checkbox" name="application_stamp" id="application_stamp" {{$m_category->申請印 ? 'checked' : ''}}>
+                        <label class="approval_setting_element" for="application_stamp">申請印を必須にする。</label>
+                    </div>
+                </div>
                 <div class="preview_control_button_container">
                     <div class="preview_control_close_button">
                         閉じる
@@ -82,17 +94,17 @@
             <input type="hidden" id="height" name="height" value="">
             <input type="hidden" id="p_l" name="p_l" value="">
             <input type="hidden" id="status" name="status" value="{{$m_category->status}}">
-            
+
             @foreach ($m_optionals as $m_optional)
 
             @foreach ($m_optional["pointers"] as $pointer)
             <input type="hidden" name="pointer_array[]" value="{{$pointer->id}}" data-pointer_id="{{$pointer->id}}">
-            <input type="hidden" name="optional_id{{$pointer->id}}" value="{{$m_optional['id']}}" data-pointer_id="{{$pointer->id}}">
-            <input type="hidden" name="top{{$pointer->id}}" value="{{$pointer->top}}" data-pointer_id="{{$pointer->id}}">
-            <input type="hidden" name="left{{$pointer->id}}" value="{{$pointer->left}}" data-pointer_id="{{$pointer->id}}">
-            <input type="hidden" name="font_size{{$pointer->id}}" value="{{$pointer->フォントサイズ}}" data-pointer_id="{{$pointer->id}}">
-            <input type="hidden" name="font{{$pointer->id}}" value="{{$pointer->フォント}}" data-pointer_id="{{$pointer->id}}">
-            <input type="hidden" name="page{{$pointer->id}}" value="{{$pointer->ページ}}" data-pointer_id="{{$pointer->id}}">
+            <input type="hidden" name="optional_id{{$pointer->id}}" value="{{$m_optional['id']}}" data-prop="optional_id" data-pointer_id="{{$pointer->id}}">
+            <input type="hidden" name="top{{$pointer->id}}" value="{{$pointer->top}}" data-prop="top" data-pointer_id="{{$pointer->id}}">
+            <input type="hidden" name="left{{$pointer->id}}" value="{{$pointer->left}}" data-prop="left" data-pointer_id="{{$pointer->id}}">
+            <input type="hidden" name="font_size{{$pointer->id}}" value="{{$pointer->フォントサイズ}}" data-prop="font_size" data-pointer_id="{{$pointer->id}}">
+            <input type="hidden" name="font{{$pointer->id}}" value="{{$pointer->フォント}}" data-prop="font" data-pointer_id="{{$pointer->id}}">
+            <input type="hidden" name="page{{$pointer->id}}" value="{{$pointer->ページ}}" data-prop="page" data-pointer_id="{{$pointer->id}}">
             @endforeach
 
             @endforeach

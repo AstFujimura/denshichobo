@@ -1017,7 +1017,9 @@ class FlowController extends Controller
             $parts = explode("_", $order);
             foreach ($parts as $part) {
                 $m_optional = M_optional::find($part);
-                $m_pointers = M_pointer::where('任意項目マスタID', $part)->get();
+                $m_pointers = M_pointer::where('カテゴリマスタID', $id)
+                    ->where('任意項目マスタID', $part)
+                    ->get();
                 if ($m_optional->型 != 4) {
                     $item = [
                         "id" => $part,
@@ -1049,9 +1051,22 @@ class FlowController extends Controller
             $m_category->縦 = 0;
             $m_category->横 = 0;
             $m_category->縦横 = null;
+            $m_category->承認印 = false;
+            $m_category->申請印 = false;
         } else {
             $pointers = $request->pointer_array;
-
+            $approval_stamp = $request->input('approval_stamp');
+            $application_stamp = $request->input('application_stamp');
+            if ($approval_stamp) {
+                $m_category->承認印 = true;
+            } else {
+                $m_category->承認印 = false;
+            }
+            if ($application_stamp) {
+                $m_category->申請印 = true;
+            } else {
+                $m_category->申請印 = false;
+            }
             M_pointer::where("カテゴリマスタID", $category_id)->delete();
             if ($pointers) {
                 foreach ($pointers as $pointer) {
@@ -1100,8 +1115,6 @@ class FlowController extends Controller
                 $m_category->縦 = $width;
                 $m_category->横 = $height;
                 $m_category->縦横 = $p_l;
-
-                
             }
         }
         $m_category->save();
@@ -1794,8 +1807,21 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflowstamp', compact("prefix", "server"));
-   
+        $m_stamp = M_stamp::where('ユーザーID', Auth::id())->first();
+        $m_stamp_chars = "";
+        if ($m_stamp) {
+            $m_stamp->縦横比 = 1 - $m_stamp->縦横比;
+            $m_stamp_chars = M_stamp_char::where('はんこマスタID', $m_stamp->id)->get();
+            $str = "";
+            $length = 0;
+            foreach ($m_stamp_chars as $m_stamp_char) {
+                $str = $str . $m_stamp_char->文字;
+                $length = $length + 1;
+            }
+            $m_stamp->文字 = $str;
+            $m_stamp->文字数 = $length;
+        }
+        return view('flow.workflowstamp', compact("prefix", "server", "m_stamp", "m_stamp_chars"));
     }
     public function workflowstamppost(Request $request)
     {
@@ -1804,21 +1830,46 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        dd($request->all());
+        // dd($request->all());
         $letter_length = $request->input("letter_length");
-        $m_stamp = M_stamp::where('ユーザーID',Auth::id())->first();
-        $m_stamp->フォント = $request->input("font");
-        $m_stamp->フォントサイズ = $request->input("font_size");
-        $m_stamp->縦横比 = $request->input("aspect");
-        if ($m_stamp){
-            M_stamp_char::where('はんこマスタID',$m_stamp->id)->delete();
+        $m_stamp = M_stamp::where('ユーザーID', Auth::id())->first();
+
+        $imageData = $request->input('stamp_img');
+        $imageData = str_replace('data:image/png;base64,', '', $imageData);
+        $imageData = str_replace(' ', '+', $imageData);
+        // Base64デコード
+        $imageBinaryData = base64_decode($imageData);
+        $imagename = "test100.png";
+        $imagepath = Config::get('custom.file_upload_path') . '\\' . $imagename;
+        file_put_contents($imagepath, $imageBinaryData);
+
+        if ($m_stamp) {
+            $m_stamp->フォント = $request->input("font");
+            $m_stamp->フォントサイズ = $request->input("font_size");
+            $m_stamp->縦横比 = $request->input("aspect");
+            $m_stamp->save();
+            M_stamp_char::where('はんこマスタID', $m_stamp->id)->delete();
+            $m_stamp_id = $m_stamp->id;
+        } else {
+            $new_m_stamp = new M_stamp();
+            $new_m_stamp->ユーザーID = Auth::id();
+            $new_m_stamp->フォント = $request->input("font");
+            $new_m_stamp->フォントサイズ = $request->input("font_size");
+            $new_m_stamp->縦横比 = $request->input("aspect");
+            $new_m_stamp->save();
+            $m_stamp_id = $new_m_stamp->id;
         }
 
-        for ($i = 0; $i < $letter_length ; $i++) {
-
+        for ($i = 0; $i < $letter_length; $i++) {
+            $new_m_stamp_char = new M_stamp_char();
+            $new_m_stamp_char->はんこマスタID = $m_stamp_id;
+            $new_m_stamp_char->文字 = $request->input('char' . $i);
+            $new_m_stamp_char->top = $request->input('y' . $i);
+            $new_m_stamp_char->left = $request->input('x' . $i);
+            $new_m_stamp_char->文字番号 = $i;
+            $new_m_stamp_char->save();
         }
         return redirect()->route('workflow');
-   
     }
     public function flowimgget($id)
     {

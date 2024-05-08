@@ -1602,11 +1602,13 @@ $(document).ready(function () {
 
 
   // ----------印鑑設定-------------------
-  var fonturl = $('#font').val()
+  if ($('#stamp_setting').length != 0) {
 
-  // var font = new FontFace('HGR', 'url(' + fonturl + ')')
-  // font.load().then(function (loadedFont) {
-  //   document.fonts.add(loadedFont);
+    var fonturl = $('#font').val()
+
+    // var font = new FontFace('HGR', 'url(' + fonturl + ')')
+    // font.load().then(function (loadedFont) {
+    //   document.fonts.add(loadedFont);
     var canvas = $("<canvas>").attr("id", "stamp_canvas").attr("class", "stamp_canvas").attr("width", 400).attr("height", 400);
     var context = canvas[0].getContext("2d"); // 2Dコンテキストを取得
     var centerX = canvas[0].width / 2; // 中心のX座標
@@ -1640,29 +1642,35 @@ $(document).ready(function () {
     // link.href = imageData; // 画像データをリンク先に設定
     // link.click(); // リンクをクリックしてダウンロードを開始
 
-  
-  $('.flow_stamp_bold_button').on('click', function () {
 
-  })
-
-  $('.flow_stamp_lettter_change_button').on('click', function () {
+    // 画面表示時に入力された文字に関するプロパティとプレビューを作成
     str_container_create()
-
-  })
-  $(document).on("input",'.stamp_slider',function(){
-    stamp_preview_reload()
-  })
-  $('.flow_stamp_font_select').on('change', function () {
+    // その後input情報をもとにプレビューのリロード
     stamp_preview_reload()
 
-  })
-  $("#stamp_regist").on('submit',function(event){
+    $('.flow_stamp_bold_button').on('click', function () {
 
-    event.preventDefault()
-
-    create_stamp_img().then(function(imageData){
-      $("#stamp_img").val(imageData);
-      $("#stamp_regist")[0].submit();
     })
-  })
+
+    $('.flow_stamp_lettter_change_button').on('click', function () {
+      str_container_create()
+
+    })
+    $(document).on("input", '.stamp_slider', function () {
+      stamp_preview_reload()
+    })
+    $('.flow_stamp_font_select').on('change', function () {
+      stamp_preview_reload()
+
+    })
+    $("#stamp_regist").on('submit', function (event) {
+
+      event.preventDefault()
+
+      create_stamp_img().then(function (imageData) {
+        $("#stamp_img").val(imageData);
+        // $("#stamp_regist")[0].submit();
+      })
+    })
+  }
 });

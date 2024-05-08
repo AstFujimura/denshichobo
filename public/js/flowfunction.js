@@ -2059,9 +2059,11 @@ function approval_setting_pdf(prefix, ID) {
     });
   }
   else {
+    var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
     $.ajax({
-      url: prefix + '/workflow/approval/setting/img/' + ID, // データを取得するURLを指定
+      url: prefix + '/workflow/approval/setting/img/' + ID +"?timestamp=" + timestamp, // データを取得するURLを指定
       method: 'GET',
+      cache: false, // キャッシュを無効にする
       xhrFields: {
         responseType: 'blob' // ファイルをBlobとして受け取る
       },
@@ -2151,6 +2153,11 @@ function str_container_create() {
   if (letter_length == $("#letter_length").val()) {
     for (var i = 0; i < letter_length; i++) {
       var currentChar = letter[i];
+      if ($('.stamp_str[data-str_num="' + i + '"]').length == 0){
+        var str_div = $("<div>").attr('class', "stamp_str").attr('data-str_num', i)
+        str_div.text(currentChar)
+        $('.flow_stamp_preview').append(str_div)
+      }
       $('.flow_stamp_right_subtitle[data-str_num="' + i + '"]').text(currentChar)
       $('.flow_stamp_char[data-str_num="' + i + '"]').val(currentChar)
       var str_div = $('.stamp_str[data-str_num="' + i + '"]')
@@ -2226,13 +2233,14 @@ function stamp_preview_reload() {
     // var str = $(this).find('.flow_stamp_right_subtitle').text()
     var x = $(this).find('.x_slider').val()
     var y = $(this).find('.y_slider').val()
+
     var str_div = $('.stamp_str[data-str_num="' + str_id + '"]')
 
     if ($('.flow_stamp_font_select').val() == "毛筆体") {
       var correction = $('.font_size_slider').val() / 100 * 6 + 1
     }
     else {
-      var correction = 0
+      var correction = 5
     }
     var scale = 1 - $('.scale_slider').val()
     $('#aspect').val(scale)
