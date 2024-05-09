@@ -1669,7 +1669,7 @@ $(document).ready(function () {
 
       create_stamp_img().then(function (imageData) {
         $("#stamp_img").val(imageData);
-        // $("#stamp_regist")[0].submit();
+        $("#stamp_regist")[0].submit();
       })
     })
   }

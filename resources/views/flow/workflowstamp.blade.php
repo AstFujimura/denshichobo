@@ -80,9 +80,9 @@
                         縦横比
                     </div>
                     @if ($m_stamp)
-                    <input type="range" min="-1" max="0.8" value="{{$m_stamp->縦横比}}" step="0.01" class="stamp_slider scale_slider">
+                    <input type="range" min="-0.4" max="0.4" value="{{$m_stamp->縦横比}}" step="0.01" class="stamp_slider scale_slider">
                     @else
-                    <input type="range" min="-1" max="0.8" value="0.2" step="0.01" class="stamp_slider scale_slider">
+                    <input type="range" min="-0.4" max="0.4" value="0.2" step="0.01" class="stamp_slider scale_slider">
                     @endif
 
                     <input type="hidden" name="aspect" id="aspect" value="">
