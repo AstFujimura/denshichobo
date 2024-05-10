@@ -211,7 +211,7 @@ Route::prefix($prefix)->group(function () {
             Route::post('/workflow/category/approval/setting', [FlowController::class, 'categoryapprovalsettingpost'])->name('categoryapprovalsettingpost');
             //承認用紙のpdfのapi
             Route::get('/workflow/approval/setting/img/{id}', [FlowController::class, 'approvalsettingpdf'])->name('approvalsettingpdf');
-            
+
 
 
             // ワークフロー申請
@@ -222,6 +222,14 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/choice/{id}', [FlowController::class, 'workflowchoiceget'])->name('workflowchoiceget');
             // ワークフロー経路選択ポスト
             Route::post('/workflow/choice', [FlowController::class, 'workflowchoicepost'])->name('workflowchoicepost');
+
+            // ワークフロー申請印
+            Route::get('/workflow/application/stamp/{id}', [FlowController::class, 'workflowapplicationstampget'])->name('workflowapplicationstampget');
+            // ワークフロー申請印ポスト
+            Route::post('/workflow/application/stamp', [FlowController::class, 'workflowapplicationstamppost'])->name('workflowapplicationstamppost');
+
+
+
             // ワークフロー確認画面
             Route::get('/workflow/confirm/{id}', [FlowController::class, 'workflowconfirmget'])->name('workflowconfirmget');
             // ワークフロー最終申請
@@ -236,8 +244,9 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/stamp', [FlowController::class, 'workflowstampget'])->name('workflowstampget');
             // 印鑑設定ポスト
             Route::post('/workflow/stamp', [FlowController::class, 'workflowstamppost'])->name('workflowstamppost');
-
-
+            // 印鑑データを返すAPI
+            Route::get('/workflow/stamp/img/{id}', [FlowController::class, 'workflowstampimgget'])->name('workflowstampimgget');
+            
 
 
             // ワークフローファイル閲覧API

@@ -1543,6 +1543,7 @@ body {
 
 .flow_confirm_element {
     width: 475px;
+    display: flex;
 }
 
 /* 申請一覧 */
@@ -2676,7 +2677,31 @@ body {
     overflow-y: auto;
 
 }
-
+.preview_property_container{
+    height: 49px;
+    width: 97%;
+    position: fixed;
+    background: whitesmoke;
+    z-index: 2;
+    box-shadow: 0px 3px 4px 0 #bdbaba;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.font_size_content{
+display: flex;
+align-items: center;
+}
+.property_title{
+    font-weight: bold;
+    margin-right: 10px;
+}
+.font_size_input{
+    height: 30px;
+    width: 50px;
+    border: solid 1px gray;
+    border-radius: 3px;
+}
 .preview_main_container {
     position: relative;
     flex-grow: 1;
@@ -2705,7 +2730,7 @@ body {
 }
 
 .preview_control_items {
-    margin-top: 10px;
+    margin-top: 40px;
     max-height: 60vh;
     overflow-y: auto;
 }
@@ -2787,15 +2812,17 @@ body {
     margin-inline: 7px;
 }
 
-.stamp_check_container{
+.stamp_check_container {
     background: #dee7c3;
     padding-block: 10px;
 }
-.stamp_check_content{
+
+.stamp_check_content {
     display: flex;
     margin-left: 40px;
     margin-block: 10px;
 }
+
 .preview_control_button_container {
     background: #eef8ff;
     flex-grow: 1;
@@ -2822,7 +2849,7 @@ body {
 
 .canvas_container {
     position: relative;
-    margin-top: 30px;
+    margin-top: 55px;
     margin-inline: auto;
     width: auto;
     display: table;
@@ -2993,7 +3020,8 @@ body {
     margin-top: 10px;
     margin-left: 30px;
 }
-.stamp_str{
+
+.stamp_str {
     position: absolute;
 }
 
@@ -3008,4 +3036,48 @@ body {
     left: 30;
     line-height: 240px;
     height: 240px;
+}
+
+/* 申請印 */
+.application_stamp_container {
+    background: #d7d7d7;
+    width: 97%;
+    height: 100%;
+    z-index: 100;
+    top: 100px;
+    position: absolute;
+    display: flex;
+}
+
+.application_stamp_button_content {
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.application_stamp_button_container {
+    background: white;
+}
+
+.application_stamp_back_button {
+    margin-left: 20px;
+    width: 100px;
+    padding-left: 0;
+}
+
+.application_stamp_submit_button {
+    margin-left: 20px;
+    width: 150px;
+    height: 50px;
+    margin-top: 10px;
+}
+
+.origin {
+    display: none;
+}
+
+.application_stamp {
+    position: absolute;
+    width: 36px;
 }

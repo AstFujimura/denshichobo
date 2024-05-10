@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('フォントサイズ')->default(16);
             $table->string('フォント')->default("毛筆体");
             $table->decimal('縦横比',10,2)->default(0.8);
+            $table->string('ファイルパス');
 
             $table->timestamps();
         });

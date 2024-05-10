@@ -50,8 +50,20 @@
             </div>
         </div>
         <div class="approval_setting_detail_container display_none">
+            <div class="preview_property_container">
+                <div class="font_size_content">
+                    <div class="property_title">
+                        フォントサイズ
+                    </div>
+                    <input type="number" id="font_size_input" class="font_size_input">
+                    px
+                </div>
+
+            </div>
             <div class="preview_pages_container"></div>
-            <div class="preview_main_container"></div>
+            <div class="preview_main_container">
+
+            </div>
             <div class="preview_control_container">
                 <div class="preview_control_items">
                     @foreach ($m_optionals as $m_optional)

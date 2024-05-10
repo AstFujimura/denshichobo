@@ -912,9 +912,9 @@ $(document).ready(function () {
     // 空白のセルの値を指定
     const gapcellwidth = 10
     const gapcellheight = 10
-    var flow_id = $("#flowid").val()
+    var m_flow_id = $("#m_flow_id").val()
     $.ajax({
-      url: prefix + '/viewonlyworkflow/' + flow_id,
+      url: prefix + '/viewonlyworkflow/' + m_flow_id,
       type: 'get',
       dataType: 'json',
       success: function (response) {
@@ -932,7 +932,7 @@ $(document).ready(function () {
     })
 
     $.ajax({
-      url: prefix + '/viewonlymetaworkflow/' + flow_id,
+      url: prefix + '/viewonlymetaworkflow/' + m_flow_id,
       type: 'get',
       dataType: 'json',
       success: function (response) {
@@ -945,11 +945,131 @@ $(document).ready(function () {
       }
 
     })
+
+    // プレビューボタンを押したとき
+    $(".approve_preview_button").on("click", function () {
+      $('.approve_preview_container').show()
+      $('.approve_gray').show()
+      var ID = $(this).data("id");
+      preview_img_get(prefix, ID)
+
+    })
   }
 
   $('.condition_accordion_trigger').on('click', function () {
     $('.condition_accordion').toggleClass('condition_accordion_close')
   })
+
+
+  // ----------申請印押印-------------------
+  if ($('#applicationstamp').length != 0) {
+
+
+    var ID = $('#category_id').val()
+    approval_setting_pdf(prefix, ID)
+    var user_id = $('#user_id').val()
+    if ($('#server').val() == "cloud") {
+      $.ajax({
+        url: prefix + '/workflow/stamp/img/' + user_id, // データを取得するURLを指定
+        method: 'GET',
+        cache: false, // キャッシュを無効にする
+        dataType: "json",
+        success: function (response) {
+          if (response.Type.startsWith('image/')) {
+            var img = $('<img>');
+            img.attr('src', response.path);
+            img.attr('width', '100%');
+            img.attr('height', '600px');
+            img.addClass('origin');
+
+            $('#inputs').append(img);
+          }
+        }
+      });
+    }
+    else {
+      $.ajax({
+        url: prefix + '/workflow/stamp/img/' + user_id, // データを取得するURLを指定
+        method: 'GET',
+        xhrFields: {
+          responseType: 'blob' // ファイルをBlobとして受け取る
+        },
+        success: function (response) {
+          // 取得したファイルデータを使ってPDFを表示
+          var Url = URL.createObjectURL(response);
+          if (response.type.startsWith('image/')) {
+            var img = $('<img>');
+            img.attr('src', Url);
+            // img.attr('height', '600px');
+            img.addClass('origin');
+
+            $('#inputs').append(img);
+          }
+
+
+        },
+        error: function (xhr, status, error) {
+          console.error(error); // エラー処理
+        }
+      });
+
+    }
+
+
+    var dragging = false; // ドラッグ中かどうかのフラグ
+    var offsetX, offsetY; // ドラッグ開始位置と要素の左上端との差
+    var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
+    var clicked = false
+
+    $(document).on('click', '.canvas_container', function (event) {
+      if (!clicked) {
+        var position = $(this);
+        offsetX = position.offset().left
+        offsetY = position.offset().top
+        nowX = event.pageX - offsetX - 18
+        nowY = event.pageY - offsetY - 18
+
+        var clonedElement = $('.origin').first().clone()
+        clonedElement.addClass('application_stamp')
+        clonedElement.removeClass('origin')
+        clonedElement.css({ left: nowX, top: nowY });
+        $(this).append(clonedElement)
+        clicked = true
+        $('#left').val(nowX)
+        $('#top').val(nowY)
+      }
+
+    })
+    // 要素をクリックしたときの処理
+    $(document).on("mousedown", ".application_stamp", function (event) {
+      event.preventDefault(); // ブラウザのデフォルトのドラッグ動作を停止
+      dragging = true; // ドラッグ開始
+      $(this).data("dragging", true)
+      $(this).attr("data-dragging", true)
+    })
+    // ドラッグ中の処理
+    $(document).on("mousemove", function (event) {
+      if (dragging) {
+        // ドラッグ中の座標を取得し、要素を移動
+        nowX = event.pageX - offsetX - 18;
+        nowY = event.pageY - offsetY - 18;
+        $(".application_stamp").css({ left: nowX, top: nowY });
+      }
+    })
+    // ドラッグ終了時の処理
+    $(document).on("mouseup", function () {
+      if (dragging) {
+        dragging = false; // ドラッグ終了
+        $(".application_stamp").data("dragging", false)
+        $(".application_stamp").attr("data-dragging", false)
+        $(".application_stamp").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
+        $('#left').val(nowX)
+        $('#top').val(nowY)
+      }
+    });
+
+
+  }
 
 
 
@@ -974,9 +1094,9 @@ $(document).ready(function () {
     // 空白のセルの値を指定
     const gapcellwidth = 10
     const gapcellheight = 10
-    var flow_id = $("#flowid").val()
+    var m_flow_id = $("#m_flow_id").val()
     $.ajax({
-      url: prefix + '/viewonlyworkflow/' + flow_id,
+      url: prefix + '/viewonlyworkflow/' + m_flow_id,
       type: 'get',
       dataType: 'json',
       success: function (response) {
@@ -1568,7 +1688,6 @@ $(document).ready(function () {
       var position = element.position();
       offsetX = event.pageX - position.left;
       offsetY = event.pageY - position.top;
-
 
       // ドラッグ中に選択された要素の振る舞いを変更する場合は、ここにコードを追加
 

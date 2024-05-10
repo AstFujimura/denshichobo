@@ -1205,6 +1205,8 @@ class FlowController extends Controller
         // アンダースコア（_）をデリミタとして文字列を分割
         $parts = explode("_", $order);
 
+
+
         // partsの一つ目の要素が標題であるためそれを格納
         $new_t_flow->標題 = $request->input("item" . $parts[0]);
         $new_t_flow->save();
@@ -1263,6 +1265,20 @@ class FlowController extends Controller
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
+
+        // 申請確認画面から戻る場合もあるためワークフロー経路選択時に
+        // 申請印の有無のステータスを振る
+        $t_flow = T_flow::find($id);
+        $m_flow = M_flow::find($t_flow->フローマスタID);
+        $m_category = M_category::find($m_flow->カテゴリマスタID);
+        // 申請印が必須の場合はステータスを-1に(申請印未押印)
+        if ($m_category->申請印) {
+            $t_flow->ステータス = -1;
+            $t_flow->save();
+        }
+
+
+
         $t_optional = T_optional::where("金額条件", true)->first();
         $groupIds = Group_User::where('ユーザーID', Auth::id())->pluck('グループID')->toArray();
         $m_flows = DB::table('m_flows')
@@ -1289,11 +1305,75 @@ class FlowController extends Controller
         if ($t_flow) {
             $t_flow->フローマスタID = $m_flow_id;
             $t_flow->save();
-            return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
+            if ($t_flow->ステータス == -1) {
+                return redirect()->route('workflowapplicationstampget', ["id" => $t_flow_id]);
+            } else if ($t_flow->ステータス == 0) {
+                return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
+            } else {
+                return redirect()->route('workflowerrorGet', ["code" => "A546815"]);;
+            }
         } else {
             return redirect()->route('workflowerrorGet', ["code" => "A546815"]);;
         }
     }
+
+    // idはt_flowのid
+    public function workflowapplicationstampget($id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $t_flow = T_flow::find($id);
+        $category_id = M_flow::find($t_flow->フローマスタID)->カテゴリマスタID;
+        $user_id = Auth::id();
+        return view('flow.workflowapplicationstamp', compact("prefix", "server", "category_id", "user_id", "t_flow"));
+    }
+    public function workflowapplicationstamppost(Request $request)
+    {
+        // dd($request->all());
+        // TCPDFでPDFを作成し、画像を追加する
+        $pdf = new Fpdi();
+        $m_category = M_category::find($request->input("category_id"));
+        $pdf->setPrintHeader(false);
+        $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+
+        $top = $request->input("top");
+        $left = $request->input("left");
+
+        $m_stamp = M_stamp::where('ユーザーID', Auth::id())->first();
+        $imgpath = Config::get('custom.file_upload_path') . '\\' . $m_stamp->ファイルパス;
+
+
+        $pdfpath = Config::get('custom.file_upload_path') . '\\' . $m_category->ファイルパス;
+        // 入力されたPDFデータを新しいPDFに結合
+        $pdf->setSourceFile($pdfpath);
+        $tplIdx = $pdf->importPage(1);
+        // $size = $pdf->getTemplateSize($tplIdx);
+        $pdf->useTemplate($tplIdx); // サイズ調整が必要かもしれません
+
+        $pdf->Image($imgpath, $left * 0.35264, $top * 0.35264, 9.5, 0, '', '', '', false);
+
+        $now = Carbon::now();
+        $currentTime = $now->format('YmdHis');
+        $randomID = $this->generateRandomCode();
+
+        $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
+
+        $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
+        $pdfcontent = $pdf->Output('', 'S');
+        file_put_contents($new_pdf_path, $pdfcontent);
+
+        $t_flow_id = $request->input("t_flow_id");
+        $t_flow = T_flow::find($t_flow_id);
+        $t_flow->ステータス = 0;
+        $t_flow->申請ファイルパス = $new_pdf_name;
+        $t_flow->save();
+
+        return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
+    }
+
 
     public function workflowconfirmget($id)
     {
@@ -1303,9 +1383,9 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         $t_optionals = $this->application_items($id);
-        $flowid = T_flow::find($id)->フローマスタID;
+        $t_flow = T_flow::find($id);
 
-        return view('flow.workflowconfirm', compact("prefix", "server", "id", "flowid", "t_optionals"));
+        return view('flow.workflowconfirm', compact("prefix", "server", "id", "t_flow", "t_optionals"));
     }
     // フローテーブルを引数として項目の情報のレコードを返す
     private function application_items($id)
@@ -1332,8 +1412,8 @@ class FlowController extends Controller
     }
     public function workflowconfirmpost(Request $request)
     {
-        $flow_id = $request->input("id");
-        $t_flow = T_flow::find($flow_id);
+        $t_flow_id = $request->input("t_flow_id");
+        $t_flow = T_flow::find($t_flow_id);
         $m_flow = M_flow::find($t_flow->フローマスタID);
 
         // フローのトランザクションテーブルを作成
@@ -1839,7 +1919,7 @@ class FlowController extends Controller
         $imageData = str_replace(' ', '+', $imageData);
         // Base64デコード
         $imageBinaryData = base64_decode($imageData);
-        $imagename = "test100.png";
+        $imagename = "stamp_" . Auth::id() . ".png";
         $imagepath = Config::get('custom.file_upload_path') . '\\' . $imagename;
         file_put_contents($imagepath, $imageBinaryData);
 
@@ -1847,6 +1927,7 @@ class FlowController extends Controller
             $m_stamp->フォント = $request->input("font");
             $m_stamp->フォントサイズ = $request->input("font_size");
             $m_stamp->縦横比 = $request->input("aspect");
+            $m_stamp->ファイルパス = $imagename;
             $m_stamp->save();
             M_stamp_char::where('はんこマスタID', $m_stamp->id)->delete();
             $m_stamp_id = $m_stamp->id;
@@ -1856,6 +1937,7 @@ class FlowController extends Controller
             $new_m_stamp->フォント = $request->input("font");
             $new_m_stamp->フォントサイズ = $request->input("font_size");
             $new_m_stamp->縦横比 = $request->input("aspect");
+            $new_m_stamp->ファイルパス = $imagename;
             $new_m_stamp->save();
             $m_stamp_id = $new_m_stamp->id;
         }
@@ -1871,14 +1953,61 @@ class FlowController extends Controller
         }
         return redirect()->route('workflow');
     }
+
+    public function workflowstampimgget($id)
+    {
+        $M_stamp = M_stamp::where("ユーザーID", $id)->first();
+
+
+
+        $filepath = $M_stamp->ファイルパス;
+
+
+        if (config('prefix.server') == "cloud") {
+            // S3バケットの情報
+            $bucket = 'astdocs.com';
+            $key = $filepath;
+            $expiration = '+1 hour'; // 有効期限
+
+            $s3Client = new S3Client([
+                'region' => 'ap-northeast-1',
+                'version' => 'latest',
+            ]);
+
+            $command = $s3Client->getCommand('GetObject', [
+                'Bucket' => $bucket,
+                'Key' => $key
+            ]);
+            // 署名付きURLを生成
+            $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+        } else {
+            $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
+        }
+
+
+        // 画像形式の場合は画像を表示
+        if (config('prefix.server') == "cloud") {
+            return response()->json(['path' => $path, 'Type' => 'image/png']);
+        } else {
+            return response()->file($path, ['Content-Type' => 'image/png']);
+        }
+    }
+
+
     public function flowimgget($id)
     {
-        $img = T_optional::find($id);
-
-
-
-        $filepath = $img->ファイルパス;
-        $extension = $img->ファイル形式;
+        // 承認用紙の場合はt_flowのIDを負の数でAPIをたたくため
+        if ($id < 0) {
+            $t_flow_id = $id * (-1);
+            $img = T_flow::find($t_flow_id);
+            $filepath = str_replace(".pdf", "", $img->申請ファイルパス);
+            $extension = "pdf";
+        }
+         else {
+            $img = T_optional::find($id);
+            $filepath = $img->ファイルパス;
+            $extension = $img->ファイル形式;
+        }
 
 
         if (config('prefix.server') == "cloud") {

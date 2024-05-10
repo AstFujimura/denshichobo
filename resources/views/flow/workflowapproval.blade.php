@@ -163,8 +163,8 @@
 
         </div>
     </div>
-    <input type="hidden" value="{{$t_flow->id}}" id="t_flowid">
-    <input type="hidden" value="{{$t_flow->フローマスタID}}" id="flowid">
+    <!-- <input type="hidden" value="{{$t_flow->id}}" id="t_flowid"> -->
+    <input type="hidden" value="{{$t_flow->フローマスタID}}" id="m_flow_id">
     <div class="element_input">
         <input type="hidden" id="maxgrid_column">
         <input type="hidden" id="maxgrid_row">

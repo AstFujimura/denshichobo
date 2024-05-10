@@ -11,14 +11,16 @@
 </div>
 
 
-
+<div class="approve_gray"></div>
+<div class="approve_preview_container"></div>
 @section('main')
 <div class="MainElement">
 
     <h2 class="pagetitle" id="flow_confirm"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">確認画面</h2>
     <form action="{{route('workflowconfirmpost')}}" method="post" id="flow_application_choice_form" class="flow_confirm_form" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" value="{{$flowid}}" name="id" id="flowid">
+        <input type="hidden" value="{{$t_flow->フローマスタID}}" name="m_flow_id" id="m_flow_id">
+        <input type="hidden" value="{{$t_flow->id}}" name="t_flow_id" id="t_flow_id">
 
         <a href="{{route('workflowchoiceget',['id' => $id])}}" class="back_button flow_application_back_button">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
@@ -43,13 +45,26 @@
                 </div>
                 <div class="flow_confirm_element">
                     @if ($t_optional->値 == "file_regist_2545198")
+                    <div class="approve_preview_button" data-id="{{$t_optional->id}}">プレビュー</div>
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$t_optional->id}}">
                     @else
                     {{$t_optional->値}}
                     @endif
                 </div>
             </div>
             @endforeach
-
+            <div class="view_application_title">
+                承認用紙
+            </div>
+            <div class="flow_confirm_content">
+                <div class="flow_confirm_label">
+                    承認用紙
+                </div>
+                <div class="flow_confirm_element">
+                    <div class="approve_preview_button" data-id="-{{$t_flow->id}}">プレビュー</div>
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
+                </div>
+            </div>
         </div>
         <div class="flow_confirm_view_container">
 
