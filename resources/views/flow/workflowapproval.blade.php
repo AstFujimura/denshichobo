@@ -15,7 +15,7 @@
     <div class="flow_view_container">
         <div class="flow_application_button_content">
             <a href="{{route('workflowapprovalview')}}" class="back_button " id="flow_next_button">
-               承認一覧へもどる
+                承認一覧へもどる
             </a>
         </div>
 
@@ -52,6 +52,18 @@
                             </div>
                         </div>
                         @endforeach
+                        <div class="approval_sub_title">
+                            承認用紙
+                        </div>
+                        <div class="approve_content">
+                            <div class="approve_content_title">
+                                承認用紙
+                            </div>
+                            <div class="approve_content_element">
+                                <div class="approve_preview_button" data-id="-{{$t_flow->id}}">プレビュー</div>
+                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="approve_authorizer_container">
@@ -69,9 +81,15 @@
                                 <div class="rejectbutton" id="rejectbutton">
                                     却下する
                                 </div>
+                                @if ($t_flow->承認印)
+                                <div class="approvalbutton" id="stamp_approvalbutton">
+                                    承認印を押す
+                                </div>
+                                @else
                                 <div class="approvalbutton" id="approvalbutton">
                                     承認する
                                 </div>
+                                @endif
                             </div>
                             <input type="hidden" name="approval_id" value="{{$t_approval->id}}">
                             <input type="hidden" name="result" id="result" value="">

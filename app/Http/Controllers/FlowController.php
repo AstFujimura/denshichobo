@@ -1193,6 +1193,7 @@ class FlowController extends Controller
         // フローテーブルを作成 (ステータスはデフォルトで0→下書き状態)
         $new_t_flow = new T_flow();
         $new_t_flow->申請者ID = Auth::id();
+        $new_t_flow->カテゴリマスタID = $request->input("category");
         $pastID = $this->generateRandomCode();
         $new_t_flow->過去データID = $pastID;
 
@@ -1200,6 +1201,10 @@ class FlowController extends Controller
 
         $category_id = $request->input('category');
         $m_category = M_category::find($category_id);
+
+        if ($m_category->承認印){
+            $new_t_flow->承認印 = true;
+        }
         // 項目順を取得
         $order = $m_category->項目順;
         // アンダースコア（_）をデリミタとして文字列を分割
@@ -1209,6 +1214,42 @@ class FlowController extends Controller
 
         // partsの一つ目の要素が標題であるためそれを格納
         $new_t_flow->標題 = $request->input("item" . $parts[0]);
+
+
+        // 任意項目の画像をpdfに挿入する
+        $pdf = new Fpdi();
+        $pdf->setPrintHeader(false);
+        $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+        $pdfpath = Config::get('custom.file_upload_path') . '\\' . $m_category->ファイルパス;
+        // 入力されたPDFデータを新しいPDFに結合
+        $pdf->setSourceFile($pdfpath);
+        $tplIdx = $pdf->importPage(1);
+        // $size = $pdf->getTemplateSize($tplIdx);
+        $pdf->useTemplate($tplIdx); // サイズ調整が必要かもしれません
+
+        // -----------------------------
+
+        // 画像挿入コードを後でかく
+
+        // -----------------------------
+
+        $now = Carbon::now();
+        $currentTime = $now->format('YmdHis');
+        $randomID = $this->generateRandomCode();
+
+        $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
+
+        $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
+        $pdfcontent = $pdf->Output('', 'S');
+        file_put_contents($new_pdf_path, $pdfcontent);
+
+
+        $new_t_flow->申請印なしファイルパス = $new_pdf_name;
+        $new_t_flow->save();
+
+
+
+
         $new_t_flow->save();
         foreach ($parts as $part) {
             $m_optional = M_optional::find($part);
@@ -1269,8 +1310,7 @@ class FlowController extends Controller
         // 申請確認画面から戻る場合もあるためワークフロー経路選択時に
         // 申請印の有無のステータスを振る
         $t_flow = T_flow::find($id);
-        $m_flow = M_flow::find($t_flow->フローマスタID);
-        $m_category = M_category::find($m_flow->カテゴリマスタID);
+        $m_category = M_category::find($t_flow->カテゴリマスタID);
         // 申請印が必須の場合はステータスを-1に(申請印未押印)
         if ($m_category->申請印) {
             $t_flow->ステータス = -1;
@@ -1332,6 +1372,8 @@ class FlowController extends Controller
     }
     public function workflowapplicationstamppost(Request $request)
     {
+        $t_flow_id = $request->input("t_flow_id");
+        $t_flow = T_flow::find($t_flow_id);
         // dd($request->all());
         // TCPDFでPDFを作成し、画像を追加する
         $pdf = new Fpdi();
@@ -1346,7 +1388,7 @@ class FlowController extends Controller
         $imgpath = Config::get('custom.file_upload_path') . '\\' . $m_stamp->ファイルパス;
 
 
-        $pdfpath = Config::get('custom.file_upload_path') . '\\' . $m_category->ファイルパス;
+        $pdfpath = Config::get('custom.file_upload_path') . '\\' . $t_flow->申請印なしファイルパス;
         // 入力されたPDFデータを新しいPDFに結合
         $pdf->setSourceFile($pdfpath);
         $tplIdx = $pdf->importPage(1);
@@ -1365,8 +1407,7 @@ class FlowController extends Controller
         $pdfcontent = $pdf->Output('', 'S');
         file_put_contents($new_pdf_path, $pdfcontent);
 
-        $t_flow_id = $request->input("t_flow_id");
-        $t_flow = T_flow::find($t_flow_id);
+
         $t_flow->ステータス = 0;
         $t_flow->申請ファイルパス = $new_pdf_name;
         $t_flow->save();
@@ -1561,7 +1602,7 @@ class FlowController extends Controller
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where('ユーザーID', Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
-            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
             ->where('users.id', 'like', $user ? $user : "%%")
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
@@ -1576,7 +1617,7 @@ class FlowController extends Controller
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where('ユーザーID', Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
-            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
             ->where('users.id', 'like', $user ? $user : "%%")
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
@@ -1590,7 +1631,7 @@ class FlowController extends Controller
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where('ユーザーID', Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
-            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
             ->where('users.id', 'like', $user ? $user : "%%")
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
@@ -1640,11 +1681,16 @@ class FlowController extends Controller
     }
     public function approvalsettingpdf($id)
     {
-        $img = M_category::find($id);
+        if ($id < 0){
+            $t_flow_id = $id * (-1);
+            $t_flow = T_flow::find($t_flow_id);
+            $filepath = $t_flow->申請印なしファイルパス;
+        }
+        else {
+            $img = M_category::find($id);
+            $filepath = $img->ファイルパス;
+        }
 
-
-
-        $filepath = $img->ファイルパス;
 
 
         if (config('prefix.server') == "cloud") {
@@ -1786,7 +1832,7 @@ class FlowController extends Controller
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where("申請者ID", Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
-            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
             ->where('users.id', 'like', $user ? $user : "%%")
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
@@ -1809,7 +1855,7 @@ class FlowController extends Controller
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where("申請者ID", Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
-            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
             ->where('users.id', 'like', $user ? $user : "%%")
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
@@ -1824,7 +1870,7 @@ class FlowController extends Controller
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
             ->where("申請者ID", Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
-            ->where('カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
             ->where('users.id', 'like', $user ? $user : "%%")
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
@@ -2002,8 +2048,7 @@ class FlowController extends Controller
             $img = T_flow::find($t_flow_id);
             $filepath = str_replace(".pdf", "", $img->申請ファイルパス);
             $extension = "pdf";
-        }
-         else {
+        } else {
             $img = T_optional::find($id);
             $filepath = $img->ファイルパス;
             $extension = $img->ファイル形式;

@@ -2622,7 +2622,7 @@ body {
     align-items: center;
 }
 
-.approcal_setting_detail_button {
+.approval_setting_detail_button {
     border: solid 1px rgb(39, 150, 253);
     color: rgb(39, 150, 253);
     border-radius: 5px;
@@ -2642,7 +2642,7 @@ body {
 }
 
 
-.approcal_setting_detail_button:hover {
+.approval_setting_detail_button:hover {
     background: rgb(39, 150, 253);
     color: white;
 }
@@ -2677,7 +2677,8 @@ body {
     overflow-y: auto;
 
 }
-.preview_property_container{
+
+.preview_property_container {
     height: 49px;
     width: 97%;
     position: fixed;
@@ -2687,21 +2688,33 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    top: 80px;
+    opacity: 0;
+    transition: all 0.2s;
 }
-.font_size_content{
-display: flex;
-align-items: center;
+.preview_property_container_open {
+    top: 112px;
+    opacity: 1;
+    transition: all 0.2s;
 }
-.property_title{
+
+.font_size_content {
+    display: flex;
+    align-items: center;
+}
+
+.property_title {
     font-weight: bold;
     margin-right: 10px;
 }
-.font_size_input{
+
+.font_size_input {
     height: 30px;
     width: 50px;
     border: solid 1px gray;
     border-radius: 3px;
 }
+
 .preview_main_container {
     position: relative;
     flex-grow: 1;
@@ -2720,6 +2733,56 @@ align-items: center;
     border: solid 1px gainsboro;
 }
 
+.focus_line {
+    display: none;
+    position: absolute;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    border: solid 1px rgb(147, 198, 228);
+    top: -6px;
+    left: -6px;
+}
+
+.focus_status {
+    display: block !important; 
+}
+
+.focus_point {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: #60a2e5;
+    border: solid 1px white;
+    position: absolute;
+}
+
+.upper_right {
+    top: -5px;
+    right: -5px;
+    cursor: nesw-resize;
+
+}
+
+.upper_left {
+    top: -5px;
+    left: -5px;
+    cursor: nwse-resize;
+
+}
+
+.lower_right {
+    bottom: -5px;
+    right: -5px;
+    cursor: nwse-resize;
+
+}
+
+.lower_left {
+    bottom: -5px;
+    left: -5px;
+    cursor: nesw-resize;
+
+}
 
 .preview_control_container {
     width: 300px;

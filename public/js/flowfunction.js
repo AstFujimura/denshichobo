@@ -1864,11 +1864,14 @@ function check_reset(element) {
 // プレビューボタンを押したときにそのイメージを取得する
 // IDにはt_optionalのidが入る
 function preview_img_get(prefix, ID) {
+  var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
+  
   if ($('#server').val() == "cloud") {
     $.ajax({
-      url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
+      url: prefix + '/workflow/img/' + ID+ "?timestamp=" + timestamp, // データを取得するURLを指定
       method: 'GET',
       dataType: "json",
+      cache: false, // キャッシュを無効にする
       success: function (response) {
         if (response.Type === 'application/pdf') {
           var embed = $('<embed>');
@@ -1894,8 +1897,9 @@ function preview_img_get(prefix, ID) {
   }
   else {
     $.ajax({
-      url: prefix + '/workflow/img/' + ID, // データを取得するURLを指定
+      url: prefix + '/workflow/img/' + ID+ "?timestamp=" + timestamp, // データを取得するURLを指定
       method: 'GET',
+      cache: false, // キャッシュを無効にする
       xhrFields: {
         responseType: 'blob' // ファイルをBlobとして受け取る
       },
@@ -2061,7 +2065,7 @@ function approval_setting_pdf(prefix, ID) {
   else {
     var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
     $.ajax({
-      url: prefix + '/workflow/approval/setting/img/' + ID +"?timestamp=" + timestamp, // データを取得するURLを指定
+      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp, // データを取得するURLを指定
       method: 'GET',
       cache: false, // キャッシュを無効にする
       xhrFields: {
@@ -2095,17 +2099,12 @@ function pointer_create(pointer_num, pointertext, page) {
   if ($('.optional_item[data-pointer_id="' + pointer_num + '"]').length == 0) {
 
 
-    var item_element = $("<canvas class='optional_item' data-pointer_id='" + pointer_num + "'></canvas>");
+    var item_element = $("<div class='optional_item' data-pointer_id='" + pointer_num + "'></div>");
     // Canvasの幅と高さを設定
     item_element.attr('width', 100);
     item_element.attr('height', 30);
-    var ctx = item_element.get(0).getContext('2d')
-    ctx.width = 1000;
-    ctx.height = 300;
 
-
-    ctx.font = $('[name="font_size' + pointer_num + '"]').val() + 'pt gosic';
-    ctx.fillText(pointertext, 0, 20)
+    item_element.text(pointertext)
     // fillTextWithWrap(ctx, pointertext, 0, 20, 200, 20); // テキストを改行しながら描画
 
     item_element.css({
@@ -2113,9 +2112,47 @@ function pointer_create(pointer_num, pointertext, page) {
       top: $('[name="top' + pointer_num + '"]').val() + "px",
       left: $('[name="left' + pointer_num + '"]').val() + "px",
     });
+    var focus_element = $("<div class='focus_line'></div>")
+    var upper_right = $('<div class="focus_point upper_right"></div>')
+    var upper_left = $('<div class="focus_point upper_left"></div>')
+    var lower_right = $('<div class="focus_point lower_right"></div>')
+    var lower_left = $('<div class="focus_point lower_left"></div>')
+    focus_element.append(upper_right)
+    focus_element.append(upper_left)
+    focus_element.append(lower_right)
+    focus_element.append(lower_left)
+
+    item_element.append(focus_element)
     $(".canvas_container[data-page='" + page + "']").append(item_element);
+    focus_optional_item(item_element)
   }
 }
+
+function focus_optional_item(optional_item) {
+  focus_cancel()
+  optional_item.find(".focus_line").addClass('focus_status')
+  $('.preview_property_container').addClass('preview_property_container_open')
+  font_size_reroad(optional_item.data('pointer_id'))
+}
+function focus_cancel() {
+  $('.focus_line').removeClass('focus_status')
+  $('.preview_property_container').removeClass('preview_property_container_open')
+}
+function change_font_size() {
+  var font_size = $('#font_size_input').val()
+  var focus_optional_item = $('.focus_status').parent()
+  var pointer_id = focus_optional_item.data('pointer_id')
+  focus_optional_item.css({
+    "font-size":font_size
+  })
+  $('[name="font_size' + pointer_id + '"]').val(font_size)
+}
+function font_size_reroad(pointer_id) {
+  var font_size = $('[name="font_size' + pointer_id + '"]').val()
+  $('#font_size_input').val(font_size)
+}
+
+
 
 function approval_setting_submit_check() {
   var error = false
@@ -2153,7 +2190,7 @@ function str_container_create() {
   if (letter_length == $("#letter_length").val()) {
     for (var i = 0; i < letter_length; i++) {
       var currentChar = letter[i];
-      if ($('.stamp_str[data-str_num="' + i + '"]').length == 0){
+      if ($('.stamp_str[data-str_num="' + i + '"]').length == 0) {
         var str_div = $("<div>").attr('class', "stamp_str").attr('data-str_num', i)
         str_div.text(currentChar)
         $('.flow_stamp_preview').append(str_div)
@@ -2284,7 +2321,7 @@ function create_stamp_img() {
       // Canvasを画像ファイルとして保存
       var imageData = canvas[0].toDataURL("image/png"); // PNG形式で画像データを取得
       resolve(imageData);
-      
+
 
     })
   }).catch(function (error) {

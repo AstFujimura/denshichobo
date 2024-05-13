@@ -965,8 +965,8 @@ $(document).ready(function () {
   if ($('#applicationstamp').length != 0) {
 
 
-    var ID = $('#category_id').val()
-    approval_setting_pdf(prefix, ID)
+    var ID = $('#t_flow_id').val()
+    approval_setting_pdf(prefix, ID * (-1))
     var user_id = $('#user_id').val()
     if ($('#server').val() == "cloud") {
       $.ajax({
@@ -991,6 +991,7 @@ $(document).ready(function () {
       $.ajax({
         url: prefix + '/workflow/stamp/img/' + user_id, // データを取得するURLを指定
         method: 'GET',
+        cache: false, // キャッシュを無効にする
         xhrFields: {
           responseType: 'blob' // ファイルをBlobとして受け取る
         },
@@ -1495,22 +1496,22 @@ $(document).ready(function () {
     $(document).on('change', '#approval_setting_issue', function (event) {
       if ($(this).prop('checked')) {
         $('.approval_setting_droparea').removeClass("display_none");
-        $('.approcal_setting_detail_button').removeClass("display_none");
+        $('.approval_setting_detail_button').removeClass("display_none");
         if ($('#approval_setting_file').prop('files').length == 0) {
-          $('.approcal_setting_detail_button').addClass("disable");
+          $('.approval_setting_detail_button').addClass("disable");
           $('#status').val("error")
         }
       }
       else {
         $('.approval_setting_droparea').addClass("display_none");
         $('.approval_setting_change_file').addClass("display_none");
-        $('.approcal_setting_detail_button').addClass("display_none");
+        $('.approval_setting_detail_button').addClass("display_none");
         $('#status').val("empty")
       }
 
     });
     // $(document).on('change', '#approval_setting_file', function (event) {
-    //   $('.approcal_setting_detail_button').removeClass("display_none");
+    //   $('.approval_setting_detail_button').removeClass("display_none");
     // });
 
     $(document).on('dragover', '.approval_setting_droparea', function (event) {
@@ -1528,7 +1529,7 @@ $(document).ready(function () {
 
       if (input.files && input.files[0]) {
         if (this.files[0].type === "application/pdf") {
-          $('.approcal_setting_detail_button').removeClass("disable");
+          $('.approval_setting_detail_button').removeClass("disable");
           var file = input.files[0];
           var fileReader = new FileReader();
 
@@ -1544,7 +1545,7 @@ $(document).ready(function () {
         else {
           $(this).val("")
           alert('pdfをインポートしてください')
-          $('.approcal_setting_detail_button').addClass("disable");
+          $('.approval_setting_detail_button').addClass("disable");
         }
 
       }
@@ -1564,7 +1565,7 @@ $(document).ready(function () {
       // PDFがインポートされた場合
       if (fileType === "application/pdf") {
         $(this).find(".file_input").prop("files", event.originalEvent.dataTransfer.files);
-        $('.approcal_setting_detail_button').removeClass("disable");
+        $('.approval_setting_detail_button').removeClass("disable");
         var file = event.target.files[0];
         var fileReader = new FileReader();
 
@@ -1579,18 +1580,19 @@ $(document).ready(function () {
       // PDF以外は受け付けない
       else {
         alert('pdfをインポートしてください')
-        $('.approcal_setting_detail_button').addClass("display_none");
+        $('.approval_setting_detail_button').addClass("display_none");
       }
       pointer_reset()
     })
 
-    $(document).on('click', ".approcal_setting_detail_button", function () {
+    $(document).on('click', ".approval_setting_detail_button", function () {
       $('.approval_setting_detail_container').removeClass("display_none");
       $('[name="pointer_array[]"]').each(function () {
         var pointer_num = $(this).val()
         var pointertext = $('.preview_test_str[data-pointer_id="' + pointer_num + '"]').find('.preview_test_str_input').val()
         var page = $('[name="page' + pointer_num + '"]').val()
         pointer_create(pointer_num, pointertext, page)
+        focus_cancel()
       })
     })
 
@@ -1604,24 +1606,6 @@ $(document).ready(function () {
     var offsetX, offsetY; // ドラッグ開始位置と要素の左上端との差
     var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
 
-    // $(document).on("click", ".pdf_canvas", function (event) {
-
-    //   var parentOffset = $('.preview_main_container').offset();
-
-    //   var left = event.pageX - parentOffset.left;
-    //   var top = event.pageY - parentOffset.top;
-
-    //   // 新しい要素を生成し、位置を設定
-    //   var testlelement = $("<div class='testelement'></div>");
-    //   testlelement.css({
-    //     position: "absolute",
-    //     top: top,
-    //     left: left
-    //   });
-
-    //   // 生成した要素をbody要素に追加
-    //   $(".preview_main_container").append(testlelement);
-    // });
     $("#category_approval_setting_form").on('submit', function (event) {
       event.preventDefault();
       if (approval_setting_submit_check()) {
@@ -1681,6 +1665,8 @@ $(document).ready(function () {
 
     // 要素をクリックしたときの処理
     $(document).on("mousedown", ".optional_item", function (event) {
+      event.preventDefault()
+      focus_optional_item($(this))
       dragging = true; // ドラッグ開始
       $(this).data("dragging", true)
       $(this).attr("data-dragging", true)
@@ -1717,6 +1703,25 @@ $(document).ready(function () {
         $(".optional_item").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
       }
     });
+
+    $('.preview_main_container').on('click', function (event) {
+
+      var targetElement = $(event.target);
+
+      var optional_item = targetElement.closest('.optional_item');
+
+      // 要素をクリックしていない場合すべてのフォーカスを解除
+      if (optional_item.length == 0) {
+        focus_cancel()
+      }
+
+    })
+
+    $("#font_size_input").on('change',function(){
+      change_font_size() 
+    })
+
+
   }
 
 

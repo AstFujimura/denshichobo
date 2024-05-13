@@ -43,7 +43,7 @@
                     <p>ここにドラッグ＆ドロップ</p>
                     <input type="file" name="pdf" id="approval_setting_file" class="file_input" accept=".pdf">
                 </label>
-                <div class="approcal_setting_detail_button {{$m_category->発行 ? '' : 'display_none'}}">
+                <div class="approval_setting_detail_button {{$m_category->発行 ? '' : 'display_none'}}">
                     詳細設定
                 </div>
 

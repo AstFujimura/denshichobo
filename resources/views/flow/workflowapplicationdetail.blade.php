@@ -52,6 +52,18 @@
                             </div>
                         </div>
                         @endforeach
+                        <div class="approval_sub_title">
+                            承認用紙
+                        </div>
+                        <div class="approve_content">
+                            <div class="approve_content_title">
+                                承認用紙
+                            </div>
+                            <div class="approve_content_element">
+                                <div class="approve_preview_button" data-id="-{{$t_flow->id}}">プレビュー</div>
+                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
+                            </div>
+                        </div>
                     </div>
                     <div class="approve_authorizer_container">
                         <div class="approval_sub_title">
