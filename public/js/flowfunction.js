@@ -2049,10 +2049,10 @@ function fillTextWithWrap(ctx, text, x, y, maxWidth, lineHeight) {
   ctx.fillText(line, x, yPosition);
 }
 
-function approval_setting_pdf(prefix, ID) {
+function approval_setting_pdf(prefix, ID,status) {
   if ($('#server').val() == "cloud") {
     $.ajax({
-      url: prefix + '/workflow/approval/setting/img/' + ID, // データを取得するURLを指定
+      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp+ "&status=" + status, // データを取得するURLを指定
       method: 'GET',
       dataType: "json",
       success: function (response) {
@@ -2065,7 +2065,7 @@ function approval_setting_pdf(prefix, ID) {
   else {
     var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
     $.ajax({
-      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp, // データを取得するURLを指定
+      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp+ "&status=" + status, // データを取得するURLを指定
       method: 'GET',
       cache: false, // キャッシュを無効にする
       xhrFields: {

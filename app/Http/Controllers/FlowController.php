@@ -1202,7 +1202,7 @@ class FlowController extends Controller
         $category_id = $request->input('category');
         $m_category = M_category::find($category_id);
 
-        if ($m_category->承認印){
+        if ($m_category->承認印) {
             $new_t_flow->承認印 = true;
         }
         // 項目順を取得
@@ -1679,12 +1679,15 @@ class FlowController extends Controller
 
         return view('flow.workflowapproval', compact("prefix", "server", "t_flow", "user", "t_optionals", "t_approval", "past_approvals"));
     }
-    public function approvalsettingpdf($id)
+    public function approvalsettingpdf(Request $request,$id)
     {
-        if ($id < 0){
-            $t_flow_id = $id * (-1);
-            $t_flow = T_flow::find($t_flow_id);
+        if ($request->input("status") == "application") {
+            $t_flow = T_flow::find($id);
             $filepath = $t_flow->申請印なしファイルパス;
+        }
+        else if ($request->input("status") == "approve"){
+            $t_flow = T_flow::find($id);
+            $filepath = $t_flow->申請ファイルパス;
         }
         else {
             $img = M_category::find($id);
@@ -1801,12 +1804,72 @@ class FlowController extends Controller
 
                 $t_flow->ステータス = 2;
                 $t_flow->save();
+            } else if ($result == "stamp_approve") {
             }
         }
         return redirect()->route('workflowapprovalview');
     }
 
+    public function workflowapprovalstampget(Request $request,$id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $t_approval = T_approval::find($id);
+        $t_flow = T_flow::find($t_approval->フローテーブルID);
+        $category_id = M_flow::find($t_flow->フローマスタID)->カテゴリマスタID;
+        return view('flow.workflowapprovalstamp', compact("prefix", "server","t_approval","category_id"));
+    
+    
+    }
 
+    public function workflowapprovalstamppost(Request $request,$id)
+    {
+        $t_flow_id = $request->input("t_flow_id");
+        $t_flow = T_flow::find($t_flow_id);
+        // dd($request->all());
+        // TCPDFでPDFを作成し、画像を追加する
+        $pdf = new Fpdi();
+        $m_category = M_category::find($request->input("category_id"));
+        $pdf->setPrintHeader(false);
+        $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+
+        $top = $request->input("top");
+        $left = $request->input("left");
+
+        $m_stamp = M_stamp::where('ユーザーID', Auth::id())->first();
+        $imgpath = Config::get('custom.file_upload_path') . '\\' . $m_stamp->ファイルパス;
+
+
+        $pdfpath = Config::get('custom.file_upload_path') . '\\' . $t_flow->申請ファイルパス;
+        // 入力されたPDFデータを新しいPDFに結合
+        $pdf->setSourceFile($pdfpath);
+        $tplIdx = $pdf->importPage(1);
+        // $size = $pdf->getTemplateSize($tplIdx);
+        $pdf->useTemplate($tplIdx); // サイズ調整が必要かもしれません
+
+        $pdf->Image($imgpath, $left * 0.35264, $top * 0.35264, 9.5, 0, '', '', '', false);
+
+        $now = Carbon::now();
+        $currentTime = $now->format('YmdHis');
+        $randomID = $this->generateRandomCode();
+
+        $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
+
+        $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
+        $pdfcontent = $pdf->Output('', 'S');
+        file_put_contents($new_pdf_path, $pdfcontent);
+
+
+        $t_flow->ステータス = 0;
+        $t_flow->申請ファイルパス = $new_pdf_name;
+        $t_flow->save();
+
+        return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
+    
+    }
     public function workflowviewget(Request $request)
     {
         $m_categories = M_category::all();

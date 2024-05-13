@@ -260,6 +260,10 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/approval/{id}', [FlowController::class, 'workflowapprovalget'])->name('workflowapprovalget');
             // 承認ポスト
             Route::post('/workflow/approval', [FlowController::class, 'workflowapprovalpost'])->name('workflowapprovalpost');
+            // 承認印 idはt_approvalのid
+            Route::get('/workflow/approval/stamp/{id}', [FlowController::class, 'workflowapprovalstampget'])->name('workflowapprovalstampget');
+            // 承認印ポスト
+            Route::post('/workflow/approval/stamp/', [FlowController::class, 'workflowapprovalstamppost'])->name('workflowapprovalstamppost');
 
 
 

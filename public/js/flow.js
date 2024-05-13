@@ -961,12 +961,18 @@ $(document).ready(function () {
   })
 
 
-  // ----------申請印押印-------------------
-  if ($('#applicationstamp').length != 0) {
+  // ----------申請印押印--------承認印押印-----------
+  if ($('#applicationstamp').length != 0 ||$('#approvestamp').length != 0) {
 
+    if ($('#applicationstamp').length != 0){
+      var status = "application"
+    }
+    else if ($('#approvestamp').length != 0){
+      var status = "approve"
+    }
 
     var ID = $('#t_flow_id').val()
-    approval_setting_pdf(prefix, ID * (-1))
+    approval_setting_pdf(prefix, ID,status)
     var user_id = $('#user_id').val()
     if ($('#server').val() == "cloud") {
       $.ajax({
@@ -1228,6 +1234,11 @@ $(document).ready(function () {
       if (confirm("申請を承認します。よろしいですか")) {
         $("#approve_form").submit();
       }
+    })
+    // 「承認印を押す」ボタンを押したとき
+    $("#stamp_approvalbutton").on("click", function () { 
+      $("#result").val("stamp_approve");
+      window.location.href =  prefix + "/workflow/approval/stamp/"+$('#t_approval_id').val()
     })
     // 「却下する」ボタンを押したとき
     $("#rejectbutton").on("click", function () {
@@ -1717,8 +1728,8 @@ $(document).ready(function () {
 
     })
 
-    $("#font_size_input").on('change',function(){
-      change_font_size() 
+    $("#font_size_input").on('change', function () {
+      change_font_size()
     })
 
 
