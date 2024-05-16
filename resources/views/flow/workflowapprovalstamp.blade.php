@@ -16,7 +16,7 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/approve.svg') }}" alt="" class="title_icon">
         承認印
     </h2>
-    <form action="{{route('workflowapplicationstamppost')}}" method="post" id="category_approval_setting_form" enctype="multipart/form-data">
+    <form action="{{route('workflowapprovalstamppost')}}" method="post" id="category_approval_setting_form" enctype="multipart/form-data">
         @csrf
 
 
