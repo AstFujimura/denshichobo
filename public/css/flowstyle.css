@@ -1,3 +1,9 @@
+
+@font-face {
+    font-family: 'Noto';
+    src: url('../font/Noto.ttf');
+}
+
 @font-face {
     font-family: 'HGR教科書体';
     src: url('../font/HGR教科書体.TTC');
@@ -39,6 +45,7 @@
 }
 
 body {
+    font-family: 'Noto';
     background: rgb(225 225 225);
 }
 

@@ -1180,7 +1180,7 @@ class FlowController extends Controller
         $server = config('prefix.server');
         $m_categories = M_category::all();
         $m_pointers = M_pointer::all();
-        return view('flow.workflowapplication', compact("prefix", "server", "m_categories","m_pointers"));
+        return view('flow.workflowapplication', compact("prefix", "server", "m_categories", "m_pointers"));
     }
 
     public function workflowapplicationpost(Request $request)
@@ -1222,55 +1222,22 @@ class FlowController extends Controller
         // partsの一つ目の要素が標題であるためそれを格納
         $new_t_flow->標題 = $request->input("item" . $parts[0]);
 
+        $new_t_flow->save();
 
-        // 任意項目の画像をpdfに挿入する
-        $pdf = new Fpdi();
-        $pdf->setPrintHeader(false);
-        $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
-        $pdfpath = Config::get('custom.file_upload_path') . '\\' . $m_category->ファイルパス;
-        // 入力されたPDFデータを新しいPDFに結合
-        $pdf->setSourceFile($pdfpath);
-        $tplIdx = $pdf->importPage(1);
-        // $size = $pdf->getTemplateSize($tplIdx);
-        $pdf->useTemplate($tplIdx); // サイズ調整が必要かもしれません
-
-        // -----------------------------
-        $m_pointers = $request->input('m_pointers');
-        // 画像挿入コードを後でかく
-        foreach ($m_pointers as $m_pointer_id) {
-            // $imageData = $request->input('m_pointer_img'.$m_pointer_id);
-            // $imageData = str_replace('data:image/png;base64,', '', $imageData);
-            // $imageData = str_replace(' ', '+', $imageData);
-            // // Base64デコード
-            // $imageBinaryData = base64_decode($imageData);
-            // $imagename = "pointer_" . $m_pointer_id . ".png";
-            // $imagepath = Config::get('custom.file_upload_path') . '\\' . $imagename;
-            // file_put_contents($imagepath, $imageBinaryData);
-
-            // $m_pointer = M_pointer::find($m_pointer_id);
-            $pdf->Image($imagepath, $m_pointer->left, $m_pointer->top, '', 0, '', '', '', false);
-
+        // 承認用紙を発行する場合
+        if ($m_category->発行) {
+            // pdfに挿入する
+            $pdf = new Fpdi();
+            $pdf->setPrintHeader(false);
+            $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+            $pdfpath = Config::get('custom.file_upload_path') . '\\' . $m_category->ファイルパス;
+            // 入力されたPDFデータを新しいPDFに結合
+            $pdf->setSourceFile($pdfpath);
+            $tplIdx = $pdf->importPage(1);
+            $pdf->useTemplate($tplIdx);
         }
-        // -----------------------------
-
-        $now = Carbon::now();
-        $currentTime = $now->format('YmdHis');
-        $randomID = $this->generateRandomCode();
-
-        $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
-
-        $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
-        $pdfcontent = $pdf->Output('', 'S');
-        file_put_contents($new_pdf_path, $pdfcontent);
 
 
-        $new_t_flow->変更前承認ファイルパス = $new_pdf_name;
-        $new_t_flow->save();
-
-
-
-
-        $new_t_flow->save();
         foreach ($parts as $part) {
             $m_optional = M_optional::find($part);
             $t_optional = new T_optional();
@@ -1279,10 +1246,13 @@ class FlowController extends Controller
             $t_optional->金額条件 = $m_optional->金額条件;
             if ($m_optional->型 == 1) {
                 $t_optional->文字列 = $request->input("item" . $part);
+                $value = $t_optional->文字列;
             } else if ($m_optional->型 == 2) {
                 $t_optional->数値 = $request->input("item" . $part);
+                $value = $t_optional->数値;
             } else if ($m_optional->型 == 3) {
                 $t_optional->日付 = $request->input("item" . $part);
+                $value = $t_optional->日付;
             } else if ($m_optional->型 == 4) {
                 $file = $request->file("item" . $part);
                 $pastID = $this->generateRandomCode();
@@ -1314,8 +1284,35 @@ class FlowController extends Controller
                 $t_optional->ファイル形式 = $extension;
             }
             $t_optional->save();
-        }
 
+            if ($m_category->発行) {
+                // 項目位置マスタに項目マスタのIDが含まれていた場合
+                $m_pointer = M_pointer::where('任意項目マスタID', $m_optional->id)
+                    ->where('カテゴリマスタID', $m_category->id)
+                    ->first();
+                if ($m_pointer) {
+
+                    $pdf->SetFont('Noto', '', $m_pointer->フォントサイズ . "pt");
+                    $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
+                    $pdf->Write(0, $value);
+                }
+            }
+        }
+        if ($m_category->発行) {
+            $now = Carbon::now();
+            $currentTime = $now->format('YmdHis');
+            $randomID = $this->generateRandomCode();
+
+            $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
+
+            $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
+            $pdfcontent = $pdf->Output('', 'S');
+            file_put_contents($new_pdf_path, $pdfcontent);
+
+            $new_t_flow->変更前承認ファイルパス = $new_pdf_name;
+            $new_t_flow->save();
+        }
+        
         return redirect()->route('workflowchoiceget', ["id" => $new_t_flow->id]);
     }
 
@@ -1711,9 +1708,9 @@ class FlowController extends Controller
             ->get();
 
         $comment = $request->input('comment');
- 
+
         $approval = $request->input('approval');
-        return view('flow.workflowapproval', compact("prefix", "server", "t_flow", "user", "t_optionals", "t_approval", "past_approvals", "stamp_status","comment","approval"));
+        return view('flow.workflowapproval', compact("prefix", "server", "t_flow", "user", "t_optionals", "t_approval", "past_approvals", "stamp_status", "comment", "approval"));
     }
     public function approvalsettingpdf(Request $request, $id)
     {
@@ -1785,7 +1782,7 @@ class FlowController extends Controller
                 $t_flow_point->save();
 
                 if (isset($t_approval->承認ファイルパス))
-                $t_flow->変更前承認ファイルパス = $t_approval->承認ファイルパス;
+                    $t_flow->変更前承認ファイルパス = $t_approval->承認ファイルパス;
 
                 // 最終決裁点だった場合の処理
                 if ($t_flow_point->承認ステータス == 0) {
@@ -2142,19 +2139,17 @@ class FlowController extends Controller
     }
 
 
-    public function flowimgget(Request $request,$id)
+    public function flowimgget(Request $request, $id)
     {
-        if ($request->input("type") == "t_flow_before"){
+        if ($request->input("type") == "t_flow_before") {
             $img = T_flow::find($id);
             $filepath = str_replace(".pdf", "", $img->変更前承認ファイルパス);
             $extension = "pdf";
-        }
-        else if ($request->input("type") == "t_flow_after"){
+        } else if ($request->input("type") == "t_flow_after") {
             $img = T_flow::find($id);
             $filepath = str_replace(".pdf", "", $img->変更後承認ファイルパス);
             $extension = "pdf";
-        }
-        else if ($request->input("type") == "t_optional"){
+        } else if ($request->input("type") == "t_optional") {
             $img = T_optional::find($id);
             $filepath = $img->ファイルパス;
             $extension = $img->ファイル形式;
