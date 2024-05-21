@@ -2719,6 +2719,20 @@ body {
 }
 
 /* 承認設定 */
+.approval_setting_button{
+    background: rgb(47, 113, 255);
+    color: white;
+    width: 120px;
+    padding: 7px;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    height: 38px;
+}
+.approval_setting_button:hover{
+    background: rgb(42, 99, 221);
+}
 
 .approval_setting_container {
     margin-left: 30px;

@@ -18,11 +18,10 @@
 
         <div class="category_setting_container">
             <div class="flow_application_button_content">
-                <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
-                    トップへもどる
+                <a href="{{route('categoryget')}}" class="back_button " id="">
+                    カテゴリ一覧へもどる
                 </a>
-                <button>送信</button>
+                <button class="approval_setting_button">送信</button>
             </div>
             <div class="approval_setting_container">
                 <div class="approval_setting_content">
