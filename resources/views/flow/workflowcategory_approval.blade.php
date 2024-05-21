@@ -56,7 +56,7 @@
                         フォントサイズ
                     </div>
                     <input type="number" id="font_size_input" class="font_size_input">
-                    px
+                    pt
                 </div>
 
             </div>

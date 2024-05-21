@@ -58,14 +58,17 @@
                             カテゴリを選択すると<br>
                             申請項目が表示されます
                         </div>
-                    
+
                     </div>
                 </div>
             </div>
         </div>
-
-
-
+        <div class="pointer_input">
+            @foreach ($m_pointers as $m_pointer)
+            <input type="hidden" class="m_pointer" data-m_pointer_id="{{$m_pointer->id}}" data-m_optional_id="{{$m_pointer->任意項目マスタID}}" data-category_id="{{$m_pointer->カテゴリマスタID}}" data-font_size="{{$m_pointer->フォントサイズ}}">
+            <input type="hidden" class="m_pointer_img" data-m_pointer_id="{{$m_pointer->id}}" id="m_pointer_img{{$m_pointer->id}}" name="m_pointer_img{{$m_pointer->id}}" value="">
+            @endforeach
+        </div>
 
     </form>
 

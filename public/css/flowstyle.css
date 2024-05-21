@@ -1817,6 +1817,7 @@ body {
     align-items: center;
 }
 
+/* 
 .rejectbutton {
     background: #de3131;
     color: white;
@@ -1833,15 +1834,143 @@ body {
 
 .rejectbutton:hover {
     background: #8f2121;
-}
+} */
 
 .approve_authorizer_container {
-    margin-left: auto;
     margin-right: 20px;
+    width: 451px;
 }
 
 .approvalbutton {
-    background: #31bbde;
+    background: white;
+    border: solid 1px #31bbde;
+    color: #31bbde;
+    height: 50px;
+    line-height: 50px;
+    font-size: 16px;
+    width: 160px;
+    text-align: center;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-block: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.approvalbutton:hover {
+    background: #bff2ff;
+}
+
+.approval_annotation {
+    font-size: 14px;
+    font-weight: bold;
+    height: 20px;
+    padding: 10px 20px;
+    margin-top: auto;
+    display: flex;
+    border-radius: 5px;
+    width: 300px;
+}
+
+.unselected {
+    background: rgb(255 230 157);
+    color: #4b371b;
+}
+
+.selected {
+    background: rgb(228 255 225);
+    color: #5ba857;
+}
+
+.approval_element {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 100px;
+    margin-block: 20px;
+    border: solid 1px rgb(184, 184, 184);
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.approve_label:hover {
+    box-shadow: 0px 0px 5px 0 #9ae7ff;
+    border: solid 1px #a2e3ff;
+}
+
+.reject_label:hover {
+    box-shadow: 0px 0px 5px 0 #ff1919;
+    border: solid 1px #ff0404;
+}
+
+.approval_check {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 20px;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background: white;
+    border: solid 1px rgb(156, 156, 156);
+    top: 40%;
+}
+
+.approval_check::before {
+    content: "";
+    width: 0;
+    height: 0;
+    transition: all 0.2s;
+}
+
+.approval_input {
+    display: none;
+}
+
+.approval_input:checked+label .approval_check::before {
+    content: "";
+    display: block;
+    width: 60%;
+    height: 60%;
+    border-radius: 10px;
+    position: relative;
+    background: #008eff;
+    transition: all 0.2s;
+}
+
+.approval_input:checked+.approve_label {
+    background: #e0fbff;
+    box-shadow: 0px 0px 5px 0 #9ae7ff;
+    border: solid 1px #a2e3ff;
+    color: #070710 !important;
+}
+
+.approval_input:checked+.reject_label {
+    background: #ffe0e0;
+    box-shadow: 0px 0px 5px 0 #ff1919;
+    border: solid 1px #ff0404;
+    color: #070710 !important;
+}
+
+.approval_input:checked+label .approval_name {
+
+    color: #070710 !important;
+}
+
+
+
+.approval_name {
+    color: rgb(114, 114, 114);
+    font-weight: bold;
+}
+
+.approval_decision {
+    background: #317cde;
     color: white;
     height: 50px;
     line-height: 50px;
@@ -1850,22 +1979,33 @@ body {
     text-align: center;
     border-radius: 3px;
     cursor: pointer;
-    margin-block: 10px;
+    margin-top: 10px;
+    margin-inline: auto;
+    border: none;
 }
 
-.approvalbutton:hover {
-    background: #1a6375;
+.approval_decision:hover {
+    background: #214f8b;
 }
 
 .approve_comment_container {
-
     margin-bottom: 20px;
-    margin-left: 30px
+}
+
+.approval_content {
+    display: none;
+    transition: all 0.2s;
+    margin-left: 20px;
+}
+
+.approval_input:checked~.approval_content {
+    display: block;
+    transition: all 0.2s;
 }
 
 .approvecomment {
-    width: 500px;
-    height: 150px;
+    width: 350px;
+    height: 100px;
     font-size: 16px;
     font-family: inherit;
     border: solid 1px #adaaaa;
@@ -2663,8 +2803,8 @@ body {
     background: #d7d7d7;
     width: 97%;
     height: 100%;
-    z-index: 100;
-    top: 0;
+    z-index: 10;
+    top: 100px;
     position: absolute;
     display: flex;
 }
@@ -2673,7 +2813,7 @@ body {
     padding-top: 20px;
     width: 197px;
     background: #e7e7e7;
-    height: calc(100vh - 145px);
+    height: calc(100vh - 240px);
     overflow-y: auto;
 
 }
@@ -2683,18 +2823,21 @@ body {
     width: 97%;
     position: fixed;
     background: whitesmoke;
-    z-index: 2;
+    z-index: -1;
     box-shadow: 0px 3px 4px 0 #bdbaba;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
-    top: 80px;
+    top: 112px;
     opacity: 0;
     transition: all 0.2s;
 }
+
 .preview_property_container_open {
-    top: 112px;
+    display: flex;
+    top: 202px;
     opacity: 1;
+    z-index: 2;
     transition: all 0.2s;
 }
 
@@ -2719,7 +2862,7 @@ body {
     position: relative;
     flex-grow: 1;
     background: #c6c6c6;
-    height: calc(100vh - 125px);
+    height: calc(100vh - 220px);
     overflow-y: auto;
 }
 
@@ -2744,7 +2887,7 @@ body {
 }
 
 .focus_status {
-    display: block !important; 
+    display: block !important;
 }
 
 .focus_point {
@@ -2787,7 +2930,7 @@ body {
 .preview_control_container {
     width: 300px;
     background: white;
-    height: calc(100vh - 125px);
+    height: calc(100vh - 220px);
     display: flex;
     flex-direction: column;
 }
@@ -3142,5 +3285,5 @@ body {
 
 .application_stamp {
     position: absolute;
-    width: 36px;
+    /* width: 36px; */
 }

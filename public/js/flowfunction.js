@@ -1399,6 +1399,37 @@ function flow_application_date_format(element) {
   }
 }
 
+function pointer_img_create() {
+  var category_id = $('[name="category"]:checked').val()
+  $('.m_pointer[data-category_id=' + category_id + ']').each(function () {
+    var text = $('input[name="item'+$(this).data('m_optional_id')+'"]').val();
+
+    var font_size = $(this).data("font_size");
+
+    var canvas = $('<canvas></canvas>')[0];
+
+    var ctx = canvas.getContext('2d');
+    canvas.width = 120;
+    canvas.height = 100;
+    // Canvasをクリア
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // フォントを設定してテキストを描画
+    ctx.font = font_size + 'pt Arial';
+    ctx.textAlign = 'right';
+    ctx.fillText(text, 50, 10);
+    $('.preview').append(canvas)
+
+    // Canvasの内容を画像データに変換
+    var imageData = canvas.toDataURL('image/png');
+
+    // 画像データをinputのvalueに設定
+    $('#m_pointer_img'+ $(this).data('m_pointer_id')).val(imageData);
+    var m_pointer = '<input type="hidden" name="m_pointers[]" value="'+$(this).data('m_pointer_id')+'">'
+    $('.pointer_input').append(m_pointer)
+  })
+}
+
 function viewonlyreset() {
   $('.view_condition_group_element').html("")
   $('.view_condition_start_price_value').text("")
@@ -1863,12 +1894,12 @@ function check_reset(element) {
 
 // プレビューボタンを押したときにそのイメージを取得する
 // IDにはt_optionalのidが入る
-function preview_img_get(prefix, ID) {
+function preview_img_get(prefix, ID, type = "t_flow_before") {
   var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
-  
+
   if ($('#server').val() == "cloud") {
     $.ajax({
-      url: prefix + '/workflow/img/' + ID+ "?timestamp=" + timestamp, // データを取得するURLを指定
+      url: prefix + '/workflow/img/' + ID + "?type=" + type + "&timestamp=" + timestamp, // データを取得するURLを指定
       method: 'GET',
       dataType: "json",
       cache: false, // キャッシュを無効にする
@@ -1897,7 +1928,7 @@ function preview_img_get(prefix, ID) {
   }
   else {
     $.ajax({
-      url: prefix + '/workflow/img/' + ID+ "?timestamp=" + timestamp, // データを取得するURLを指定
+      url: prefix + '/workflow/img/' + ID + "?type=" + type + "&timestamp=" + timestamp, // データを取得するURLを指定
       method: 'GET',
       cache: false, // キャッシュを無効にする
       xhrFields: {
@@ -1951,7 +1982,7 @@ function displayPdf(pdfData) {
       }
 
       return pdf.getPage(pageNum).then(function (page) {
-        var scaleMain = 1;
+        var scaleMain = 1.3;
         var scalePage = 0.3;
         var viewportMain = page.getViewport({ scale: scaleMain });
         var viewportPage = page.getViewport({ scale: scalePage });
@@ -1960,8 +1991,8 @@ function displayPdf(pdfData) {
         var contextMain = canvasMain.getContext('2d');
         canvasMain.height = viewportMain.height;
         canvasMain.width = viewportMain.width;
-        $('#width').val(canvasMain.width * 0.352)
-        $('#height').val(canvasMain.height * 0.352)
+        $('#width').val(canvasMain.width * 0.352 / 1.3)
+        $('#height').val(canvasMain.height * 0.352 / 1.3)
         var canvasPage = $('<canvas class="pdf_page_view"></canvas>').get(0);
         var contextPage = canvasPage.getContext('2d');
         canvasPage.height = viewportPage.height;
@@ -2006,13 +2037,13 @@ function pointer_input_create(optional_id, pointer_num) {
   input_pointer_array.attr('data-pointer_id', pointer_num)
   input_pointer_array.val(pointer_num)
   $('#inputs').append(input_pointer_array)
-  canvas_width = $(".canvas_container[data-page='1']").width()
+  canvas_width = $("#width").val()
 
   var vararray = [
     ["optional_id", optional_id],
-    ["top", 30],
+    ["top", 10],
     ["left", canvas_width / 2],
-    ["font_size", 16],
+    ["font_size", 10],
     ["font", null],
     ["page", 1],
   ]
@@ -2049,10 +2080,10 @@ function fillTextWithWrap(ctx, text, x, y, maxWidth, lineHeight) {
   ctx.fillText(line, x, yPosition);
 }
 
-function approval_setting_pdf(prefix, ID,status) {
+function approval_setting_pdf(prefix, ID, status) {
   if ($('#server').val() == "cloud") {
     $.ajax({
-      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp+ "&status=" + status, // データを取得するURLを指定
+      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp + "&status=" + status, // データを取得するURLを指定
       method: 'GET',
       dataType: "json",
       success: function (response) {
@@ -2065,7 +2096,7 @@ function approval_setting_pdf(prefix, ID,status) {
   else {
     var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
     $.ajax({
-      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp+ "&status=" + status, // データを取得するURLを指定
+      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp + "&status=" + status, // データを取得するURLを指定
       method: 'GET',
       cache: false, // キャッシュを無効にする
       xhrFields: {
@@ -2094,23 +2125,42 @@ function approval_setting_pdf(prefix, ID,status) {
   }
 }
 
+function canvas_offset(xy, page = 1) {
+  var canvas_container = $('.canvas_container').eq(page - 1)
+  if (xy == "x") {
+    return canvas_container.offset().left
+  }
+  else if (xy == "y") {
+    return canvas_container.offset().top
+  }
+}
 
 function pointer_create(pointer_num, pointertext, page) {
+  var width = $('#width').val()
+  var height = $('#height').val()
+  var pdf_canvas_width = $(".pdf_canvas").width()
+  var pdf_canvas_height = $(".pdf_canvas").height()
+  var pt_width = width * 2.83465
+  var rate = pdf_canvas_width / pt_width
+  var top = $('[name="top' + pointer_num + '"]').val() * pdf_canvas_height / height
+  var left = $('[name="left' + pointer_num + '"]').val() * pdf_canvas_width / width
+  var font_size = $('[name="font_size' + pointer_num + '"]').val() * rate
   if ($('.optional_item[data-pointer_id="' + pointer_num + '"]').length == 0) {
 
 
     var item_element = $("<div class='optional_item' data-pointer_id='" + pointer_num + "'></div>");
-    // Canvasの幅と高さを設定
-    item_element.attr('width', 100);
-    item_element.attr('height', 30);
+    // 幅と高さを設定
+    // item_element.attr('width', 100);
+    // item_element.attr('height', 30);
 
     item_element.text(pointertext)
     // fillTextWithWrap(ctx, pointertext, 0, 20, 200, 20); // テキストを改行しながら描画
 
     item_element.css({
       position: "absolute",
-      top: $('[name="top' + pointer_num + '"]').val() + "px",
-      left: $('[name="left' + pointer_num + '"]').val() + "px",
+      "top": top + "px",
+      "left": left + "px",
+      "font-size": font_size + 'px',
     });
     var focus_element = $("<div class='focus_line'></div>")
     var upper_right = $('<div class="focus_point upper_right"></div>')
@@ -2138,15 +2188,23 @@ function focus_cancel() {
   $('.focus_line').removeClass('focus_status')
   $('.preview_property_container').removeClass('preview_property_container_open')
 }
+// フォントサイズのテキストボックスの値が変わった時にポインター要素のcssを変更する
 function change_font_size() {
   var font_size = $('#font_size_input').val()
   var focus_optional_item = $('.focus_status').parent()
   var pointer_id = focus_optional_item.data('pointer_id')
+
+  pdf_canvas_width = $(".pdf_canvas").width()
+  pt_width = $('#width').val() * 2.83465
+  rate = pdf_canvas_width / pt_width
+
+
   focus_optional_item.css({
-    "font-size":font_size
+    "font-size": font_size * rate + "px"
   })
   $('[name="font_size' + pointer_id + '"]').val(font_size)
 }
+// ポインターIDを受け取ってinput要素からフォントサイズのテキストボックスに値を入れる
 function font_size_reroad(pointer_id) {
   var font_size = $('[name="font_size' + pointer_id + '"]').val()
   $('#font_size_input').val(font_size)

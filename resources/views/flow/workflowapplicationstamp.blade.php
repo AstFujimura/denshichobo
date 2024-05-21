@@ -52,6 +52,8 @@
             <input type="hidden" id="t_flow_id" name="t_flow_id" value="{{$t_flow->id}}">
             <input type="hidden" id="top" name="top" value="">
             <input type="hidden" id="left" name="left" value="">
+            <input type="hidden" id="width" name="width" value="">
+            <input type="hidden" id="height" name="height" value="">
 
             <!-- <img src="" alt=""> -->
         </div>

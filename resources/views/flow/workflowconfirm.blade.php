@@ -45,7 +45,7 @@
                 </div>
                 <div class="flow_confirm_element">
                     @if ($t_optional->値 == "file_regist_2545198")
-                    <div class="approve_preview_button" data-id="{{$t_optional->id}}">プレビュー</div>
+                    <div class="approve_preview_button" data-id="{{$t_optional->id}}" data-type="t_optional">プレビュー</div>
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$t_optional->id}}">
                     @else
                     {{$t_optional->値}}
@@ -61,7 +61,7 @@
                     承認用紙
                 </div>
                 <div class="flow_confirm_element">
-                    <div class="approve_preview_button" data-id="-{{$t_flow->id}}">プレビュー</div>
+                    <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_after">プレビュー</div>
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
                 </div>
             </div>

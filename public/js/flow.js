@@ -849,6 +849,7 @@ $(document).ready(function () {
     e.preventDefault()
     // 必須項目のチェックを行う
     if (!flow_application_required_check()) {
+      pointer_img_create()
       this.submit()
 
     }
@@ -951,7 +952,7 @@ $(document).ready(function () {
       $('.approve_preview_container').show()
       $('.approve_gray').show()
       var ID = $(this).data("id");
-      preview_img_get(prefix, ID)
+      preview_img_get(prefix, ID,"t_flow_after")
 
     })
   }
@@ -962,17 +963,17 @@ $(document).ready(function () {
 
 
   // ----------申請印押印--------承認印押印-----------
-  if ($('#applicationstamp').length != 0 ||$('#approvestamp').length != 0) {
+  if ($('#applicationstamp').length != 0 || $('#approvestamp').length != 0) {
 
-    if ($('#applicationstamp').length != 0){
+    if ($('#applicationstamp').length != 0) {
       var status = "application"
     }
-    else if ($('#approvestamp').length != 0){
+    else if ($('#approvestamp').length != 0) {
       var status = "approve"
     }
 
     var ID = $('#t_flow_id').val()
-    approval_setting_pdf(prefix, ID,status)
+    approval_setting_pdf(prefix, ID, status)
     var user_id = $('#user_id').val()
     if ($('#server').val() == "cloud") {
       $.ajax({
@@ -1028,36 +1029,55 @@ $(document).ready(function () {
     var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
     var clicked = false
 
+    var width, height, pdf_canvas_width, pdf_canvas_height
+    var scrollX,scrollY
+
     $(document).on('click', '.canvas_container', function (event) {
       if (!clicked) {
-        var position = $(this);
-        offsetX = position.offset().left
-        offsetY = position.offset().top
+        offsetX = canvas_offset("x")
+        offsetY = canvas_offset("y")
         nowX = event.pageX - offsetX - 18
         nowY = event.pageY - offsetY - 18
+        
 
+        width = $('#width').val()
+        height = $('#height').val()
+        pdf_canvas_width = $(".pdf_canvas").width()
+        pdf_canvas_height = $(".pdf_canvas").height()
         var clonedElement = $('.origin').first().clone()
         clonedElement.addClass('application_stamp')
         clonedElement.removeClass('origin')
-        clonedElement.css({ left: nowX, top: nowY });
+        clonedElement.css({
+          left: nowX,
+          top: nowY,
+          width: 9.5 / width * 100 + "%"
+        });
         $(this).append(clonedElement)
         clicked = true
-        $('#left').val(nowX)
-        $('#top').val(nowY)
+        $('#left').val(nowX * width / pdf_canvas_width)
+        $('#top').val(nowY * width / pdf_canvas_height)
       }
 
     })
+
+
     // 要素をクリックしたときの処理
     $(document).on("mousedown", ".application_stamp", function (event) {
       event.preventDefault(); // ブラウザのデフォルトのドラッグ動作を停止
+      var position = $(this).parent();
+      offsetX = canvas_offset("x")
+      offsetY = canvas_offset("y")
       dragging = true; // ドラッグ開始
       $(this).data("dragging", true)
       $(this).attr("data-dragging", true)
     })
     // ドラッグ中の処理
     $(document).on("mousemove", function (event) {
+
       if (dragging) {
         // ドラッグ中の座標を取得し、要素を移動
+        offsetX = canvas_offset("x")
+        offsetY = canvas_offset("y")
         nowX = event.pageX - offsetX - 18;
         nowY = event.pageY - offsetY - 18;
         $(".application_stamp").css({ left: nowX, top: nowY });
@@ -1070,8 +1090,8 @@ $(document).ready(function () {
         $(".application_stamp").data("dragging", false)
         $(".application_stamp").attr("data-dragging", false)
         $(".application_stamp").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
-        $('#left').val(nowX)
-        $('#top').val(nowY)
+        $('#left').val(nowX * width / pdf_canvas_width)
+        $('#top').val(nowY * height / pdf_canvas_height)
       }
     });
 
@@ -1121,6 +1141,16 @@ $(document).ready(function () {
       }
 
     })
+
+    if ($('#stamp_status').val() == "true") {
+      $('.unselected').hide()
+      $('.selected').show()
+    }
+    else {
+      $('.unselected').show()
+      $('.selected').hide()
+    }
+
   }
 
   // -------承認一覧----------------------
@@ -1182,7 +1212,8 @@ $(document).ready(function () {
     $('.approve_preview_container').show()
     $('.approve_gray').show()
     var ID = $(this).data("id");
-    preview_img_get(prefix, ID)
+    var type = $(this).data("type")
+    preview_img_get(prefix, ID,type)
 
   })
 
@@ -1228,25 +1259,27 @@ $(document).ready(function () {
       $('[data-front_point="' + front_point + '"]').removeClass("approve_hover");
     });
 
-    // 「承認する」ボタンを押したとき
-    $("#approvalbutton").on("click", function () {
-      $("#result").val("approve");
-      if (confirm("申請を承認します。よろしいですか")) {
-        $("#approve_form").submit();
-      }
-    })
+    // // 「承認する」ボタンを押したとき
+    // $("#approvalbutton").on("click", function () {
+    //   $("#result").val("approve");
+    //   if (confirm("申請を承認します。よろしいですか")) {
+    //     $("#approve_form").submit();
+    //   }
+    // })
     // 「承認印を押す」ボタンを押したとき
-    $("#stamp_approvalbutton").on("click", function () { 
+    $("#stamp_approvalbutton").on("click", function () {
       $("#result").val("stamp_approve");
-      window.location.href =  prefix + "/workflow/approval/stamp/"+$('#t_approval_id').val()
+      var comment = $("#approvecomment").val();
+      $("#result").val("stamp_approve");
+      window.location.href = prefix + "/workflow/approval/stamp/" + $('#t_approval_id').val() + "?comment=" + comment
     })
-    // 「却下する」ボタンを押したとき
-    $("#rejectbutton").on("click", function () {
-      $("#result").val("reject");
-      if (confirm("申請を却下します。よろしいですか")) {
-        $("#approve_form").submit();
-      }
-    })
+    // // 「却下する」ボタンを押したとき
+    // $("#rejectbutton").on("click", function () {
+    //   $("#result").val("reject");
+    //   if (confirm("申請を却下します。よろしいですか")) {
+    //     $("#approve_form").submit();
+    //   }
+    // })
 
 
 
@@ -1616,7 +1649,9 @@ $(document).ready(function () {
     var dragging = false; // ドラッグ中かどうかのフラグ
     var offsetX, offsetY; // ドラッグ開始位置と要素の左上端との差
     var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
+    var width, height, pdf_canvas_width, pdf_canvas_height
 
+    
     $("#category_approval_setting_form").on('submit', function (event) {
       event.preventDefault();
       if (approval_setting_submit_check()) {
@@ -1629,21 +1664,16 @@ $(document).ready(function () {
         else {
           $('#p_l').val('P')
         }
-
-        $('.optional_item').each(function () {
-          var canvas = $(this).get(0)
-
-          var top_input = $('input[data-prop="top"][data-pointer_id="' + $(this).data('pointer_id') + '"]');
-          top_input.val($(this).css('top').replace("px", ""));
-
-          var left_input = $('input[data-prop="left"][data-pointer_id="' + $(this).data('pointer_id') + '"]');
-          left_input.val($(this).css('left').replace("px", ""));
-
-        })
         this.submit()
       }
     })
+
+
+
+
+
     $(document).on('click', '.preview_control_item', function () {
+
 
       var pointer_num = $('#pointer_num').val()
       var pointertext = $(this).find(".preview_control_item_title").text();
@@ -1676,6 +1706,11 @@ $(document).ready(function () {
 
     // 要素をクリックしたときの処理
     $(document).on("mousedown", ".optional_item", function (event) {
+      width = $('#width').val()
+      height = $('#height').val()
+      pdf_canvas_width = $(".pdf_canvas").width()
+      pdf_canvas_height = $(".pdf_canvas").height()
+
       event.preventDefault()
       focus_optional_item($(this))
       dragging = true; // ドラッグ開始
@@ -1709,9 +1744,15 @@ $(document).ready(function () {
     $(document).on("mouseup", function () {
       if (dragging) {
         dragging = false; // ドラッグ終了
+        var dragging_pointer_id = $(".optional_item[data-dragging='true']").data("pointer_id")
         $(".optional_item[data-dragging='true']").data("dragging", false)
         $(".optional_item[data-dragging='true']").attr("data-dragging", false)
         $(".optional_item").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
+        
+        var top_input = $('input[data-prop="top"][data-pointer_id="' + dragging_pointer_id + '"]');
+        var left_input = $('input[data-prop="left"][data-pointer_id="' + dragging_pointer_id + '"]');
+        top_input.val(nowY * height / pdf_canvas_height);
+        left_input.val(nowX * width / pdf_canvas_width);
       }
     });
 

@@ -30,42 +30,6 @@
         <div class="flow_view_content">
             <div class="approve_tab open_tab">
                 <div class="approve_container">
-                    <div class="approve_application_info_container">
-                        <div class="approval_sub_title">
-                            申請情報
-                        </div>
-                        <div class="applicant_info">
-                            <img class="approve_person_icon" src="{{ asset(config('prefix.prefix').'/'.'img/person.svg') }}">申請者 : {{$user->name}}
-                        </div>
-                        @foreach ($t_optionals as $t_optional)
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                {{$t_optional->項目名}}
-                            </div>
-                            <div class="approve_content_element">
-                                @if ($t_optional->値 == "file_regist_2545198")
-                                <div class="approve_preview_button" data-id="{{$t_optional->id}}">プレビュー</div>
-                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$t_optional->id}}">
-                                @else
-                                {{$t_optional->値}}
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                        <div class="approval_sub_title">
-                            承認用紙
-                        </div>
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                承認用紙
-                            </div>
-                            <div class="approve_content_element">
-                                <div class="approve_preview_button" data-id="-{{$t_flow->id}}">プレビュー</div>
-                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="approve_authorizer_container">
                         @if ($t_approval->ステータス == 2)
                         <div class="approval_sub_title">
@@ -73,26 +37,47 @@
                         </div>
                         <form action="{{route('workflowapprovalpost')}}" method="post" id="approve_form" class="approve_form" enctype="multipart/form-data">
                             @csrf
-                            <div class="approve_comment_container">
-                                <div>承認者コメント</div>
-                                <textarea class="approvecomment" name="approvecomment" id="approvecomment"></textarea>
-                            </div>
-                            <div class="approve_decision_container">
-                                <div class="rejectbutton" id="rejectbutton">
-                                    却下する
-                                </div>
-                                @if ($t_flow->承認印)
-                                <div class="approvalbutton" id="stamp_approvalbutton">
-                                    承認印を押す
-                                </div>
-                                @else
-                                <div class="approvalbutton" id="approvalbutton">
+                            <input type="radio" name="approval" id="approve" value="approve" class="approval_input" {{$approval=='approve' ? 'checked' : '' }}>
+                            <label for="approve" class="approval_element approve_label">
+                                <div class="approval_check"></div>
+                                <div class="approval_name">
                                     承認する
                                 </div>
+                            </label>
+                            <div class="approval_content">
+                                @if ($t_flow->承認印)
+                                <div class="approval_annotation unselected">
+                                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/exclamation.svg') }}" alt="" class="button_icon">
+                                    承認印を押印してください
+                                </div>
+                                <div class="approval_annotation selected">
+                                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/check.svg') }}" alt="" class="button_icon">
+                                    押印済
+                                </div>
+                                <div class="approvalbutton" id="stamp_approvalbutton">
+                                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/stamp.svg') }}" alt="" class="button_icon">
+                                    承認印を押す
+                                </div>
                                 @endif
+                                <div class="approve_comment_container">
+                                    <div>承認者コメント</div>
+                                    <textarea class="approvecomment" name="approvecomment" id="approvecomment">{{$comment}}</textarea>
+                                </div>
                             </div>
+
+                            <input type="radio" name="approval" id="reject" value="reject" class="approval_input">
+                            <label for="reject" class="approval_element reject_label">
+                                <div class="approval_check"></div>
+                                <div class="approval_name">
+                                    却下する
+                                </div>
+                            </label>
+                            <button class="approval_decision">
+                                決定
+                            </button>
+
+
                             <input type="hidden" name="approval_id" value="{{$t_approval->id}}">
-                            <input type="hidden" name="result" id="result" value="">
 
                         </form>
                         @else
@@ -121,6 +106,43 @@
                         @endif
 
                     </div>
+                    <div class="approve_application_info_container">
+                        <div class="approval_sub_title">
+                            申請情報
+                        </div>
+                        <div class="applicant_info">
+                            <img class="approve_person_icon" src="{{ asset(config('prefix.prefix').'/'.'img/person.svg') }}">申請者 : {{$user->name}}
+                        </div>
+                        @foreach ($t_optionals as $t_optional)
+                        <div class="approve_content">
+                            <div class="approve_content_title">
+                                {{$t_optional->項目名}}
+                            </div>
+                            <div class="approve_content_element">
+                                @if ($t_optional->値 == "file_regist_2545198")
+                                <div class="approve_preview_button" data-id="{{$t_optional->id}}" data-type="t_optional">プレビュー</div>
+                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$t_optional->id}}">
+                                @else
+                                {{$t_optional->値}}
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                        <div class="approval_sub_title">
+                            承認用紙
+                        </div>
+                        <div class="approve_content">
+                            <div class="approve_content_title">
+                                承認用紙
+                            </div>
+                            <div class="approve_content_element">
+                                <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_before">プレビュー</div>
+                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
             <div class="approve_condition_tab">
@@ -182,6 +204,7 @@
         </div>
     </div>
     <!-- <input type="hidden" value="{{$t_flow->id}}" id="t_flowid"> -->
+    <input type="hidden" name="stamp_status" id="stamp_status" value="{{$stamp_status}}">
     <input type="hidden" value="{{$t_flow->フローマスタID}}" id="m_flow_id">
     <input type="hidden" value="{{$t_approval->id}}" name="t_approval_id" id="t_approval_id">
     <div class="element_input">

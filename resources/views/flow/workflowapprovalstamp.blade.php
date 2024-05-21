@@ -31,7 +31,7 @@
                 <div class="preview_control_items">
                     <div class="application_stamp_button_container">
                         <div class="application_stamp_button_content">
-                            <a href="{{route('workflow')}}" class="back_button application_stamp_back_button" id="flow_next_button">
+                            <a href="{{route('workflowapprovalget', ['id' => $t_approval->id])}}" class="back_button application_stamp_back_button" id="flow_next_button">
                                 <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
                                 もどる
                             </a>
@@ -47,11 +47,15 @@
 
         </div>
         <div id="inputs">
+            <input type="hidden" id="comment" name="comment" value="{{$comment}}">
             <input type="hidden" id="category_id" name="category_id" value="{{$category_id}}">
+            <input type="hidden" id="t_approval" name="t_approval" value="{{$t_approval->id}}">
             <input type="hidden" id="user_id" value="{{$t_approval->ユーザーID}}">
             <input type="hidden" id="t_flow_id" name="t_flow_id" value="{{$t_approval->フローテーブルID}}">
             <input type="hidden" id="top" name="top" value="">
             <input type="hidden" id="left" name="left" value="">
+            <input type="hidden" id="width" name="width" value="">
+            <input type="hidden" id="height" name="height" value="">
 
             <!-- <img src="" alt=""> -->
         </div>

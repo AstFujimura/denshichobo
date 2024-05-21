@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::table('t_flows', function (Blueprint $table) {
             $table->boolean('承認印')->default(false);
-            $table->string('申請ファイルパス')->nullable();
-            $table->string('申請印なしファイルパス')->nullable();
+            $table->string('変更前承認ファイルパス')->nullable();
+            $table->string('変更後承認ファイルパス')->nullable();
             $table->unsignedBigInteger('カテゴリマスタID')->default(1);
             $table->foreign('カテゴリマスタID')->references('id')->on('m_categories')->onDelete('cascade');
         });
@@ -32,8 +32,8 @@ return new class extends Migration
         Schema::table('t_flows', function (Blueprint $table) {
 
             $table->dropColumn('承認印');
-            $table->dropColumn('申請ファイルパス');
-            $table->dropColumn('申請印なしファイルパス');
+            $table->dropColumn('変更前承認ファイルパス');
+            $table->dropColumn('変更後承認ファイルパス');
             $table->dropForeign(['カテゴリマスタID']);
             $table->dropColumn('カテゴリマスタID');
         });
