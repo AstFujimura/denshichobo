@@ -32,6 +32,10 @@
 
             </div>
             @endforeach
+            <div class="category_setting_content_add" data-category_id="">
+                カテゴリを追加する
+            </div>
+
         </div>
     </div>
 </div>

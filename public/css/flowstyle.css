@@ -183,6 +183,7 @@ body {
     border-radius: 10px;
     margin-inline: auto;
     cursor: pointer;
+    position: relative;
 }
 
 .flow_title_icon {
@@ -194,6 +195,29 @@ body {
     font-weight: bold;
     font-size: 18px;
     margin-top: 8px;
+}
+.ribbon{
+    position: absolute;
+    width: 60px;
+    height: 30px;
+    background: red;
+    right: 0;
+    top: 15px;
+    color: white;
+    font-weight: bold;
+    padding-left: 10px;
+}
+.ribbon::before{
+    content: "";
+    background: white;
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    transform: rotate(45deg);
+    left: -20px;
+}
+.main_general_button:hover .ribbon::before{
+    background: #f3fbff;
 }
 
 .main_general_button:hover {
@@ -940,6 +964,14 @@ body {
 
 /* フロー申請 */
 
+.application_annotation{
+    margin-bottom: 25px;
+    margin-left: 50px;
+    background: gainsboro;
+    padding: 10px 20px;
+    border-radius: 10px;
+    width: 550px;
+}
 .flow_application_main_content {
     display: flex;
 }
@@ -947,6 +979,8 @@ body {
 .category_choice_container {
     width: 300px;
     margin-inline: 30px;
+    max-height: 407px;
+    overflow: auto;
 }
 
 .category_input {
@@ -1038,6 +1072,11 @@ body {
 .category_name {
     color: rgb(114, 114, 114);
     font-weight: bold;
+}
+
+.application_red {
+    color: red;
+    margin-left: 5px;
 }
 
 .application_form_content {
@@ -2385,7 +2424,19 @@ body {
 .mail_setting_form_label {
     font-size: 13px;
 }
-
+.password_change{
+    background: gainsboro;
+    border-radius: 3px;
+    width: 164px;
+    height: 35px;
+    line-height: 35px;
+    padding-inline: 16px;
+    cursor: pointer;
+}
+.password_change:hover{
+    background: gray;
+    color: white;
+}
 .mail_setting_form_text {
     height: 30px;
     border: solid gray 1px;
@@ -2420,6 +2471,7 @@ body {
 .category_setting_container {
     background: white;
     padding: 10px 30px 40px 40px;
+    width: 1100px;
 }
 
 .category_setting_grid {
@@ -2443,10 +2495,28 @@ body {
     align-items: center;
 }
 
+
 .category_setting_content:hover {
     top: 3px;
     background: rgb(235 254 255);
     box-shadow: 1px 1px 4px 0px #e2e2e2;
+}
+
+.category_setting_content_add {
+    width: 250px;
+    height: 150px;
+    background: white;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid 3px #cfcfcf;
+    color: gray;
+}
+.category_setting_content_add:hover{
+    box-shadow: 0 0 7px 0 #ffdd62;
 }
 
 .category_pen_icon {
@@ -2527,6 +2597,15 @@ body {
     height: 100px;
     border: solid 1px rgb(209, 209, 209);
     border-radius: 3px;
+}
+.category_regist_title_container {
+margin-bottom: 10px;
+}
+
+.category_regist_title{
+    height: 30px;
+    width: 500px;
+    border: solid 1px #cfcfcf;
 }
 
 .category_detail_optional_title {
@@ -3042,6 +3121,9 @@ body {
 .stamp_check_container {
     background: #dee7c3;
     padding-block: 10px;
+    width: 300px;
+    margin-left: 50px;
+    margin-top: 10px;
 }
 
 .stamp_check_content {
@@ -3266,6 +3348,45 @@ body {
 }
 
 /* 申請印 */
+.stamp_gray{
+    background: #00000096;
+    position: fixed;
+    left: 0;
+    top: 112px;
+    width: 100%;
+    height: calc(100% - 112px);
+    z-index: 101;
+    display: none;
+    justify-content: center;
+}
+.stamp_gray_open {
+    display: flex;
+}
+.stamp_none_message{
+    background: white;
+    width: 30%;
+    height: 300px;
+    margin-inline: auto;
+    position: relative;
+    margin-block: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+}
+.regist_stamp_button{
+    display: block;
+    background: #2c71ff;
+    color: white;
+    padding: 10px 40px;
+    border-radius: 3px;
+    margin-top: 28px;
+}
+.regist_stamp_button:hover{
+    background: #18459e;
+}
+
 .application_stamp_container {
     background: #d7d7d7;
     width: 97%;
@@ -3277,10 +3398,25 @@ body {
 }
 
 .application_stamp_button_content {
-    height: 80px;
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+}
+.change_stamp_button {
+    background: #5aa85a;
+    color: white;
+    padding-block: 7px;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    height: 38px;
+    margin-top: 20px;
+    margin-left: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
 }
 
 .application_stamp_button_container {

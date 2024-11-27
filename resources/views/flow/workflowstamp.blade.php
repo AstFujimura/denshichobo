@@ -88,12 +88,12 @@
                     <input type="hidden" name="aspect" id="aspect" value="">
                 </div>
                 <div class="letter_container">
-                @if ($m_stamp)
+                    @if ($m_stamp)
                     <input type="hidden" id="letter_length" value="{{$m_stamp->文字数}}" name="letter_length">
                     @else
                     <input type="hidden" id="letter_length" value="0" name="letter_length">
                     @endif
-                    
+
                     @if ($m_stamp)
                     @foreach($m_stamp_chars as $m_stamp_char)
                     <div class="flow_stamp_str_container">
@@ -116,12 +116,13 @@
                 </div>
             </div>
         </div>
-        <input type="hidden" id="stamp_img" name="stamp_img" value="aa">
+        <input type="hidden" id="stamp_img" name="stamp_img" value="">
         <input type="hidden" id="毛筆体" value="{{ asset(config('prefix.prefix').'/'.'font/毛筆体.ttf') }}">
         <input type="hidden" id="HG正楷書体" value="{{ asset(config('prefix.prefix').'/'.'font/HG正楷書体.TTF') }}">
         <input type="hidden" id="HGゴシック体" value="{{ asset(config('prefix.prefix').'/'.'font/HGゴシック体.TTC') }}">
         <input type="hidden" id="HGR明朝体" value="{{ asset(config('prefix.prefix').'/'.'font/HGR明朝体.TTC') }}">
-
+        <input type="hidden" name="t_flow" value="{{$t_flow_id}}">
+        <input type="hidden" name="t_approval" value="{{$t_approval_id}}">
     </form>
 </div>
 @endsection

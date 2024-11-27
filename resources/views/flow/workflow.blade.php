@@ -30,6 +30,9 @@
                     <div class="main_button_title">
                         承認
                     </div>
+                    @if ($t_approval_count != 0)
+                    <div class="ribbon">{{$t_approval_count}}</div>
+                    @endif
                 </a>
                 <a href="{{route('workflowviewget')}}" class="main_general_button">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application_view.svg') }}" alt="" class="flow_title_icon">

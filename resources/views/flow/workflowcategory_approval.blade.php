@@ -47,6 +47,18 @@
                 </div>
 
             </div>
+            <div class="stamp_check_container  {{$m_category->発行 ? '' : 'display_none'}}">
+                <div class="stamp_check_content">
+
+                    <input type="checkbox" name="approval_stamp" id="approval_stamp" {{$m_category->承認印 ? 'checked' : ''}}>
+                    <label class="approval_setting_element" for="approval_stamp">承認印を必須にする。</label>
+                </div>
+                <div class="stamp_check_content">
+
+                    <input type="checkbox" name="application_stamp" id="application_stamp" {{$m_category->申請印 ? 'checked' : ''}}>
+                    <label class="approval_setting_element" for="application_stamp">申請印を必須にする。</label>
+                </div>
+            </div>
         </div>
         <div class="approval_setting_detail_container display_none">
             <div class="preview_property_container">
@@ -78,18 +90,7 @@
                     @endforeach
                     @endforeach
                 </div>
-                <div class="stamp_check_container">
-                    <div class="stamp_check_content">
 
-                        <input type="checkbox" name="approval_stamp" id="approval_stamp" {{$m_category->承認印 ? 'checked' : ''}}>
-                        <label class="approval_setting_element" for="approval_stamp">承認印を必須にする。</label>
-                    </div>
-                    <div class="stamp_check_content">
-
-                        <input type="checkbox" name="application_stamp" id="application_stamp" {{$m_category->申請印 ? 'checked' : ''}}>
-                        <label class="approval_setting_element" for="application_stamp">申請印を必須にする。</label>
-                    </div>
-                </div>
                 <div class="preview_control_button_container">
                     <div class="preview_control_close_button">
                         閉じる

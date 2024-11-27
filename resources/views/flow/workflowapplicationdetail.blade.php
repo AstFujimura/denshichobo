@@ -30,41 +30,6 @@
         <div class="flow_view_content">
             <div class="approve_tab open_tab">
                 <div class="approve_container">
-                    <div class="approve_application_info_container">
-                        <div class="approval_sub_title">
-                            申請情報
-                        </div>
-                        <div class="applicant_info">
-                            <img class="approve_person_icon" src="{{ asset(config('prefix.prefix').'/'.'img/person.svg') }}">申請者 : {{$user->name}}
-                        </div>
-                        @foreach ($t_optionals as $t_optional)
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                {{$t_optional->項目名}}
-                            </div>
-                            <div class="approve_content_element">
-                                @if ($t_optional->値 == "file_regist_2545198")
-                                <div class="approve_preview_button" data-id="{{$t_optional->id}}"data-type="t_optional">プレビュー</div>
-                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$t_optional->id}}">
-                                @else
-                                {{$t_optional->値}}
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
-                        <div class="approval_sub_title">
-                            承認用紙
-                        </div>
-                        <div class="approve_content">
-                            <div class="approve_content_title">
-                                承認用紙
-                            </div>
-                            <div class="approve_content_element">
-                                <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_before">プレビュー</div>
-                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
-                            </div>
-                        </div>
-                    </div>
                     <div class="approve_authorizer_container">
                         <div class="approval_sub_title">
                             申請ステータス
@@ -100,7 +65,7 @@
                                 決裁済
                             </div>
                         </div>
-                        <div class="approval_sub_title">
+                        <!-- <div class="approval_sub_title">
                             TAMERU
                         </div>
                         <div class="tameru_container">
@@ -110,7 +75,7 @@
                             <div class="tameru_button">
                                 TAMERUに保存
                             </div>
-                        </div>
+                        </div> -->
                         @elseif ($t_flow->ステータス == 4)
                         <div class="application_status_container">
 
@@ -118,16 +83,55 @@
                                 決裁済
                             </div>
                         </div>
-                        <div class="approval_sub_title">
+                        <!-- <div class="approval_sub_title">
                             TAMERU
                         </div>
                         <div class="tameru_container">
                             <div class="tameru_content">
                                 <span class="tameru_status_title">現在のステータス:</span> <span class="tameru_status saved">保存済</span>
                             </div>
+                        </div> -->
+                        @endif
+                    </div>
+                    <div class="approve_application_info_container">
+                        <div class="approval_sub_title">
+                            申請情報
+                        </div>
+                        <div class="applicant_info">
+                            <img class="approve_person_icon" src="{{ asset(config('prefix.prefix').'/'.'img/person.svg') }}">申請者 : {{$user->name}}
+                        </div>
+                        @foreach ($t_optionals as $t_optional)
+                        <div class="approve_content">
+                            <div class="approve_content_title">
+                                {{$t_optional->項目名}}
+                            </div>
+                            <div class="approve_content_element">
+                                @if ($t_optional->値 == "file_regist_2545198")
+                                <div class="approve_preview_button" data-id="{{$t_optional->id}}" data-type="t_optional">プレビュー</div>
+                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$t_optional->id}}">
+                                @elseif ($t_optional->値 == "file_none_246851")
+                                @else
+                                {{$t_optional->値}}
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                        @if ($m_category->発行)
+                        <div class="approval_sub_title">
+                            承認用紙
+                        </div>
+                        <div class="approve_content">
+                            <div class="approve_content_title">
+                                承認用紙
+                            </div>
+                            <div class="approve_content_element">
+                                <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_before">プレビュー</div>
+                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
+                            </div>
                         </div>
                         @endif
                     </div>
+
 
 
                 </div>

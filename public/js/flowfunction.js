@@ -824,10 +824,8 @@ function e_delete(column, row, arrays) {
     }
     // 削除できる場合
     else {
-      if (confirm('本当にこのフロー地点を削除しますか')) {
-        arrays = delete_exe(column, row, arrays)
-        console.log(arrays)
-      }
+      arrays = delete_exe(column, row, arrays)
+      console.log(arrays)
     }
   }
 
@@ -1402,7 +1400,7 @@ function flow_application_date_format(element) {
 function pointer_img_create() {
   var category_id = $('[name="category"]:checked').val()
   $('.m_pointer[data-category_id=' + category_id + ']').each(function () {
-    var text = $('input[name="item'+$(this).data('m_optional_id')+'"]').val();
+    var text = $('input[name="item' + $(this).data('m_optional_id') + '"]').val();
 
     var font_size = $(this).data("font_size");
 
@@ -1424,8 +1422,8 @@ function pointer_img_create() {
     var imageData = canvas.toDataURL('image/png');
 
     // 画像データをinputのvalueに設定
-    $('#m_pointer_img'+ $(this).data('m_pointer_id')).val(imageData);
-    var m_pointer = '<input type="hidden" name="m_pointers[]" value="'+$(this).data('m_pointer_id')+'">'
+    $('#m_pointer_img' + $(this).data('m_pointer_id')).val(imageData);
+    var m_pointer = '<input type="hidden" name="m_pointers[]" value="' + $(this).data('m_pointer_id') + '">'
     $('.pointer_input').append(m_pointer)
   })
 }
@@ -1775,7 +1773,7 @@ function change_disable() {
   })
 }
 
-// 並べ替えた時にその順番をinputの格納
+// 並べ替えた時にその順番をinputに格納
 function change_items_order() {
   var order = ""
   $('.category_detail_optional_content').each(function () {
@@ -1826,12 +1824,11 @@ function max_input_reload(element, status) {
 }
 function application_input_item(item) {
   console.log(item["id"])
-
+  var required = item["必須"] ? '*' : ''
   var content = `<div class="application_form_content">
     <div class="application_form_label">
-    `+ item["項目名"] + `
+    `+ item["項目名"] + `<span class="application_red">`+required+`</span>
     </div>`
-
   switch (item["型"]) {
     case 1:
       if (item["最大"] <= 100) {

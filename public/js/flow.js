@@ -688,7 +688,11 @@ $(document).ready(function () {
       dataType: 'json',
       success: function (response) {
         $('.flow_application_area').html('')
-        $.each(response, function (index, array) {
+        if (response[0]) {
+          var content = '<div class="application_annotation">' + response[0] + '</div>'
+        }
+        $('.flow_application_area').append(content)
+        $.each(response[1], function (index, array) {
           application_input_item(array)
 
         })
@@ -952,7 +956,7 @@ $(document).ready(function () {
       $('.approve_preview_container').show()
       $('.approve_gray').show()
       var ID = $(this).data("id");
-      preview_img_get(prefix, ID,"t_flow_after")
+      preview_img_get(prefix, ID, "t_flow_after")
 
     })
   }
@@ -975,54 +979,61 @@ $(document).ready(function () {
     var ID = $('#t_flow_id').val()
     approval_setting_pdf(prefix, ID, status)
     var user_id = $('#user_id').val()
-    if ($('#server').val() == "cloud") {
-      $.ajax({
-        url: prefix + '/workflow/stamp/img/' + user_id, // データを取得するURLを指定
-        method: 'GET',
-        cache: false, // キャッシュを無効にする
-        dataType: "json",
-        success: function (response) {
-          if (response.Type.startsWith('image/')) {
-            var img = $('<img>');
-            img.attr('src', response.path);
-            img.attr('width', '100%');
-            img.attr('height', '600px');
-            img.addClass('origin');
-
-            $('#inputs').append(img);
-          }
-        }
-      });
+    if ($('#stamp_img').val() == 'none') {
+      $('.stamp_gray').addClass('stamp_gray_open')
     }
     else {
-      $.ajax({
-        url: prefix + '/workflow/stamp/img/' + user_id, // データを取得するURLを指定
-        method: 'GET',
-        cache: false, // キャッシュを無効にする
-        xhrFields: {
-          responseType: 'blob' // ファイルをBlobとして受け取る
-        },
-        success: function (response) {
-          // 取得したファイルデータを使ってPDFを表示
-          var Url = URL.createObjectURL(response);
-          if (response.type.startsWith('image/')) {
-            var img = $('<img>');
-            img.attr('src', Url);
-            // img.attr('height', '600px');
-            img.addClass('origin');
+      var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
 
-            $('#inputs').append(img);
+      if ($('#server').val() == "cloud") {
+        $.ajax({
+          url: prefix + '/workflow/stamp/img/' + user_id + "?timestamp=" + timestamp,  // データを取得するURLを指定
+          method: 'GET',
+          cache: false, // キャッシュを無効にする
+          dataType: "json",
+          success: function (response) {
+            if (response.Type.startsWith('image/')) {
+              var img = $('<img>');
+              img.attr('src', response.path);
+              img.attr('width', '100%');
+              img.attr('height', '600px');
+              img.addClass('origin');
+
+              $('#inputs').append(img);
+            }
           }
+        });
+      }
+      else {
+        $.ajax({
+          url: prefix + '/workflow/stamp/img/' + user_id + "?timestamp=" + timestamp, // データを取得するURLを指定
+          method: 'GET',
+          cache: false, // キャッシュを無効にする
+          xhrFields: {
+            responseType: 'blob' // ファイルをBlobとして受け取る
+          },
+          success: function (response) {
+            // 取得したファイルデータを使ってPDFを表示
+            var Url = URL.createObjectURL(response);
+            if (response.type.startsWith('image/')) {
+              var img = $('<img>');
+              img.attr('src', Url);
+              // img.attr('height', '600px');
+              img.addClass('origin');
+
+              $('#inputs').append(img);
+            }
 
 
-        },
-        error: function (xhr, status, error) {
-          console.error(error); // エラー処理
-        }
-      });
+          },
+          error: function (xhr, status, error) {
+            console.error(error); // エラー処理
+          }
+        });
+
+      }
 
     }
-
 
     var dragging = false; // ドラッグ中かどうかのフラグ
     var offsetX, offsetY; // ドラッグ開始位置と要素の左上端との差
@@ -1030,7 +1041,7 @@ $(document).ready(function () {
     var clicked = false
 
     var width, height, pdf_canvas_width, pdf_canvas_height
-    var scrollX,scrollY
+    var scrollX, scrollY
 
     $(document).on('click', '.canvas_container', function (event) {
       if (!clicked) {
@@ -1038,7 +1049,7 @@ $(document).ready(function () {
         offsetY = canvas_offset("y")
         nowX = event.pageX - offsetX - 18
         nowY = event.pageY - offsetY - 18
-        
+
 
         width = $('#width').val()
         height = $('#height').val()
@@ -1151,6 +1162,23 @@ $(document).ready(function () {
       $('.selected').hide()
     }
 
+    $('#approve_form').on("submit", function (event) {
+      event.preventDefault()
+      var status = $('.approval_input:checked').val()
+      if ($('[name="approval"]:checked').length == 0) {
+        alert("「承認する」もしくは「却下する」を選択してください")
+      }
+      else if ($('#approve:checked').length != 0 && $('#stamp_status').val() == "false") {
+        alert('承認印を押印してください')
+      }
+      else {
+        if (confirm('本当に'+ (status == "approve" ? "承認":"却下") +'しますか')) {
+          this.submit()
+        }
+      }
+
+    })
+
   }
 
   // -------承認一覧----------------------
@@ -1213,7 +1241,7 @@ $(document).ready(function () {
     $('.approve_gray').show()
     var ID = $(this).data("id");
     var type = $(this).data("type")
-    preview_img_get(prefix, ID,type)
+    preview_img_get(prefix, ID, type)
 
   })
 
@@ -1317,6 +1345,12 @@ $(document).ready(function () {
     }
   })
 
+  $('.password_change').on('click', function () {
+    $(this).hide()
+    $('#mail_setting_password').removeClass("display_none")
+    $('#mail_setting_password').attr("data-required",'true')
+  })
+
 
   $('.test_send_button').on('click', function () {
     if (!mail_setting_required_check('test')) {
@@ -1352,6 +1386,8 @@ $(document).ready(function () {
     }
   })
 
+
+  // -----------カテゴリ設定------------------
 
   $('.category_pen_icon').on('click', function () {
     // 表示されているdivを非表示にする
@@ -1438,9 +1474,18 @@ $(document).ready(function () {
     }
     window.location.href = prefix + '/workflow/category/detail/' + $(this).data("category_id");
   })
+  // カテゴリを追加するをクリックしたとき
+  $('.category_setting_content_add').on('click', function (event) {
+    window.location.href = prefix + '/workflow/category/regist';
+  })
+
+  // -----------------------------
 
 
-  // カテゴリ詳細編集ページ
+
+  // ----------カテゴリ詳細編集ページ-------------------
+  // ----------カテゴリ登録ページ-------------------
+
   if ($('#category_detail').length != 0) {
     sortable_reload()
 
@@ -1541,6 +1586,7 @@ $(document).ready(function () {
       if ($(this).prop('checked')) {
         $('.approval_setting_droparea').removeClass("display_none");
         $('.approval_setting_detail_button').removeClass("display_none");
+        $('.stamp_check_container').removeClass("display_none");
         if ($('#approval_setting_file').prop('files').length == 0) {
           $('.approval_setting_detail_button').addClass("disable");
           $('#status').val("error")
@@ -1550,6 +1596,7 @@ $(document).ready(function () {
         $('.approval_setting_droparea').addClass("display_none");
         $('.approval_setting_change_file').addClass("display_none");
         $('.approval_setting_detail_button').addClass("display_none");
+        $('.stamp_check_container').addClass("display_none");
         $('#status').val("empty")
       }
 
@@ -1651,7 +1698,7 @@ $(document).ready(function () {
     var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
     var width, height, pdf_canvas_width, pdf_canvas_height
 
-    
+
     $("#category_approval_setting_form").on('submit', function (event) {
       event.preventDefault();
       if (approval_setting_submit_check()) {
@@ -1748,7 +1795,7 @@ $(document).ready(function () {
         $(".optional_item[data-dragging='true']").data("dragging", false)
         $(".optional_item[data-dragging='true']").attr("data-dragging", false)
         $(".optional_item").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
-        
+
         var top_input = $('input[data-prop="top"][data-pointer_id="' + dragging_pointer_id + '"]');
         var left_input = $('input[data-prop="left"][data-pointer_id="' + dragging_pointer_id + '"]');
         top_input.val(nowY * height / pdf_canvas_height);

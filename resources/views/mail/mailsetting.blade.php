@@ -22,6 +22,9 @@
                 <button class="next_button flow_next_button" id="flow_next_button">
                     登録
                 </button>
+                <a href="javascript:void(0);" onclick="window.location.reload();" class="cancel_button " id="flow_next_button">
+                    キャンセル
+                </a>
             </div>
             <div class="mail_setting_main_content">
                 <div class="mail_setting_section">
@@ -62,13 +65,18 @@
                         <div class="mail_setting_form_label">
                             アカウント名<span class="red">*</span>
                         </div>
-                        <input type="text" name="username"  value="{{$M_mail->username ?? ''}}" id="mail_setting_username" class="mail_setting_form_text text_semilong_content" data-required="true" autocomplete="off">
+                        <input type="text" name="username" value="{{$M_mail->username ?? ''}}" id="mail_setting_username" class="mail_setting_form_text text_semilong_content" data-required="true" autocomplete="off">
                     </div>
                     <div class="mail_setting_form_content ">
                         <div class="mail_setting_form_label">
                             パスワード<span class="red">*</span>
                         </div>
+                        @if ($M_mail)
+                        <div class="password_change">パスワードを変更する</div>
+                        <input type="password" name="password" id="mail_setting_password" class="mail_setting_form_text text_semilong_content display_none" data-required="" autocomplete="off">
+                        @else
                         <input type="password" name="password" id="mail_setting_password" class="mail_setting_form_text text_semilong_content" data-required="true" autocomplete="off">
+                        @endif
                     </div>
                 </div>
                 <div class="mail_setting_section">
@@ -80,7 +88,7 @@
                             受信用メールアドレス
                         </div>
                         <div class="mail_setting_test_send_content">
-                            <input type="text" name="test_mail"  value="{{$M_mail->test_mail ?? ''}}" id="mail_setting_test_mail" class="mail_setting_form_text text_semilong_content" data-required="false" autocomplete="off">
+                            <input type="text" name="test_mail" value="{{$M_mail->test_mail ?? ''}}" id="mail_setting_test_mail" class="mail_setting_form_text text_semilong_content" data-required="false" autocomplete="off">
                             <div class="test_send_button">
                                 テスト送信
                             </div>

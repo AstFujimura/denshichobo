@@ -101,7 +101,7 @@
                     @endif
 
                     @foreach ($approvables as $approvable)
-                    <a href="/workflow/approval/{{$approvable->approval_id}}" class="flow_view_tbody_tr">
+                    <a href="{{$prefix}}/workflow/approval/{{$approvable->approval_id}}" class="flow_view_tbody_tr">
                         <div class="flow_view_td flow_view_title">
                             {{$approvable->標題}}
                         </div>
@@ -125,7 +125,7 @@
                     <div class="none_data_message">承認済の申請データはありません</div>
                     @endif
                     @foreach ($approveds as $approved)
-                    <a href="/workflow/approval/{{$approved->approval_id}}" class="flow_view_tbody_tr">
+                    <a href="{{$prefix}}/workflow/approval/{{$approved->approval_id}}" class="flow_view_tbody_tr">
                         <div class="flow_view_td flow_view_title">
                             {{$approved->標題}}
                         </div>
@@ -150,7 +150,7 @@
                     <div class="none_data_message">却下済の申請データはありません</div>
                     @endif
                     @foreach ($rejecteds as $rejected)
-                    <a href="/workflow/approval/{{$rejected->approval_id}}" class="flow_view_tbody_tr">
+                    <a href="{{$prefix}}/workflow/approval/{{$rejected->approval_id}}" class="flow_view_tbody_tr">
                         <div class="flow_view_td flow_view_title">
                             {{$rejected->標題}}
                         </div>

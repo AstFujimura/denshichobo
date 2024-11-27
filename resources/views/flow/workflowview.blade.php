@@ -100,7 +100,7 @@
                     <div class="none_data_message">進行中の申請データはありません</div>
                     @endif
                     @foreach ($t_flows_ongoing as $t_flow_ongoing)
-                    <a href="/workflow/application/detail/{{$t_flow_ongoing->flow_id}}" class="flow_view_tbody_tr">
+                    <a href="{{$prefix}}/workflow/application/detail/{{$t_flow_ongoing->flow_id}}" class="flow_view_tbody_tr">
 
                         <div class="flow_view_td flow_view_title">
                             {{$t_flow_ongoing->標題}}
@@ -125,7 +125,7 @@
                     <div class="none_data_message">決裁済の申請データはありません</div>
                     @endif
                     @foreach ($t_flows_approved as $t_flow_approved)
-                    <a href="/workflow/application/detail/{{$t_flow_approved->flow_id}}" class="flow_view_tbody_tr">
+                    <a href="{{$prefix}}/workflow/application/detail/{{$t_flow_approved->flow_id}}" class="flow_view_tbody_tr">
 
                         <div class="flow_view_td flow_view_title">
                             {{$t_flow_approved->標題}}
@@ -150,7 +150,7 @@
                     <div class="none_data_message"> 却下済の申請データはありません</div>
                     @endif
                     @foreach ($t_flows_reject as $t_flow_reject)
-                    <a href="/workflow/application/detail/{{$t_flow_reject->flow_id}}" class="flow_view_tbody_tr">
+                    <a href="{{$prefix}}/workflow/application/detail/{{$t_flow_reject->flow_id}}" class="flow_view_tbody_tr">
 
                         <div class="flow_view_td flow_view_title">
                             {{$t_flow_reject->標題}}

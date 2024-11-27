@@ -47,12 +47,14 @@
                     @if ($t_optional->値 == "file_regist_2545198")
                     <div class="approve_preview_button" data-id="{{$t_optional->id}}" data-type="t_optional">プレビュー</div>
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/{{$t_optional->id}}">
+                    @elseif ($t_optional->値 == "file_none_246851")
                     @else
                     {{$t_optional->値}}
                     @endif
                 </div>
             </div>
             @endforeach
+            @if ($m_category->発行)
             <div class="view_application_title">
                 承認用紙
             </div>
@@ -65,6 +67,7 @@
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
                 </div>
             </div>
+            @endif
         </div>
         <div class="flow_confirm_view_container">
 

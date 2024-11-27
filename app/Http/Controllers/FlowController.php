@@ -52,10 +52,12 @@ class FlowController extends Controller
 
         if (!$duplicationarray) {
             $users = User::where('name', 'like', '%' . $searchtext . '%')
+                ->where('id', '!=', 1)
                 ->where('削除', "")
                 ->get();
         } else {
             $users = User::where('name', 'like', '%' . $searchtext . '%')
+                ->where('id', '!=', 1)
                 ->whereNotIn('name', $duplicationarray)
                 ->where('削除', "")
                 ->get();
@@ -494,7 +496,10 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflow', compact("prefix", "server"));
+        $t_approval_count = T_approval::where('ユーザーID', Auth::id())
+            ->where('ステータス', 2)
+            ->count();
+        return view('flow.workflow', compact("prefix", "server", "t_approval_count"));
     }
     // ワークフローマスタ一覧
     public function workflowmaster(Request $request)
@@ -798,6 +803,7 @@ class FlowController extends Controller
                 $new_M_mail->test_mail = $test_mail;
                 $new_M_mail->save();
             }
+            return redirect()->route('workflow');
         }
     }
     // テストメール送信
@@ -816,6 +822,10 @@ class FlowController extends Controller
             $username = $request->input("username");
             $password = $request->input("password");
             $test_mail = $request->input("test_mail");
+            if (!$password) {
+                $m_mail_password = M_mail::first()->password;
+                $password = Crypt::decryptString($m_mail_password);
+            }
 
             $mailConfig = [
                 'driver' => 'smtp',
@@ -915,6 +925,7 @@ class FlowController extends Controller
     // カテゴリ詳細変更ポスト
     public function categorydetailpost(Request $request)
     {
+
         if (Auth::user()->管理 == "管理") {
             $category_id = $request->input('id');
             $m_category = M_category::find($category_id);
@@ -977,6 +988,80 @@ class FlowController extends Controller
         }
     }
 
+    // カテゴリを追加
+    public function categoryregistget()
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        if (Auth::user()->管理 == "管理") {
+            return view('flow.workflowcategoryregist', compact("prefix", "server"));
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+    public function categoryregistpost(Request $request)
+    {
+        if (Auth::user()->管理 == "管理") {
+            $new_m_category = new M_category();
+            $order = $request->input('order');
+            $new_m_category->カテゴリ名 = $request->input('category_name');
+            $new_m_category->注釈 = $request->input('annotation');
+            // 仮の項目順を入れておく
+            $new_m_category->項目順 = $order;
+            $new_m_category->save();
+            // 新規追加された場合項目のidが仮の形(50000以上)のものになっているため
+            // DBに登録してそのidを取得したものを使用して正式なものをofficial_orderに格納する
+            $official_order = "";
+            // アンダースコア（_）をデリミタとして文字列を分割
+            $parts = explode("_", $order);
+            foreach ($parts as $part) {
+                // 新規に追加された項目
+                // 新規に追加されたものは50000以上としている
+                if ($part == 50000) {
+                    $new_m_optional = new M_optional();
+                    $new_m_optional->カテゴリマスタID = $new_m_category->id;
+                    $new_m_optional->項目名 = $request->input("name_" . $part . "");
+                    $new_m_optional->型 = 1;
+                    $new_m_optional->最大 = 30;
+                    $new_m_optional->必須 = true;
+                    $new_m_optional->デフォルト = true;
+                    $new_m_optional->save();
+                    $part = $new_m_optional->id;
+                } else if ($part > 50000) {
+                    $new_m_optional = new M_optional();
+                    $new_m_optional->カテゴリマスタID = $new_m_category->id;
+                    $new_m_optional->項目名 = $request->input("name_" . $part . "");
+                    $new_m_optional->型 = $request->input("type_" . $part . "");
+                    $new_m_optional->最大 = $request->input("max_" . $part . "");
+                    $new_m_optional->必須 = $request->input("required_" . $part . "");
+                    // 金額条件に合致するものはtrueにする
+                    if ($request->input('price') == $part) {
+                        $new_m_optional->金額条件 = true;
+                    }
+                    $new_m_optional->save();
+                    $part = $new_m_optional->id;
+                }
+
+                // 最初
+                if ($official_order == "") {
+                    $official_order = $part;
+                }
+                // 二番目以降
+                else {
+                    $official_order = $official_order . "_" . $part;
+                }
+                $new_m_category->項目順 = $official_order;
+                $new_m_category->save();
+            }
+            return redirect()->route('categorydetailget', ["id" => $new_m_category->id]);
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+
     // カテゴリ情報の非同期通信API
     public function categoryinfoget(Request $request, $id)
     {
@@ -997,7 +1082,7 @@ class FlowController extends Controller
 
             $category_object[] = $item;
         }
-        return response()->json($category_object);
+        return response()->json([$m_category->注釈, $category_object]);
     }
 
     // カテゴリ承認設定
@@ -1255,33 +1340,35 @@ class FlowController extends Controller
                 $value = $t_optional->日付;
             } else if ($m_optional->型 == 4) {
                 $file = $request->file("item" . $part);
-                $pastID = $this->generateRandomCode();
-                $extension = $file->getClientOriginalExtension();
-                $filename = Config::get('custom.file_upload_path');
-                $now = Carbon::now();
-                $currentTime = $now->format('YmdHis');
-                $filepath = $currentTime . '_' . $pastID;
-                //アップロードされたファイルに拡張子がない場合
-                if (!$extension) {
-                    if (config('app.env') == 'production') {
-                        // 本番環境用の設定
+                if ($file) {
+                    $pastID = $this->generateRandomCode();
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = Config::get('custom.file_upload_path');
+                    $now = Carbon::now();
+                    $currentTime = $now->format('YmdHis');
+                    $filepath = $currentTime . '_' . $pastID;
+                    //アップロードされたファイルに拡張子がない場合
+                    if (!$extension) {
+                        if (config('app.env') == 'production') {
+                            // 本番環境用の設定
+                        } else {
+                            // 開発環境用の設定
+                            copy($file->getRealPath(), $filename . "\\" . $filepath);
+                        }
+                        //extensionがnullになっているためエラー回避
+                        $extension = "";
                     } else {
-                        // 開発環境用の設定
-                        copy($file->getRealPath(), $filename . "\\" . $filepath);
+                        if (config('app.env') == 'production') {
+                            // 本番環境用の設定
+                        } else {
+                            // 開発環境用の設定
+                            copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+                        }
                     }
-                    //extensionがnullになっているためエラー回避
-                    $extension = "";
-                } else {
-                    if (config('app.env') == 'production') {
-                        // 本番環境用の設定
-                    } else {
-                        // 開発環境用の設定
-                        copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-                    }
-                }
 
-                $t_optional->ファイルパス = $filepath;
-                $t_optional->ファイル形式 = $extension;
+                    $t_optional->ファイルパス = $filepath;
+                    $t_optional->ファイル形式 = $extension;
+                }
             }
             $t_optional->save();
 
@@ -1292,7 +1379,7 @@ class FlowController extends Controller
                     ->first();
                 if ($m_pointer) {
 
-                    $pdf->SetFont('Noto', '', $m_pointer->フォントサイズ . "pt");
+                    $pdf->SetFont('Noto', 'B', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
                     $pdf->Write(0, $value);
                 }
@@ -1310,9 +1397,14 @@ class FlowController extends Controller
             file_put_contents($new_pdf_path, $pdfcontent);
 
             $new_t_flow->変更前承認ファイルパス = $new_pdf_name;
+            // 申請印を押さない場合は変更後承認ファイルパスへの記述がないため
+            // ここで値を格納する
+            if (!$m_category->申請印) {
+                $new_t_flow->変更後承認ファイルパス = $new_pdf_name;
+            }
             $new_t_flow->save();
         }
-        
+
         return redirect()->route('workflowchoiceget', ["id" => $new_t_flow->id]);
     }
 
@@ -1343,6 +1435,7 @@ class FlowController extends Controller
             ->whereIn('m_flow_groups.グループID', $groupIds)
             ->where('金額下限条件', '<=', $t_optional->数値 ?? 2000000000)
             ->where('金額上限条件', '>=', $t_optional->数値 ?? 0)
+            ->where('カテゴリマスタID', $m_category->id)
             ->where('削除フラグ', false)
             ->select('m_flows.*')
             ->distinct() // 重複を取り除く
@@ -1375,7 +1468,7 @@ class FlowController extends Controller
     }
 
     // idはt_flowのid
-    public function workflowapplicationstampget($id)
+    public function workflowapplicationstampget(Request $request, $id)
     {
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
@@ -1385,13 +1478,18 @@ class FlowController extends Controller
         $t_flow = T_flow::find($id);
         $category_id = M_flow::find($t_flow->フローマスタID)->カテゴリマスタID;
         $user_id = Auth::id();
-        return view('flow.workflowapplicationstamp', compact("prefix", "server", "category_id", "user_id", "t_flow"));
+        $m_stamp = M_stamp::where('ユーザーID', $user_id)->first();
+
+        return view('flow.workflowapplicationstamp', compact("prefix", "server", "category_id", "user_id", "t_flow", "m_stamp"));
     }
     public function workflowapplicationstamppost(Request $request)
     {
         $t_flow_id = $request->input("t_flow_id");
         $t_flow = T_flow::find($t_flow_id);
-        // dd($request->all());
+        // すでに申請済みの場合
+        if ($t_flow->ステータス > 0) {
+            return redirect()->route('workflowerrorGet', ["code" => "A546815"]);
+        }
         // TCPDFでPDFを作成し、画像を追加する
         $pdf = new Fpdi();
         $m_category = M_category::find($request->input("category_id"));
@@ -1442,8 +1540,10 @@ class FlowController extends Controller
         $server = config('prefix.server');
         $t_optionals = $this->application_items($id);
         $t_flow = T_flow::find($id);
+        $m_flow = M_flow::find($t_flow->フローマスタID);
+        $m_category = M_category::find($m_flow->カテゴリマスタID);
 
-        return view('flow.workflowconfirm', compact("prefix", "server", "id", "t_flow", "t_optionals"));
+        return view('flow.workflowconfirm', compact("prefix", "server", "id", "t_flow", "t_optionals", "m_category"));
     }
     // フローテーブルを引数として項目の情報のレコードを返す
     private function application_items($id)
@@ -1459,9 +1559,12 @@ class FlowController extends Controller
                 $t_optional->値 = $t_optional->数値;
             } else if ($m_optional->型 == 3) {
                 $t_optional->値 = $t_optional->日付;
-            } else if ($m_optional->型 == 4) {
+            } else if ($m_optional->型 == 4 && $t_optional->ファイルパス) {
                 // viewでファイルの場合は違う表示をするので以下の値を入れておいてviewでif文の分岐
                 $t_optional->値 = "file_regist_2545198";
+            } else if ($m_optional->型 == 4 && !$t_optional->ファイルパス) {
+                // viewでファイルの場合は違う表示をするので以下の値を入れておいてviewでif文の分岐
+                $t_optional->値 = "file_none_246851";
             } else if ($m_optional->型 == 5) {
                 $t_optional->値 = $t_optional->bool;
             }
@@ -1473,6 +1576,10 @@ class FlowController extends Controller
         $t_flow_id = $request->input("t_flow_id");
         $t_flow = T_flow::find($t_flow_id);
         $m_flow = M_flow::find($t_flow->フローマスタID);
+        // すでに申請済みの場合
+        if ($t_flow->ステータス > 0) {
+            return redirect()->route('workflowerrorGet', ["code" => "A546815"]);
+        }
 
         // フローのトランザクションテーブルを作成
 
@@ -1586,11 +1693,61 @@ class FlowController extends Controller
             foreach ($t_approvals as $t_approval) {
                 $t_approval->ステータス = 2;
                 $t_approval->save();
+                $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
             }
         }
-        return redirect()->route('workflowmaster');
+        return redirect()->route('workflow');
     }
+    private function workflowmailpost($user_id, $content, $content_id)
+    {
+        if (Auth::user()->管理 == "管理") {
+            $m_mail = M_mail::first();
+            $name = $m_mail->name;
+            $mail = $m_mail->mail;
+            $host = $m_mail->host;
+            $port = $m_mail->port;
+            $username = $m_mail->username;
+            $password = Crypt::decryptString($m_mail->password);
 
+            $recipient = User::find($user_id)->email;
+
+            $mailConfig = [
+                'driver' => 'smtp',
+                'host' => $host,
+                'port' => $port,
+                'username' => $username,
+                'password' => $password,
+                'encryption' => 'tls',
+            ];
+            if ($content == "approval") {
+                $url = route('workflowapprovalget', ['id' => $content_id]);
+                $subject = '【ワークフローシステム】承認依頼';
+                $t_flow = T_flow::find(T_approval::find($content_id)->フローテーブルID);
+                $applicant_name = User::find($t_flow->申請者ID)->name;
+                $parameter = compact('url', 'applicant_name');
+            } else if ($content == "reject") {
+                $url = route('workflowapplicationdetailget', ['id' => $content_id]);
+                $subject = '【ワークフローシステム】申請却下';
+                $parameter = compact('url');
+            } else if ($content == "completion") {
+                $url = route('workflowapplicationdetailget', ['id' => $content_id]);
+                $subject = '【ワークフローシステム】決裁';
+                $parameter = compact('url');
+            }
+            config(['mail' => $mailConfig]);
+            try {
+                Mail::send('mail.mail_' . $content, $parameter, function ($message) use ($recipient, $mail, $name, $subject) {
+                    $message->to($recipient)
+                        ->subject($subject)
+                        ->from($mail, $name);
+                });
+                return response()->json('送信しました');
+                // return redirect()->route('workflow');
+            } catch (\Exception) {
+                return response()->json('送信できませんでした');
+            }
+        }
+    }
 
 
     // 承認一覧
@@ -1683,11 +1840,18 @@ class FlowController extends Controller
             ->first();
         $t_optionals =  $this->application_items($t_approval->フローテーブルID);
         $t_flow = T_flow::find($t_approval->フローテーブルID);
-
+        $m_flow = M_flow::find($t_flow->フローマスタID);
+        $m_category = M_category::find($m_flow->カテゴリマスタID);
         if (isset($t_approval->承認ファイルパス)) {
             $stamp_status = "true";
-        } else {
+        }
+        // 承認印を押す必要があるがまだ押印されていない場合
+        else if ($t_flow->承認印) {
             $stamp_status = "false";
+        }
+        // 承認印を押す必要がない場合
+        else {
+            $stamp_status = "none";
         }
 
 
@@ -1710,7 +1874,7 @@ class FlowController extends Controller
         $comment = $request->input('comment');
 
         $approval = $request->input('approval');
-        return view('flow.workflowapproval', compact("prefix", "server", "t_flow", "user", "t_optionals", "t_approval", "past_approvals", "stamp_status", "comment", "approval"));
+        return view('flow.workflowapproval', compact("prefix", "server", "t_flow", "user", "t_optionals", "t_approval", "past_approvals", "stamp_status", "comment", "approval", "m_category"));
     }
     public function approvalsettingpdf(Request $request, $id)
     {
@@ -1770,6 +1934,11 @@ class FlowController extends Controller
 
         $t_flow = T_flow::find($t_flow_point->フローテーブルID);
 
+        // 承認権限がない場合
+        if ($t_approval->ステータス != 2) {
+            return redirect()->route('workflowerrorGet', ["code" => "B546254"]);
+        }
+
         if ($t_flow_point->承認ステータス < 0) {
             if ($result == "approve") {
                 // dd($t_flow_point->承認ステータス);
@@ -1796,6 +1965,7 @@ class FlowController extends Controller
                         $t_flow->決裁数 += 1;
                         if ($t_flow->決裁数 == $t_flow->決裁地点数) {
                             $t_flow->ステータス = 3;
+                            $this->workflowmailpost($t_flow->申請者ID, 'completion', $t_flow->id);
                         }
                         $t_flow->save();
                     }
@@ -1824,6 +1994,7 @@ class FlowController extends Controller
                         foreach ($t_approvals as $t_approval) {
                             $t_approval->ステータス = 2;
                             $t_approval->save();
+                            $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
                         }
                     }
                 }
@@ -1838,6 +2009,7 @@ class FlowController extends Controller
 
                 $t_flow->ステータス = 2;
                 $t_flow->save();
+                $this->workflowmailpost($t_flow->申請者ID, 'reject', $t_flow->id);
             } else if ($result == "stamp_approve") {
             }
         }
@@ -1855,7 +2027,8 @@ class FlowController extends Controller
         $t_flow = T_flow::find($t_approval->フローテーブルID);
         $category_id = M_flow::find($t_flow->フローマスタID)->カテゴリマスタID;
         $comment = $request->input('comment');
-        return view('flow.workflowapprovalstamp', compact("prefix", "server", "t_approval", "category_id", "comment"));
+        $m_stamp = M_stamp::where('ユーザーID', Auth::id())->first();
+        return view('flow.workflowapprovalstamp', compact("prefix", "server", "t_approval", "category_id", "comment", "m_stamp"));
     }
 
     public function workflowapprovalstamppost(Request $request)
@@ -1997,7 +2170,8 @@ class FlowController extends Controller
 
         $t_optionals =  $this->application_items($id);
         $t_flow = T_flow::find($id);
-
+        $m_flow = M_flow::find($t_flow->フローマスタID);
+        $m_category = M_category::find($m_flow->カテゴリマスタID);
 
         $user = User::find($t_flow->申請者ID);
 
@@ -2022,10 +2196,10 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflowapplicationdetail', compact("prefix", "server", "t_flow", "user", "t_optionals", "past_approvals"));
+        return view('flow.workflowapplicationdetail', compact("prefix", "server", "t_flow", "user", "t_optionals", "past_approvals", "m_category"));
     }
 
-    public function workflowstampget()
+    public function workflowstampget(Request $request)
     {
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
@@ -2046,7 +2220,10 @@ class FlowController extends Controller
             $m_stamp->文字 = $str;
             $m_stamp->文字数 = $length;
         }
-        return view('flow.workflowstamp', compact("prefix", "server", "m_stamp", "m_stamp_chars"));
+        $t_flow_id = $request->input('t_flow') ?? '';
+        $t_approval_id = $request->input('t_approval') ?? '';
+
+        return view('flow.workflowstamp', compact("prefix", "server", "m_stamp", "m_stamp_chars", "t_flow_id", "t_approval_id"));
     }
     public function workflowstamppost(Request $request)
     {
@@ -2096,6 +2273,11 @@ class FlowController extends Controller
             $new_m_stamp_char->文字番号 = $i;
             $new_m_stamp_char->save();
         }
+        if ($request->input('t_flow')) {
+            return redirect()->route('workflowapplicationstampget', ["id" => $request->input('t_flow')]);
+        } else if ($request->input('t_approval')) {
+            return redirect()->route('workflowapprovalstampget', ["id" => $request->input('t_approval')]);
+        }
         return redirect()->route('workflow');
     }
 
@@ -2103,38 +2285,41 @@ class FlowController extends Controller
     {
         $M_stamp = M_stamp::where("ユーザーID", $id)->first();
 
+        if ($M_stamp) {
+
+            $filepath = $M_stamp->ファイルパス;
 
 
-        $filepath = $M_stamp->ファイルパス;
+            if (config('prefix.server') == "cloud") {
+                // S3バケットの情報
+                $bucket = 'astdocs.com';
+                $key = $filepath;
+                $expiration = '+1 hour'; // 有効期限
+
+                $s3Client = new S3Client([
+                    'region' => 'ap-northeast-1',
+                    'version' => 'latest',
+                ]);
+
+                $command = $s3Client->getCommand('GetObject', [
+                    'Bucket' => $bucket,
+                    'Key' => $key
+                ]);
+                // 署名付きURLを生成
+                $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+            } else {
+                $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
+            }
 
 
-        if (config('prefix.server') == "cloud") {
-            // S3バケットの情報
-            $bucket = 'astdocs.com';
-            $key = $filepath;
-            $expiration = '+1 hour'; // 有効期限
-
-            $s3Client = new S3Client([
-                'region' => 'ap-northeast-1',
-                'version' => 'latest',
-            ]);
-
-            $command = $s3Client->getCommand('GetObject', [
-                'Bucket' => $bucket,
-                'Key' => $key
-            ]);
-            // 署名付きURLを生成
-            $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+            // 画像形式の場合は画像を表示
+            if (config('prefix.server') == "cloud") {
+                return response()->json(['path' => $path, 'Type' => 'image/png']);
+            } else {
+                return response()->file($path, ['Content-Type' => 'image/png']);
+            }
         } else {
-            $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
-        }
-
-
-        // 画像形式の場合は画像を表示
-        if (config('prefix.server') == "cloud") {
-            return response()->json(['path' => $path, 'Type' => 'image/png']);
-        } else {
-            return response()->file($path, ['Content-Type' => 'image/png']);
+            return response()->json("none");
         }
     }
 

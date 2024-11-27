@@ -201,6 +201,11 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/category/change/{id}/{value}', [FlowController::class, 'categorychangeget'])->name('categorychangeget');
             //カテゴリ詳細変更
             Route::get('/workflow/category/detail/{id}', [FlowController::class, 'categorydetailget'])->name('categorydetailget');
+            //カテゴリ追加
+            Route::get('/workflow/category/regist', [FlowController::class, 'categoryregistget'])->name('categoryregistget');
+            //カテゴリ追加ポスト
+            Route::post('/workflow/category/regist', [FlowController::class, 'categoryregistpost'])->name('categoryregistpost');
+
             //カテゴリ詳細変更ポスト
             Route::post('/workflow/category/detail', [FlowController::class, 'categorydetailpost'])->name('categorydetailpost');
             // カテゴリ情報の非同期通信API
@@ -246,7 +251,7 @@ Route::prefix($prefix)->group(function () {
             Route::post('/workflow/stamp', [FlowController::class, 'workflowstamppost'])->name('workflowstamppost');
             // 印鑑データを返すAPI
             Route::get('/workflow/stamp/img/{id}', [FlowController::class, 'workflowstampimgget'])->name('workflowstampimgget');
-            
+
 
 
             // ワークフローファイル閲覧API
