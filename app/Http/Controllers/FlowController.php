@@ -267,11 +267,11 @@ class FlowController extends Controller
         if ($regist_edit == "edit") {
             $t_flow = T_flow::where("フローマスタID", $flow_master_id)
                 ->first();
-            $t_flow_draft = T_flow_draft::where("フローマスタID", $flow_master_id)
-                ->first();
+            // $t_flow_draft = T_flow_draft::where("フローマスタID", $flow_master_id)
+            //     ->first();
+
             // フローのトランザクションデータがあった場合は古いデータの削除フラグを立てる
-            // フローの下書き(経路申請途中のデータ)があった場合も古いデータの削除フラグを立てる
-            if ($t_flow || $t_flow_draft) {
+            if ($t_flow) {
                 $m_flow = M_flow::find($flow_master_id);
                 $m_flow->削除フラグ = true;
                 $m_flow->save();
@@ -724,12 +724,12 @@ class FlowController extends Controller
         if (Auth::user()->管理 == "管理") {
             $t_flow = T_flow::where("フローマスタID", $id)
                 ->first();
-            $t_flow_draft = T_flow_draft::where("フローマスタID", $id)
-                ->first();
+            // $t_flow_draft = T_flow_draft::where("フローマスタID", $id)
+            //     ->first();
             $m_flow = M_flow::find($id);
-            // フローのトランザクションデータおよび下書きデータが存在する場合は
+            // フローのトランザクションデータが存在する場合は
             // レコードを削除せず削除フラグをたてる
-            if ($t_flow || $t_flow_draft) {
+            if ($t_flow) {
                 $m_flow->削除フラグ = true;
                 $m_flow->save();
             } else {

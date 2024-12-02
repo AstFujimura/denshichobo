@@ -147,11 +147,13 @@ body {
 .main_menu_container {
     background: white;
     border-radius: 30px;
+    width: fit-content;
 }
 
 .main_general_container {
     padding: 40px;
     max-width: 1100px;
+    gap: 25px;
 }
 
 .main_general_title {
@@ -846,7 +848,6 @@ body {
     border-radius: 5px;
     color: white;
     font-size: 18px;
-    font-weight: bold;
 }
 
 .workflow_submit_button:hover {
