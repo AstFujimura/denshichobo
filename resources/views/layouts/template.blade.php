@@ -29,6 +29,9 @@
         <a href="{{route('topGet')}}" class="logoelement01">
             TAMERU
         </a>
+        @if (App\Models\Version::where('フロー', true)->first())
+        <a href="{{route('workflow')}}" class="tameru_banner">電子承認システム</a>
+        @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>

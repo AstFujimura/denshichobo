@@ -43,7 +43,7 @@ class LoginController extends Controller
             }
             // ログアウトボタンを押してログイン画面に遷移してきた場合
             else {
-                return redirect()->route('topGet');
+                return redirect()->route('startchoiceGet');
             }
             
         }
@@ -54,6 +54,16 @@ class LoginController extends Controller
             // リダイレクト先に戻す
             return redirect()->back();
         }
+    }
+
+    public function startchoiceGet()
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !==""){
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        return view('login.startchoice',compact('prefix','server'));
     }
 
 }

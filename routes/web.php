@@ -162,6 +162,8 @@ Route::prefix($prefix)->group(function () {
 
         // -------------------------------承認機能----------------------------------------------------
         if (Version::where('フロー', true)->first()) {
+            // 機能選択画面
+            Route::get('/start_choice', [LoginController::class, 'startchoiceGet'])->name('startchoiceGet');
             // ワークフロー登録
             Route::get('/workflowregist', [FlowController::class, 'workflowregistget'])->name('workflowregistget');
             Route::post('/workflowregist', [FlowController::class, 'workflowregistpost'])->name('workflowregistpost');

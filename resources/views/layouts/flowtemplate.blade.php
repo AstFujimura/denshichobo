@@ -28,9 +28,10 @@
 
 <header class="header001">
     <div class="logo01">
-        <a href="{{route('adminGet')}}" class="logoelement01">
-            ワークフロー
+        <a href="{{route('workflow')}}" class="logoelement01">
+            電子承認システム
         </a>
+        <a href="{{route('topGet')}}" class="tameru_banner">TAMERU</a>
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
@@ -58,6 +59,7 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_stamp.svg') }}" class="menuicon01">
         <div class="iconmessage">印鑑設定</div>
     </div>
+    @if (Auth::user()->管理 == '管理')
     <div class="headerIcon001" onclick="location.href='{{route('workflowmaster')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="menuicon01">
         <div class="iconmessage">経路マスタ一覧</div>
@@ -66,11 +68,19 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="menuicon01">
         <div class="iconmessage">経路マスタ登録</div>
     </div>
+    <div class="headerIcon001" onclick="location.href='{{route('mailsettingget')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_mail.svg') }}" class="menuicon01">
+        <div class="iconmessage">メール設定</div>
+    </div>
     <div class="headerIcon001" onclick="location.href='{{route('categoryget')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="menuicon01">
         <div class="iconmessage">カテゴリ設定</div>
     </div>
-
+    <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_admin.svg') }}" class="menuicon01">
+        <div class="iconmessage">ユーザー情報</div>
+    </div>  
+    @endif
     <div class="headerIcon001" onclick="window.open('{{route('question')}}', '_blank');">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
         <div class="iconmessage">ヘルプ</div>
@@ -202,6 +212,30 @@
                         </div>
                         <div class="button1name01">
                             カテゴリ設定
+                        </div>
+
+                    </div>
+
+                </a>
+                <a href="{{route('mailsettingget')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_mail.svg') }}" class="flow_right_icon">
+                        </div>
+                        <div class="button1name01">
+                            メール設定
+                        </div>
+
+                    </div>
+
+                </a>
+                <a href="{{route('adminGet')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_mail.svg') }}" class="flow_right_icon">
+                        </div>
+                        <div class="button1name01">
+                            ユーザー設定
                         </div>
 
                     </div>

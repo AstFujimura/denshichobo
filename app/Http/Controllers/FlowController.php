@@ -642,7 +642,7 @@ class FlowController extends Controller
                     } else if ($flow_approval->グループID) {
                         // nowgroupと該当のグループIDが一致した場合(２つ目以降の役職のレコードの場合)
                         if ($nowgroup == $flow_approval->グループID) {
-                            $flow_approval->newgroup = "none";
+                            $flow_approval->newgroup = "newgroup_post";
                         }
                         // 新しいグループIDかつ役職IDがない場合(限定無し、申請者が選択の場合)
                         else if ($nowgroup != $flow_approval->グループID && $flow_approval->役職ID) {
@@ -1977,15 +1977,19 @@ class FlowController extends Controller
                 foreach ($next_flow_points as $next_flow_point) {
 
                     $t_flow_point = DB::table('t_flow_points')
-                        ->select('t_flow_points.id as t_flow_point_id')
+                        ->select('t_flow_points.id as t_flow_point_id', 't_flow_points.承認移行ステータス')
                         ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
                         ->where('m_flow_points.フロントエンド表示ポイント', $next_flow_point->次フロントエンド表示ポイント)
                         ->where('フローテーブルID', $t_flow_point->フローテーブルID)
                         ->first();
                     // 保存
-                    DB::table('t_flow_points')
-                        ->where('id', $t_flow_point->t_flow_point_id)
-                        ->increment('承認移行ステータス', 1);
+                    // DB::table('t_flow_points')
+                    //     ->where('id', $t_flow_point->t_flow_point_id)
+                    //     ->increment('承認移行ステータス', 1);
+
+                    $t_flow_point->承認移行ステータス += 1;
+
+
                     // もし承認移行ステータスが0、つまり承認に必要なポイントがたまったら
                     // 次の承認テーブルのステータスを承認可能状態に変更する
                     if ($t_flow_point->承認移行ステータス == 0) {

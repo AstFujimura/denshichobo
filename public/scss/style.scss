@@ -1,4 +1,3 @@
-@charset "UTF-8";
 a {
   text-decoration: none;
 }
@@ -35,6 +34,7 @@ a {
   background: white;
   overflow-x: auto;
   opacity: 1;
+
 }
 
 .news_delete_button {
@@ -97,19 +97,21 @@ a {
   background: black;
 }
 
-@media (max-width: 800px) {
+@media (max-width:800px) {
   .info {
     height: 50px;
     margin-bottom: 10px;
-    background: rgb(237, 237, 237);
+    background: rgb(237 237 237);
     display: flex;
     width: 100vw;
   }
+
   .showcontainer {
     display: flex;
     font-size: 13px;
     margin-left: 15px;
   }
+
   .excelbutton {
     background: #bceda3;
     border: #1c881c solid 2px;
@@ -122,23 +124,28 @@ a {
     color: black;
     cursor: pointer;
   }
+
   .pagecontainer {
     display: flex;
     margin-left: 11%;
   }
+
 }
-@media (min-width: 800px) {
+
+@media (min-width:800px) {
   .info {
     height: 50px;
     margin-bottom: 10px;
-    background: rgb(237, 237, 237);
+    background: rgb(237 237 237);
     display: flex;
   }
+
   .showcontainer {
     display: flex;
     margin-left: 50px;
     font-size: 13px;
   }
+
   .excelbutton {
     background: #bceda3;
     border: #1c881c solid 2px;
@@ -151,11 +158,19 @@ a {
     color: black;
     cursor: pointer;
   }
+
   .pagecontainer {
     display: flex;
     margin-left: 50px;
   }
+
 }
+
+
+
+
+
+
 .showelement {
   margin-block: auto;
 }
@@ -164,6 +179,8 @@ a {
   margin-block: auto;
   margin-left: 20px;
 }
+
+
 
 .excelbutton:hover {
   background: #234214;
@@ -190,12 +207,15 @@ a {
   font-size: 12px;
   color: black;
   transition: all 0.2s;
+
 }
 
 .pagebutton:hover {
   background: rgb(0, 0, 0);
   color: white;
   border: solid 1px black;
+
+
 }
 
 .nowpagebutton {
@@ -226,6 +246,7 @@ a {
   font-size: 10px;
   color: black;
   cursor: default;
+
 }
 
 /* .count{
@@ -258,31 +279,39 @@ a {
   display: flex;
 }
 
-@media (max-width: 800px) {
+
+@media (max-width:800px) {
   .history_table_div {
     display: flex;
     font-size: 12px;
   }
+
   .filehennkou {
     width: 52px;
     text-align: center;
   }
+
   .koushinn {
     width: 138px;
   }
 }
-@media (min-width: 800px) {
+
+@media (min-width:800px) {
   .history_table_div {
     display: flex;
   }
+
   .filehennkou {
     width: 100px;
     text-align: center;
   }
+
   .koushinn {
     width: 200px;
   }
 }
+
+
 .history_table_div div {
   background: rgb(181, 228, 240);
   text-align: center;
@@ -300,19 +329,26 @@ a {
   justify-content: center;
 }
 
+
+
+
 .top_table_body {
   display: flex;
+
 }
+
+
 
 .delete_history_table_body {
   display: flex;
 }
 
-.delete_history_table_body > div {
+.delete_history_table_body>div {
   padding: 5px;
   border-right: solid 1px white;
   border-bottom: solid 1px rgb(127, 127, 207);
   line-height: 30px;
+
 }
 
 .delete_history_table_body div {
@@ -324,7 +360,7 @@ a {
   display: flex;
 }
 
-.history_table_body > div {
+.history_table_body>div {
   padding: 5px;
   border-right: solid 1px white;
   border-bottom: solid 1px rgb(127, 127, 207);
@@ -336,7 +372,7 @@ a {
   display: flex;
 }
 
-.delete_table > div {
+.delete_table>div {
   padding: 5px;
   white-space: nowrap;
   overflow: hidden;
@@ -346,6 +382,8 @@ a {
   height: 30px;
   line-height: 30px;
 }
+
+
 
 .top_table_margin {
   margin-top: 48px;
@@ -366,7 +404,7 @@ a {
 
 .invalid {
   border: rgb(252, 86, 86) solid 2px;
-  background-color: rgb(250, 238, 245);
+  background-color: rgb(250 238 245);
 }
 
 .errorelement {
@@ -392,9 +430,12 @@ a {
   margin: auto;
 }
 
+
 .download:hover {
   background: rgb(201, 201, 201);
 }
+
+
 
 .button1logo01 {
   margin-right: 1rem;
@@ -416,13 +457,14 @@ a {
   color: white;
 }
 
-@media (max-width: 800px) {
+@media (max-width:800px) {
   .searchbox {
     padding-block: 20px;
-    background: rgb(231, 231, 231);
+    background: rgb(231 231 231);
     display: block;
     width: 100vw;
   }
+
   .searchelement {
     display: flex;
     padding-inline: 10px;
@@ -430,9 +472,11 @@ a {
     position: relative;
     margin-inline: 10px;
   }
+
   .requirelabel {
     width: 95px;
   }
+
   .searchbutton {
     background: rgb(182, 233, 182);
     padding: 5px;
@@ -442,26 +486,32 @@ a {
     margin-inline: auto;
     color: black;
   }
+
   .buttonarea {
     display: flex;
     margin-top: 17px;
+
   }
 }
-@media (min-width: 800px) {
+
+@media (min-width:800px) {
   .searchbox {
     padding: 20px;
-    background: rgb(231, 231, 231);
+    background: rgb(231 231 231);
     display: flex;
   }
+
   .searchelement {
     display: flex;
     padding-inline: 10px;
     margin-block: 5px;
     position: relative;
   }
+
   .requirelabel {
     width: 70px;
   }
+
   .searchbutton {
     background: rgb(182, 233, 182);
     padding: 5px;
@@ -469,14 +519,21 @@ a {
     border-radius: 5px;
     cursor: pointer;
   }
+
   .buttonarea {
     align-self: flex-end;
   }
 }
+
+
+
+
 .searchlabel {
   display: inline-block;
   width: 95px;
 }
+
+
 
 .searchselect {
   width: 110px;
@@ -490,7 +547,10 @@ a {
 
 .userselectbox {
   height: 30px;
+
 }
+
+
 
 .searchbutton:hover {
   background: rgb(69, 173, 69);
@@ -523,6 +583,8 @@ a {
   width: 100px;
 }
 
+
+
 .detail_table td {
   border: solid 1px black;
   border-collapse: collapse;
@@ -531,6 +593,7 @@ a {
 
 .detail_table {
   border-collapse: collapse;
+
 }
 
 .menubar {
@@ -560,8 +623,10 @@ a {
   border-right: solid 1px white;
 }
 
+
 .history_table {
   border-collapse: collapse;
+
 }
 
 .history_table thead tr {
@@ -618,6 +683,7 @@ a {
   margin-block: auto;
   border: solid 1px rgb(185, 185, 185);
   color: #9a9a9a;
+
 }
 
 .registpreviewarea {
@@ -640,6 +706,9 @@ a {
   margin-block: auto;
 }
 
+
+
+
 .input-field {
   height: 30px;
   background: white;
@@ -657,6 +726,8 @@ a {
   padding: 30px;
 }
 
+
+
 .input-container {
   display: flex;
   margin-top: 20px;
@@ -671,6 +742,8 @@ a {
   font-size: 12px;
 }
 
+
+
 .pagetitle {
   margin-top: 20px;
 }
@@ -679,6 +752,8 @@ a {
   margin-top: 70px;
 }
 
+
+
 .hidukeTd {
   text-align: center;
 }
@@ -686,6 +761,8 @@ a {
 .torihikisakiinput {
   position: relative;
 }
+
+
 
 .registtorihikisakiselect {
   width: 300px;
@@ -727,6 +804,8 @@ a {
   cursor: pointer;
 }
 
+
+
 .teisei,
 .rireki {
   width: 75px;
@@ -742,18 +821,26 @@ a {
   width: 100px;
 }
 
+
+
+
+
 .koushinnsya {
   width: 120px;
 }
 
+
+
+
+
 .downloadTd {
   width: 40px;
-  display: flex;
+  display: flex
 }
 
 .preview {
   width: 40px;
-  display: flex;
+  display: flex
 }
 
 .maru {
@@ -831,7 +918,7 @@ a {
   border-right: solid 1px rgb(152, 200, 245);
 }
 
-@media (max-width: 870px) {
+@media (max-width:870px) {
   .previewcontainer {
     width: 90vw;
     height: 80vh;
@@ -840,9 +927,11 @@ a {
     top: 100px;
     background: white;
     display: none;
+
   }
 }
-@media (min-width: 870px) {
+
+@media (min-width:870px) {
   .previewcontainer {
     width: 800px;
     height: 90vh;
@@ -852,8 +941,11 @@ a {
     left: 50px;
     background: white;
     display: none;
+
   }
 }
+
+
 .wholecontainer {
   top: 0;
   left: 0;
@@ -885,56 +977,66 @@ a {
 
 .pagination p {
   display: none;
+
 }
 
 .pagination .flex-1 {
   display: none;
 }
 
-@media (max-width: 480px) {
+@media(max-width:480px) {
   .important {
     position: relative;
     cursor: pointer;
     font-size: 1rem;
     font-weight: normal;
-    transition: all 0.5s ease;
+    transition: all .5s ease;
     padding: 10px 50px;
     border: solid 1px #bababa;
     margin-block: 20px;
   }
+
 }
-@media (min-width: 480px) {
+
+@media(min-width:480px) {
   .important {
     position: relative;
     cursor: pointer;
     font-size: 1rem;
     font-weight: normal;
-    transition: all 0.5s ease;
+    transition: all .5s ease;
     padding: 10px 50px;
     width: 360px;
     border: solid 1px #bababa;
     margin-block: 20px;
   }
+
 }
+
+
 /*アイコンの＋と×*/
 .important_title::before,
 .important_title::after {
   position: absolute;
-  content: "";
+  content: '';
   width: 15px;
   height: 2px;
   background-color: #333;
   top: 20px;
   left: 15px;
   transition: all 0.3s ease;
+
 }
 
 .important_title::before {
+
   transform: rotate(0deg);
+
 }
 
 .important_title::after {
   transform: rotate(90deg);
+
 }
 
 /*　closeというクラスがついたら形状変化　*/
@@ -950,7 +1052,7 @@ a {
   overflow: hidden;
   opacity: 0;
   height: 0;
-  transition: height 0.5s ease;
+  transition: height .5s ease;
   background: rgb(226, 226, 226);
 }
 
@@ -969,6 +1071,7 @@ a {
   background: rgb(152, 200, 245);
   width: 10px;
   height: 10px;
+
 }
 
 .deletecolor {
@@ -991,6 +1094,8 @@ a {
   margin-block: auto;
   margin-left: 50px;
 }
+
+
 
 .usersettingbutton {
   border: solid #2978a6 2px;
@@ -1023,11 +1128,12 @@ a {
   color: white;
 }
 
-@media (max-width: 800px) {
+@media (max-width:800px) {
   .top_table_div {
     display: flex;
     font-size: 13px;
   }
+
   .top_table_div div {
     background: rgb(181, 228, 240);
     text-align: center;
@@ -1035,11 +1141,13 @@ a {
     padding-block: 5px;
     padding-right: 2px;
   }
+
   .top_table_element {
     position: relative;
     font-size: 12px;
   }
-  .top_table_body > div {
+
+  .top_table_body>div {
     padding-block: 5px;
     padding-right: 2px;
     white-space: nowrap;
@@ -1050,53 +1158,65 @@ a {
     height: 30px;
     line-height: 30px;
   }
+
   .hiduke {
     width: 75px;
   }
+
   .kinngaku {
     width: 52px;
   }
+
   .torihikisaki {
     width: 81px;
     width: 65px;
   }
+
   .syoruikubunn {
     width: 56px;
     text-align: center;
     display: none;
   }
+
   .teisyutu {
     width: 69px;
     text-align: center;
     display: none;
   }
+
   .hozonn {
     width: 100px;
     display: none;
   }
+
   .bikou {
     width: 75px;
   }
+
   .teisei,
   .rireki {
     width: 43px;
   }
+
   .extension {
     width: 28px;
     display: none;
   }
 }
-@media (min-width: 800px) {
+
+@media (min-width:800px) {
   .top_table_element {
     position: relative;
   }
+
   .top_table_div div {
     background: rgb(181, 228, 240);
     text-align: center;
     border-right: solid 1px white;
     padding: 5px;
   }
-  .top_table_body > div {
+
+  .top_table_body>div {
     padding: 5px;
     white-space: nowrap;
     overflow: hidden;
@@ -1106,35 +1226,45 @@ a {
     height: 30px;
     line-height: 30px;
   }
+
   .hiduke,
   .kinngaku {
     width: 130px;
   }
+
   .torihikisaki {
     width: 200px;
+
   }
+
   .syoruikubunn {
     width: 75px;
     text-align: center;
   }
+
   .teisyutu {
     width: 100px;
     text-align: center;
   }
+
   .hozonn {
     width: 100px;
   }
+
   .bikou {
     width: 130px;
   }
+
   .teisei,
   .rireki {
     width: 75px;
   }
+
   .extension {
     width: 45px;
   }
 }
+
 .loader {
   display: none;
   position: fixed;
@@ -1154,21 +1284,23 @@ a {
   font-weight: bold;
 }
 
-.documenttable_header > div {
+.documenttable {}
+
+.documenttable_header>div {
   background: rgb(245, 227, 217);
   text-align: center;
   border-right: solid 1px white;
   padding: 5px;
 }
 
-.grouptable_header > div {
+.grouptable_header>div {
   background: rgb(245, 227, 217);
   text-align: center;
   border-right: solid 1px white;
   padding: 5px;
 }
 
-.documenttable_body > div {
+.documenttable_body>div {
   padding: 5px;
   white-space: nowrap;
   overflow: hidden;
@@ -1177,9 +1309,11 @@ a {
   border-bottom: solid 1px rgb(127, 127, 207);
   height: 30px;
   line-height: 30px;
+
+
 }
 
-.grouptable_body > div {
+.grouptable_body>div {
   padding: 5px;
   white-space: nowrap;
   overflow: hidden;
@@ -1188,6 +1322,8 @@ a {
   border-bottom: solid 1px rgb(127, 127, 207);
   height: 30px;
   line-height: 30px;
+
+
 }
 
 .documenttable_header {
@@ -1290,6 +1426,7 @@ a {
 
 .docu_check {
   margin: auto;
+
 }
 
 .docu_change_button {
@@ -1303,6 +1440,8 @@ a {
   width: 44px;
   height: 27px;
 }
+
+
 
 .docu_change_button:hover {
   background: rgb(12, 124, 22);
@@ -1336,6 +1475,7 @@ a {
   font-size: 15px;
   width: 44px;
   height: 27px;
+
 }
 
 .docu_delete_button:hover {
@@ -1353,6 +1493,7 @@ a {
   font-size: 15px;
   width: 44px;
   height: 27px;
+
 }
 
 .gr_delete_button:hover {
@@ -1442,7 +1583,9 @@ a {
   color: white;
 }
 
+
 /* グループ_役職設定 */
+
 .positiontable {
   width: 500px;
 }
@@ -1483,6 +1626,7 @@ a {
   display: flex;
   width: 25%;
   align-items: center;
+
 }
 
 .delete_container {
@@ -1496,7 +1640,7 @@ a {
   flex-direction: column;
 }
 
-.positiontable_body > div {
+.positiontable_body>div {
   display: flex;
   justify-content: center;
   height: 37px;
@@ -1520,6 +1664,8 @@ a {
   color: white;
 }
 
+
+
 .admin_position_delete {
   width: 100px;
 }
@@ -1534,6 +1680,7 @@ a {
   font-size: 15px;
   width: 44px;
   height: 27px;
+
 }
 
 .position_delete_button:hover {
@@ -1589,6 +1736,7 @@ a {
   color: white;
 }
 
+
 .groupusertable {
   width: 500px;
 }
@@ -1597,7 +1745,7 @@ a {
   display: flex;
 }
 
-.groupusertable_header > div {
+.groupusertable_header>div {
   background: rgb(245, 227, 217);
   border-right: solid 1px white;
   text-align: center;
@@ -1622,17 +1770,18 @@ a {
   border: solid 1px red !important;
   background: rgb(255, 234, 238);
 }
-
 .errorselect option {
   background: white;
 }
 
 .groupuser_position {
   width: 33%;
+
 }
 
 .groupuser_delete {
   width: 33%;
+
 }
 
 .groupuser_delete_button {
@@ -1645,6 +1794,7 @@ a {
   font-size: 15px;
   width: 44px;
   height: 27px;
+
 }
 
 .groupuser_delete_button:hover {
@@ -1685,6 +1835,8 @@ a {
   color: white;
 }
 
+.groupusertable_body {}
+
 .dummy_table {
   display: none !important;
 }
@@ -1697,7 +1849,7 @@ a {
   border-bottom: solid 1px rgb(127, 127, 207);
 }
 
-.past:hover > div {
+.past:hover>div {
   background: rgb(192, 192, 192);
   cursor: pointer;
   border-right: solid 1px rgb(192, 192, 192);

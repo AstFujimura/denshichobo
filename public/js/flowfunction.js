@@ -1581,7 +1581,6 @@ function view_create_line(lineobject, cellwidth, cellheight, gapcellwidth, gapce
 function view_create_approval(approval_object) {
   var prefix = $('#prefix').val();
   $.each(approval_object, function (index, array) {
-    console.log(array)
     var element = $('.grid' + array["column"] + '_' + array["row"])
     var approval_container = element.find(".approval_container")
 
@@ -1642,7 +1641,7 @@ function view_create_approval(approval_object) {
 
 
 
-      approval_container.append('<div class="position_class">' + array["group"] + '</div>')
+      approval_container.append('<div class="position_class">' + array["position"] + '</div>')
     }
   })
 
