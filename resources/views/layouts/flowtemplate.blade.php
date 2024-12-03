@@ -169,6 +169,7 @@
                     </div>
 
                 </a>
+                @if (Auth::user()->管理 == '管理')
                 <a href="{{route('workflowmaster')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
@@ -232,7 +233,7 @@
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_mail.svg') }}" class="flow_right_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_admin.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
                             ユーザー設定
@@ -241,7 +242,7 @@
                     </div>
 
                 </a>
-
+                @endif
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
