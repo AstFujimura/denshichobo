@@ -78,7 +78,7 @@ label {
   height: 300px;
 
   .start_choice_element {
-    background-color: white;
+    background-color: #f3f3f3;
     border-radius: 10px;
     box-shadow: 1px 4px 5px #ccc;
     height: 133px;
@@ -92,6 +92,12 @@ label {
     &:hover {
       background-color: #91d7ff;
       color: white;
+    }
+    .smart_circuit_logo{
+    width: 120px;
+    }
+    .tameru_logo{
+      width: 120px;
     }
   }
 }

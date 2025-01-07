@@ -1661,7 +1661,7 @@ function group_object_create(groupobjects) {
 function add_status_message() {
   $(".e").each(function () {
     var front_point = $(this).attr("id");
-    var each_status = $('[data-front_point="' + front_point + '"]').find(".approve_condition_status").text().trim()
+    var each_status = $('[data-front_point="' + front_point + '"]').find(".approve_condition_status").first().text().trim()
     var point_status = $('[data-front_point="' + front_point + '"]').data("point_status")
     console.log(each_status)
     // 申請の場合

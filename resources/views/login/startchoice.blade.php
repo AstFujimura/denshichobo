@@ -13,10 +13,11 @@
 
 <div class="start_choice_container">
     <a class="start_choice_element" href="{{route('workflow')}}">
-        電子承認システム
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/smartcircuit_logo.svg') }}" alt="smartcircuit" class="smart_circuit_logo">
     </a>
     <a class="start_choice_element" href="{{route('topGet')}}">
-        TAMERU
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo.svg') }}" alt="TAMERU" class="tameru_logo">
+        
     </a>
 </div>
 <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>

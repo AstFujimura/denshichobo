@@ -223,8 +223,15 @@ Route::prefix($prefix)->group(function () {
 
             // ワークフロー申請
             Route::get('/workflow/application', [FlowController::class, 'workflowapplicationget'])->name('workflowapplicationget');
-            // ワークフロー申請
+            // ワークフロー申請ポスト
             Route::post('/workflow/application', [FlowController::class, 'workflowapplicationpost'])->name('workflowapplicationpost');
+
+            // ワークフロー再申請
+            Route::get('/workflow/reapply/{id}', [FlowController::class, 'workflowreapplyget'])->name('workflowreapplyget');
+            // ワークフロー再申請ポスト
+            Route::post('/workflow/reapply', [FlowController::class, 'workflowreapplypost'])->name('workflowreapplypost');
+
+
             // ワークフロー経路選択
             Route::get('/workflow/choice/{id}', [FlowController::class, 'workflowchoiceget'])->name('workflowchoiceget');
             // ワークフロー経路選択ポスト
@@ -234,7 +241,10 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/application/stamp/{id}', [FlowController::class, 'workflowapplicationstampget'])->name('workflowapplicationstampget');
             // ワークフロー申請印ポスト
             Route::post('/workflow/application/stamp', [FlowController::class, 'workflowapplicationstamppost'])->name('workflowapplicationstamppost');
-
+            // ワークフロー再申請印
+            Route::get('/workflow/reapply/stamp/{id}', [FlowController::class, 'workflowreapplicationstampget'])->name('workflowreapplicationstampget');
+            // ワークフロー再申請印ポスト
+            Route::post('/workflow/reapply/stamp', [FlowController::class, 'workflowreapplicationstamppost'])->name('workflowreapplicationstamppost');
 
 
             // ワークフロー確認画面

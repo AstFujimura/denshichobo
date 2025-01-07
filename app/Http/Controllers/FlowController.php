@@ -499,7 +499,10 @@ class FlowController extends Controller
         $t_approval_count = T_approval::where('ユーザーID', Auth::id())
             ->where('ステータス', 2)
             ->count();
-        return view('flow.workflow', compact("prefix", "server", "t_approval_count"));
+        $t_reapplication_count = T_approval::where('ユーザーID', Auth::id())
+            ->where('ステータス', 7)
+            ->count();
+        return view('flow.workflow', compact("prefix", "server", "t_approval_count", "t_reapplication_count"));
     }
     // ワークフローマスタ一覧
     public function workflowmaster(Request $request)
@@ -1255,7 +1258,7 @@ class FlowController extends Controller
 
 
 
-
+    // ワークフロー申請
     public function workflowapplicationget(Request $request)
     {
         $prefix = config('prefix.prefix');
@@ -1267,7 +1270,7 @@ class FlowController extends Controller
         $m_pointers = M_pointer::all();
         return view('flow.workflowapplication', compact("prefix", "server", "m_categories", "m_pointers"));
     }
-
+    // ワークフロー申請ポスト
     public function workflowapplicationpost(Request $request)
     {
         $prefix = config('prefix.prefix');
@@ -1296,6 +1299,9 @@ class FlowController extends Controller
 
         if ($m_category->承認印) {
             $new_t_flow->承認印 = true;
+        }
+        if ($m_category->申請印) {
+            $new_t_flow->申請印 = true;
         }
         // 項目順を取得
         $order = $m_category->項目順;
@@ -1378,7 +1384,6 @@ class FlowController extends Controller
                     ->where('カテゴリマスタID', $m_category->id)
                     ->first();
                 if ($m_pointer) {
-
                     $pdf->SetFont('Noto', 'B', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
                     $pdf->Write(0, $value);
@@ -1408,6 +1413,138 @@ class FlowController extends Controller
         return redirect()->route('workflowchoiceget', ["id" => $new_t_flow->id]);
     }
 
+    // ワークフロー再申請
+    public function workflowreapplyget($id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $t_flow = T_flow::find($id);
+        $now_reapply_number = $t_flow->再承認番号;
+        $t_optionals = $this->application_items($id, $now_reapply_number);
+        $m_pointers = M_pointer::all();
+
+        return view('flow.workflowreapplication', compact("prefix", "server", "t_flow", "t_optionals", "m_pointers"));
+    }
+
+    // ワークフロー再申請ポスト
+    public function workflowreapplypost(Request $request)
+    {
+        $t_flow_id = $request->input("t_flow_id");
+        $t_flow = T_flow::find($t_flow_id);
+        $t_approval = T_approval::where("フローテーブルID", $t_flow_id)
+            ->where("ステータス", 0)
+            ->first();
+        $now_reapply_number = $t_flow->再承認番号;
+        $next_reapply_number = intval($now_reapply_number) + 1;
+        $t_optionals = T_optional::where("フローテーブルID", $t_flow_id)
+            ->where("再承認番号", $now_reapply_number)
+            ->get();
+        // 一度仮登録した再申請の任意項目テーブルの値があれば
+        // それを削除する
+        $next_t_optionals = T_optional::where("フローテーブルID", $t_flow_id)
+            ->where("再承認番号", $next_reapply_number)
+            ->delete();
+        // 承認用紙を発行する場合
+        if ($t_flow->発行) {
+            // pdfに挿入する
+            $pdf = new Fpdi();
+            $pdf->setPrintHeader(false);
+            $pdf->AddPage($t_flow->縦横, [$t_flow->横, $t_flow->縦]);
+            $pdfpath = Config::get('custom.file_upload_path') . '\\' . $t_approval->承認ファイルパス;
+            // 入力されたPDFデータを新しいPDFに結合
+            $pdf->setSourceFile($pdfpath);
+            $tplIdx = $pdf->importPage(1);
+            $pdf->useTemplate($tplIdx);
+        }
+        foreach ($t_optionals as $t_optional) {
+            $m_optional = M_optional::find($t_optional->任意項目マスタID);
+            $new_t_optional = new T_optional();
+            $new_t_optional->フローテーブルID = $t_flow_id;
+            $new_t_optional->任意項目マスタID = $t_optional->任意項目マスタID;
+            $new_t_optional->再承認番号 = $next_reapply_number;
+            if ($m_optional->型 == 1) {
+                $new_t_optional->文字列 = $request->input("application_form_input" . $t_optional->id);
+                $value = $new_t_optional->文字列;
+            } else if ($m_optional->型 == 2) {
+                $new_t_optional->数値 = $request->input("application_form_input" . $t_optional->id);
+                $value = $new_t_optional->数値;
+            } else if ($m_optional->型 == 3) {
+                $new_t_optional->日付 = $request->input("application_form_input" . $t_optional->id);
+                $value = $new_t_optional->日付;
+            } else if ($m_optional->型 == 4) {
+                $file = $request->file("application_form_input" . $t_optional->id);
+                if ($file) {
+                    $pastID = $this->generateRandomCode();
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = Config::get('custom.file_upload_path');
+                    $now = Carbon::now();
+                    $currentTime = $now->format('YmdHis');
+                    $filepath = $currentTime . '_' . $pastID;
+                    //アップロードされたファイルに拡張子がない場合
+                    if (!$extension) {
+                        if (config('app.env') == 'production') {
+                            // 本番環境用の設定
+                        } else {
+                            // 開発環境用の設定
+                            copy($file->getRealPath(), $filename . "\\" . $filepath);
+                        }
+                        //extensionがnullになっているためエラー回避
+                        $extension = "";
+                    } else {
+                        if (config('app.env') == 'production') {
+                            // 本番環境用の設定
+                        } else {
+                            // 開発環境用の設定
+                            copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+                        }
+                    }
+
+                    $new_t_optional->ファイルパス = $filepath;
+                    $new_t_optional->ファイル形式 = $extension;
+                }
+            }
+            if ($t_flow->発行) {
+                // 項目位置マスタに項目マスタのIDが含まれていた場合
+                $m_pointer = M_pointer::where('任意項目マスタID', $m_optional->id)
+                    ->first();
+                if ($m_pointer) {
+                    $pdf->SetFont('Noto', 'B', $m_pointer->フォントサイズ . "pt");
+                    $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
+                    $pdf->Write(0, $value);
+                }
+            }
+
+            $new_t_optional->save();
+        }
+        if ($t_flow->発行) {
+            $now = Carbon::now();
+            $currentTime = $now->format('YmdHis');
+            $randomID = $this->generateRandomCode();
+
+            $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
+
+            $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
+            $pdfcontent = $pdf->Output('', 'S');
+            file_put_contents($new_pdf_path, $pdfcontent);
+
+            $t_flow->変更前承認ファイルパス = $new_pdf_name;
+            // 申請印を押さない場合は変更後承認ファイルパスへの記述がないため
+            // ここで値を格納する
+            if (!$t_flow->申請印) {
+                $t_flow->変更後承認ファイルパス = $new_pdf_name;
+            }
+        }
+        $t_flow->save();
+        if ($t_flow->申請印 == 1) {
+            return redirect()->route('workflowreapplicationstampget', ["id" => $t_flow_id]);
+        } else {
+            return redirect()->route('workflowreapplicationdetailget', ["id" => $t_flow_id]);
+        }
+    }
+
     // ワークフロー経路選択
     public function workflowchoiceget($id)
     {
@@ -1421,10 +1558,10 @@ class FlowController extends Controller
         $t_flow = T_flow::find($id);
         $m_category = M_category::find($t_flow->カテゴリマスタID);
         // 申請印が必須の場合はステータスを-1に(申請印未押印)
-        if ($m_category->申請印) {
-            $t_flow->ステータス = -1;
-            $t_flow->save();
-        }
+        // if ($m_category->申請印) {
+        //     $t_flow->ステータス = -1;
+        //     $t_flow->save();
+        // }
 
 
 
@@ -1455,7 +1592,7 @@ class FlowController extends Controller
         if ($t_flow) {
             $t_flow->フローマスタID = $m_flow_id;
             $t_flow->save();
-            if ($t_flow->ステータス == -1) {
+            if ($t_flow->申請印 == 1) {
                 return redirect()->route('workflowapplicationstampget', ["id" => $t_flow_id]);
             } else if ($t_flow->ステータス == 0) {
                 return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
@@ -1468,6 +1605,7 @@ class FlowController extends Controller
     }
 
     // idはt_flowのid
+    // 申請印
     public function workflowapplicationstampget(Request $request, $id)
     {
         $prefix = config('prefix.prefix');
@@ -1482,12 +1620,13 @@ class FlowController extends Controller
 
         return view('flow.workflowapplicationstamp', compact("prefix", "server", "category_id", "user_id", "t_flow", "m_stamp"));
     }
+    // 申請印ポスト
     public function workflowapplicationstamppost(Request $request)
     {
         $t_flow_id = $request->input("t_flow_id");
         $t_flow = T_flow::find($t_flow_id);
         // すでに申請済みの場合
-        if ($t_flow->ステータス > 0) {
+        if ($t_flow->ステータス != 0) {
             return redirect()->route('workflowerrorGet', ["code" => "A546815"]);
         }
         // TCPDFでPDFを作成し、画像を追加する
@@ -1530,7 +1669,75 @@ class FlowController extends Controller
         return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
     }
 
+    // 再申請印
+    public function workflowreapplicationstampget(Request $request, $id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $t_flow = T_flow::find($id);
+        $category_id = M_flow::find($t_flow->フローマスタID)->カテゴリマスタID;
+        $user_id = Auth::id();
+        $m_stamp = M_stamp::where('ユーザーID', $user_id)->first();
 
+        return view('flow.workflowreapplicationstamp', compact("prefix", "server", "category_id", "user_id", "t_flow", "m_stamp"));
+    }
+    // 再申請印ポスト
+    public function workflowreapplicationstamppost(Request $request)
+    {
+        $t_flow_id = $request->input("t_flow_id");
+        $t_flow = T_flow::find($t_flow_id);
+        $t_approval = T_approval::where("フローテーブルID", $t_flow_id)
+            ->where("ステータス", 0)
+            ->first();
+        // すでに申請済みの場合
+        if ($t_flow->ステータス != 0 && $t_flow->ステータス != -1 && $t_flow->ステータス != 5) {
+            return redirect()->route('workflowerrorGet', ["code" => "A546815"]);
+        }
+        // TCPDFでPDFを作成し、画像を追加する
+        $pdf = new Fpdi();
+        $m_category = M_category::find($request->input("category_id"));
+        $pdf->setPrintHeader(false);
+        $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+
+        $top = $request->input("top");
+        $left = $request->input("left");
+
+        $m_stamp = M_stamp::where('ユーザーID', Auth::id())->first();
+        $imgpath = Config::get('custom.file_upload_path') . '\\' . $m_stamp->ファイルパス;
+
+
+        $pdfpath = Config::get('custom.file_upload_path') . '\\' . $t_flow->変更前承認ファイルパス;
+        // 入力されたPDFデータを新しいPDFに結合
+        $pdf->setSourceFile($pdfpath);
+        $tplIdx = $pdf->importPage(1);
+        // $size = $pdf->getTemplateSize($tplIdx);
+        $pdf->useTemplate($tplIdx); // サイズ調整が必要かもしれません
+
+        $pdf->Image($imgpath, $left, $top, 9.5, 0, '', '', '', false);
+
+        $now = Carbon::now();
+        $currentTime = $now->format('YmdHis');
+        $randomID = $this->generateRandomCode();
+
+        $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
+
+        $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
+        $pdfcontent = $pdf->Output('', 'S');
+        file_put_contents($new_pdf_path, $pdfcontent);
+
+
+        // $t_flow->ステータス = 0;
+        $t_flow->変更後承認ファイルパス = $new_pdf_name;
+        $t_flow->save();
+
+        return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
+    }
+
+
+    // 申請確認画面(再申請も含む)
     public function workflowconfirmget($id)
     {
         $prefix = config('prefix.prefix');
@@ -1538,21 +1745,34 @@ class FlowController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        $t_optionals = $this->application_items($id);
         $t_flow = T_flow::find($id);
         $m_flow = M_flow::find($t_flow->フローマスタID);
         $m_category = M_category::find($m_flow->カテゴリマスタID);
 
+        // 初期申請の場合
+        if ($t_flow->ステータス == 0) {
+            $t_optionals = $this->application_items($id);
+        }
+        // 再申請の場合
+        else {
+            $next_reapply_number = intval($t_flow->再承認番号) + 1;
+            $t_optionals = $this->application_items($id, $next_reapply_number);
+        }
+
+
         return view('flow.workflowconfirm', compact("prefix", "server", "id", "t_flow", "t_optionals", "m_category"));
     }
     // フローテーブルを引数として項目の情報のレコードを返す
-    private function application_items($id)
+    private function application_items($id, $reapply_number = 1)
     {
-        $t_optionals = T_optional::where("フローテーブルID", $id)->get();
+        $t_optionals = T_optional::where("フローテーブルID", $id)
+            ->where("再承認番号", $reapply_number)
+            ->get();
 
         foreach ($t_optionals as $t_optional) {
             $m_optional = M_optional::find($t_optional->任意項目マスタID);
             $t_optional->項目名 = $m_optional->項目名;
+            $t_optional->型 = $m_optional->型;
             if ($m_optional->型 == 1) {
                 $t_optional->値 = $t_optional->文字列;
             } else if ($m_optional->型 == 2) {
@@ -1568,133 +1788,196 @@ class FlowController extends Controller
             } else if ($m_optional->型 == 5) {
                 $t_optional->値 = $t_optional->bool;
             }
+
+            if ($m_optional->必須 == 1) {
+                $t_optional->必須 = 1;
+            } else {
+                $t_optional->必須 = 0;
+            }
         }
         return $t_optionals;
     }
+    // ワークフロー最終申請ポスト
     public function workflowconfirmpost(Request $request)
     {
         $t_flow_id = $request->input("t_flow_id");
         $t_flow = T_flow::find($t_flow_id);
         $m_flow = M_flow::find($t_flow->フローマスタID);
+        $m_category = M_category::find($m_flow->カテゴリマスタID);
         // すでに申請済みの場合
-        if ($t_flow->ステータス > 0) {
+        if ($t_flow->ステータス != 0 && $t_flow->ステータス != 5) {
             return redirect()->route('workflowerrorGet', ["code" => "A546815"]);
         }
+        // 初期申請の場合
+        if ($t_flow->ステータス == 0) {
+            // フローのトランザクションテーブルを作成
 
-        // フローのトランザクションテーブルを作成
-
-        $t_flow->ステータス = 1;
-        $t_flow->決裁地点数 = $m_flow->決裁地点数;
-        // 承認用紙のファイルパスを確定させる
-        $t_flow->変更前承認ファイルパス = $t_flow->変更後承認ファイルパス;
-
-
-        // -------------古いファイルパスを消去するかどうかは今後考える-----------
+            $t_flow->ステータス = 1;
+            $t_flow->決裁地点数 = $m_flow->決裁地点数;
+            // 再申請時の時のためのファイルパス
+            $application_file_path = $m_category->ファイルパス;
+            // 承認用紙のファイルパスを確定させる
+            $t_flow->変更前承認ファイルパス = $t_flow->変更後承認ファイルパス;
 
 
-        $t_flow->save();
+            // -------------古いファイルパスを消去するかどうかは今後考える-----------
 
-        $m_flow_points = M_flow_point::where("フローマスタID", $t_flow->フローマスタID)
-            ->get();
-        foreach ($m_flow_points as $m_flow_point) {
-            // フロー地点のトランザクションテーブルを作成
-            $new_t_flow_point = new T_flow_point();
-            $new_t_flow_point->フローテーブルID = $t_flow->id;
-            $new_t_flow_point->フロー地点ID = $m_flow_point->id;
-            $new_t_flow_point->承認移行ステータス = - ($m_flow_point->承認移行ポイント);
-            $new_t_flow_point->承認ステータス = - ($m_flow_point->承認ポイント);
-            $new_t_flow_point->save();
 
-            // 個人の場合
-            if ($m_flow_point->個人グループ == 1) {
-                $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
-                    ->get();
+            $t_flow->save();
 
-                foreach ($m_approvals as $m_approval) {
+            $m_flow_points = M_flow_point::where("フローマスタID", $t_flow->フローマスタID)
+                ->get();
+            foreach ($m_flow_points as $m_flow_point) {
+                // フロー地点のトランザクションテーブルを作成
+                $new_t_flow_point = new T_flow_point();
+                $new_t_flow_point->フローテーブルID = $t_flow->id;
+                $new_t_flow_point->フロー地点ID = $m_flow_point->id;
+                $new_t_flow_point->承認移行ステータス = - ($m_flow_point->承認移行ポイント);
+                $new_t_flow_point->承認ステータス = - ($m_flow_point->承認ポイント);
+                $new_t_flow_point->save();
+
+                // 個人の場合
+                if ($m_flow_point->個人グループ == 1) {
+                    $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
+                        ->get();
+
+                    foreach ($m_approvals as $m_approval) {
+
+                        $t_approval = new T_approval();
+                        $t_approval->フローテーブルID = $t_flow->id;
+                        $t_approval->フロー地点テーブルID = $new_t_flow_point->id;
+                        $t_approval->ステータス = 1;
+                        $t_approval->ユーザーID = $m_approval->ユーザーID;
+                        $t_approval->save();
+                    }
+                }
+                // グループ限定無しの場合
+                else if ($m_flow_point->個人グループ == 2) {
+                    $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
+                        ->get();
+
+                    foreach ($m_approvals as $m_approval) {
+                        $group_users = Group_User::where("グループID", $m_approval->グループID)
+                            ->get();
+
+                        foreach ($group_users as $group_user) {
+                            $t_approval = new T_approval();
+                            $t_approval->フローテーブルID = $t_flow->id;
+                            $t_approval->フロー地点テーブルID = $new_t_flow_point->id;
+                            $t_approval->ステータス = 1;
+                            $t_approval->ユーザーID = $group_user->ユーザーID;
+                            $t_approval->save();
+                        }
+                    }
+                }
+                // 役職から選択の場合
+                else if ($m_flow_point->個人グループ == 4) {
+                    $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
+                        ->get();
+
+                    foreach ($m_approvals as $m_approval) {
+                        $group_users = Group_User::where("グループID", $m_approval->グループID)
+                            ->where("役職ID", $m_approval->役職ID)
+                            ->get();
+
+                        foreach ($group_users as $group_user) {
+                            $t_approval = new T_approval();
+                            $t_approval->フローテーブルID = $t_flow->id;
+                            $t_approval->フロー地点テーブルID = $new_t_flow_point->id;
+                            $t_approval->ステータス = 1;
+                            $t_approval->ユーザーID = $group_user->ユーザーID;
+                            $t_approval->save();
+                        }
+                    }
+                }
+                // 申請者の場合
+                else if ($m_flow_point->個人グループ == 0) {
+                    $m_approval = M_approval::where("フロー地点ID", $m_flow_point->id)->first();
 
                     $t_approval = new T_approval();
                     $t_approval->フローテーブルID = $t_flow->id;
                     $t_approval->フロー地点テーブルID = $new_t_flow_point->id;
-                    $t_approval->ステータス = 1;
-                    $t_approval->ユーザーID = $m_approval->ユーザーID;
+                    $t_approval->ステータス = 0;
+                    $t_approval->ユーザーID = Auth::id();
+                    $t_approval->承認ファイルパス = $application_file_path;
                     $t_approval->save();
+                    $applicant_flow_point_id = $m_flow_point->id;
                 }
             }
-            // グループ限定無しの場合
-            else if ($m_flow_point->個人グループ == 2) {
-                $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
+
+            $next_flow_points = M_next_flow_point::where("現フロー地点ID", $applicant_flow_point_id)
+                ->get();
+            foreach ($next_flow_points as $next_flow_point) {
+                //　申請者から初めの承認ポイントを取得
+                $t_flow_point = DB::table('t_flow_points')
+                    ->select('t_flow_points.id as t_flow_point_id')
+                    ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
+                    ->where('m_flow_points.フロントエンド表示ポイント', $next_flow_point->次フロントエンド表示ポイント)
+                    ->where('フローテーブルID', $t_flow->id)
+                    ->first();
+                // 保存
+                DB::table('t_flow_points')
+                    ->where('id', $t_flow_point->t_flow_point_id)
+                    ->update(['承認移行ステータス' => 0]);
+                // dd($t_flow_point->t_flow_point_id);
+                $t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->t_flow_point_id)
                     ->get();
-
-                foreach ($m_approvals as $m_approval) {
-                    $group_users = Group_User::where("グループID", $m_approval->グループID)
-                        ->get();
-
-                    foreach ($group_users as $group_user) {
-                        $t_approval = new T_approval();
-                        $t_approval->フローテーブルID = $t_flow->id;
-                        $t_approval->フロー地点テーブルID = $new_t_flow_point->id;
-                        $t_approval->ステータス = 1;
-                        $t_approval->ユーザーID = $group_user->ユーザーID;
-                        $t_approval->save();
-                    }
+                foreach ($t_approvals as $t_approval) {
+                    $t_approval->ステータス = 2;
+                    $t_approval->save();
+                    $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
                 }
-            }
-            // 役職から選択の場合
-            else if ($m_flow_point->個人グループ == 4) {
-                $m_approvals = M_approval::where("フロー地点ID", $m_flow_point->id)
-                    ->get();
-
-                foreach ($m_approvals as $m_approval) {
-                    $group_users = Group_User::where("グループID", $m_approval->グループID)
-                        ->where("役職ID", $m_approval->役職ID)
-                        ->get();
-
-                    foreach ($group_users as $group_user) {
-                        $t_approval = new T_approval();
-                        $t_approval->フローテーブルID = $t_flow->id;
-                        $t_approval->フロー地点テーブルID = $new_t_flow_point->id;
-                        $t_approval->ステータス = 1;
-                        $t_approval->ユーザーID = $group_user->ユーザーID;
-                        $t_approval->save();
-                    }
-                }
-            }
-            // 申請者の場合
-            else if ($m_flow_point->個人グループ == 0) {
-                $m_approval = M_approval::where("フロー地点ID", $m_flow_point->id)->first();
-
-                $t_approval = new T_approval();
-                $t_approval->フローテーブルID = $t_flow->id;
-                $t_approval->フロー地点テーブルID = $new_t_flow_point->id;
-                $t_approval->ステータス = 0;
-                $t_approval->ユーザーID = Auth::id();
-                $t_approval->save();
-                $applicant_flow_point_id = $m_flow_point->id;
             }
         }
-
-        $next_flow_points = M_next_flow_point::where("現フロー地点ID", $applicant_flow_point_id)
-            ->get();
-        foreach ($next_flow_points as $next_flow_point) {
-            //　申請者から初めの承認ポイントを取得
-            $t_flow_point = DB::table('t_flow_points')
-                ->select('t_flow_points.id as t_flow_point_id')
-                ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
-                ->where('m_flow_points.フロントエンド表示ポイント', $next_flow_point->次フロントエンド表示ポイント)
-                ->where('フローテーブルID', $t_flow->id)
+        // 再申請の場合
+        else if ($t_flow->ステータス == 5) {
+            $t_flow->ステータス = 1;
+            $t_flow->変更前承認ファイルパス = $t_flow->変更後承認ファイルパス;
+            $next_reapply_number = intval($t_flow->再承認番号) + 1;
+            $t_flow->再承認番号 = $next_reapply_number;
+            // 標題を取得(再承認番号が該当するもののうち一番最初のものが標題)
+            $t_flow_title = T_optional::where("フローテーブルID", $t_flow->id)
+                ->where("再承認番号", $next_reapply_number)
                 ->first();
-            // 保存
-            DB::table('t_flow_points')
-                ->where('id', $t_flow_point->t_flow_point_id)
-                ->update(['承認移行ステータス' => 0]);
-            // dd($t_flow_point->t_flow_point_id);
-            $t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->t_flow_point_id)
+            $t_flow->標題 = $t_flow_title->文字列;
+            $t_flow->save();
+            $t_approval_application = T_approval::where("フローテーブルID", $t_flow->id)
+                ->where("ステータス", 7)
+                ->where("再承認番号", $next_reapply_number)
+                ->first();
+
+            $t_flow_point = T_flow_point::find($t_approval_application->フロー地点テーブルID);
+            $m_flow_point = M_flow_point::find($t_flow_point->フロー地点ID);
+
+            $next_flow_points = M_next_flow_point::where("現フロー地点ID", $m_flow_point->id)
                 ->get();
-            foreach ($t_approvals as $t_approval) {
-                $t_approval->ステータス = 2;
-                $t_approval->save();
-                $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
+            // 申請者の直後のフロー地点の承認移行ステータスを0に
+            foreach ($next_flow_points as $next_flow_point) {
+                $t_flow_point = DB::table('t_flow_points')
+                    ->select('t_flow_points.id as t_flow_point_id')
+                    ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
+                    ->where('m_flow_points.フロントエンド表示ポイント', $next_flow_point->次フロントエンド表示ポイント)
+                    ->where('フローテーブルID', $t_flow->id)
+                    ->first();
+                if ($t_flow_point) {
+                    DB::table('t_flow_points')
+                        ->where('id', $t_flow_point->t_flow_point_id)
+                        ->update(['承認移行ステータス' => 0]);
+
+                    $t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->t_flow_point_id)
+                        ->where('再承認番号', $next_reapply_number)
+                        ->get();
+
+                    foreach ($t_approvals as $t_approval) {
+                        $t_approval->ステータス = 2;
+                        $t_approval->save();
+                        $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
+                    }
+                }
             }
+            // 再申請待ちから再申請済みにする
+            $t_approval_application->ステータス = 8;
+            $t_approval_application->save();
         }
         return redirect()->route('workflow');
     }
@@ -1838,7 +2121,8 @@ class FlowController extends Controller
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
             ->where("t_approvals.id", $id)
             ->first();
-        $t_optionals =  $this->application_items($t_approval->フローテーブルID);
+        $t_flow = T_flow::find($t_approval->フローテーブルID);
+        $t_optionals =  $this->application_items($t_approval->フローテーブルID, $t_flow->再承認番号);
         $t_flow = T_flow::find($t_approval->フローテーブルID);
         $m_flow = M_flow::find($t_flow->フローマスタID);
         $m_category = M_category::find($m_flow->カテゴリマスタID);
@@ -1858,30 +2142,34 @@ class FlowController extends Controller
         $user = User::find($t_flow->申請者ID);
 
         $past_approvals = DB::table('t_approvals')
-            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス")
+            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント")
             ->leftJoin('t_flow_points', 't_approvals.フロー地点テーブルID', '=', 't_flow_points.id')
             ->leftJoin('users', 't_approvals.ユーザーID', '=', 'users.id')
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
             ->where(function ($query) {
                 $query->where('ステータス', 0)
                     ->orWhere('ステータス', 4)
-                    ->orWhere('ステータス', 5);
+                    ->orWhere('ステータス', 6)
+                    ->orWhere('ステータス', 8);
             })
             ->where('t_flow_points.フローテーブルID', $t_flow->id)
             ->orderBy('承認日', 'asc')
             ->get();
-
         $comment = $request->input('comment');
 
         $approval = $request->input('approval');
         return view('flow.workflowapproval', compact("prefix", "server", "t_flow", "user", "t_optionals", "t_approval", "past_approvals", "stamp_status", "comment", "approval", "m_category"));
     }
+    // 申請印や承認印のpdfを取得
     public function approvalsettingpdf(Request $request, $id)
     {
         if ($request->input("status") == "application") {
             $t_flow = T_flow::find($id);
             $filepath = $t_flow->変更前承認ファイルパス;
         } else if ($request->input("status") == "approve") {
+            $t_flow = T_flow::find($id);
+            $filepath = $t_flow->変更前承認ファイルパス;
+        } else if ($request->input("status") == "reapplication") {
             $t_flow = T_flow::find($id);
             $filepath = $t_flow->変更前承認ファイルパス;
         } else {
@@ -2002,6 +2290,53 @@ class FlowController extends Controller
                         }
                     }
                 }
+            } else if ($result == "remand") {
+                $t_approval->ステータス = 6;
+                $t_approval->コメント = $approvecomment;
+                $t_approval->save();
+
+                $next_reapply_number = intval($t_flow->再承認番号) + 1;
+                $t_flow->ステータス = 5;
+                $t_flow->save();
+
+
+                $change_t_approvals = T_approval::where('フローテーブルID', $t_flow->id)
+                    ->where('再承認番号', $t_flow->再承認番号)
+                    ->where(function ($query) {
+                        $query->where('ステータス', 0)
+                            ->orWhere('ステータス', 1)
+                            ->orWhere('ステータス', 2)
+                            ->orWhere('ステータス', 4)
+                            ->orWhere('ステータス', 6)
+                            ->orWhere('ステータス', 8);
+                    })
+                    ->get();
+                foreach ($change_t_approvals as $change_t_approval) {
+                    $new_t_approval = new T_approval();
+                    $new_t_approval->フローテーブルID = $t_flow->id;
+                    $new_t_approval->フロー地点テーブルID = $change_t_approval->フロー地点テーブルID;
+                    $new_t_approval->ユーザーID = $change_t_approval->ユーザーID;
+                    if ($change_t_approval->ステータス == 0 || $change_t_approval->ステータス == 8) {
+                        $new_t_approval->ステータス = 7;
+                    }
+                    // 承認資格未達、承認可能状態、承認済みの人はすべて承認資格未達ステータスに
+                    else {
+                        $new_t_approval->ステータス = 1;
+                    }
+                    $new_t_approval->再承認番号 = $next_reapply_number;
+                    $new_t_approval->save();
+                }
+
+                $change_t_flow_points = T_flow_point::where('フローテーブルID', $t_flow->id)
+                    ->get();
+                foreach ($change_t_flow_points as $change_t_flow_point) {
+                    $m_flow_point = M_flow_point::find($change_t_flow_point->フロー地点ID);
+                    $flow_point_num = $m_flow_point->承認移行ポイント;
+                    $flow_next_point_num = $m_flow_point->承認移行ポイント;
+                    $change_t_flow_point->承認移行ステータス = (int)$flow_point_num * (-1);
+                    $change_t_flow_point->承認ステータス = (int)$flow_next_point_num * (-1);
+                    $change_t_flow_point->save();
+                }
             } else if ($result == "reject") {
                 // 承認テーブルの承認可能状態から承認済ステータスに変更
                 $t_approval->ステータス = 5;
@@ -2098,7 +2433,7 @@ class FlowController extends Controller
         $user = $request->input('user');
         $start_day = $request->input('start_day');
         $end_day = $request->input('end_day');
-        $status = $request->input('status') ? $request->input('status') : "ongoing_tab";
+
 
 
         $t_flows_ongoing = DB::table("t_flows")
@@ -2138,7 +2473,7 @@ class FlowController extends Controller
             ->where("ステータス", 2)
             ->get();
 
-        // 決裁済かるTAMERUに保存、未保存どちらのレコードも取得
+        // 決裁済かつTAMERUに保存、未保存どちらのレコードも取得
         $t_flows_approved = DB::table("t_flows")
             ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
@@ -2156,13 +2491,36 @@ class FlowController extends Controller
             })
             ->get();
 
+        $t_flows_reapplication = DB::table("t_flows")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->where("申請者ID", Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
+            ->where("ステータス", 5)
+            ->get();
+
+        $status = $request->input('status');
+        if ($status == null) {
+            if ($t_flows_reapplication->count() == 0) {
+                $status = "ongoing_tab";
+            } else {
+                $status = "reapplication_tab";
+            }
+        }
+
 
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        return view('flow.workflowview', compact("prefix", "server", "users", "m_categories", "status", "title", "category", "user", "start_day", "end_day", "t_flows_ongoing", "t_flows_reject", "t_flows_approved"));
+        return view('flow.workflowview', compact("prefix", "server", "users", "m_categories", "status", "title", "category", "user", "start_day", "end_day", "t_flows_ongoing", "t_flows_reject", "t_flows_approved", "t_flows_reapplication"));
     }
     public function workflowapplicationdetailget($id)
     {
@@ -2172,10 +2530,10 @@ class FlowController extends Controller
         //     ->where('t_flows.id', $id)
         //     ->first();
 
-        $t_optionals =  $this->application_items($id);
         $t_flow = T_flow::find($id);
         $m_flow = M_flow::find($t_flow->フローマスタID);
         $m_category = M_category::find($m_flow->カテゴリマスタID);
+        $t_optionals =  $this->application_items($id, $t_flow->再承認番号);
 
         $user = User::find($t_flow->申請者ID);
 

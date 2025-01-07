@@ -75,6 +75,9 @@
             <div class="flow_tab {{($status == 'reject_tab' ? 'tab_focus' : '')}}" data-tabname="reject_tab">
                 却下済
             </div>
+            <div class="flow_tab {{($status == 'reapplication_tab' ? 'tab_focus' : '')}}" data-tabname="reapplication_tab">
+                再申請待ち
+            </div>
         </div>
         <div class="flow_view_content">
             <div class="flow_view_table">
@@ -95,7 +98,7 @@
                         申請日
                     </div>
                 </div>
-                <div class="ongoing_tab open_tab {{($status == 'ongoing_tab' ? 'open_tab' : '')}}">
+                <div class="ongoing_tab {{($status == 'ongoing_tab' ? 'open_tab' : '')}}">
                     @if ($t_flows_ongoing->count() == 0)
                     <div class="none_data_message">進行中の申請データはありません</div>
                     @endif
@@ -171,20 +174,30 @@
                     @endforeach
                 </div>
 
-                <!-- <div class="flow_view_tbody_tr">
+                <div class="reapplication_tab {{($status == 'reapplication_tab' ? 'open_tab' : '')}}">
+                    @if ($t_flows_reapplication->count() == 0)
+                    <div class="none_data_message">再申請待ちの申請データはありません</div>
+                    @endif
+                    @foreach ($t_flows_reapplication as $t_flow_reapplication)
+                    <a href="{{$prefix}}/workflow/application/detail/{{$t_flow_reapplication->flow_id}}" class="flow_view_tbody_tr">
                     <div class="flow_view_td flow_view_title">
-                        ノートパソコン購入の件
-                    </div>
-                    <div class="flow_view_td flow_view_status completion">
-                        完了
-                    </div>
-                    <div class="flow_view_td flow_view_applicant">
-                        藤村直輝
-                    </div>
-                    <div class="flow_view_td flow_view_date">
-                        2024/02/01
-                    </div>
-                </div> -->
+                            {{$t_flow_reapplication->標題}}
+                        </div>
+                        <div class="flow_view_td flow_view_category">
+                            {{$t_flow_reapplication->カテゴリ名}}
+                        </div>
+                        <div class="flow_view_td flow_view_status reapplication">
+                            再申請待ち
+                        </div>
+                        <div class="flow_view_td flow_view_applicant">
+                            {{$t_flow_reapplication->name}}
+                        </div>
+                        <div class="flow_view_td flow_view_date">
+                            {{$t_flow_reapplication->created_at}}
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
 
             </div>
         </div>

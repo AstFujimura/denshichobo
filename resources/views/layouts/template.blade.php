@@ -27,7 +27,8 @@
 <header class="header001">
     <div class="logo01">
         <a href="{{route('topGet')}}" class="logoelement01">
-            TAMERU
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU" class="tameru_logo">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru.svg') }}" alt="TAMERU" class="tameru_char">
         </a>
         @if (App\Models\Version::where('フロー', true)->first())
         <a href="{{route('workflow')}}" class="tameru_banner">電子承認システム</a>

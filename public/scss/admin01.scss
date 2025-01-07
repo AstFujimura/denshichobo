@@ -11,6 +11,15 @@
     margin: auto;
     font-size: 1.5rem;
     color: white;
+    display: flex;
+    align-items: center;
+    .tameru_logo{
+        width: 40px;
+    }
+    .tameru_char{
+        height: 20px;
+        margin-left: 10px;
+    }
 }
 
 .user01{

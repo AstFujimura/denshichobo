@@ -39,6 +39,10 @@
                     <div class="main_button_title">
                         申請一覧
                     </div>
+                    @if ($t_reapplication_count != 0)
+                    <div class="ribbon">{{$t_reapplication_count}}</div>
+                    @endif
+
                 </a>
                 <a href="{{route('workflowstampget')}}" class="main_general_button">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="flow_title_icon">

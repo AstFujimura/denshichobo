@@ -92,6 +92,24 @@
                             </div>
                         </div> -->
                         @endif
+                        <!-- 再申請待ちの場合 -->
+                        @if ($t_flow->ステータス == 5)
+
+                        <div class="application_status_container">
+
+                            <div class="application_status_reapply">
+                                再申請待ち
+                            </div>
+                        </div>
+                        <div class="approval_sub_title">
+                            申請操作
+                        </div>
+                        <div class="application_status_container">
+                            <a href="{{route('workflowreapplyget', ['id' => $t_flow->id])}}" class="application_reapply_button">
+                                再申請を行う
+                            </a>
+                        </div>
+                        @endif
                     </div>
                     <div class="approve_application_info_container">
                         <div class="approval_sub_title">

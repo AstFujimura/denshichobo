@@ -858,6 +858,18 @@ $(document).ready(function () {
 
     }
   });
+  // ワークフロー再申請
+  if ($('#workflow_reapply_title').length != 0) {
+    $('.application_form_date').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      duration: 300,
+      showAnim: 'show',
+      showOn: 'button', // 日付をボタンクリックでのみ表示する
+      buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
+      buttonImageOnly: true, // テキストを非表示にする
+    })
+  }
 
 
 
@@ -967,13 +979,16 @@ $(document).ready(function () {
 
 
   // ----------申請印押印--------承認印押印-----------
-  if ($('#applicationstamp').length != 0 || $('#approvestamp').length != 0) {
+  if ($('#applicationstamp').length != 0 || $('#approvestamp').length != 0 || $('#reapplicationstamp').length != 0) {
 
     if ($('#applicationstamp').length != 0) {
       var status = "application"
     }
     else if ($('#approvestamp').length != 0) {
       var status = "approve"
+    }
+    else if ($('#reapplicationstamp').length != 0) {
+      var status = "reapplication"
     }
 
     var ID = $('#t_flow_id').val()
@@ -1172,8 +1187,20 @@ $(document).ready(function () {
         alert('承認印を押印してください')
       }
       else {
-        if (confirm('本当に'+ (status == "approve" ? "承認":"却下") +'しますか')) {
-          this.submit()
+        if (status == "approve") {
+          if (confirm('本当に承認しますか')) {
+            this.submit()
+          }
+        }
+        else if (status == "reject") {
+          if (confirm('本当に却下しますか')) {
+            this.submit()
+          }
+        }
+        else if (status == "remand") {
+          if (confirm('本当に差し戻しますか')) {
+            this.submit()
+          }
         }
       }
 

@@ -64,7 +64,13 @@
                                     <textarea class="approvecomment" name="approvecomment" id="approvecomment">{{$comment}}</textarea>
                                 </div>
                             </div>
-
+                            <input type="radio" name="approval" id="remand" value="remand" class="approval_input">
+                            <label for="remand" class="approval_element remand_label">
+                                <div class="approval_check"></div>
+                                <div class="approval_name">
+                                    差し戻す
+                                </div>
+                            </label>
                             <input type="radio" name="approval" id="reject" value="reject" class="approval_input">
                             <label for="reject" class="approval_element reject_label">
                                 <div class="approval_check"></div>
@@ -161,9 +167,12 @@
                             <div class="approve_condition_th approve_condition_date">
                                 申請・承認日
                             </div>
+                            <div class="approve_condition_th approve_condition_comment">
+                                コメント
+                            </div>
                         </div>
                         @foreach ($past_approvals as $past_approval)
-                        <div class="approve_condition_tbody_tr" data-front_point="{{$past_approval->フロントエンド表示ポイント}}" data-point_status="{{$past_approval->承認ステータス}}">
+                        <div class="approve_condition_tbody_tr @if ($past_approval->ステータス == 6) bold_underline @endif" data-front_point="{{$past_approval->フロントエンド表示ポイント}}" data-point_status="{{$past_approval->承認ステータス}}">
                             <div class="approve_condition_td approve_condition_name">
                                 {{$past_approval->name}}
                             </div>
@@ -179,9 +188,20 @@
                             <div class="approve_condition_td approve_condition_status reject_status" data-each_status="{{$past_approval->ステータス}}">
                                 却下
                             </div>
+                            @elseif ($past_approval->ステータス == 6)
+                            <div class="approve_condition_td approve_condition_status remand_status" data-each_status="{{$past_approval->ステータス}}">
+                                差し戻し
+                            </div>
+                            @elseif ($past_approval->ステータス == 8)
+                            <div class="approve_condition_td approve_condition_status reapply_status" data-each_status="{{$past_approval->ステータス}}">
+                                再申請
+                            </div>
                             @endif
                             <div class="approve_condition_td approve_condition_date">
                                 {{\Carbon\Carbon::parse($past_approval->承認日)->toDateString()}}
+                            </div>
+                            <div class="approve_condition_td approve_condition_comment">
+                                {{$past_approval->コメント}}
                             </div>
                         </div>
                         @endforeach
