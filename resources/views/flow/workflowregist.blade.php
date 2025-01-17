@@ -20,7 +20,7 @@
 
         </div> -->
         <div class="MainElement flow_master_element">
-            <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/master_regist.svg') }}" alt="" class="title_icon">経路マスタ登録</h2>
+            <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/flow.svg') }}" alt="" class="title_icon">経路マスタ登録</h2>
             <div class="element_input">
                 <input type="hidden" name="edit" class="regist" id="regist" value="regist">
                 @foreach ($positions as $position)

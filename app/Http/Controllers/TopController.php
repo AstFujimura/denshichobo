@@ -721,39 +721,52 @@ class TopController extends Controller
         }
     }
 
-    public function usersettingGet()
+    public function usersettingGet(Request $request)
     {
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
+        $system_type = $request->input('system_type') ?? "tameru";
 
         $user = Auth::user();
-        return view('information.usersetting', compact('user', 'prefix', 'server'));
+        return view('information.usersetting', compact('user', 'prefix', 'server', 'system_type'));
     }
     public function usersettingPost(Request $request)
     {
-        $user = Auth::user();
+        $user = User::find(Auth::user()->id);
         if (!$request->input('name') || !$request->input('email')) {
-            return "必須";
+            return redirect()->back()->with('error', '必須項目を入力してください');
         }
+
         //パスワード設定変更
-        else if ($request->input('oldpass')) {
+        if ($request->input('oldpass')) {
             if (Hash::check($request->input('oldpass'), $user->password)) {
                 $user->name = $request->input('name');
                 $user->email = $request->input('email');
                 $user->password = Hash::make($request->input('newpass'));
                 $user->save();
-                return "成功";
             } else {
-                return "パスワードが違います";
+                return redirect()->back()->with('error', 'パスワードが違います');
             }
         } else {
             $user->name = $request->input('name');
             $user->email = $request->input('email');
             $user->save();
-            return "成功";
+        }
+
+        if ($request->input('mail')) {
+            $user->メール許可 = true;
+        } else {
+            $user->メール許可 = false;
+        }
+        $user->save();
+
+        if ($request->input('system_type') == "tameru") {
+            return redirect()->route('usersettingGet', ['system_type' => 'tameru'])->with('success', 'ユーザー情報を更新しました');
+        } else if ($request->input('system_type') == "flow") {
+            return redirect()->route('usersettingGet', ['system_type' => 'flow'])->with('success', 'ユーザー情報を更新しました');
         }
     }
     public function usercheck(Request $request)

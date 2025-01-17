@@ -11,7 +11,7 @@
 <!-- <div class="category_setting_gray"></div> -->
 <div class="MainElement">
 
-    <h2 class="pagetitle" id="category_detail"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/setting.svg') }}" alt="" class="title_icon">{{$m_category->カテゴリ名}}</h2>
+    <h2 class="pagetitle" id="category_detail"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="title_icon">カテゴリ - {{$m_category->カテゴリ名}}</h2>
     <form action="{{route('categorydetailpost')}}" method="post">
         @csrf
         <input type="hidden" name="id" value="{{$id}}">

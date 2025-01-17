@@ -14,9 +14,12 @@ $(document).ready(function() {
     errorformreset(["name","email"]);
     errorsentencereset(["required1","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
     event.preventDefault();
-    const formData = new FormData();
+    var usersettingform = this;
+    const formData = new FormData(usersettingform);
     const name = $('#name').val();
     const email = $('#email').val();
+    const mail = $('#mail').prop('checked');
+    const system_type = $('#system_type').val();
     if (!name){
       $('#name').addClass("invalid");
       $('#required1').addClass("errorsentence");
@@ -47,6 +50,11 @@ $(document).ready(function() {
 
     formData.append('name',name);
     formData.append('email',email);
+    formData.append('system_type',system_type);
+    // メール許可の場合
+    if(mail){
+      formData.append('mail',mail);
+    }
     if($('.open').length){
       if (!oldpass){
         $('#oldpass').addClass("invalid");
@@ -121,27 +129,25 @@ $(document).ready(function() {
             if (!$('.errorsentence').length) {
   
               if (confirm("情報を変更しますよろしいですか")){
-                $.ajax({
-                  url: prefix+'/usersetting',
-                  type: 'POST',
-                  data: formData,
-                  processData: false,
-                  contentType: false,
-                  headers: {
-                    'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-                   },
-                   success: function(response){
-                    if (response == "成功"){
-                      window.location.href = prefix
-                    }
-                    
-                    else if(response == "パスワードが違います") {
-                      $('#oldpass').addClass("invalid");
-                      $('.differencepass').addClass("errorsentence");
-                   }
+              //   $.ajax({
+              //     url: prefix+'/usersetting',
+              //     type: 'POST',
+              //     data: formData,
+              //     processData: false,
+              //     contentType: false,
+              //     headers: {
+              //       'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+              //      },
+              //      success: function(response){
+                  
+              //       if(response == "パスワードが違います") {
+              //         $('#oldpass').addClass("invalid");
+              //         $('.differencepass').addClass("errorsentence");
+              //      }
             
-                }
-              });
+              //   }
+              // });
+              usersettingform.submit();
               }
   
             }

@@ -651,13 +651,18 @@ $(document).ready(function () {
 
   // --------ワークフローマスタ一覧---------------------
 
-
-  $('.flow_master_delete_button').on('click', function () {
-    var flowname = $(this).parent().parent().find('.flow_master_flowname').text()
-    if (confirm("「" + flowname + "」を削除します。よろしいですか。")) {
-      window.location.href = $(this).data("location")
-    }
-  })
+  if ($('#flow_master').length != 0) {
+    $('.flow_master_delete_button').on('click', function () {
+      var flowname = $(this).parent().parent().find('.flow_master_flowname').text()
+      if (confirm("「" + flowname + "」を削除します。よろしいですか。")) {
+        window.location.href = $(this).data("location")
+      }
+    })
+    $('.flow_master_group_arrow').on('click', function () {
+      $(this).closest('.flow_master_tr').toggleClass('group_open')
+      $(this).toggleClass('arrow_open')
+    })
+  }
 
 
 
@@ -688,6 +693,7 @@ $(document).ready(function () {
       dataType: 'json',
       success: function (response) {
         $('.flow_application_area').html('')
+
         if (response[0]) {
           var content = '<div class="application_annotation">' + response[0] + '</div>'
         }
@@ -706,6 +712,26 @@ $(document).ready(function () {
           buttonImage: prefix + '/img/calendar_2_line.svg', // カスタムアイコンのパスを指定
           buttonImageOnly: true, // テキストを非表示にする
         })
+
+        $('.flow_application_document_area').html('')
+        if (response[2] == 2) {
+          $('.flow_application_document_container').removeClass('display_none')
+
+          var approval_document = `<div class="application_form_content">
+            <div class="application_form_label">
+            承認用紙<span class="application_red"> * </span>
+            </div>
+            <div class="flow_application_droparea">
+            <p>ここにドラッグ＆ドロップ</p>
+            <input type="file" name="approval_document" data-id="approval_document" class="file_input" data-required="1" accept=".pdf">
+            </div>
+            <div class="flow_application_preview_button" data-id ="approval_document" >プレビュー</div>
+            </div>`
+          $('.flow_application_document_area').append(approval_document)
+        }
+        else {
+          $('.flow_application_document_container').addClass('display_none')
+        }
 
 
       },
@@ -748,17 +774,35 @@ $(document).ready(function () {
     }
     // PDFをプレビューとして表示する
     else if (fileType === "application/pdf") {
+
       var pdfUrl = URL.createObjectURL(File);
-      var embed = $('<embed>');
-      embed.attr('src', pdfUrl);
-      embed.attr('width', '100%');
-      embed.attr('height', '100%'); // 適切な高さを指定
+      // PDF.js を使って PDF のサイズを取得
+      var loadingTask = pdfjsLib.getDocument(pdfUrl);
+      loadingTask.promise.then(function (pdf) {
+        // 最初のページを取得
+        pdf.getPage(1).then(function (page) {
+          var viewport = page.getViewport({ scale: 1 });
+          var width = viewport.width;
+          var height = viewport.height;
 
-      imgobject[item_id] = embed
-      // $('.flow_application_preview_container').html(embed);
+          $('#width').val(width * 0.352)
+          $('#height').val(height * 0.352)
 
-      $(this).parent().find('.flow_application_preview_button').show()
+          // プレビューとして表示
+          var embed = $('<embed>');
+          embed.attr('src', pdfUrl);
+          embed.attr('width', '100%');
+          embed.attr('height', '100%');
 
+          imgobject[item_id] = embed;
+
+
+        });
+      }).catch(function (error) {
+        console.error('Error loading PDF:', error);
+      });
+
+      $(this).parent().find('.flow_application_preview_button').show();
     }
     else {
       $(this).parent().find('.flow_application_preview_button').hide()
@@ -788,12 +832,31 @@ $(document).ready(function () {
       // PDFをプレビューとして表示する
       else if (this.files[0].type === "application/pdf") {
         var pdfUrl = URL.createObjectURL(this.files[0]);
-        var embed = $('<embed>');
-        embed.attr('src', pdfUrl);
-        embed.attr('width', '100%');
-        embed.attr('height', '100%'); // 適切な高さを指定
-        imgobject[item_id] = embed
-        // $('.flow_application_preview_container').html(embed);
+        // PDF.js を使って PDF のサイズを取得
+        var loadingTask = pdfjsLib.getDocument(pdfUrl);
+        loadingTask.promise.then(function (pdf) {
+          // 最初のページを取得
+          pdf.getPage(1).then(function (page) {
+            var viewport = page.getViewport({ scale: 1 });
+            var width = viewport.width;
+            var height = viewport.height;
+
+            $('#width').val(width * 0.352)
+            $('#height').val(height * 0.352)
+
+            // プレビューとして表示
+            var embed = $('<embed>');
+            embed.attr('src', pdfUrl);
+            embed.attr('width', '100%');
+            embed.attr('height', '100%');
+
+            imgobject[item_id] = embed;
+
+
+          });
+        }).catch(function (error) {
+          console.error('Error loading PDF:', error);
+        });
 
         $(this).parent().parent().find('.flow_application_preview_button').show()
       }
@@ -1081,7 +1144,7 @@ $(document).ready(function () {
         $(this).append(clonedElement)
         clicked = true
         $('#left').val(nowX * width / pdf_canvas_width)
-        $('#top').val(nowY * width / pdf_canvas_height)
+        $('#top').val(nowY * height / pdf_canvas_height)
       }
 
     })
@@ -1375,7 +1438,7 @@ $(document).ready(function () {
   $('.password_change').on('click', function () {
     $(this).hide()
     $('#mail_setting_password').removeClass("display_none")
-    $('#mail_setting_password').attr("data-required",'true')
+    $('#mail_setting_password').attr("data-required", 'true')
   })
 
 
@@ -1603,14 +1666,14 @@ $(document).ready(function () {
 
   if ($('#approval_setting').length != 0) {
 
-    if ($('#approval_setting_issue').prop("checked")) {
+    if ($('input[name="approval_setting"]:checked').val() == 1) {
       var ID = $('#category_id').val()
       approval_setting_pdf(prefix, ID)
     }
 
-    // 承認用紙を発行するのチェックが変わった時
-    $(document).on('change', '#approval_setting_issue', function (event) {
-      if ($(this).prop('checked')) {
+    // 承認用紙の設定のラジオボタンが変わった時
+    $(document).on('change', 'input[name="approval_setting"]', function (event) {
+      if ($(this).val() == 1) {
         $('.approval_setting_droparea').removeClass("display_none");
         $('.approval_setting_detail_button').removeClass("display_none");
         $('.stamp_check_container').removeClass("display_none");
@@ -1619,7 +1682,16 @@ $(document).ready(function () {
           $('#status').val("error")
         }
       }
-      else {
+      // 申請のたびに承認用紙を発行する
+      else if ($(this).val() == 2) {
+        $('.approval_setting_droparea').addClass("display_none");
+        $('.approval_setting_change_file').addClass("display_none");
+        $('.approval_setting_detail_button').addClass("display_none");
+        $('.stamp_check_container').removeClass("display_none");
+        $('#status').val("empty")
+      }
+      // 承認用紙を発行しない
+      else if ($(this).val() == 0) {
         $('.approval_setting_droparea').addClass("display_none");
         $('.approval_setting_change_file').addClass("display_none");
         $('.approval_setting_detail_button').addClass("display_none");

@@ -12,7 +12,7 @@
 <!-- <div class="category_setting_gray"></div> -->
 <div class="MainElement">
 
-    <h2 class="pagetitle" id="approval_setting"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/setting.svg') }}" alt="" class="title_icon">承認設定</h2>
+    <h2 class="pagetitle" id="approval_setting"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="title_icon">承認設定</h2>
     <form action="{{route('categoryapprovalsettingpost')}}" method="post" id="category_approval_setting_form" enctype="multipart/form-data">
         @csrf
 
@@ -25,15 +25,22 @@
             </div>
             <div class="approval_setting_container">
                 <div class="approval_setting_content">
-                    <input type="checkbox" id="approval_setting_issue" {{$m_category->発行 ? 'checked' : ''}}>
-                    <label class="approval_setting_element" for="approval_setting_issue">承認用紙を発行する</label>
-                    <!-- <div class="approval_setting_registed">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/button/check.svg') }}" alt="" class="button_icon">
-                        インポート済み
-                    </div> -->
-
+                    <input type="radio" id="approval_none_setting" name="approval_setting" value="0" {{$m_category->発行 == 0 ? 'checked' : ''}}>
+                    <label class="approval_setting_element" for="approval_none_setting">承認用紙を発行しない</label>
                 </div>
-                <label class="approval_setting_change_file {{$m_category->発行 ? '' : 'display_none'}}" for="approval_setting_file">
+            </div>
+            <div class="approval_setting_container">
+                <div class="approval_setting_content">
+                    <input type="radio" id="approval_event_setting" name="approval_setting" value="2" {{$m_category->発行 == 2 ? 'checked' : ''}}>
+                    <label class="approval_setting_element" for="approval_event_setting">申請のたびに承認用紙を発行する</label>
+                </div>
+            </div>
+            <div class="approval_setting_container">
+                <div class="approval_setting_content">
+                    <input type="radio" id="approval_setting_issue" name="approval_setting" value="1" {{$m_category->発行 == 1 ? 'checked' : ''}}>
+                    <label class="approval_setting_element" for="approval_setting_issue">承認用紙を登録しておく</label>
+                </div>
+                <label class="approval_setting_change_file {{$m_category->発行 == 1 ? '' : 'display_none'}}" for="approval_setting_file">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/button/change.svg') }}" alt="" class="button_icon">
                     ファイルの変更
                 </label>
@@ -42,12 +49,12 @@
                     <p>ここにドラッグ＆ドロップ</p>
                     <input type="file" name="pdf" id="approval_setting_file" class="file_input" accept=".pdf">
                 </label>
-                <div class="approval_setting_detail_button {{$m_category->発行 ? '' : 'display_none'}}">
+                <div class="approval_setting_detail_button {{$m_category->発行 == 1 ? '' : 'display_none'}}">
                     詳細設定
                 </div>
 
             </div>
-            <div class="stamp_check_container  {{$m_category->発行 ? '' : 'display_none'}}">
+            <div class="stamp_check_container  {{$m_category->発行 == 1 || $m_category->発行 == 2 ? '' : 'display_none'}}">
                 <div class="stamp_check_content">
 
                     <input type="checkbox" name="approval_stamp" id="approval_stamp" {{$m_category->承認印 ? 'checked' : ''}}>

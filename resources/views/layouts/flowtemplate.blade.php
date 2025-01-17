@@ -79,14 +79,14 @@
     <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_admin.svg') }}" class="menuicon01">
         <div class="iconmessage">ユーザー情報</div>
-    </div>  
+    </div>
     @endif
     <div class="headerIcon001" onclick="window.open('{{route('question')}}', '_blank');">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
         <div class="iconmessage">ヘルプ</div>
     </div>
 
-    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
+    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet', ['system_type' => 'flow'])}}';">
         <div class="usermenu01">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
         </div>
@@ -107,7 +107,7 @@
         <div class="sidebar01">
 
             <div class="icon01">
-                <div class="user01" onclick="location.href='{{route('usersettingGet')}}';">
+                <div class="user01" onclick="location.href='{{route('usersettingGet', ['system_type' => 'flow'])}}';">
                     <div class="usericon01">
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/user_1_line.svg') }}" class="usericon01">
                     </div>
@@ -268,6 +268,16 @@
 
     </div>
 
+    @if (session('error'))
+    <input type="hidden" id="error_message" value="{{session('error')}}">
+    <div class="error_gray"></div>
+    {{session()->forget('error')}}
+    @endif
+    @if (session('success'))
+    <input type="hidden" id="success_message" value="{{session('success')}}">
+    <div class="success_gray"></div>
+    {{session()->forget('success')}}
+    @endif
 </body>
 <footer>
     @yield('footer')
@@ -276,6 +286,7 @@
 <script src="{{ asset(config('prefix.prefix').'/'.'js/style.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/flow.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/flowfunction.js') }}"></script>
+<script src="{{ asset(config('prefix.prefix').'/'.'js/usersetting.js') }}"></script>
 @if ($server == 'onpre')
 <script src="{{ asset(config('prefix.prefix').'/'.'js/onpre.js') }}"></script>
 @else

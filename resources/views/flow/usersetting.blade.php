@@ -1,5 +1,4 @@
-
-@extends(@$system_type == "tameru" ? 'layouts.template' : 'layouts.flowtemplate')
+@extends('layouts.flowtemplate')
 
 @section('title')
 TAMERU ~電子帳簿保存
@@ -16,10 +15,10 @@ TAMERU ~電子帳簿保存
 
 
 @section('main')
-<h2 class="usersettingtitle">{{$user->name}}さん情報</h2>
-
+<h2>{{$user->name}}さん情報</h2>
 <form action="{{route('usersettingPost')}}" method="post" enctype="multipart/form-data" id="usersetting">
         @csrf
+        @method('PUT')
         <div class="input-container">
         <label class="label">
             ユーザー名
@@ -41,14 +40,6 @@ TAMERU ~電子帳簿保存
             <input type="text" name="email" class="input-field" id="email" value="{{$user->email}}">
             <span class="errorelement" id="required2">必須項目です</span>
             <span class="errorelement" id="emailformat">形式が不正です</span>
-        </div>
-    </div>
-    <div class="input-container">
-        <label class="label">
-            メール許可
-        </label>
-        <div class="dateform">
-            <input type="checkbox" name="mail" class="mailcheck_input" id="mail" value="1" {{$user->メール許可 ? 'checked' : ''}}>
         </div>
     </div>
     <div class="important">
@@ -88,7 +79,7 @@ TAMERU ~電子帳簿保存
         </div>
 
     </div>
-<input type="hidden" name="system_type" value="{{$system_type}}">
+
     <button class="usersettingbutton">変更</button>
 </form>
 <input type="hidden" id="userID" value="{{$user->id}}">

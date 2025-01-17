@@ -54,12 +54,10 @@
                     <div class="flow_stamp_font_property">
                         <select class="flow_stamp_font_select" name="font" id="flow_stamp_font_select">
                             @if ($m_stamp)
-                            <option value="毛筆体" {{$m_stamp->フォント == "毛筆体" ? 'selected' : ''}}>毛筆体</option>
                             <option value="HG正楷書体" {{$m_stamp->フォント == "HG正楷書体" ? 'selected' : ''}}>楷書体</option>
                             <option value="HGゴシック体" {{$m_stamp->フォント == "HGゴシック体" ? 'selected' : ''}}>ゴシック</option>
                             <option value="HGR明朝体" {{$m_stamp->フォント == "HGR明朝体" ? 'selected' : ''}}>明朝</option>
                             @else
-                            <option value="毛筆体">毛筆体</option>
                             <option value="HG正楷書体">楷書体</option>
                             <option value="HGゴシック体">ゴシック</option>
                             <option value="HGR明朝体">明朝</option>

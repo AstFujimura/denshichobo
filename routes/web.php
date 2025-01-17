@@ -284,6 +284,12 @@ Route::prefix($prefix)->group(function () {
 
 
 
+            // 閲覧一覧
+            Route::get('/workflow/checkview', [FlowController::class, 'workflowcheckviewget'])->name('workflowcheckviewget');
+            // 閲覧詳細
+            Route::get('/workflow/checkview/detail/{id}', [FlowController::class, 'workflowcheckviewdetailget'])->name('workflowcheckviewdetailget');
+
+
 
             //    グループの役職設定画面
             Route::get('/admin/groupposition/{id}', [AdminController::class, 'admingrouppositionGet'])->name('admingrouppositionGet');

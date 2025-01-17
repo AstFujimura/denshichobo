@@ -24,6 +24,7 @@ use App\Models\T_approval;
 use App\Models\T_flow_draft;
 use App\Models\Position;
 use App\Models\T_optional;
+use App\Models\M_flow_view_group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -287,6 +288,7 @@ class FlowController extends Controller
         $category_id = $request->input("flow_category");
         $flow_name = $request->input("flow_name");
         $flow_groups = $request->input("flow_group");
+        $flow_view_groups = $request->input("flow_view_group");
         $start_flow_price = $request->input("start_flow_price");
         $end_flow_price = $request->input("end_flow_price");
         $arrays = $request->input("arrays");
@@ -335,6 +337,19 @@ class FlowController extends Controller
             $flow_group_master->フローマスタID = $flow_master->id;
             $flow_group_master->グループiD = $groupid;
             $flow_group_master->save();
+        }
+
+        // // -----------------------------------------------------
+
+        // -------------閲覧グループ条件マスタ-------------------
+
+
+        // 閲覧グループ条件マスタをそれぞれ登録
+        foreach ($flow_view_groups as $groupid) {
+            $flow_view_group_master = new M_flow_view_group();
+            $flow_view_group_master->フローマスタID = $flow_master->id;
+            $flow_view_group_master->グループiD = $groupid;
+            $flow_view_group_master->save();
         }
 
         // // -----------------------------------------------------
@@ -515,7 +530,11 @@ class FlowController extends Controller
         if (Auth::user()->管理 == "管理") {
 
             $server = config('prefix.server');
-            $flow_master = M_flow::where("削除フラグ", false)
+            $flow_master = DB::table("m_flows")
+                ->select("m_flows.*", "m_categories.カテゴリ名")
+                ->leftJoin("m_categories", "m_categories.id", "=", "m_flows.カテゴリマスタID")
+                ->where("削除フラグ", false)
+                ->orderBy("カテゴリマスタID")
                 ->get();
             $flow_groups = DB::table("m_flow_groups")
                 ->select("m_flow_groups.*", "groups.グループ名")
@@ -565,6 +584,14 @@ class FlowController extends Controller
                     $group->checked = "checked";
                 } else {
                     $group->checked = "";
+                }
+                $view_group = M_flow_view_group::where("フローマスタID", $id)
+                    ->where("グループID", $group->id)
+                    ->first();
+                if ($view_group) {
+                    $group->view_checked = "checked";
+                } else {
+                    $group->view_checked = "";
                 }
             }
 
@@ -1085,7 +1112,8 @@ class FlowController extends Controller
 
             $category_object[] = $item;
         }
-        return response()->json([$m_category->注釈, $category_object]);
+        $each_time_issue = $m_category->発行;
+        return response()->json([$m_category->注釈, $category_object, $each_time_issue]);
     }
 
     // カテゴリ承認設定
@@ -1099,7 +1127,7 @@ class FlowController extends Controller
         if (Auth::user()->管理 == "管理") {
             $m_optionals = [];
             $m_category = M_category::find($id);
-            $m_category->status = $m_category->発行 ? "none_change" : "empty";
+            $m_category->status = ($m_category->発行 == 1) ? "none_change" : "empty";
             $order = $m_category->項目順;
             // アンダースコア（_）をデリミタとして文字列を分割
             $parts = explode("_", $order);
@@ -1126,22 +1154,47 @@ class FlowController extends Controller
     // カテゴリ承認設定ポスト
     public function categoryapprovalsettingpost(Request $request)
     {
-
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
         $category_id = $request->input('category_id');
         $m_category = M_category::find($category_id);
-        if ($request->input("status") == "empty") {
-            $m_category->発行 = false;
+        $approval_setting = $request->input('approval_setting');
+        // 承認用紙を発行しない
+        if ($approval_setting  == 0) {
+
+            $m_category->発行 = 0;
             $m_category->ファイルパス = null;
             $m_category->縦 = 0;
             $m_category->横 = 0;
             $m_category->縦横 = null;
             $m_category->承認印 = false;
             $m_category->申請印 = false;
-        } else {
+        }
+        // 申請のたびに承認用紙を発行する
+        else if ($approval_setting == 2) {
+            $approval_stamp = $request->input('approval_stamp');
+            $application_stamp = $request->input('application_stamp');
+            if ($approval_stamp) {
+                $m_category->承認印 = true;
+            } else {
+                $m_category->承認印 = false;
+            }
+            if ($application_stamp) {
+                $m_category->申請印 = true;
+            } else {
+                $m_category->申請印 = false;
+            }
+
+            $m_category->発行 = 2;
+            $m_category->ファイルパス = null;
+            $m_category->縦 = 0;
+            $m_category->横 = 0;
+            $m_category->縦横 = null;
+        }
+        // 承認用紙を登録しておく
+        else if ($approval_setting == 1) {
             $pointers = $request->pointer_array;
             $approval_stamp = $request->input('approval_stamp');
             $application_stamp = $request->input('application_stamp');
@@ -1199,14 +1252,14 @@ class FlowController extends Controller
 
 
                 $m_category->ファイルパス = $pdffilename;
-                $m_category->発行 = true;
+                $m_category->発行 = 1;
                 $m_category->縦 = $width;
                 $m_category->横 = $height;
                 $m_category->縦横 = $p_l;
             }
         }
         $m_category->save();
-        return redirect()->route('categoryapprovalsettingget', ['id' => $category_id]);
+        return redirect()->route('categoryapprovalsettingget', ['id' => $category_id])->with('success', '承認用紙の設定を更新しました。');
 
         // -----------以降はテストで作成したコードのため後で消す-----------------
 
@@ -1268,6 +1321,8 @@ class FlowController extends Controller
         $server = config('prefix.server');
         $m_categories = M_category::all();
         $m_pointers = M_pointer::all();
+
+
         return view('flow.workflowapplication', compact("prefix", "server", "m_categories", "m_pointers"));
     }
     // ワークフロー申請ポスト
@@ -1309,6 +1364,7 @@ class FlowController extends Controller
         $parts = explode("_", $order);
 
 
+        $new_t_flow->発行 = $m_category->発行;
 
         // partsの一つ目の要素が標題であるためそれを格納
         $new_t_flow->標題 = $request->input("item" . $parts[0]);
@@ -1316,7 +1372,7 @@ class FlowController extends Controller
         $new_t_flow->save();
 
         // 承認用紙を発行する場合
-        if ($m_category->発行) {
+        if ($m_category->発行 == 1) {
             // pdfに挿入する
             $pdf = new Fpdi();
             $pdf->setPrintHeader(false);
@@ -1378,7 +1434,7 @@ class FlowController extends Controller
             }
             $t_optional->save();
 
-            if ($m_category->発行) {
+            if ($m_category->発行 == 1) {
                 // 項目位置マスタに項目マスタのIDが含まれていた場合
                 $m_pointer = M_pointer::where('任意項目マスタID', $m_optional->id)
                     ->where('カテゴリマスタID', $m_category->id)
@@ -1390,7 +1446,7 @@ class FlowController extends Controller
                 }
             }
         }
-        if ($m_category->発行) {
+        if ($m_category->発行 == 1) {
             $now = Carbon::now();
             $currentTime = $now->format('YmdHis');
             $randomID = $this->generateRandomCode();
@@ -1408,6 +1464,51 @@ class FlowController extends Controller
                 $new_t_flow->変更後承認ファイルパス = $new_pdf_name;
             }
             $new_t_flow->save();
+        } else if ($m_category->発行 == 2) {
+            $file = $request->file("approval_document");
+
+            if ($file) {
+                $pastID = $this->generateRandomCode();
+                $extension = $file->getClientOriginalExtension();
+                $filename = Config::get('custom.file_upload_path');
+                $now = Carbon::now();
+                $currentTime = $now->format('YmdHis');
+                $filepath = $currentTime . '_' . $pastID;
+                //アップロードされたファイルに拡張子がない場合
+                if (!$extension) {
+                    if (config('app.env') == 'production') {
+                        // 本番環境用の設定
+                    } else {
+                        // 開発環境用の設定
+                        copy($file->getRealPath(), $filename . "\\" . $filepath);
+                    }
+                    //extensionがnullになっているためエラー回避
+                    $extension = "";
+                } else {
+                    if (config('app.env') == 'production') {
+                        // 本番環境用の設定
+                    } else {
+                        // 開発環境用の設定
+                        copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+                    }
+                }
+                // pdfの縦と横のサイズを取得
+                $width = $request->input("width");
+                $height = $request->input("height");
+                if ($width > $height) {
+                    $new_t_flow->縦横 = "L";
+                } else {
+                    $new_t_flow->縦横 = "P";
+                }
+                $new_t_flow->横 = $width;
+                $new_t_flow->縦 = $height;
+
+                $new_t_flow->変更前承認ファイルパス = $filepath . '.' . $extension;
+                if (!$m_category->申請印) {
+                    $new_t_flow->変更後承認ファイルパス = $filepath . '.' . $extension;
+                }
+                $new_t_flow->save();
+            }
         }
 
         return redirect()->route('workflowchoiceget', ["id" => $new_t_flow->id]);
@@ -1448,7 +1549,7 @@ class FlowController extends Controller
             ->where("再承認番号", $next_reapply_number)
             ->delete();
         // 承認用紙を発行する場合
-        if ($t_flow->発行) {
+        if ($t_flow->発行 == 1) {
             // pdfに挿入する
             $pdf = new Fpdi();
             $pdf->setPrintHeader(false);
@@ -1506,7 +1607,7 @@ class FlowController extends Controller
                     $new_t_optional->ファイル形式 = $extension;
                 }
             }
-            if ($t_flow->発行) {
+            if ($t_flow->発行 == 1) {
                 // 項目位置マスタに項目マスタのIDが含まれていた場合
                 $m_pointer = M_pointer::where('任意項目マスタID', $m_optional->id)
                     ->first();
@@ -1519,7 +1620,7 @@ class FlowController extends Controller
 
             $new_t_optional->save();
         }
-        if ($t_flow->発行) {
+        if ($t_flow->発行 == 1) {
             $now = Carbon::now();
             $currentTime = $now->format('YmdHis');
             $randomID = $this->generateRandomCode();
@@ -1633,7 +1734,13 @@ class FlowController extends Controller
         $pdf = new Fpdi();
         $m_category = M_category::find($request->input("category_id"));
         $pdf->setPrintHeader(false);
-        $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+        // 承認用紙を事前に登録してある場合
+        if ($m_category->発行 == 1) {
+            $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+        } else {
+            // 承認用紙を事前に登録していない場合
+            $pdf->AddPage($t_flow->縦横, [$t_flow->横, $t_flow->縦]);
+        }
 
         $top = $request->input("top");
         $left = $request->input("left");
@@ -1700,7 +1807,13 @@ class FlowController extends Controller
         $pdf = new Fpdi();
         $m_category = M_category::find($request->input("category_id"));
         $pdf->setPrintHeader(false);
-        $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+        // 承認用紙を事前に登録してある場合
+        if ($m_category->発行 == 1) {
+            $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+        } else {
+            // 承認用紙を事前に登録していない場合
+            $pdf->AddPage($t_flow->縦横, [$t_flow->横, $t_flow->縦]);
+        }
 
         $top = $request->input("top");
         $left = $request->input("left");
@@ -1983,16 +2096,17 @@ class FlowController extends Controller
     }
     private function workflowmailpost($user_id, $content, $content_id)
     {
-        if (Auth::user()->管理 == "管理") {
-            $m_mail = M_mail::first();
-            $name = $m_mail->name;
-            $mail = $m_mail->mail;
-            $host = $m_mail->host;
-            $port = $m_mail->port;
-            $username = $m_mail->username;
-            $password = Crypt::decryptString($m_mail->password);
+        $m_mail = M_mail::first();
+        $name = $m_mail->name;
+        $mail = $m_mail->mail;
+        $host = $m_mail->host;
+        $port = $m_mail->port;
+        $username = $m_mail->username;
+        $password = Crypt::decryptString($m_mail->password);
 
-            $recipient = User::find($user_id)->email;
+        $user = User::find($user_id);
+        if ($user->メール許可) {
+            $recipient = $user->email;
 
             $mailConfig = [
                 'driver' => 'smtp',
@@ -2071,6 +2185,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 2)
+            ->where('t_approvals.再承認番号', '=', DB::raw('t_flows.再承認番号'))
             ->get();
 
         $approveds =  DB::table('t_approvals')
@@ -2086,6 +2201,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 4)
+            ->where('t_approvals.再承認番号', '=', DB::raw('t_flows.再承認番号'))
             ->get();
         $rejecteds =  DB::table('t_approvals')
             ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
@@ -2100,6 +2216,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 5)
+            ->where('t_approvals.再承認番号', '=', DB::raw('t_flows.再承認番号'))
             ->get();
 
         return view('flow.workflowapprovalview', compact("prefix", "server", "users", "m_categories", "status", "title", "category", "user", "start_day", "end_day", "approvables", "approveds", "rejecteds"));
@@ -2142,13 +2259,14 @@ class FlowController extends Controller
         $user = User::find($t_flow->申請者ID);
 
         $past_approvals = DB::table('t_approvals')
-            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント")
+            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
             ->leftJoin('t_flow_points', 't_approvals.フロー地点テーブルID', '=', 't_flow_points.id')
             ->leftJoin('users', 't_approvals.ユーザーID', '=', 'users.id')
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
             ->where(function ($query) {
                 $query->where('ステータス', 0)
                     ->orWhere('ステータス', 4)
+                    ->orWhere('ステータス', 5)
                     ->orWhere('ステータス', 6)
                     ->orWhere('ステータス', 8);
             })
@@ -2208,6 +2326,7 @@ class FlowController extends Controller
             return response()->file($path, ['Content-Type' => 'application/pdf']);
         }
     }
+    // 承認ポスト
     public function workflowapprovalpost(Request $request)
     {
         $approval_id = $request->input("approval_id");
@@ -2228,6 +2347,7 @@ class FlowController extends Controller
         }
 
         if ($t_flow_point->承認ステータス < 0) {
+            // 承認の場合
             if ($result == "approve") {
                 // dd($t_flow_point->承認ステータス);
                 // 承認テーブルの承認可能状態から承認済ステータスに変更
@@ -2241,14 +2361,27 @@ class FlowController extends Controller
                 if (isset($t_approval->承認ファイルパス))
                     $t_flow->変更前承認ファイルパス = $t_approval->承認ファイルパス;
 
-                // 最終決裁点だった場合の処理
+
+                // そのフロー地点での承認が完了していた場合
                 if ($t_flow_point->承認ステータス == 0) {
+                    // そのフロー地点で承認処理をしていないユーザー
+                    $loss_t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->id)
+                        ->where('ステータス', 2)
+                        ->get();
+                    foreach ($loss_t_approvals as $loss_t_approval) {
+                        // 承認資格喪失
+                        $loss_t_approval->ステータス = 3;
+                        $loss_t_approval->save();
+                    }
+
+
                     $last_flow_point = DB::table('t_flow_points')
                         ->select('t_flow_points.*')
                         ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
                         ->where('決裁地点', true)
                         ->first();
 
+                    // 最終決裁点だった場合の処理
                     if ($last_flow_point) {
                         $t_flow->決裁数 += 1;
                         if ($t_flow->決裁数 == $t_flow->決裁地点数) {
@@ -2290,7 +2423,9 @@ class FlowController extends Controller
                         }
                     }
                 }
-            } else if ($result == "remand") {
+            }
+            // 差し戻しの場合
+            else if ($result == "remand") {
                 $t_approval->ステータス = 6;
                 $t_approval->コメント = $approvecomment;
                 $t_approval->save();
@@ -2312,6 +2447,7 @@ class FlowController extends Controller
                     })
                     ->get();
                 foreach ($change_t_approvals as $change_t_approval) {
+                    // 再承認番号を1増やした新たな承認テーブルを追加
                     $new_t_approval = new T_approval();
                     $new_t_approval->フローテーブルID = $t_flow->id;
                     $new_t_approval->フロー地点テーブルID = $change_t_approval->フロー地点テーブルID;
@@ -2325,6 +2461,12 @@ class FlowController extends Controller
                     }
                     $new_t_approval->再承認番号 = $next_reapply_number;
                     $new_t_approval->save();
+
+                    // 現時点で承認可能状態になっている場合は承認資格喪失
+                    if ($change_t_approval->ステータス == 2) {
+                        $change_t_approval->ステータス = 3;
+                        $change_t_approval->save();
+                    }
                 }
 
                 $change_t_flow_points = T_flow_point::where('フローテーブルID', $t_flow->id)
@@ -2337,7 +2479,9 @@ class FlowController extends Controller
                     $change_t_flow_point->承認ステータス = (int)$flow_next_point_num * (-1);
                     $change_t_flow_point->save();
                 }
-            } else if ($result == "reject") {
+            }
+            // 却下の場合
+            else if ($result == "reject") {
                 // 承認テーブルの承認可能状態から承認済ステータスに変更
                 $t_approval->ステータス = 5;
                 $t_approval->コメント = $approvecomment;
@@ -2348,6 +2492,15 @@ class FlowController extends Controller
 
                 $t_flow->ステータス = 2;
                 $t_flow->save();
+
+                // 承認資格喪失
+                $loss_t_approvals = T_approval::where('フローテーブルID', $t_flow->id)
+                    ->where('ステータス', 2)
+                    ->get();
+                foreach ($loss_t_approvals as $loss_t_approval) {
+                    $loss_t_approval->ステータス = 3;
+                    $loss_t_approval->save();
+                }
                 $this->workflowmailpost($t_flow->申請者ID, 'reject', $t_flow->id);
             } else if ($result == "stamp_approve") {
             }
@@ -2355,6 +2508,7 @@ class FlowController extends Controller
         return redirect()->route('workflowapprovalview');
     }
 
+    // 承認印
     public function workflowapprovalstampget(Request $request, $id)
     {
         $prefix = config('prefix.prefix');
@@ -2369,7 +2523,7 @@ class FlowController extends Controller
         $m_stamp = M_stamp::where('ユーザーID', Auth::id())->first();
         return view('flow.workflowapprovalstamp', compact("prefix", "server", "t_approval", "category_id", "comment", "m_stamp"));
     }
-
+    // 承認印ポスト
     public function workflowapprovalstamppost(Request $request)
     {
         $t_approval = T_approval::find($request->input("t_approval"));
@@ -2380,7 +2534,7 @@ class FlowController extends Controller
         $pdf = new Fpdi();
         $m_category = M_category::find($request->input("category_id"));
         $pdf->setPrintHeader(false);
-        $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
+        $pdf->AddPage($t_flow->縦横, [$t_flow->横, $t_flow->縦]);
 
         $top = $request->input("top");
         $left = $request->input("left");
@@ -2418,6 +2572,45 @@ class FlowController extends Controller
 
         return redirect()->route('workflowapprovalget', ["id" => $t_approval->id, "comment" => $comment, "approval" => "approve"]);
     }
+
+    // 閲覧一覧
+    public function workflowcheckviewget(Request $request)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+
+        $m_categories = M_category::all();
+        $users = DB::table('t_flows')
+            ->select('users.id as user_id', 'users.name')
+            ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
+            ->distinct()
+            ->get();
+
+
+
+        $title = $request->input('title');
+        $category = $request->input('category');
+        $user = $request->input('user');
+        $start_day = $request->input('start_day');
+        $end_day = $request->input('end_day');
+        $status = $request->input('status') ? $request->input('status') : "approvable_tab";
+
+
+        $viewable_m_flows = DB::table('m_flow_view_groups')
+            ->leftJoin('group_user', 'm_flow_view_groups.グループID', '=', 'group_user.グループID')
+            ->where('group_user.ユーザーID', Auth::id())
+            ->pluck('m_flow_view_groups.フローマスタID')
+            ->unique();
+        $t_flows = T_flow::whereIn('フローマスタID', $viewable_m_flows)->get();
+        return view('flow.workflowcheckview', compact("prefix", "server", "m_categories", "users", "title", "category", "user", "start_day", "end_day", "status", "t_flows"));
+    }
+    // 閲覧詳細
+    public function workflowcheckviewdetailget(Request $request, $id) {}
+
+    // ワークフロー申請一覧
     public function workflowviewget(Request $request)
     {
         $m_categories = M_category::all();
@@ -2538,14 +2731,16 @@ class FlowController extends Controller
         $user = User::find($t_flow->申請者ID);
 
         $past_approvals = DB::table('t_approvals')
-            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス")
+            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
             ->leftJoin('t_flow_points', 't_approvals.フロー地点テーブルID', '=', 't_flow_points.id')
             ->leftJoin('users', 't_approvals.ユーザーID', '=', 'users.id')
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
             ->where(function ($query) {
                 $query->where('ステータス', 0)
                     ->orWhere('ステータス', 4)
-                    ->orWhere('ステータス', 5);
+                    ->orWhere('ステータス', 5)
+                    ->orWhere('ステータス', 6)
+                    ->orWhere('ステータス', 8);
             })
             ->where('t_flow_points.フローテーブルID', $id)
             ->orderBy('承認日', 'asc')

@@ -39,6 +39,16 @@ body {
   font-family: "Noto";
   background: rgb(225, 225, 225);
 }
+body .usersettingtitle {
+  margin-left: 30px;
+}
+body #usersetting {
+  background: white;
+  padding: 10px 50px;
+  border-radius: 30px;
+  margin-left: 30px;
+  width: fit-content;
+}
 
 .header001 {
   background: rgb(142, 214, 216) !important;
@@ -79,6 +89,8 @@ body {
   width: 31px;
   height: 31px;
   margin-inline: 10px;
+  display: flex;
+  margin-block: auto;
 }
 
 .menu001 {
@@ -804,18 +816,18 @@ body {
 
 .workflow_submit_button {
   cursor: pointer;
-  background: rgb(41, 175, 41);
+  background: rgb(48, 113, 253);
   border: solid 0;
   width: 160px;
   text-align: center;
   padding: 8px;
   border-radius: 5px;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .workflow_submit_button:hover {
-  background: rgb(20, 80, 20);
+  background: rgb(37, 81, 175);
 }
 
 /* フローマスタ一覧 */
@@ -893,20 +905,67 @@ body {
 
 .flow_master_tr {
   display: flex;
+  height: 44px;
+}
+.flow_master_tr.group_open {
+  height: fit-content !important;
+}
+.flow_master_tr > div {
+  width: 20%;
+  overflow: hidden;
+  padding: 5px 10px;
+  border-right: solid 1px white;
+  border-bottom: solid 1px #aeaeb3;
+  position: relative;
+}
+.flow_master_tr > div .flow_master_group_arrow {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 25px;
+  height: 25px;
+}
+.flow_master_tr > div .flow_master_group_arrow:hover {
+  cursor: pointer;
+  background: #e5e5e5;
+}
+.flow_master_tr > div .flow_master_group_arrow::before {
+  position: absolute;
+  content: "";
+  display: block;
+  width: 2px;
+  border-radius: 10px;
+  background: #646464;
+  height: 10px;
+  transform: rotate(40deg);
+  right: 8px;
+  top: 6px;
+  transition: all 0.2s;
+}
+.flow_master_tr > div .flow_master_group_arrow::after {
+  position: absolute;
+  content: "";
+  display: block;
+  width: 2px;
+  border-radius: 10px;
+  background: #646464;
+  height: 10px;
+  transform: rotate(135deg);
+  right: 14px;
+  top: 6px;
+  transition: all 0.2s;
+}
+.flow_master_tr > div .flow_master_group_arrow.arrow_open::before {
+  transform: rotate(135deg);
+}
+.flow_master_tr > div .flow_master_group_arrow.arrow_open::after {
+  transform: rotate(40deg);
 }
 
 /* .flow_master_tr:hover>div {
     background: rgb(139, 189, 255);
     cursor: pointer;
 } */
-.flow_master_tr > div {
-  width: 20%;
-  padding: 5px 10px;
-  border-right: solid 1px white;
-  border-bottom: solid 1px #aeaeb3;
-  position: relative;
-}
-
 .flow_master_tr .flow_master_start_price,
 .flow_master_tr .flow_master_end_price {
   text-align: right;
@@ -932,6 +991,7 @@ body {
 
 .flow_application_main_content {
   display: flex;
+  max-height: 80%;
 }
 
 /* フロー再申請 */
@@ -947,7 +1007,6 @@ body {
 .category_choice_container {
   width: 300px;
   margin-inline: 30px;
-  max-height: 407px;
   overflow: auto;
 }
 
@@ -971,6 +1030,19 @@ body {
   color: #002d8c;
   font-weight: bold;
   margin-bottom: 10px;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+}
+
+.flow_application_element_container {
+  overflow: auto;
+}
+
+.flow_application_content {
+  display: flex;
+  flex-direction: column;
 }
 
 .flow_application_area_message {
@@ -1069,6 +1141,7 @@ body {
   flex-direction: column;
   /* width: 800px; */
   overflow: hidden;
+  height: calc(100vh - 240px);
 }
 
 .flow_application_button_content {
@@ -1206,6 +1279,26 @@ body {
 
 .back_button:hover {
   background: #daba96;
+}
+
+.new_button {
+  background: rgb(41, 175, 41);
+  color: white;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+  margin-inline: 30px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  height: 38px;
+  padding: 0 30px;
+  position: relative;
+}
+.new_button:hover {
+  background: rgb(25, 117, 25);
 }
 
 .flow_choice_button_container {
@@ -1545,7 +1638,8 @@ body {
 .flow_view_container {
   background: white;
   padding: 10px 40px 40px;
-  max-width: 1200px;
+  width: fit-content;
+  max-width: 90vw;
   border-radius: 29px;
 }
 
@@ -2060,14 +2154,32 @@ body {
 
 .approve_condition_thead_tr {
   display: flex;
+  text-align: center;
+  font-size: 14px;
+  background: #e7e7e7;
+}
+.approve_condition_thead_tr .approve_condition_th {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding-inline: 5px;
+}
+.approve_condition_thead_tr .approve_condition_th:not(:last-child) {
+  border-right: solid 1px #ffffff;
 }
 
 .approve_condition_tbody_tr {
   display: flex;
   border-bottom: solid 1px #a1a1a1;
-  padding-block: 13px;
   cursor: pointer;
   color: black;
+}
+.approve_condition_tbody_tr .approve_condition_td {
+  padding: 13px 5px;
+}
+.approve_condition_tbody_tr .approve_condition_td:not(:last-child) {
+  border-right: solid 1px #e9e9e9;
 }
 .approve_condition_tbody_tr .approve_condition_comment {
   max-width: 300px;
@@ -2082,18 +2194,24 @@ body {
 }
 
 .approve_condition_name {
-  width: 110px;
+  width: 120px;
 }
 
 .approve_condition_status {
   width: 75px;
+  text-align: center;
 }
 
 .approve_condition_date {
   width: 110px;
 }
 
-.applicant_status {
+.approve_condition_comment {
+  min-width: 110px;
+}
+
+.applicant_status,
+.reapply_status {
   color: #897c06;
   font-weight: bold;
 }
@@ -2112,10 +2230,12 @@ body {
   color: yellow;
   font-weight: bold;
   background: #616161;
-  width: 35px;
   padding: 2px 15px;
-  border-radius: 3px;
-  margin-right: 10px;
+}
+
+.remand_status {
+  color: #5f0707;
+  font-weight: bold;
 }
 
 .approve_hover {
@@ -2132,9 +2252,9 @@ body {
   color: yellow;
   font-weight: bold;
   background: #616161;
-  padding: 5px 15px;
+  padding: 5px 20px;
   border-radius: 3px;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .applicant_mark {
@@ -3139,6 +3259,14 @@ body {
 }
 
 /* 印鑑設定 */
+.stamp_regist {
+  background: white;
+  padding-inline: 0 10px;
+  padding-block: 0 10px;
+  border-radius: 20px;
+  width: fit-content;
+}
+
 .flow_stamp_button_content {
   height: 80px;
   display: flex;
@@ -3150,25 +3278,24 @@ body {
 
 .stamp_regist_button {
   cursor: pointer;
-  background: rgb(41, 175, 41);
+  background: rgb(48, 113, 253);
   border: solid 0;
   width: 160px;
   text-align: center;
   padding: 8px;
   border-radius: 5px;
   color: white;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
 }
 
 .stamp_regist_button:hover {
-  background: rgb(32, 128, 32);
+  background: rgb(37, 81, 175);
 }
 
 .flow_stamp_main_container {
   display: flex;
   height: 557px;
-  margin-top: 30px;
+  margin-top: 24px;
 }
 
 .flow_stamp_left_container {
@@ -3181,13 +3308,17 @@ body {
 .flow_stamp_middle_container {
   display: flex;
   flex-direction: column;
+  background: rgb(235, 235, 235);
+  margin-left: 20px;
+  width: fit-content;
+  border-radius: 10px;
 }
 
 .flow_stamp_right_container {
   padding-block: 30px;
   width: 500px;
   margin-left: 10px;
-  background: white;
+  background: #f9f9f9;
   border-radius: 20px;
   overflow-y: auto;
 }
@@ -3207,6 +3338,8 @@ body {
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .flow_stamp_lettter_change_button:hover {
@@ -3214,12 +3347,12 @@ body {
 }
 
 .flow_stamp_letter {
-  height: 50px;
+  height: 40px;
   width: 200px;
   font-size: 20px;
   border: solid 1px rgb(187, 187, 187);
   border-radius: 3px;
-  margin-block: 20px;
+  margin-block: 15px;
 }
 
 .flow_stamp_preview {

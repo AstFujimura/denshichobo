@@ -59,10 +59,6 @@
                                     承認印を押す
                                 </div>
                                 @endif
-                                <div class="approve_comment_container">
-                                    <div>承認者コメント</div>
-                                    <textarea class="approvecomment" name="approvecomment" id="approvecomment">{{$comment}}</textarea>
-                                </div>
                             </div>
                             <input type="radio" name="approval" id="remand" value="remand" class="approval_input">
                             <label for="remand" class="approval_element remand_label">
@@ -78,6 +74,10 @@
                                     却下する
                                 </div>
                             </label>
+                            <div class="approve_comment_container">
+                                <div>承認者コメント</div>
+                                <textarea class="approvecomment" name="approvecomment" id="approvecomment">{{$comment}}</textarea>
+                            </div>
                             <button class="approval_decision">
                                 決定
                             </button>
@@ -156,6 +156,7 @@
             </div>
             <div class="approve_condition_tab">
                 <div class="approve_condition_container">
+                    <input type="hidden" value="{{$t_flow->再承認番号}}" id="reapproval_number">
                     <div class="approve_condition_table">
                         <div class="approve_condition_thead_tr">
                             <div class="approve_condition_th approve_condition_name">
@@ -177,23 +178,23 @@
                                 {{$past_approval->name}}
                             </div>
                             @if ($past_approval->ステータス == 0)
-                            <div class="approve_condition_td approve_condition_status applicant_status" data-each_status="{{$past_approval->ステータス}}">
+                            <div class="approve_condition_td approve_condition_status applicant_status" data-each_status="{{$past_approval->ステータス}}" data-reapproval_number="{{$past_approval->再承認番号}}">
                                 申請
                             </div>
                             @elseif ($past_approval->ステータス == 4)
-                            <div class="approve_condition_td approve_condition_status approved_status" data-each_status="{{$past_approval->ステータス}}">
+                            <div class="approve_condition_td approve_condition_status approved_status" data-each_status="{{$past_approval->ステータス}}" data-reapproval_number="{{$past_approval->再承認番号}}">
                                 承認
                             </div>
                             @elseif ($past_approval->ステータス == 5)
-                            <div class="approve_condition_td approve_condition_status reject_status" data-each_status="{{$past_approval->ステータス}}">
+                            <div class="approve_condition_td approve_condition_status reject_status" data-each_status="{{$past_approval->ステータス}}" data-reapproval_number="{{$past_approval->再承認番号}}">
                                 却下
                             </div>
                             @elseif ($past_approval->ステータス == 6)
-                            <div class="approve_condition_td approve_condition_status remand_status" data-each_status="{{$past_approval->ステータス}}">
+                            <div class="approve_condition_td approve_condition_status remand_status" data-each_status="{{$past_approval->ステータス}}" data-reapproval_number="{{$past_approval->再承認番号}}">
                                 差し戻し
                             </div>
                             @elseif ($past_approval->ステータス == 8)
-                            <div class="approve_condition_td approve_condition_status reapply_status" data-each_status="{{$past_approval->ステータス}}">
+                            <div class="approve_condition_td approve_condition_status reapply_status" data-each_status="{{$past_approval->ステータス}}" data-reapproval_number="{{$past_approval->再承認番号}}">
                                 再申請
                             </div>
                             @endif

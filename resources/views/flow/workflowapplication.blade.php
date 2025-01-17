@@ -49,17 +49,29 @@
                 </div>
 
                 <div class="flow_application_content">
-
-                    <div class="flow_application_title">
-                        申請内容
-                    </div>
-                    <div class="flow_application_area">
-                        <div class="flow_application_area_message">
-                            カテゴリを選択すると<br>
-                            申請項目が表示されます
+                    <div class="flow_application_document_container display_none">
+                        <div class="flow_application_title">
+                            承認用紙
                         </div>
-
+                        <div class="flow_application_document_area">
+                        </div>
+                        <input type="hidden" name="width" id="width">
+                        <input type="hidden" name="height" id="height">
                     </div>
+
+                    <div class="flow_application_element_container">
+                        <div class="flow_application_title">
+                            申請内容
+                        </div>
+                        <div class="flow_application_area">
+                            <div class="flow_application_area_message">
+                                カテゴリを選択すると<br>
+                                申請項目が表示されます
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

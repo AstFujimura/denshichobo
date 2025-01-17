@@ -44,6 +44,12 @@
                     @endif
 
                 </a>
+                <a href="{{route('workflowcheckviewget')}}" class="main_general_button">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="flow_title_icon">
+                    <div class="main_button_title">
+                        閲覧一覧
+                    </div>
+                </a>
                 <a href="{{route('workflowstampget')}}" class="main_general_button">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="flow_title_icon">
                     <div class="main_button_title">
@@ -62,17 +68,10 @@
 
                 <a href="{{route('workflowmaster')}}" class="main_admin_button">
 
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/master_view.svg') }}" alt="" class="flow_title_icon">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/flow.svg') }}" alt="" class="flow_title_icon">
 
                     <div class="main_button_title">
-                        経路マスタ一覧
-                    </div>
-                </a>
-                <a href="{{route('workflowregistget')}}" class="main_admin_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/master_regist.svg') }}" alt="" class="flow_title_icon">
-
-                    <div class="main_button_title">
-                        経路マスタ登録
+                        経路マスタ
                     </div>
                 </a>
                 <a href="{{route('mailsettingget')}}" class="main_admin_button">
@@ -83,7 +82,7 @@
                     </div>
                 </a>
                 <a href="{{route('categoryget')}}" class="main_admin_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/setting.svg') }}" alt="" class="flow_title_icon">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="flow_title_icon">
 
                     <div class="main_button_title">
                         カテゴリ設定

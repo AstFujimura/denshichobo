@@ -11,7 +11,7 @@
 <!-- <div class="category_setting_gray"></div> -->
 <div class="MainElement">
 
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/setting.svg') }}" alt="" class="title_icon">カテゴリ設定</h2>
+    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="title_icon">カテゴリ設定</h2>
     <div class="category_setting_container">
         <div class="flow_application_button_content">
             <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">

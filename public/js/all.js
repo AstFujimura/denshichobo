@@ -1,4 +1,12 @@
 $(document).ready(function () {
+  setTimeout(function () {
+    if ($('#error_message').length != 0) {
+      alert($('#error_message').val())
+    }
+    if ($('#success_message').length != 0) {
+      alert($('#success_message').val())
+    }
+  }, 10);
   var prefix = $('#prefix').val();
 
 

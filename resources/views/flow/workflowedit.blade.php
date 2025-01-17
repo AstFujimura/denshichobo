@@ -14,7 +14,7 @@
         <!-- <div class="MenueBar">
         </div> -->
         <div class="MainElement flow_master_element">
-            <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/master_regist.svg') }}" alt="" class="title_icon">経路マスタ編集</h2>
+            <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/flow.svg') }}" alt="" class="title_icon">経路マスタ編集</h2>
             <div class="element_input">
                 <input type="hidden" name="edit" class="edit" id="edit" value="edit">
                 <input type="hidden" name="flow_master_id" class="flow_master_id" id="flow_master_id" value="{{$flow_master->id}}">
@@ -91,11 +91,11 @@
                     </div>
                     <div class="left_side_section">
                         <div class="left_side_content_title">
-                            条件
+                            申請条件
                         </div>
                         <div class="accordion_menu accordion_menu_group">
                             <div class="accordion_menu_title accordion_group accordion_menu_title_open">
-                                グループ<span class="red">　※</span>
+                                申請者グループ<span class="red">　※</span>
                             </div>
                             <div class="accordion_content accordion_content_open">
 
@@ -133,23 +133,26 @@
                         </div>
 
                     </div>
-                    <!-- <div class="left_side_section">
+                    <div class="left_side_section">
                         <div class="left_side_content_title">
-                            通知メール
+                            閲覧者
                         </div>
-                        <div>
-                            <input type="radio" name="mailpoint" id="mailpoint1">
-                            <label for="mailpoint1">最終承認ポイントでの送信</label>
+                        <div class="accordion_menu accordion_menu_group">
+                            <div class="accordion_menu_title accordion_group accordion_menu_title_open">
+                                閲覧者グループ<span class="red">　※</span>
+                            </div>
+                            <div class="accordion_content accordion_content_open">
+
+                                @foreach ($groups as $index=>$group)
+                                <div>
+                                    <input type="checkbox" class="group_checkbox" name="flow_view_group[]" id="flow_view_group{{ $loop->index + 1}}" value="{{$group->id}}" {{$group->view_checked}}>
+                                    <label for="flow_view_group{{ $loop->index + 1}}">{{$group->グループ名}}</label>
+                                </div>
+                                @endforeach
+                            </div>
+
                         </div>
-                        <div>
-                            <input type="radio" name="mailpoint" id="mailpoint2">
-                            <label for="mailpoint2">任意のポイントでの送信</label>
-                        </div>
-                        <div>
-                            <input type="radio" name="mailpoint" id="mailpoint3">
-                            <label for="mailpoint3">送信しない</label>
-                        </div>
-                    </div> -->
+                    </div>
                 </div>
                 <div class="grid_container">
                     <div class="zoom_in_out">

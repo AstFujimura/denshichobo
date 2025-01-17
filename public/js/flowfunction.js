@@ -1659,6 +1659,7 @@ function group_object_create(groupobjects) {
 
 // 承認状況画面において結果のマークをviewに反映する
 function add_status_message() {
+  var reapproval_number = $('#reapproval_number').val()
   $(".e").each(function () {
     var front_point = $(this).attr("id");
     var each_status = $('[data-front_point="' + front_point + '"]').find(".approve_condition_status").first().text().trim()
@@ -1691,7 +1692,7 @@ function add_status_message() {
     // フロー地点でまだ承認人数に達していない場合
     else if (point_status < 0) {
       // 承認者が1人以上いる場合
-      var approve_count = $('[data-front_point="' + front_point + '"]').find(".approve_condition_status[data-each_status='4']").length
+      var approve_count = $('[data-front_point="' + front_point + '"]').find(".approve_condition_status[data-each_status='4'][data-reapproval_number='" + reapproval_number + "']").length
 
       // 承認人数に達していないが
       if (approve_count != 0) {
