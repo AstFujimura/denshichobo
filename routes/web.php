@@ -308,5 +308,6 @@ Route::prefix($prefix)->group(function () {
             //    ワークフローエラーコード
             Route::get('/workflowerror/{code}', [ErrorController::class, 'workflowerrorGet'])->name('workflowerrorGet');
         }
+
     });
 });
