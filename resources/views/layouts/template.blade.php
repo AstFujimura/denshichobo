@@ -33,6 +33,9 @@
         @if (App\Models\Version::where('フロー', true)->first())
         <a href="{{route('workflow')}}" class="tameru_banner">電子承認システム</a>
         @endif
+        @if (App\Models\Version::where('名刺', true)->first())
+        <a href="{{route('cardviewget')}}" class="tameru_banner">名刺管理システム</a>
+        @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
@@ -42,31 +45,31 @@
 </header>
 <div class="menu001">
 
-    <div class="headerIcon001" onclick="location.href='{{route('topGet')}}';">
+    <a class="headerIcon001" href="{{route('topGet')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
         <div class="iconmessage">Top</div>
-    </div>
-    <div class="headerIcon001" id="registpagebutton">
+    </a>
+    <a class="headerIcon001" href="{{route('registGet')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/pencil_2_line_gray.svg') }}" class="menuicon01">
         <div class="iconmessage">帳簿保存</div>
-    </div>
-    <div class="headerIcon001" onclick="window.open('{{route('question')}}', '_blank');">
+    </a>    
+    <a class="headerIcon001" href="{{route('question')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
         <div class="iconmessage">ヘルプ</div>
-    </div>
+    </a>
 
-    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
+    <a class="headerIcon001 rightmenue001" href="{{route('usersettingGet')}}">
         <div class="usermenu01">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
         </div>
         <div class="iconmessage">ユーザー情報</div>
-    </div>
-    <div class="headerIcon001 menue001">
+    </a>
+    <a class="headerIcon001 menue001">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
         <div class="iconmessage">メニュー</div>
         <img src="{{ asset(config('prefix.prefix').'/'.'img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
         <div class="iconmessage">閉じる</div>
-    </div>
+    </a>
 
 
 </div>

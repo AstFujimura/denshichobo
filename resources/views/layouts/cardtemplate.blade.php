@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin01.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin001.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/flowstyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/cardstyle.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/jquery-ui.css') }}">
     <script src="{{ asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
@@ -28,79 +28,47 @@
 
 <header class="header001">
     <div class="logo01">
-        <a href="{{route('workflow')}}" class="logoelement01">
-            電子承認システム
+        <a href="{{route('cardviewget')}}" class="logoelement01">
+            名刺管理システム
         </a>
         <a href="{{route('topGet')}}" class="tameru_banner">TAMERU</a>
-        @if (App\Models\Version::where('名刺', true)->first())
-        <a href="{{route('cardviewget')}}" class="tameru_banner">名刺管理システム</a>
+        @if (App\Models\Version::where('フロー', true)->first())
+        <a href="{{route('workflow')}}" class="tameru_banner">電子承認システム</a>
         @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
-    <span class="version">ver.3.0.1</span>
+    <span class="version">ver.4.0.0</span>
 </header>
 <div class="menu001">
 
-    <a class="headerIcon001" href="{{route('workflow')}}">
+    <a class="headerIcon001" href="{{route('cardviewget')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
         <div class="iconmessage">Top</div>
     </a>
-    <a class="headerIcon001" href="{{route('workflowapplicationget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application.svg') }}" class="menuicon01">
-        <div class="iconmessage">ワークフロー申請</div>
+    <a class="headerIcon001" href="{{route('cardregistget')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
+        <div class="iconmessage">名刺登録</div>
     </a>
-    <a class="headerIcon001" href="{{route('workflowapprovalview')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_approve.svg') }}" class="menuicon01">
-        <div class="iconmessage">承認</div>
-    </a>
-    <a class="headerIcon001" href="{{route('workflowviewget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application_view.svg') }}" class="menuicon01">
-        <div class="iconmessage">申請一覧</div>
-    </a>
-    <a class="headerIcon001" href="{{route('workflowstampget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_stamp.svg') }}" class="menuicon01">
-        <div class="iconmessage">印鑑設定</div>
-    </a>
-    @if (Auth::user()->管理 == '管理')
-    <a class="headerIcon001" href="{{route('workflowmaster')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="menuicon01">
-        <div class="iconmessage">経路マスタ一覧</div>
-    </a>
-    <a class="headerIcon001" href="{{route('workflowregistget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="menuicon01">
-        <div class="iconmessage">経路マスタ登録</div>
-    </a>
-    <a class="headerIcon001" href="{{route('mailsettingget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_mail.svg') }}" class="menuicon01">
-        <div class="iconmessage">メール設定</div>
-    </a>
-    <a class="headerIcon001" href="{{route('categoryget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="menuicon01">
-        <div class="iconmessage">カテゴリ設定</div>
-    </a>
-    <a class="headerIcon001" href="{{route('adminGet')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_admin.svg') }}" class="menuicon01">
-        <div class="iconmessage">ユーザー情報</div>
-    </a>
-    @endif
-    <a class="headerIcon001" href="{{route('question')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
-        <div class="iconmessage">ヘルプ</div>
+    <a class="headerIcon001" href="{{route('cardviewget')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
+        <div class="iconmessage">Top</div>
     </a>
 
-    <a class="headerIcon001 rightmenue001" href="{{route('usersettingGet', ['system_type' => 'flow'])}}">
+
+
+    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet', ['system_type' => 'flow'])}}';">
         <div class="usermenu01">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
         </div>
         <div class="iconmessage">ユーザー情報</div>
-    </a>
-    <a class="headerIcon001 menue001">
+    </div>
+    <div class="headerIcon001 menue001">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
         <div class="iconmessage">メニュー</div>
         <img src="{{ asset(config('prefix.prefix').'/'.'img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
         <div class="iconmessage">閉じる</div>
-    </a>
+    </div>
 
 
 </div>

@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\FlowController;
+use App\Http\Controllers\CardController;
 use App\Http\Middleware\CheckSessionTimeout;
 use Illuminate\Support\Facades\Config;
 
@@ -307,6 +308,23 @@ Route::prefix($prefix)->group(function () {
 
             //    ワークフローエラーコード
             Route::get('/workflowerror/{code}', [ErrorController::class, 'workflowerrorGet'])->name('workflowerrorGet');
+        }
+
+        
+        // -----------------------------名刺管理--------------------------------
+        if (Version::where('名刺', true)->first()) {
+            // 名刺管理画面
+            Route::get('/card/cardview', [CardController::class, 'cardviewget'])->name('cardviewget');
+            // 会社一覧画面
+            Route::get('/card/companyview', [CardController::class, 'cardcompanyviewget'])->name('cardcompanyviewget');
+            // 名刺詳細
+            Route::get('/card/detail/{id}', [CardController::class, 'carddetailget'])->name('carddetailget');
+            // 名刺登録
+            Route::get('/card/regist', [CardController::class, 'cardregistget'])->name('cardregistget');
+            // 名刺編集
+            Route::get('/card/edit/{id}', [CardController::class, 'cardeditget'])->name('cardeditget');
+            // 名刺登録・編集ポスト
+            Route::post('/card/regist', [CardController::class, 'cardregistpost'])->name('cardregistpost');
         }
 
     });

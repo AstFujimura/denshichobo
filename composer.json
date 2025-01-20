@@ -8,6 +8,7 @@
         "php": "8.2.*",
         "aws/aws-sdk-php": "^3.279",
         "doctrine/dbal": "^3.6",
+        "google/cloud-vision": "^1.10",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
         "laravel/framework": "^9.19",
