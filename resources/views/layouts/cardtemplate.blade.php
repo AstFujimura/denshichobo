@@ -13,11 +13,13 @@
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/cardstyle.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/jquery-ui.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/cropper.css') }}">
     <script src="{{ asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
     <script src="{{ asset(config('prefix.prefix').'/'.'jquery/laravelui.js')}}"></script>
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui.js')}}"></script>
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui_ja.js')}}"></script>
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/pdf.js')}}"></script>
+    <script src="{{ asset(config('prefix.prefix').'/'.'jquery/cropper-1.6.2.min.js') }}"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
     </noscript>
@@ -255,8 +257,7 @@
 </footer>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/all.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/style.js') }}"></script>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/flow.js') }}"></script>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/flowfunction.js') }}"></script>
+<script src="{{ asset(config('prefix.prefix').'/'.'js/card.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/usersetting.js') }}"></script>
 @if ($server == 'onpre')
 <script src="{{ asset(config('prefix.prefix').'/'.'js/onpre.js') }}"></script>

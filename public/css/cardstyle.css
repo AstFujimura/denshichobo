@@ -101,3 +101,146 @@ body #usersetting {
   padding: 10px 30px;
   background: rgb(225, 225, 225);
 }
+
+.crop_controller_container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.801);
+  display: none;
+}
+.crop_controller_container.controller_open {
+  display: block;
+}
+.crop_controller_container .crop_controller_content {
+  width: 400px;
+  max-width: 90%;
+  max-height: 90%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.58);
+}
+.crop_controller_container .crop_controller_content img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.crop_controller_container .crop_complete_button {
+  position: absolute;
+  top: -2rem;
+  left: 30%;
+  transform: translate(-50%, -50%);
+  background: #ffe041;
+  border-radius: 1rem;
+  width: 4rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.crop_controller_container .crop_complete_button:hover {
+  background: #ffc041;
+}
+.crop_controller_container .crop_complete_button img {
+  width: 1.5rem;
+}
+.crop_controller_container .crop_cancel_button {
+  position: absolute;
+  top: -2rem;
+  left: 70%;
+  transform: translate(-50%, -50%);
+  background: #868686;
+  border-radius: 1rem;
+  width: 4rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.crop_controller_container .crop_cancel_button:hover {
+  background: #666666;
+}
+.crop_controller_container .crop_cancel_button img {
+  width: 1.2rem;
+}
+
+.card_regist_container {
+  width: fit-content;
+}
+.card_regist_container .crop_button {
+  margin-left: auto;
+  width: 6rem;
+  border-radius: 1rem;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  justify-content: center;
+  margin-bottom: 0.3rem;
+  color: gray;
+  text-align: center;
+  display: none;
+}
+.card_regist_container .crop_button.crop_button_open {
+  display: flex;
+}
+.card_regist_container .crop_button:hover {
+  background: #c1c1c1;
+}
+.card_regist_container .crop_button img {
+  width: 1rem;
+}
+.card_regist_container .cropped_image_container {
+  height: calc(100% - 0.4rem);
+  display: block;
+  border: solid 0.2rem #adadad;
+  background: #f9f9f9;
+  border-radius: 1rem;
+  position: relative;
+}
+.card_regist_container .cropped_image_container .cropped_image_container_text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #868686;
+}
+.card_regist_container .croppable_image {
+  width: 100%;
+  display: block;
+}
+.card_regist_container .card_file_front {
+  display: none;
+}
+.card_regist_container .card_file_front_label {
+  width: 20rem;
+  aspect-ratio: 1.65/1;
+  display: block;
+  overflow: hidden;
+}
+.card_regist_container .card_file_front_label img {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+  height: 100%;
+}
+.card_regist_container .send_button {
+  background: #41c9ff;
+  color: white;
+  border-radius: 1rem;
+  width: 7rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+.card_regist_container .send_button:hover {
+  background: #21a9d9;
+}

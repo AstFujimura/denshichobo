@@ -325,6 +325,8 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/edit/{id}', [CardController::class, 'cardeditget'])->name('cardeditget');
             // 名刺登録・編集ポスト
             Route::post('/card/regist', [CardController::class, 'cardregistpost'])->name('cardregistpost');
+            // 名刺OCR
+            Route::post('/card/ocr', [CardController::class, 'cardocrpost'])->name('cardocrpost');
         }
 
     });

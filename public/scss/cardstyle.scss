@@ -107,3 +107,169 @@ body {
     padding: 10px 30px;
     background: rgb(225 225 225);
 }
+
+
+// 名刺登録
+.crop_controller_container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.801);
+    display: none;
+
+    &.controller_open {
+        display: block;
+    }
+
+    .crop_controller_content {
+        width: 400px;
+        max-width: 90%;
+        max-height: 90%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 20px 6px rgb(255 255 255 / 58%);
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+
+    .crop_complete_button {
+        position: absolute;
+        top: -2rem;
+        left: 30%;
+        transform: translate(-50%, -50%);
+        background: #ffe041;
+        border-radius: 1rem;
+        width: 4rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:hover {
+            background: #ffc041;
+        }
+
+        img {
+            width: 1.5rem;
+        }
+    }
+
+    .crop_cancel_button {
+        position: absolute;
+        top: -2rem;
+        left: 70%;
+        transform: translate(-50%, -50%);
+        background: #868686;
+        border-radius: 1rem;
+        width: 4rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:hover {
+            background: #666666;
+        }
+
+        img {
+            width: 1.2rem;
+        }
+    }
+}
+
+.card_regist_container {
+    width: fit-content;
+
+    .crop_button {
+        margin-left: auto;
+        width: 6rem;
+        border-radius: 1rem;
+        padding: 0.2rem 0.5rem;
+        cursor: pointer;
+        justify-content: center;
+        margin-bottom: 0.3rem;
+        color: gray;
+        text-align: center;
+        display: none;
+
+        &.crop_button_open {
+            display: flex;
+        }
+
+        &:hover {
+            background: #c1c1c1;
+        }
+
+        img {
+            width: 1rem;
+        }
+    }
+
+    .cropped_image_container {
+        height: calc(100% - 0.4rem);
+        display: block;
+        border: solid 0.2rem #adadad;
+        background: #f9f9f9;
+        border-radius: 1rem;
+        position: relative;
+
+        .cropped_image_container_text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #868686;
+        }
+    }
+
+    .croppable_image {
+        width: 100%;
+        display: block;
+    }
+
+    .card_file_front {
+        display: none;
+    }
+
+    .card_file_front_label {
+        width: 20rem;
+        aspect-ratio: 1.65/1;
+        display: block;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            display: block;
+            object-fit: contain;
+            height: 100%;
+        }
+    }
+
+    .send_button {
+        background: #41c9ff;
+        color: white;
+        border-radius: 1rem;
+        width: 7rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-top: 1rem;
+
+        &:hover {
+            background: #21a9d9;
+        }
+    }
+}
