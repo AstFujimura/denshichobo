@@ -26,6 +26,13 @@ body {
     z-index: 13;
 }
 
+.menu001 {
+    @media screen and (max-width: 600px) {
+        width: 100%;
+        overflow: hidden;
+    }
+}
+
 .main01 {
     background: rgb(225 225 225);
     display: block;
@@ -39,7 +46,12 @@ body {
     color: #454545;
     background: #f9f9f9;
     display: flex;
-    width: 1000px;
+    // width: 1000px;
+    margin-left: 2rem;
+
+    @media (max-width: 800px) {
+        display: none;
+    }
 }
 
 .button1name01 {
@@ -104,12 +116,247 @@ body {
 
 
 .Mainelement {
-    padding: 10px 30px;
+    // padding: 10px 30px;
     background: rgb(225 225 225);
+
+    @media screen and (max-width: 600px) {
+        padding: 10px 0px;
+    }
 }
 
 
-// 名刺登録
+
+// 名刺一覧
+.card_view_container {
+    margin-left: 2rem;
+    @media screen and (max-width: 1200px) {
+        width: 90%;
+        margin: 10px auto;
+    }
+    .card_view_card {
+        background: white;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px;
+        display: flex;
+        width: 50rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: #454545;
+
+        @media screen and (max-width: 1200px) {
+            width: 90%;
+            margin: 10px auto;
+        }
+
+        &:hover {
+            background: #f9f9f9;
+        }
+
+        .card_view_card_name {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .text_container {
+            width: 70%;
+            .company_info {
+                display: flex;
+                color: #868686;
+                .card_view_card_company{
+                    width: 10rem;
+                    @media screen and (max-width: 600px) {
+                        font-size: 0.8rem;
+                        width: 8rem;
+                    }
+                    @media screen and (max-width: 400px) {
+                        font-size: 0.7rem;
+                        width: 50%;
+                    }
+                }
+                .card_view_card_department{
+                    width: 10rem;
+                    @media screen and (max-width: 600px) {
+                        font-size: 0.8rem;
+                        width: 8rem;
+                    }
+                    @media screen and (max-width: 400px) {
+                        font-size: 0.7rem;
+                        width: 50%;
+                    }
+                }
+            }
+        }
+
+        img {
+            min-width: 5rem;
+            height: 5rem;
+            object-fit: contain;
+            margin-left: auto;
+            margin-right: 3rem;
+            box-shadow: 2px 4px 3px 0 rgba(0, 0, 0, 0.1);
+            @media screen and (max-width: 600px) {
+                min-width: 3rem;
+                height: 3rem;
+                margin-right: 1rem;
+            }
+        }
+    }
+}
+
+// 名刺詳細
+.card_detail_container {
+    display: flex;
+
+    .card_history_container {
+        width: 26rem;
+        background: #0B294C;
+        height: 100%;
+        height: calc(100vh - 112px);
+        overflow: hidden;
+
+        .card_history_content {
+            display: flex;
+            width: 23rem;
+            padding: 1rem;
+            cursor: pointer;
+
+            &:hover {
+                background: #12437c;
+            }
+
+            &:first-child {
+                margin-top: 3rem;
+            }
+
+            &:last-child {
+                margin-bottom: 3rem;
+            }
+
+            .history_card {
+                min-width: 5rem;
+                margin-right: 1rem;
+
+                img {
+                    height: 5rem;
+                    object-fit: contain;
+                    box-shadow: 1px 2px 3px 1px rgb(0 0 0);
+
+                }
+            }
+
+            .history_card_text {
+                color: white;
+
+                .card_detail_text_name {
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .card_history_add_button {
+            background: #2a8bfa;
+            color: white;
+            border-radius: 1rem;
+            padding: 0.7rem 1.2rem;
+            cursor: pointer;
+            width: fit-content;
+            margin-inline: auto;
+            margin-top: 3rem;
+            cursor: pointer;
+
+            &:hover {
+                background: #1865bd;
+            }
+        }
+
+
+
+    }
+
+    .card_info_container {
+
+        .card_info_content {
+            display: flex;
+            padding-block: 3rem;
+            margin: 10px;
+            width: 50rem;
+            justify-content: space-around;
+            margin-left: 3rem;
+
+            .card_detail_card {
+
+                img {
+                    height: 10rem;
+                    background: white;
+                    object-fit: contain;
+                    box-shadow: 4px 7px 11px 1px rgb(0 0 0 / 59%);
+                }
+            }
+        }
+
+        .card_info_detail_content {
+            display: flex;
+
+            .personal_info,
+            .company_info {
+                background: white;
+                border-radius: 10px;
+                margin-left: 3rem;
+                width: 35rem;
+                padding-block: 1rem;
+
+                &_content {
+                    color: #3d3b3b;
+                    display: flex;
+                    border-bottom: solid 1px #b6b6b6;
+                    height: 3rem;
+                    align-items: center;
+                    margin-inline: 1rem;
+
+                    &_title {
+                        width: 5rem;
+                        font-size: 0.8rem;
+                    }
+
+                    &_text {
+                        width: 15rem;
+                        font-size: 1rem;
+                    }
+                }
+            }
+        }
+
+        .card_edit_button {
+            background: #0B294C;
+            color: white;
+            border-radius: 1rem;
+            padding: 0.7rem 1.2rem;
+            cursor: pointer;
+            width: fit-content;
+            margin-inline: auto;
+            margin-top: 3rem;
+
+            &:hover {
+                background: #12437c;
+            }
+        }
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// 名刺切り取り処理
 .crop_controller_container {
     position: fixed;
     top: 0;
@@ -127,7 +374,7 @@ body {
     .crop_controller_content {
         width: 400px;
         max-width: 90%;
-        max-height: 90%;
+        max-height: 50%;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -160,7 +407,7 @@ body {
         }
 
         img {
-            width: 1.5rem;
+            width: 1rem;
         }
     }
 
@@ -183,93 +430,394 @@ body {
         }
 
         img {
-            width: 1.2rem;
+            width: 0.8rem;
         }
     }
-}
 
-.card_regist_container {
-    width: fit-content;
-
-    .crop_button {
-        margin-left: auto;
-        width: 6rem;
+    .crop_rotate_button {
+        position: absolute;
+        bottom: -4rem;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #f3f3f3;
         border-radius: 1rem;
-        padding: 0.2rem 0.5rem;
-        cursor: pointer;
-        justify-content: center;
-        margin-bottom: 0.3rem;
-        color: gray;
-        text-align: center;
-        display: none;
-
-        &.crop_button_open {
-            display: flex;
-        }
-
-        &:hover {
-            background: #c1c1c1;
-        }
-
-        img {
-            width: 1rem;
-        }
-    }
-
-    .cropped_image_container {
-        height: calc(100% - 0.4rem);
-        display: block;
-        border: solid 0.2rem #adadad;
-        background: #f9f9f9;
-        border-radius: 1rem;
-        position: relative;
-
-        .cropped_image_container_text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #868686;
-        }
-    }
-
-    .croppable_image {
-        width: 100%;
-        display: block;
-    }
-
-    .card_file_front {
-        display: none;
-    }
-
-    .card_file_front_label {
-        width: 20rem;
-        aspect-ratio: 1.65/1;
-        display: block;
-        overflow: hidden;
-
-        img {
-            width: 100%;
-            display: block;
-            object-fit: contain;
-            height: 100%;
-        }
-    }
-
-    .send_button {
-        background: #41c9ff;
-        color: white;
-        border-radius: 1rem;
-        width: 7rem;
+        width: 4rem;
         height: 2rem;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        margin-top: 1rem;
 
         &:hover {
-            background: #21a9d9;
+            background: #c7c7c7;
+        }
+
+        img {
+            width: 1.2rem;
+        }
+    }
+}
+
+.loading_container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &.loading_container_open {
+        display: flex;
+    }
+
+    img {
+        width: 10rem;
+    }
+
+    .loading_text {
+        color: white;
+        font-size: 1.5rem;
+        background: #08080894;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+}
+
+.card_regist_container {
+    width: fit-content;
+    margin-left: 2rem;
+
+    @media screen and (max-width: 750px) {
+        margin-inline: auto;
+    }
+
+    .card_regist_form {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+
+        @media screen and (max-width: 1200px) {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @media screen and (max-width: 750px) {
+            grid-template-columns: 1fr;
+        }
+
+        gap: 1rem;
+
+        .submit_button {
+            background: #1d59ff;
+            color: white;
+            border-radius: 2rem;
+            width: 7rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            position: fixed;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15rem;
+            height: 3rem;
+            box-shadow: 2px 5px 6px 0px rgb(155 152 152);
+            z-index: 1;
+
+        }
+
+        .card_regist_content {
+            margin-top: 1rem;
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            position: sticky;
+            top: 0px;
+            background: #e1e1e1;
+            padding-block: 1rem;
+            z-index: 100;
+
+
+            .button_container {
+                display: flex;
+                justify-content: center;
+                display: none;
+                margin-block: 0.3rem;
+
+                &.button_container_open {
+                    display: flex;
+                }
+
+                .send_button {
+                    background: #41c9ff;
+                    color: white;
+                    border-radius: 1rem;
+                    width: 7rem;
+                    height: 2rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #21a9d9;
+                    }
+                }
+
+                .crop_button {
+                    margin-left: 1rem;
+                    width: 6rem;
+                    height: 2rem;
+                    border-radius: 1rem;
+                    // padding: 0.2rem 0.5rem;
+                    cursor: pointer;
+                    justify-content: center;
+                    align-items: center;
+                    color: gray;
+                    background: #f9f9f9;
+                    text-align: center;
+                    display: flex;
+
+                    &:hover {
+                        background: #c1c1c1;
+                    }
+
+                    img {
+                        width: 1rem;
+                    }
+                }
+            }
+
+
+            .cropped_image_container {
+                height: calc(100% - 0.4rem);
+                display: block;
+                border: solid 0.2rem #adadad;
+                background: #f9f9f9;
+                border-radius: 1rem;
+                position: relative;
+
+                .cropped_image_container_text {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    color: #868686;
+                }
+            }
+
+            .croppable_image {
+                width: 100%;
+                display: block;
+            }
+
+            .card_file_front {
+                display: none;
+            }
+
+            .card_file_front_label {
+                width: 20rem;
+                max-width: 90%;
+                aspect-ratio: 1.65/1;
+                height: calc(20rem / 1.65);
+                display: block;
+                overflow: hidden;
+                margin-inline: auto;
+
+                img {
+                    width: 100%;
+                    display: block;
+                    object-fit: contain;
+                    height: 100%;
+                }
+            }
+
+
+        }
+
+        .form_container {
+            margin-top: 1rem;
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+
+
+
+            @media screen and (min-width: 1200px) {
+                &.personal_info {
+                    grid-column: 1/2;
+                    grid-row: 2/3;
+                }
+
+                &.company_info {
+                    grid-column: 2/3;
+                    grid-row: 2/3;
+                }
+
+                &.position_info {
+                    grid-column: 3/4;
+                    grid-row: 2/3;
+                }
+            }
+
+            table {
+                width: 100%;
+
+                tr {
+                    height: 4rem;
+
+                    td {
+                        &:first-child {
+                            font-size: 0.8rem;
+                            color: #868686;
+                        }
+
+                        input {
+                            border: none;
+                            border-radius: 0;
+                            border-bottom: solid 1px #adadad;
+                            background: transparent;
+                            width: 100%;
+                            padding: 5px;
+                            padding: 5px;
+                            font-size: 1rem;
+
+                            &:focus {
+                                outline: none;
+                                border-bottom: solid 1px #1d59ff;
+                            }
+                        }
+
+                        .company_search_button {
+                            width: 1rem;
+                            height: 1rem;
+                            background: #d9d9d9;
+                            padding: 0.3rem;
+                            border-radius: 0.2rem;
+                            cursor: pointer;
+
+                            &:hover {
+                                background: #b6b6b6;
+                            }
+                        }
+
+                        .delete_department_button {
+                            cursor: pointer;
+                            background: #ffa5a5;
+                            color: #ffffff;
+                            padding: 0.1rem 0.3rem;
+                            border-radius: 0.2rem;
+
+                            &:hover {
+                                background: #ff8585;
+                            }
+                        }
+
+                        &.company_td {
+                            position: relative;
+                            z-index: 0;
+
+                            .company_choiced {
+                                background: #c2e6fc;
+                                border: solid 0.2rem #a7ceff;
+                                border-radius: 0.2rem;
+                                color: black !important;
+                                font-weight: bold;
+                                opacity: 1;
+                                cursor: pointer;
+                                &:hover {
+                                    background: #a7ceff;
+                                }
+
+                            }
+
+                            .new_company_tag {
+                                background: #dafcc2;
+                                border: solid 0.15rem #83ad80;
+                                border-radius: 0.2rem;
+                                color: #396b4b !important;
+                                font-size: 0.8rem;
+                                opacity: 1;
+                                position: absolute;
+                                top: -0.2rem;
+                                left: 0.3rem;
+                                width: 2rem;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+
+                            .company_candidate_container {
+                                position: absolute;
+                                bottom: -200%;
+                                left: 0;
+                                width: 100%;
+                                border-radius: 0.5rem;
+                                background: white;
+                                box-shadow: 0 0 5px 0px #a9a9a9;
+                                height: 8rem;
+                                overflow-y: scroll;
+                                display: none;
+
+                                &_open {
+                                    display: block;
+                                }
+
+                                input[type="radio"] {
+                                    display: none;
+
+                                    &:checked+label {
+                                        background: #61b2ff;
+                                        color: white;
+                                    }
+                                }
+
+                                .company_candidate_content {
+                                    font-size: 0.8rem;
+                                    min-height: 2rem;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    cursor: pointer;
+
+                                    padding-left: 0.2rem;
+
+                                    &.company_candidate_new {
+                                        margin-top: 0.5rem;
+                                    }
+
+                                    &:hover {
+                                        background: #a0d0fd;
+                                        color: white;
+                                    }
+
+
+                                    .compapany_card_img_container {
+                                        width: 2.5rem;
+                                        height: 1.5rem;
+                                        background: #ffffff;
+                                        border: solid 1px #adadad;
+                                        margin-right: 0.5rem;
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                    }
+
+                                    .company_candidate_item {
+                                        width: 9rem;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

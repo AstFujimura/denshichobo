@@ -36,7 +36,7 @@ $(document).ready(function () {
 
 
     //パスワードリセット時のアコーディオンメニュー
-    $('.title').on('click',function(){
+    $('.title').on('click', function () {
         $('.title').toggleClass('close')
         $('.importantelement').toggleClass('open')
     });
@@ -45,15 +45,18 @@ $(document).ready(function () {
 
     // 画面をスクロールをしたら動かしたい場合の記述
     $(window).scroll(function () {
-        FixedAnime();/* スクロール途中からヘッダーを出現させる関数を呼ぶ*/
 
-        const scrollX = $(window).scrollLeft();
-        $('.header001').css('left', `${scrollX}px`);
-        if (!$('.menu001fixed').length){
-            $('.menu001').css('left', `${scrollX}px`);
-        }
-        else{
-            $('.menu001').css('left', 0);
+
+        if ($('#cardtemplate').length == 0) {
+            FixedAnime();/* スクロール途中からヘッダーを出現させる関数を呼ぶ*/
+            const scrollX = $(window).scrollLeft();
+            $('.header001').css('left', `${scrollX}px`);
+            if (!$('.menu001fixed').length) {
+                $('.menu001').css('left', `${scrollX}px`);
+            }
+            else {
+                $('.menu001').css('left', 0);
+            }
         }
     });
     //スクロールすると上部に固定させるための設定を関数でまとめる
@@ -94,7 +97,7 @@ $(document).ready(function () {
             $('.history_table_element').removeClass('history_table_margin');
         }
 
-    
+
 
     }
 

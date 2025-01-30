@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('部署名');
             $table->unsignedBigInteger('上位部署ID')->nullable();
             $table->foreign('上位部署ID')->references('id')->on('departments');
-            $table->string('部署電話番号');
-            $table->string('部署FAX番号');
+            $table->string('部署電話番号')->nullable();
+            $table->string('部署FAX番号')->nullable();
             $table->timestamps();
 
             

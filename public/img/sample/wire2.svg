@@ -1,0 +1,137 @@
+<svg width="1200" height="1000" viewBox="0 0 1200 1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景色 -->
+  <rect width="100%" height="100%" fill="#f5f5f5" />
+
+  <!-- ドロップシャドウのフィルター定義 -->
+  <defs>
+    <filter id="dropShadow" width="200%" height="200%">
+      <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1" />
+      <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.2 0" in="shadowBlurOuter1"/>
+      <feMerge>
+        <feMergeNode in="shadowBlurOuter1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- ヘッダー用グラデーション -->
+    <linearGradient id="headerGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6fb3f2" />
+      <stop offset="100%" stop-color="#3b8de3" />
+    </linearGradient>
+  </defs>
+
+  <!-- メインコンテナ（白背景、角丸＋シャドウ） -->
+  <g filter="url(#dropShadow)">
+    <rect x="50" y="50" width="1100" height="900" fill="#fff" rx="8" ry="8"/>
+  </g>
+
+  <!-- ヘッダー -->
+  <rect x="50" y="50" width="1100" height="80" fill="url(#headerGradient)" rx="8" ry="8"/>
+  <text x="80" y="100" font-family="sans-serif" font-size="24" fill="#fff" font-weight="bold">
+    名刺管理システム
+  </text>
+  <!-- 右上ナビゲーションっぽいテキスト（サンプル） -->
+  <text x="980" y="100" font-family="sans-serif" font-size="14" fill="#fff">
+    ログアウト
+  </text>
+
+  <!-- ページタイトル -->
+  <text x="70" y="170" font-family="sans-serif" font-size="28" fill="#333" font-weight="bold">
+    名刺登録
+  </text>
+
+  <!-- アップロード/プレビュー領域 (同じ場所を想定) -->
+  <!-- 背面にプレビュー用画像が表示されるイメージ。ここでは仮のグレーの四角。 -->
+  <rect x="70" y="200" width="580" height="300" fill="#eee" rx="8" ry="8" stroke="#ccc" stroke-width="1"/>
+  <text x="90" y="230" font-family="sans-serif" font-size="14" fill="#666">
+    ここにアップロードされた画像がプレビューされる想定
+  </text>
+
+  <!-- アップロードのガイド（手前側） -->
+  <!-- ※実際の実装では画像がアップロードされたら消す or 非表示に切り替える想定 -->
+  <rect x="70" y="200" width="580" height="300" fill="none" stroke="#aaa" stroke-dasharray="6 6" stroke-width="2" rx="8" ry="8" />
+  
+  <!-- アップロード用アイコン (シンプルな雲と矢印) -->
+  <path d="
+    M 330,310
+    c 0,-20 16,-36 36,-36
+    c 3,0 6,0.3 9,1
+    c 6,-14 20,-24 36,-24
+    c 22,0 40,18 40,40
+    c 0,1 0,2 -0.1,3
+    c 0.7,-0.1 1.4,-0.1 2.1,-0.1
+    c 16,0 30,9 36,22
+    c 1.4,3 2.1,6.3 2.1,9.7
+    c 0,14 -11,25 -25,25
+    h -134
+    c -12,0 -22,-10 -22,-22
+    c 0,-12 10,-22 22,-22z
+  " fill="#eee" stroke="#999" stroke-width="2"/>
+
+  <!-- 上矢印 -->
+  <path d="
+    M 340,320
+    l 0,-40
+    l 20,0
+    l 0,40
+    l 10,0
+    l -20,20
+    l -20,-20
+    z
+  " fill="#aaa"/>
+
+  <text x="300" y="370" font-family="sans-serif" font-size="16" fill="#666" text-anchor="middle">
+    <tspan x="360" dy="0">画像をクリック</tspan>
+    <tspan x="360" dy="22">またはドラッグ＆ドロップ</tspan>
+  </text>
+
+  <!-- フォーム領域 -->
+
+  <!-- 個人情報セクション -->
+  <rect x="70" y="530" width="580" height="190" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="4" ry="4"></rect>
+  <text x="80" y="555" font-family="sans-serif" font-size="16" font-weight="bold" fill="#333">
+    個人情報
+  </text>
+  <!-- 各項目: ラベル＋入力欄のイメージ（ラベルは左、欄は右） -->
+  <!-- 名前 -->
+  <text x="80" y="595" font-family="sans-serif" font-size="14" fill="#333">名前</text>
+  <rect x="150" y="575" width="200" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4"/>
+  <!-- 役職 -->
+  <text x="80" y="635" font-family="sans-serif" font-size="14" fill="#333">役職</text>
+  <rect x="150" y="615" width="200" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4"/>
+  <!-- メール -->
+  <text x="80" y="675" font-family="sans-serif" font-size="14" fill="#333">メールアドレス</text>
+  <rect x="180" y="655" width="220" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4"/>
+  <!-- 電話 -->
+  <text x="80" y="715" font-family="sans-serif" font-size="14" fill="#333">電話番号</text>
+  <rect x="180" y="695" width="220" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4"/>
+  
+  <!-- 会社情報セクション -->
+  <rect x="670" y="200" width="480" height="400" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="4" ry="4"></rect>
+  <text x="680" y="225" font-family="sans-serif" font-size="16" font-weight="bold" fill="#333">
+    会社情報
+  </text>
+  <!-- 会社名 -->
+  <text x="680" y="265" font-family="sans-serif" font-size="14" fill="#333">会社名</text>
+  <rect x="740" y="245" width="200" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4"/>
+  <!-- 部署 -->
+  <text x="680" y="305" font-family="sans-serif" font-size="14" fill="#333">部署</text>
+  <rect x="740" y="285" width="200" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4"/>
+  <!-- 住所 -->
+  <text x="680" y="345" font-family="sans-serif" font-size="14" fill="#333">住所</text>
+  <rect x="740" y="325" width="320" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4"/>
+
+  <!-- 会社に関する他の項目があると想定し、下部にも空欄を用意しておく -->
+  <rect x="680" y="370" width="380" height="100" fill="#fff" stroke="#ccc" rx="4" ry="4"/>
+  <text x="690" y="395" font-family="sans-serif" font-size="14" fill="#999">
+    他の項目など…
+  </text>
+  
+  <!-- 登録ボタン -->
+  <rect x="970" y="650" width="180" height="50" fill="#007bff" rx="6" ry="6" />
+  <text x="1060" y="683" font-family="sans-serif" font-size="18" fill="#fff" font-weight="bold" text-anchor="middle">
+    登録
+  </text>
+
+</svg>

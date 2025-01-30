@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('会社名');
-            $table->string('会社名カナ');
-            $table->string('会社所在地');
-            $table->string('電話番号');
-            $table->string('FAX番号');
-            $table->string('webサイト');
+            $table->string('会社名カナ')->nullable();
+            $table->string('会社所在地')->nullable();
+            $table->string('電話番号')->nullable();
+            $table->string('FAX番号')->nullable();
+            $table->string('webサイト')->nullable();
             $table->timestamps();
         });
     }

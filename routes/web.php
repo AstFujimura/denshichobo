@@ -310,14 +310,14 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflowerror/{code}', [ErrorController::class, 'workflowerrorGet'])->name('workflowerrorGet');
         }
 
-        
+
         // -----------------------------名刺管理--------------------------------
         if (Version::where('名刺', true)->first()) {
             // 名刺管理画面
             Route::get('/card/cardview', [CardController::class, 'cardviewget'])->name('cardviewget');
             // 会社一覧画面
             Route::get('/card/companyview', [CardController::class, 'cardcompanyviewget'])->name('cardcompanyviewget');
-            // 名刺詳細
+            // 名刺詳細(idはcardusersのid)
             Route::get('/card/detail/{id}', [CardController::class, 'carddetailget'])->name('carddetailget');
             // 名刺登録
             Route::get('/card/regist', [CardController::class, 'cardregistget'])->name('cardregistget');
@@ -327,7 +327,12 @@ Route::prefix($prefix)->group(function () {
             Route::post('/card/regist', [CardController::class, 'cardregistpost'])->name('cardregistpost');
             // 名刺OCR
             Route::post('/card/ocr', [CardController::class, 'cardocrpost'])->name('cardocrpost');
+            // 名刺画像取得
+            Route::get('/card/img/{id}/{front}', [CardController::class, 'cardimgget'])->name('cardimgget');
+            // 会社候補取得
+            Route::get('/card/company/candidate', [CardController::class, 'companycandidateget'])->name('cardcompanycandidateget');
+            // 会社情報API
+            Route::get('/card/company/info/{id}', [CardController::class, 'companyinfoget'])->name('companyinfoget');
         }
-
     });
 });

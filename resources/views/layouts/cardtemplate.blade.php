@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
     <title>@yield('title')</title>
     <link rel="icon" href="{{ asset(config('prefix.prefix').'/'.'icon/favicon.ico') }}" id="favicon">
@@ -30,12 +30,12 @@
 
 <header class="header001">
     <div class="logo01">
-        <a href="{{route('cardviewget')}}" class="logoelement01">
+        <a href="{{route('cardviewget')}}" class="logoelement01" id="cardtemplate">
             名刺管理システム
         </a>
         <a href="{{route('topGet')}}" class="tameru_banner">TAMERU</a>
         @if (App\Models\Version::where('フロー', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner">電子承認システム</a>
+        <a href="{{route('workflow')}}" class="tameru_banner">電子承認</a>
         @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">

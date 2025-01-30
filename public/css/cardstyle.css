@@ -22,6 +22,13 @@ body #usersetting {
   z-index: 13;
 }
 
+@media screen and (max-width: 600px) {
+  .menu001 {
+    width: 100%;
+    overflow: hidden;
+  }
+}
+
 .main01 {
   background: rgb(225, 225, 225);
   display: block;
@@ -35,7 +42,12 @@ body #usersetting {
   color: #454545;
   background: #f9f9f9;
   display: flex;
-  width: 1000px;
+  margin-left: 2rem;
+}
+@media (max-width: 800px) {
+  .pagetitle {
+    display: none;
+  }
 }
 
 .button1name01 {
@@ -98,8 +110,210 @@ body #usersetting {
 }
 
 .Mainelement {
-  padding: 10px 30px;
   background: rgb(225, 225, 225);
+}
+@media screen and (max-width: 600px) {
+  .Mainelement {
+    padding: 10px 0px;
+  }
+}
+
+.card_view_container {
+  margin-left: 2rem;
+}
+@media screen and (max-width: 1200px) {
+  .card_view_container {
+    width: 90%;
+    margin: 10px auto;
+  }
+}
+.card_view_container .card_view_card {
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  width: 50rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: #454545;
+}
+@media screen and (max-width: 1200px) {
+  .card_view_container .card_view_card {
+    width: 90%;
+    margin: 10px auto;
+  }
+}
+.card_view_container .card_view_card:hover {
+  background: #f9f9f9;
+}
+.card_view_container .card_view_card .card_view_card_name {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+.card_view_container .card_view_card .text_container {
+  width: 70%;
+}
+.card_view_container .card_view_card .text_container .company_info {
+  display: flex;
+  color: #868686;
+}
+.card_view_container .card_view_card .text_container .company_info .card_view_card_company {
+  width: 10rem;
+}
+@media screen and (max-width: 600px) {
+  .card_view_container .card_view_card .text_container .company_info .card_view_card_company {
+    font-size: 0.8rem;
+    width: 8rem;
+  }
+}
+@media screen and (max-width: 400px) {
+  .card_view_container .card_view_card .text_container .company_info .card_view_card_company {
+    font-size: 0.7rem;
+    width: 50%;
+  }
+}
+.card_view_container .card_view_card .text_container .company_info .card_view_card_department {
+  width: 10rem;
+}
+@media screen and (max-width: 600px) {
+  .card_view_container .card_view_card .text_container .company_info .card_view_card_department {
+    font-size: 0.8rem;
+    width: 8rem;
+  }
+}
+@media screen and (max-width: 400px) {
+  .card_view_container .card_view_card .text_container .company_info .card_view_card_department {
+    font-size: 0.7rem;
+    width: 50%;
+  }
+}
+.card_view_container .card_view_card img {
+  min-width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+  margin-left: auto;
+  margin-right: 3rem;
+  box-shadow: 2px 4px 3px 0 rgba(0, 0, 0, 0.1);
+}
+@media screen and (max-width: 600px) {
+  .card_view_container .card_view_card img {
+    min-width: 3rem;
+    height: 3rem;
+    margin-right: 1rem;
+  }
+}
+
+.card_detail_container {
+  display: flex;
+}
+.card_detail_container .card_history_container {
+  width: 26rem;
+  background: #0B294C;
+  height: 100%;
+  height: calc(100vh - 112px);
+  overflow: hidden;
+}
+.card_detail_container .card_history_container .card_history_content {
+  display: flex;
+  width: 23rem;
+  padding: 1rem;
+  cursor: pointer;
+}
+.card_detail_container .card_history_container .card_history_content:hover {
+  background: #12437c;
+}
+.card_detail_container .card_history_container .card_history_content:first-child {
+  margin-top: 3rem;
+}
+.card_detail_container .card_history_container .card_history_content:last-child {
+  margin-bottom: 3rem;
+}
+.card_detail_container .card_history_container .card_history_content .history_card {
+  min-width: 5rem;
+  margin-right: 1rem;
+}
+.card_detail_container .card_history_container .card_history_content .history_card img {
+  height: 5rem;
+  object-fit: contain;
+  box-shadow: 1px 2px 3px 1px rgb(0, 0, 0);
+}
+.card_detail_container .card_history_container .card_history_content .history_card_text {
+  color: white;
+}
+.card_detail_container .card_history_container .card_history_content .history_card_text .card_detail_text_name {
+  font-weight: bold;
+}
+.card_detail_container .card_history_container .card_history_add_button {
+  background: #2a8bfa;
+  color: white;
+  border-radius: 1rem;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  width: fit-content;
+  margin-inline: auto;
+  margin-top: 3rem;
+  cursor: pointer;
+}
+.card_detail_container .card_history_container .card_history_add_button:hover {
+  background: #1865bd;
+}
+.card_detail_container .card_info_container .card_info_content {
+  display: flex;
+  padding-block: 3rem;
+  margin: 10px;
+  width: 50rem;
+  justify-content: space-around;
+  margin-left: 3rem;
+}
+.card_detail_container .card_info_container .card_info_content .card_detail_card img {
+  height: 10rem;
+  background: white;
+  object-fit: contain;
+  box-shadow: 4px 7px 11px 1px rgba(0, 0, 0, 0.59);
+}
+.card_detail_container .card_info_container .card_info_detail_content {
+  display: flex;
+}
+.card_detail_container .card_info_container .card_info_detail_content .personal_info,
+.card_detail_container .card_info_container .card_info_detail_content .company_info {
+  background: white;
+  border-radius: 10px;
+  margin-left: 3rem;
+  width: 35rem;
+  padding-block: 1rem;
+}
+.card_detail_container .card_info_container .card_info_detail_content .personal_info_content,
+.card_detail_container .card_info_container .card_info_detail_content .company_info_content {
+  color: #3d3b3b;
+  display: flex;
+  border-bottom: solid 1px #b6b6b6;
+  height: 3rem;
+  align-items: center;
+  margin-inline: 1rem;
+}
+.card_detail_container .card_info_container .card_info_detail_content .personal_info_content_title,
+.card_detail_container .card_info_container .card_info_detail_content .company_info_content_title {
+  width: 5rem;
+  font-size: 0.8rem;
+}
+.card_detail_container .card_info_container .card_info_detail_content .personal_info_content_text,
+.card_detail_container .card_info_container .card_info_detail_content .company_info_content_text {
+  width: 15rem;
+  font-size: 1rem;
+}
+.card_detail_container .card_info_container .card_edit_button {
+  background: #0B294C;
+  color: white;
+  border-radius: 1rem;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  width: fit-content;
+  margin-inline: auto;
+  margin-top: 3rem;
+}
+.card_detail_container .card_info_container .card_edit_button:hover {
+  background: #12437c;
 }
 
 .crop_controller_container {
@@ -118,7 +332,7 @@ body #usersetting {
 .crop_controller_container .crop_controller_content {
   width: 400px;
   max-width: 90%;
-  max-height: 90%;
+  max-height: 50%;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -148,7 +362,7 @@ body #usersetting {
   background: #ffc041;
 }
 .crop_controller_container .crop_complete_button img {
-  width: 1.5rem;
+  width: 1rem;
 }
 .crop_controller_container .crop_cancel_button {
   position: absolute;
@@ -168,68 +382,117 @@ body #usersetting {
   background: #666666;
 }
 .crop_controller_container .crop_cancel_button img {
+  width: 0.8rem;
+}
+.crop_controller_container .crop_rotate_button {
+  position: absolute;
+  bottom: -4rem;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #f3f3f3;
+  border-radius: 1rem;
+  width: 4rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.crop_controller_container .crop_rotate_button:hover {
+  background: #c7c7c7;
+}
+.crop_controller_container .crop_rotate_button img {
   width: 1.2rem;
+}
+
+.loading_container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.loading_container.loading_container_open {
+  display: flex;
+}
+.loading_container img {
+  width: 10rem;
+}
+.loading_container .loading_text {
+  color: white;
+  font-size: 1.5rem;
+  background: rgba(8, 8, 8, 0.5803921569);
+  padding: 1rem;
+  margin-top: 1rem;
 }
 
 .card_regist_container {
   width: fit-content;
+  margin-left: 2rem;
 }
-.card_regist_container .crop_button {
-  margin-left: auto;
-  width: 6rem;
-  border-radius: 1rem;
-  padding: 0.2rem 0.5rem;
-  cursor: pointer;
+@media screen and (max-width: 750px) {
+  .card_regist_container {
+    margin-inline: auto;
+  }
+}
+.card_regist_container .card_regist_form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+@media screen and (max-width: 1200px) {
+  .card_regist_container .card_regist_form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media screen and (max-width: 750px) {
+  .card_regist_container .card_regist_form {
+    grid-template-columns: 1fr;
+  }
+}
+.card_regist_container .card_regist_form .submit_button {
+  background: #1d59ff;
+  color: white;
+  border-radius: 2rem;
+  width: 7rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 0.3rem;
-  color: gray;
-  text-align: center;
-  display: none;
+  cursor: pointer;
+  position: fixed;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 15rem;
+  height: 3rem;
+  box-shadow: 2px 5px 6px 0px rgb(155, 152, 152);
+  z-index: 1;
 }
-.card_regist_container .crop_button.crop_button_open {
+.card_regist_container .card_regist_form .card_regist_content {
+  margin-top: 1rem;
+  grid-column: 1/2;
+  grid-row: 1/2;
+  position: sticky;
+  top: 0px;
+  background: #e1e1e1;
+  padding-block: 1rem;
+  z-index: 100;
+}
+.card_regist_container .card_regist_form .card_regist_content .button_container {
+  display: flex;
+  justify-content: center;
+  display: none;
+  margin-block: 0.3rem;
+}
+.card_regist_container .card_regist_form .card_regist_content .button_container.button_container_open {
   display: flex;
 }
-.card_regist_container .crop_button:hover {
-  background: #c1c1c1;
-}
-.card_regist_container .crop_button img {
-  width: 1rem;
-}
-.card_regist_container .cropped_image_container {
-  height: calc(100% - 0.4rem);
-  display: block;
-  border: solid 0.2rem #adadad;
-  background: #f9f9f9;
-  border-radius: 1rem;
-  position: relative;
-}
-.card_regist_container .cropped_image_container .cropped_image_container_text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #868686;
-}
-.card_regist_container .croppable_image {
-  width: 100%;
-  display: block;
-}
-.card_regist_container .card_file_front {
-  display: none;
-}
-.card_regist_container .card_file_front_label {
-  width: 20rem;
-  aspect-ratio: 1.65/1;
-  display: block;
-  overflow: hidden;
-}
-.card_regist_container .card_file_front_label img {
-  width: 100%;
-  display: block;
-  object-fit: contain;
-  height: 100%;
-}
-.card_regist_container .send_button {
+.card_regist_container .card_regist_form .card_regist_content .button_container .send_button {
   background: #41c9ff;
   color: white;
   border-radius: 1rem;
@@ -239,8 +502,213 @@ body #usersetting {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-top: 1rem;
 }
-.card_regist_container .send_button:hover {
+.card_regist_container .card_regist_form .card_regist_content .button_container .send_button:hover {
   background: #21a9d9;
+}
+.card_regist_container .card_regist_form .card_regist_content .button_container .crop_button {
+  margin-left: 1rem;
+  width: 6rem;
+  height: 2rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  color: gray;
+  background: #f9f9f9;
+  text-align: center;
+  display: flex;
+}
+.card_regist_container .card_regist_form .card_regist_content .button_container .crop_button:hover {
+  background: #c1c1c1;
+}
+.card_regist_container .card_regist_form .card_regist_content .button_container .crop_button img {
+  width: 1rem;
+}
+.card_regist_container .card_regist_form .card_regist_content .cropped_image_container {
+  height: calc(100% - 0.4rem);
+  display: block;
+  border: solid 0.2rem #adadad;
+  background: #f9f9f9;
+  border-radius: 1rem;
+  position: relative;
+}
+.card_regist_container .card_regist_form .card_regist_content .cropped_image_container .cropped_image_container_text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #868686;
+}
+.card_regist_container .card_regist_form .card_regist_content .croppable_image {
+  width: 100%;
+  display: block;
+}
+.card_regist_container .card_regist_form .card_regist_content .card_file_front {
+  display: none;
+}
+.card_regist_container .card_regist_form .card_regist_content .card_file_front_label {
+  width: 20rem;
+  max-width: 90%;
+  aspect-ratio: 1.65/1;
+  height: 12.1212121212rem;
+  display: block;
+  overflow: hidden;
+  margin-inline: auto;
+}
+.card_regist_container .card_regist_form .card_regist_content .card_file_front_label img {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+  height: 100%;
+}
+.card_regist_container .card_regist_form .form_container {
+  margin-top: 1rem;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+@media screen and (min-width: 1200px) {
+  .card_regist_container .card_regist_form .form_container.personal_info {
+    grid-column: 1/2;
+    grid-row: 2/3;
+  }
+  .card_regist_container .card_regist_form .form_container.company_info {
+    grid-column: 2/3;
+    grid-row: 2/3;
+  }
+  .card_regist_container .card_regist_form .form_container.position_info {
+    grid-column: 3/4;
+    grid-row: 2/3;
+  }
+}
+.card_regist_container .card_regist_form .form_container table {
+  width: 100%;
+}
+.card_regist_container .card_regist_form .form_container table tr {
+  height: 4rem;
+}
+.card_regist_container .card_regist_form .form_container table tr td:first-child {
+  font-size: 0.8rem;
+  color: #868686;
+}
+.card_regist_container .card_regist_form .form_container table tr td input {
+  border: none;
+  border-radius: 0;
+  border-bottom: solid 1px #adadad;
+  background: transparent;
+  width: 100%;
+  padding: 5px;
+  padding: 5px;
+  font-size: 1rem;
+}
+.card_regist_container .card_regist_form .form_container table tr td input:focus {
+  outline: none;
+  border-bottom: solid 1px #1d59ff;
+}
+.card_regist_container .card_regist_form .form_container table tr td .company_search_button {
+  width: 1rem;
+  height: 1rem;
+  background: #d9d9d9;
+  padding: 0.3rem;
+  border-radius: 0.2rem;
+  cursor: pointer;
+}
+.card_regist_container .card_regist_form .form_container table tr td .company_search_button:hover {
+  background: #b6b6b6;
+}
+.card_regist_container .card_regist_form .form_container table tr td .delete_department_button {
+  cursor: pointer;
+  background: #ffa5a5;
+  color: #ffffff;
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.2rem;
+}
+.card_regist_container .card_regist_form .form_container table tr td .delete_department_button:hover {
+  background: #ff8585;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td {
+  position: relative;
+  z-index: 0;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_choiced {
+  background: #c2e6fc;
+  border: solid 0.2rem #a7ceff;
+  border-radius: 0.2rem;
+  color: black !important;
+  font-weight: bold;
+  opacity: 1;
+  cursor: pointer;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_choiced:hover {
+  background: #a7ceff;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .new_company_tag {
+  background: #dafcc2;
+  border: solid 0.15rem #83ad80;
+  border-radius: 0.2rem;
+  color: #396b4b !important;
+  font-size: 0.8rem;
+  opacity: 1;
+  position: absolute;
+  top: -0.2rem;
+  left: 0.3rem;
+  width: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container {
+  position: absolute;
+  bottom: -200%;
+  left: 0;
+  width: 100%;
+  border-radius: 0.5rem;
+  background: white;
+  box-shadow: 0 0 5px 0px #a9a9a9;
+  height: 8rem;
+  overflow-y: scroll;
+  display: none;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container_open {
+  display: block;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container input[type=radio] {
+  display: none;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container input[type=radio]:checked + label {
+  background: #61b2ff;
+  color: white;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container .company_candidate_content {
+  font-size: 0.8rem;
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding-left: 0.2rem;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container .company_candidate_content.company_candidate_new {
+  margin-top: 0.5rem;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container .company_candidate_content:hover {
+  background: #a0d0fd;
+  color: white;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container .company_candidate_content .compapany_card_img_container {
+  width: 2.5rem;
+  height: 1.5rem;
+  background: #ffffff;
+  border: solid 1px #adadad;
+  margin-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card_regist_container .card_regist_form .form_container table tr td.company_td .company_candidate_container .company_candidate_content .company_candidate_item {
+  width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -1,0 +1,117 @@
+<svg width="375" height="812" viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景色 -->
+  <rect width="100%" height="100%" fill="#f0f2f5" />
+
+  <!-- ドロップシャドウ用フィルター -->
+  <defs>
+    <filter id="cardShadow" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceGraphic" dx="0" dy="4" />
+      <feGaussianBlur result="blurOut" in="offOut" stdDeviation="6" />
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+    </filter>
+
+    <!-- ヘッダー用のグラデーション -->
+    <linearGradient id="headerGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d8e7ff"/>
+      <stop offset="100%" stop-color="#adcfff"/>
+    </linearGradient>
+
+    <!-- ボタン用グラデーション -->
+    <linearGradient id="buttonGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4f9dff"/>
+      <stop offset="100%" stop-color="#216de7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ヘッダー領域（上部帯＋タイトル） -->
+  <rect x="0" y="0" width="375" height="60" fill="url(#headerGradient)" />
+  <!-- システム名 -->
+  <text x="20" y="38" font-family="sans-serif" font-size="18" fill="#333" font-weight="bold">
+    名刺管理システム
+  </text>
+  <!-- 右側にメニューアイコンっぽい例 -->
+  <text x="330" y="38" font-family="sans-serif" font-size="14" fill="#333">≡</text>
+
+  <!-- ページタイトル -->
+  <text x="20" y="100" font-family="sans-serif" font-size="24" fill="#333" font-weight="bold">
+    名刺登録
+  </text>
+
+  <!-- メインコンテナ（角丸＆シャドウでカード風に） -->
+  <g filter="url(#cardShadow)">
+    <rect x="20" y="120" width="335" height="640" fill="#ffffff" rx="12" ry="12"/>
+  </g>
+
+  <!-- コンテナ内部コンテンツ -->
+  <!-- アップロード/プレビュー セクション -->
+  <rect x="40" y="140" width="295" height="180" fill="#fafafa" stroke="#ddd" stroke-width="1" rx="8" ry="8" />
+  <!-- アップロードガイド（ダッシュ枠＋アイコン） -->
+  <rect x="40" y="140" width="295" height="180" fill="none" stroke="#ccc" stroke-width="2" stroke-dasharray="5 5" rx="8" ry="8" />
+  
+  <!-- 雲アイコン -->
+  <path d="
+    M 185,220
+    c 0,-18 14,-32 32,-32
+    c 2.8,0 5.5,0.3 8.2,1
+    c 5,-12 17,-20 30,-20
+    c 18,0 33,15 33,33
+    c 0,0.8 0,1.5 -0.1,2.3
+    c 0.6,-0.1 1.3,-0.1 1.9,-0.1
+    c 14,0 26,8 31,20
+    c 1.2,2.7 1.8,5.6 1.8,8.6
+    c 0,12 -9.8,21.8 -21.8,21.8
+    h -118
+    c -10.6,0 -19.2,-8.6 -19.2,-19.2
+    c 0,-10.6 8.6,-19.2 19.2,-19.2z
+  " fill="#e0e7ff" stroke="#aaa" stroke-width="1"/>
+
+  <!-- 上矢印 -->
+  <path d="
+    M 195,225
+    l 0,-30
+    l 15,0
+    l 0,30
+    l 8,0
+    l -15,15
+    l -15,-15
+    z
+  " fill="#9aaee0"/>
+
+  <text x="187" y="265" font-family="sans-serif" font-size="14" fill="#666" text-anchor="middle">
+    アップロード
+  </text>
+
+  <!-- 個人情報フォーム -->
+  <text x="40" y="345" font-family="sans-serif" font-size="16" fill="#333" font-weight="bold">
+    個人情報
+  </text>
+  <!-- 名前 -->
+  <text x="40" y="375" font-family="sans-serif" font-size="12" fill="#333">名前</text>
+  <rect x="40" y="385" width="295" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4" />
+  <!-- 役職 -->
+  <text x="40" y="430" font-family="sans-serif" font-size="12" fill="#333">役職</text>
+  <rect x="40" y="440" width="295" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4" />
+  <!-- メール -->
+  <text x="40" y="485" font-family="sans-serif" font-size="12" fill="#333">メールアドレス</text>
+  <rect x="40" y="495" width="295" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4" />
+  <!-- 電話番号 -->
+  <text x="40" y="540" font-family="sans-serif" font-size="12" fill="#333">電話番号</text>
+  <rect x="40" y="550" width="295" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4" />
+
+  <!-- 会社情報フォーム -->
+  <text x="40" y="605" font-family="sans-serif" font-size="16" fill="#333" font-weight="bold">
+    会社情報
+  </text>
+  <!-- 会社名 -->
+  <text x="40" y="635" font-family="sans-serif" font-size="12" fill="#333">会社名</text>
+  <rect x="40" y="645" width="295" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4" />
+  <!-- 部署 -->
+  <text x="40" y="690" font-family="sans-serif" font-size="12" fill="#333">部署</text>
+  <rect x="40" y="700" width="295" height="30" fill="#fff" stroke="#ccc" rx="4" ry="4" />
+
+  <!-- 登録ボタン -->
+  <rect x="40" y="755" width="295" height="40" fill="url(#buttonGradient)" rx="8" ry="8" />
+  <text x="187.5" y="782" font-family="sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="middle">
+    登録
+  </text>
+</svg>
