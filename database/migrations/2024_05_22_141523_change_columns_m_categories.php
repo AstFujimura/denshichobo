@@ -27,8 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('m_categories', function (Blueprint $table) {
-            $table->decimal('縦')->nullable(false)->change();
-            $table->decimal('横')->nullable(false)->change();
+            $table->decimal('縦', 10, 5)->nullable(false)->change();
+            $table->decimal('横', 10, 5)->nullable(false)->change();
         });
     }
 };
