@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('cards', function (Blueprint $table) {
-           $table->dropForeign(['会社履歴ID']);
+        //    $table->dropForeign(['会社履歴ID']);
            $table->dropColumn('会社履歴ID');
         });
     }
@@ -26,8 +26,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('cards', function (Blueprint $table) {
-            $table->unsignedBigInteger('会社履歴ID')->default(1);
-            $table->foreign('会社履歴ID')->references('id')->on('companyhistories')->delete('cascade');
+            // $table->unsignedBigInteger('会社履歴ID')->nullable();
+            // $table->foreign('会社履歴ID')->references('id')->on('companyhistories')->delete('cascade');
         });
     }
 };
