@@ -231,7 +231,7 @@ class CardController extends Controller
                 $extension = $request->file('blob-image')->getClientOriginalExtension();
                 $filename = $this->generateRandomCode() . "." . $extension;
                 // S3にファイルを保存
-                $path = Storage::disk('s3')->put($prefix . '/' . $filename, $request->file('blob-image'), 'public');
+                $path = Storage::disk('s3')->put($prefix . '/' . $filename, $request->file('blob-image'), 'private');
             
                 // S3のURLを取得
                 $url = $filename;
