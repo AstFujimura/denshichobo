@@ -238,7 +238,7 @@ class CardController extends Controller
                 $path = Storage::disk('s3')->putFileAs($prefix, $request->file('blob-image'), $filename, 'public');
             
                 // S3のURLを取得
-                $url = Storage::disk('s3')->url($path);
+                $url = $filename;
             
                 $card->名刺ファイル表 = $url;
             }
@@ -260,7 +260,7 @@ class CardController extends Controller
                 
                 // S3にファイルを保存
                 $path = Storage::disk('s3')->putFileAs($prefix, $request->file('card_file_front'), $filename, 'public');
-                
+
             }
 
 
