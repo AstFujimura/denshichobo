@@ -33,7 +33,9 @@
         <a href="{{route('cardviewget')}}" class="logoelement01" id="cardtemplate">
             名刺管理システム
         </a>
+        @if (App\Models\Version::where('tameru', true)->first())
         <a href="{{route('topGet')}}" class="tameru_banner">TAMERU</a>
+        @endif
         @if (App\Models\Version::where('フロー', true)->first())
         <a href="{{route('workflow')}}" class="tameru_banner">電子承認</a>
         @endif
@@ -93,7 +95,7 @@
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                        名刺管理システム
+                            名刺管理システム
                         </div>
 
                     </div>
@@ -105,7 +107,7 @@
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                        名刺登録
+                            名刺登録
                         </div>
 
                     </div>

@@ -31,7 +31,9 @@
         <a href="{{route('workflow')}}" class="logoelement01">
             電子承認システム
         </a>
+        @if (App\Models\Version::where('tameru', true)->first())
         <a href="{{route('topGet')}}" class="tameru_banner">TAMERU</a>
+        @endif
         @if (App\Models\Version::where('名刺', true)->first())
         <a href="{{route('cardviewget')}}" class="tameru_banner">名刺管理システム</a>
         @endif

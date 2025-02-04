@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Version;
 use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Http\Request;
@@ -39,6 +40,10 @@ class LoginController extends Controller
             Auth::login($user);
             // ログイン前に指定したurlがある場合("/"の場合も含む)
             if (session('url.intended')){
+                // もしデモ環境でTAMERUのトップを指定しようとした場合は名刺管理の方に進む
+                if (session('url.intended') == route('topGet') && Version::where('tameru', false)->first()){
+                    return redirect(route('cardviewget'));
+                }
                 return redirect(session('url.intended'));
             }
             // ログアウトボタンを押してログイン画面に遷移してきた場合
