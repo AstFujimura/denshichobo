@@ -231,8 +231,14 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.status === 'success') {
+                        try{
                         autoFillForm(response.data);
                         getCompanyCandidate(response.data.会社名, true);
+                        }
+                        catch(e){
+                            console.log(e);
+                            $('.loading_container').removeClass('loading_container_open');
+                        }
                     } else {
                         console.log("エラーが発生しました。", response.message);
                     }
