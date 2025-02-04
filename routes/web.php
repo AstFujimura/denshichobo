@@ -52,7 +52,7 @@ Route::prefix($prefix)->group(function () {
     Route::get('/icon/{file}', [AssetController::class, 'icon'])->where('file', '.*ico');
 
     // フォントフォルダへのルーティング
-    Route::get('/font/{file}', [AssetController::class, 'font'])->where('file', '.*\.(TTC|TTF)');
+    Route::get('/font/{file}', [AssetController::class, 'font'])->where('file', '.*\.(TTC|TTF|ttf|otf|woff|woff2)');
 
 
     //  ログインページ
