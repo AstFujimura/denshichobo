@@ -273,8 +273,9 @@ $(document).ready(function () {
         // 会社候補を取得して表示
         // AI読み取りで候補がない場合は候補を表示せずに「新規」表示だけをおこなう
         function getCompanyCandidate(company_name, auto = false) {
+            var prefix = $('#prefix').val();
             $.ajax({
-                url: '/card/company/candidate',
+                url: prefix + '/card/company/candidate',
                 type: 'GET',
                 data: { company_name: company_name },
                 success: function (response) {
@@ -315,8 +316,9 @@ $(document).ready(function () {
         }
         // 会社情報を取得して表示
         function company_info_get(id) {
+            var prefix = $('#prefix').val();
             $.ajax({
-                url: '/card/company/info/' + id,
+                url: prefix + '/card/company/info/' + id,
                 type: 'GET',
                 success: function (response) {
                     $('#company_name').val(response.会社名);
@@ -592,8 +594,9 @@ $(document).ready(function () {
     }
     // 会社カード画像の表(その会社に属する名刺の一つ)を取得して表示
     function getCompanyCardImage(img, card_id) {
+        var prefix = $('#prefix').val();
         $.ajax({
-            url: '/card/img/' + card_id + '/front',
+            url: prefix + '/card/img/' + card_id + '/front',
             method: 'GET',
             xhrFields: {
                 responseType: 'blob' // ファイルをBlobとして受け取る
