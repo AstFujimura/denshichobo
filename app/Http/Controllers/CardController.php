@@ -186,7 +186,7 @@ class CardController extends Controller
         if ($edit == 'edit') {
             $carduser = Carduser::where('id', $request->carduser)->first();
             $card = Card::where('id', $request->card_id)->first();
-        } 
+        }
         // 名刺の追加
         else if ($edit == 'add') {
             $carduser = Carduser::where('id', $request->carduser)->first();
@@ -195,8 +195,7 @@ class CardController extends Controller
             $card->会社ID = $company->id;
             $card->最新フラグ = 1;
             $past_card = Card::where('名刺ユーザーID', $carduser->id)->update(['最新フラグ' => 0]);
-        } 
-        else{
+        } else {
             $carduser = new Carduser();
             $carduser->表示名 = $request->name;
             $carduser->表示名カナ = $request->name_kana;
@@ -218,51 +217,48 @@ class CardController extends Controller
 
         // 切り取ったblob画像の場合
         if ($request->hasFile('blob-image')) {
-            if ($server == 'onpre'){
-            $extension = $request->file('blob-image')->getClientOriginalExtension();
-            $filename = $this->generateRandomCode() . "." . $extension;
-            $filepath = Config::get('custom.file_upload_path');
-            // ファイルを保存
-            $request->file('blob-image')->move($filepath, $filename);
+            if ($server == 'onpre') {
+                $extension = $request->file('blob-image')->getClientOriginalExtension();
+                $filename = $this->generateRandomCode() . "." . $extension;
+                $filepath = Config::get('custom.file_upload_path');
+                // ファイルを保存
+                $request->file('blob-image')->move($filepath, $filename);
 
-            $card->名刺ファイル表 = $filename;
-            }
-            else if ($server == 'cloud'){
+                $card->名刺ファイル表 = $filename;
+            } else if ($server == 'cloud') {
                 $extension = $request->file('blob-image')->getClientOriginalExtension();
                 $filename = $this->generateRandomCode() . "." . $extension;
                 // S3にファイルを保存
-                $path = Storage::disk('s3')->putFile($prefix . '/' . $filename, $request->file('blob-image'), 'private');
-            
+                $path = Storage::disk('s3')->putFileAs(
+                    $prefix,
+                    $request->file('blob-image'),
+                    $filename,
+                    'private'
+                );
+
                 // S3のURLを取得
                 $url = $filename;
-            
+
                 $card->名刺ファイル表 = $url;
             }
         }
         // 切り取られていない画像の場合
         else if ($request->hasFile('card_file_front')) {
-            if ($server == 'onpre'){
-            $extension = $request->file('card_file_front')->getClientOriginalExtension();
-            $filename = $this->generateRandomCode() . "." . $extension;
-            $filepath = Config::get('custom.file_upload_path');
-            // ファイルを保存
-            $request->file('card_file_front')->move($filepath, $filename);
-
-            $card->名刺ファイル表 = $filename;
-            }
-            else if ($server == 'cloud'){
+            if ($server == 'onpre') {
                 $extension = $request->file('card_file_front')->getClientOriginalExtension();
                 $filename = $this->generateRandomCode() . "." . $extension;
-                
+                $filepath = Config::get('custom.file_upload_path');
+                // ファイルを保存
+                $request->file('card_file_front')->move($filepath, $filename);
+
+                $card->名刺ファイル表 = $filename;
+            } else if ($server == 'cloud') {
+                $extension = $request->file('card_file_front')->getClientOriginalExtension();
+                $filename = $this->generateRandomCode() . "." . $extension;
+
                 // S3にファイルを保存
                 $path = Storage::disk('s3')->putFileAs($prefix, $request->file('card_file_front'), $filename, 'public');
-
             }
-
-
-
-
-
         }
         // 編集の場合で名刺ファイルを変更しない場合は何もかえない
 
