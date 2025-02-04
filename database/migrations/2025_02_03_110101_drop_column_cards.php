@@ -26,7 +26,6 @@ return new class extends Migration
     public function down()
     {
         Schema::table('cards', function (Blueprint $table) {
-            $table->unsignedBigInteger('会社履歴ID');
             $table->foreign('会社履歴ID')->references('id')->on('companyhistories');
         });
     }
