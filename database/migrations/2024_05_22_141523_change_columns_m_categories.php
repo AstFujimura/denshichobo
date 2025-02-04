@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('m_categories', function (Blueprint $table) {
-            $table->decimal('縦', 10, 5)->nullable();
-            $table->decimal('横', 10, 5)->nullable();
+            $table->decimal('縦', 10, 5)->nullable()->change();
+            $table->decimal('横', 10, 5)->nullable()->change();
         });
     }
 
