@@ -506,7 +506,7 @@ class CardController extends Controller
         if (config('prefix.server') == "cloud") {
             // S3バケットの情報
             $bucket = 'astdocs.com';
-            $key = config('prefix.prefix') . $filepath;
+            $key = config('prefix.prefix') .'/'. $filepath;
             $expiration = '+1 hour'; // 有効期限
 
             $s3Client = new S3Client([
