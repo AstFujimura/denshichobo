@@ -232,7 +232,7 @@ class CardController extends Controller
                 $filename = $this->generateRandomCode() . "." . $extension;
                 
                 // S3にファイルを保存
-                $path = Storage::disk('s3')->putFileAs($prefix, $request->file('blob-image'), $filename, 'public');
+                $path = Storage::disk('s3')->put($prefix . '/' . $filename, file_get_contents($request->file('blob-image')), 'public');
             
                 // S3のURLを取得
                 $url = $filename;
