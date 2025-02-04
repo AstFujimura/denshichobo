@@ -13,45 +13,55 @@
         <div class="card_history_container">
             @foreach ($cards as $card)
             <div class="card_history_content">
-                <div class="history_card">
-                    <img class="lazyload" data-card_id="{{ $card->card_id }}" data-front="true" alt="">
-                </div>
-                <div class="history_card_text">
-                    <div class="card_detail_text_name">
-                        {{ $card->名前 }}
+                <input type="radio" name="card_history" id="card_history_{{ $card->card_id }}" value="{{ $card->card_id }}" @if ($card->最新フラグ == 1) checked @endif>
+                <label for="card_history_{{ $card->card_id }}" class="card_history_label">
+                    <div class="history_card">
+                        @if ($card->最新フラグ == 1)
+                        <img class="new_card_check" src="{{asset(config('prefix.prefix').'/'.'img/card/new_card_check.svg')}}" alt="">
+                        @endif
+                        <img class="lazyload" data-card_id="{{ $card->card_id }}" data-front="true" alt="">
                     </div>
-                    <div class="history_card_text_company">
-                        {{ $card->現会社名 }}
+                    <div class="history_card_text">
+                        <div class="card_detail_text_name">
+                            {{ $card->名前 }}
+                        </div>
+                        <div class="history_card_text_company">
+                            {{ $card->会社名 }}
+                        </div>
+                        <div class="history_card_text_department">
+                            @foreach ($card->departments as $department)
+                            {{ $department->部署名 }}
+                            @endforeach
+                        </div>
                     </div>
-                    <div class="history_card_text_department">
-                        @foreach ($card->departments as $department)
-                        {{ $department->部署名 }}
-                        @endforeach
-                    </div>
-                </div>
+                </label>
             </div>
             @endforeach
-            <div class="card_history_add_button">
-                名刺を追加する
+            <div class="card_history_close_button">
+                閉じる
             </div>
+            <a href="{{ route('cardaddget', ['id' => $carduser->id]) }}" class="card_history_add_button">
+                名刺を追加する
+            </a>
         </div>
         <div class="card_info_container">
-            <h2 class="pagetitle" id="card_view_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">{{ $carduser->表示名 }} さん</h2>
-            <div class="card_info_content">
-                <div class="card_detail_card">
-                    <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="true" alt="">
+            <h2 class="pagetitle" id="card_detail_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">{{ $carduser->表示名 }} さん</h2>
+            <div class="card_detail_content">
+                <div class="card_info_content">
+                    <div class="setting_container">
+                        <div class="card_history_button">名刺履歴</div>
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/menu_blue.svg')}}" alt="">
+                    </div>
+                    <div class="card_detail_card">
+                        <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="true" alt="">
+                    </div>
                 </div>
-                <div class="card_detail_card">
-                    <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="false" alt="">
-                </div>
-            </div>
-            <div class="card_info_detail_content">
                 <div class="personal_info">
                     <div class="personal_info_content">
                         <div class="personal_info_content_title">
                             名前
                         </div>
-                        <div class="personal_info_content_text">
+                        <div class="personal_info_content_text" id="name">
                             {{ $now_card->名前 }}
                         </div>
                     </div>
@@ -60,8 +70,24 @@
                         <div class="personal_info_content_title">
                             名前カナ
                         </div>
-                        <div class="personal_info_content_text">
+                        <div class="personal_info_content_text" id="name_kana">
                             {{ $now_card->名前カナ }}
+                        </div>
+                    </div>
+                    <div class="personal_info_content">
+                        <div class="personal_info_content_title">
+                            携帯電話
+                        </div>
+                        <div class="personal_info_content_text" id="phone_number">
+                            {{ $now_card->携帯電話番号 }}
+                        </div>
+                    </div>
+                    <div class="personal_info_content">
+                        <div class="personal_info_content_title">
+                            メールアドレス
+                        </div>
+                        <div class="personal_info_content_text" id="email">
+                            {{ $now_card->メールアドレス }}
                         </div>
                     </div>
                 </div>
@@ -70,27 +96,67 @@
                         <div class="company_info_content_title">
                             会社名
                         </div>
-                        <div class="company_info_content_text">
-                            {{ $now_card->現会社名 }}
+                        <div class="company_info_content_text" id="company_name">
+                            {{ $now_card->会社名 }}
+                        </div>
+                    </div>
+                    <div class="company_info_content">
+                        <div class="company_info_content_title">
+                            会社名カナ
+                        </div>
+                        <div class="company_info_content_text" id="company_name_kana">
+                            {{ $now_card->会社名カナ }}
+                        </div>
+                    </div>
+                    <div class="company_info_content">
+                        <div class="company_info_content_title">
+                            会社所在地
+                        </div>
+                        <div class="company_info_content_text" id="company_address">
+                            {{ $now_card->会社所在地 }}
+                        </div>
+                    </div>
+                    <div class="company_info_content">
+                        <div class="company_info_content_title">
+                            電話番号
+                        </div>
+                        <div class="company_info_content_text" id="company_phone_number">
+                            {{ $now_card->電話番号 }}
+                        </div>
+                    </div>
+                    <div class="company_info_content">
+                        <div class="company_info_content_title">
+                            FAX番号
+                        </div>
+                        <div class="company_info_content_text" id="company_fax_number">
+                            {{ $now_card->FAX番号 }}
+                        </div>
+                    </div>
+                </div>
+                <div class="position_info">
+                    <div class="position_info_content">
+                        <div class="position_info_content_title" id="position">
+                            役職
                         </div>
                     </div>
                     @foreach ($now_card->departments as $index => $department)
-                    <div class="company_info_content">
-                        <div class="company_info_content_title">
-                            部署名{{ $index + 1 }}
+                    <div class="position_info_content">
+                        <div class="position_info_content_title">
+                            部署{{ $index + 1 }}
                         </div>
-                        <div class="company_info_content_text">
+                        <div class="position_info_content_text" id="department{{$index+1}}">
                             {{ $department->部署名 }}
                         </div>
                     </div>
                     @endforeach
                 </div>
-
             </div>
 
-            <div class="card_edit_button" data-card_id="{{ $now_card->id }}">
+
+
+            <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" id="card_edit_button" class="card_edit_button" data-card_id="{{ $now_card->id }}">
                 この名刺を編集する
-            </div>
+            </a>
         </div>
 
     </div>

@@ -60,7 +60,7 @@ $(document).ready(function () {
 
                 }
             });
-            
+
             $('.button_container').addClass('button_container_open');
         }
 
@@ -435,6 +435,54 @@ $(document).ready(function () {
     // 名刺一覧画面
     if ($('#card_view_title').length > 0) {
         var prefix = $('#prefix').val();
+        lazyload('imgset');
+
+    }
+
+    // 名刺詳細画面
+    if ($('#card_detail_title').length > 0) {
+        var prefix = $('#prefix').val();
+        lazyload('imgset');
+        $(document).on('change', 'input[name="card_history"]', function () {
+            var card_edit_button = $('#card_edit_button');
+            card_edit_button.attr('href', prefix + '/card/edit/' + $(this).val());
+            $('.imgset').data('card_id',$(this).val())
+            $('.card_history_container').toggleClass('card_history_container_open');
+            $.ajax({
+                url: prefix + '/card/history/' + $(this).val(),
+                method: 'GET',
+                success: function (response) {
+                    console.log(response)
+                    card_detail_renew(response)
+                    designateload($('.card_detail_card .imgset'))
+                }
+            });
+
+        });
+
+        
+        $('.card_history_button,.card_history_close_button').on('click', function () {
+            $('.card_history_container').toggleClass('card_history_container_open');
+        })
+
+        function card_detail_renew(response){
+            $('#name').text(response.名前);
+            $('#name_kana').text(response.名前カナ);
+            $('#phone_number').text(response.携帯電話番号);
+            $('#email').text(response.メールアドレス);
+            $('#company_name').text(response.会社名);
+            $('#company_name_kana').text(response.会社名カナ);
+            $('#company_address').text(response.会社所在地);
+            $('#company_phone_number').text(response.電話番号);
+            $('#company_fax_number').text(response.FAX番号);
+            $('#position').text(response.役職);
+            $('#department_name').text(response.部署名);
+        }
+    }
+    // data-card_idから画像を読み込んで出力
+    // addclassにはその要素に対してクラスを追加
+    function lazyload(addclass) {
+        var prefix = $('#prefix').val();
         $('img.lazyload').each(function () {
             var img = $(this);
             if ($('#server').val() == "cloud") {
@@ -476,7 +524,7 @@ $(document).ready(function () {
                         var Url = URL.createObjectURL(response);
                         if (response.type.startsWith('image/')) {
                             img.attr('src', Url);
-                            img.addClass('imgset');
+                            img.addClass(addclass);
                         }
 
 
@@ -488,6 +536,58 @@ $(document).ready(function () {
 
             }
         });
+    }
+    // 指定したimgの画像を再読み込み
+    function designateload(img){
+        if ($('#server').val() == "cloud") {
+            $.ajax({
+                url: prefix + '/img/' + ID, // データを取得するURLを指定
+                method: 'GET',
+                dataType: "json",
+                success: function (response) {
+                    if (response.Type === 'application/pdf') {
+                        var embed = $('<embed>');
+                        embed.attr('src', response.path);
+                        embed.attr('width', '100%');
+                        embed.attr('height', '600px');
+                        embed.attr('type', 'application/pdf');
+                        embed.addClass('imgset');
+
+                        $('.pastpreview').html(embed);
+                    }
+                    else if (response.Type.startsWith('image/')) {
+                        var img = $('<img>');
+                        img.attr('src', response.path);
+                        img.attr('width', '100%');
+                        img.attr('height', '600px');
+                        img.addClass('imgset');
+
+                        $('.pastpreview').html(img);
+                    }
+                }
+            });
+        }
+        else {
+            $.ajax({
+                url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob' // ファイルをBlobとして受け取る
+                },
+                success: function (response) {
+                    var Url = URL.createObjectURL(response);
+                    if (response.type.startsWith('image/')) {
+                        img.attr('src', Url);
+                    }
+
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(error); // エラー処理
+                }
+            });
+
+        }
     }
     // 会社カード画像の表(その会社に属する名刺の一つ)を取得して表示
     function getCompanyCardImage(img, card_id) {

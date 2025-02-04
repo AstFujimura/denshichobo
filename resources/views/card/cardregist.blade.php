@@ -31,7 +31,16 @@
             </div>
         </div>
     </div>
-    <h2 class="pagetitle" id="card_regist_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">名刺登録</h2>
+    <h2 class="pagetitle" id="card_regist_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">
+        @if ($edit == 'add')
+        {{$carduser->表示名}}さん 名刺追加
+        @elseif ($edit == 'edit')
+        {{$card->名前}}さん 名刺編集
+        @else
+        名刺登録
+        @endif
+    </h2>
+
 
     <div class="card_regist_container">
         <form class="card_regist_form" action="{{ route('cardregistpost') }}" id="card_regist_form" method="post" enctype="multipart/form-data">
@@ -40,7 +49,7 @@
             <input type="hidden" name="company_id" id="company_id" value="{{$card->会社ID ?? 0}}">
             <input type="hidden" name="edit" id="edit" value="{{$edit}}">
             <input type="hidden" name="card_id" id="card_id" value="{{$card_id}}">
-            <input type="hidden" name="carduser" id="carduser" value="{{$carduser}}">
+            <input type="hidden" name="carduser" id="carduser" value="{{$carduser_id}}">
 
             <div class="card_regist_content">
                 <input type="file" name="card_file_front" id="card_file_front" class="card_file_front">
@@ -149,7 +158,8 @@
                     <tr>
                         <td>部署1</td>
                         <td>
-                            <input type="text" name="department1" class="department" id="department1" data-department_number="1" autocomplete="off"></td>
+                            <input type="text" name="department1" class="department" id="department1" data-department_number="1" autocomplete="off">
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2"><button type="button" id="add_department" data-now_department_number="1">部署追加</button></td>
@@ -158,9 +168,10 @@
                     @foreach($card->departments as $index => $department)
                     <tr>
                         <td>部署{{$index+1}}</td>
-                        
+
                         <td>
-                            <input type="text" name="department{{$index+1}}" class="department" id="department{{$index+1}}" data-department_number="{{$index+1}}" autocomplete="off" value="{{$department->部署名}}"></td>
+                            <input type="text" name="department{{$index+1}}" class="department" id="department{{$index+1}}" data-department_number="{{$index+1}}" autocomplete="off" value="{{$department->部署名}}">
+                        </td>
                         </td>
                         @if($index != 0)
                         <td>
@@ -173,7 +184,7 @@
                         <td colspan="2"><button type="button" id="add_department" data-now_department_number="{{count($card->departments)}}">部署追加</button></td>
                     </tr>
                     @endif
-                    
+
                 </table>
             </div>
 

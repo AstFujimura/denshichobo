@@ -319,10 +319,15 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/companyview', [CardController::class, 'cardcompanyviewget'])->name('cardcompanyviewget');
             // 名刺詳細(idはcardusersのid)
             Route::get('/card/detail/{id}', [CardController::class, 'carddetailget'])->name('carddetailget');
+            // 名刺情報API
+            Route::get('/card/history/{id}', [CardController::class, 'cardinfoget'])->name('cardinfoget');
             // 名刺登録
             Route::get('/card/regist', [CardController::class, 'cardregistget'])->name('cardregistget');
             // 名刺編集
             Route::get('/card/edit/{id}', [CardController::class, 'cardeditget'])->name('cardeditget');
+            // 名刺追加(cardusersのid)
+            Route::get('/card/add/{id}', [CardController::class, 'cardaddget'])->name('cardaddget');
+            
             // 名刺登録・編集ポスト
             Route::post('/card/regist', [CardController::class, 'cardregistpost'])->name('cardregistpost');
             // 名刺OCR

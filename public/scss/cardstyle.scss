@@ -1,8 +1,28 @@
+html {
+    font-size: 62.5%;
+    @media (min-width: 1441px) {
+        font-size: 0.8vw;
+    }
+    @media (min-width: 1201px) and (max-width: 1440px) {
+        font-size: 1vw;
+    }
+    @media (min-width: 401px) and (max-width: 1200px) {
+        font-size: 14px;
+    }
+
+    @media (max-width: 400px) {
+        font-size: 3.5vw;
+    }
+}
+
 @font-face {
     font-family: 'Noto';
     src: url('../font/Noto.ttf');
 }
 
+.iconmessage {
+    display: none !important;
+}
 
 body {
     font-family: 'Noto';
@@ -129,10 +149,12 @@ body {
 // 名刺一覧
 .card_view_container {
     margin-left: 2rem;
+
     @media screen and (max-width: 1200px) {
         width: 90%;
         margin: 10px auto;
     }
+
     .card_view_card {
         background: white;
         border-radius: 10px;
@@ -160,26 +182,33 @@ body {
 
         .text_container {
             width: 70%;
+
             .company_info {
                 display: flex;
                 color: #868686;
-                .card_view_card_company{
+
+                .card_view_card_company {
                     width: 10rem;
+
                     @media screen and (max-width: 600px) {
                         font-size: 0.8rem;
                         width: 8rem;
                     }
+
                     @media screen and (max-width: 400px) {
                         font-size: 0.7rem;
                         width: 50%;
                     }
                 }
-                .card_view_card_department{
+
+                .card_view_card_department {
                     width: 10rem;
+
                     @media screen and (max-width: 600px) {
                         font-size: 0.8rem;
                         width: 8rem;
                     }
+
                     @media screen and (max-width: 400px) {
                         font-size: 0.7rem;
                         width: 50%;
@@ -195,6 +224,7 @@ body {
             margin-left: auto;
             margin-right: 3rem;
             box-shadow: 2px 4px 3px 0 rgba(0, 0, 0, 0.1);
+
             @media screen and (max-width: 600px) {
                 min-width: 3rem;
                 height: 3rem;
@@ -215,10 +245,47 @@ body {
         height: calc(100vh - 112px);
         overflow: hidden;
 
+        @media screen and (min-width: 801px) {
+            .card_history_close_button {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 800px) {
+            position: absolute;
+            left: -200%;
+            transition: all 1s;
+            z-index: 10;
+            top: 0;
+
+
+            &.card_history_container_open {
+                display: block;
+                width: 100%;
+                left: 0;
+            }
+
+            .card_history_close_button {
+                display: flex;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                background: #676767;
+                color: white;
+                padding: 0.3rem 1rem;
+                cursor: pointer;
+                border-radius: 0.3rem;
+                font-size: 0.8rem;
+                margin-right: 2rem;
+
+                &:hover {
+                    background: #474747;
+                }
+            }
+        }
+
         .card_history_content {
-            display: flex;
-            width: 23rem;
-            padding: 1rem;
+            width: 100%;
             cursor: pointer;
 
             &:hover {
@@ -226,35 +293,59 @@ body {
             }
 
             &:first-child {
-                margin-top: 3rem;
+                margin-top: 4rem;
             }
 
             &:last-child {
                 margin-bottom: 3rem;
             }
 
-            .history_card {
-                min-width: 5rem;
-                margin-right: 1rem;
+            input[type="radio"] {
+                display: none;
 
-                img {
-                    height: 5rem;
-                    object-fit: contain;
-                    box-shadow: 1px 2px 3px 1px rgb(0 0 0);
-
+                &:checked+.card_history_label {
+                    background: #2a8bfa;
                 }
             }
 
-            .history_card_text {
-                color: white;
+            .card_history_label {
+                display: flex;
+                padding: 1rem;
 
-                .card_detail_text_name {
-                    font-weight: bold;
+                .history_card {
+                    min-width: 5rem;
+                    width: 35%;
+                    margin-inline: 1rem;
+                    position: relative;
+                    .new_card_check{
+                        width: 2.5rem;
+                        height: 2.5rem;
+                        position: absolute;
+                        top: -1rem;
+                        left: -1rem;
+                    }
+                    img.lazyload {
+                        max-height: 5rem;
+                        max-width: 100%;
+                        object-fit: contain;
+                        box-shadow: 1px 2px 3px 1px rgb(0 0 0);
+
+                    }
+                }
+
+                .history_card_text {
+                    color: white;
+                    flex: 1;
+
+                    .card_detail_text_name {
+                        font-weight: bold;
+                    }
                 }
             }
         }
 
         .card_history_add_button {
+            display: flex;
             background: #2a8bfa;
             color: white;
             border-radius: 1rem;
@@ -275,35 +366,127 @@ body {
     }
 
     .card_info_container {
+        flex: 1;
+        margin-inline: 2rem;
+        height: calc(100vh - 112px);
 
-        .card_info_content {
-            display: flex;
-            padding-block: 3rem;
-            margin: 10px;
-            width: 50rem;
-            justify-content: space-around;
-            margin-left: 3rem;
+        .card_detail_content {
+            display: grid;
+            margin-left: 2rem;
 
-            .card_detail_card {
+            @media screen and (min-width: 1200px) {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
 
-                img {
-                    height: 10rem;
-                    background: white;
-                    object-fit: contain;
-                    box-shadow: 4px 7px 11px 1px rgb(0 0 0 / 59%);
+            @media screen and (max-width: 1200px) {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin-inline: auto;
+
+                overflow: auto;
+                height: calc(100vh - 130px);
+                &::-webkit-scrollbar {
+                    display: none;
                 }
             }
-        }
 
-        .card_info_detail_content {
-            display: flex;
+            div {
+                @media screen and (min-width: 1301px) {
+
+                    &:first-child {
+                        grid-column: 1 / 2;
+                        grid-row: 1 / 2;
+                    }
+
+                    &:nth-child(2) {
+
+                        grid-column: 2 / 3;
+                        grid-row: 1 / 2;
+                    }
+
+                    &:nth-child(3) {
+                        grid-column: 1 / 2;
+                        grid-row: 2 / 3;
+                    }
+
+                    &:nth-child(4) {
+                        grid-column: 2 / 3;
+                        grid-row: 2 / 3;
+                    }
+                }
+
+
+            }
+
+            .card_info_content {
+                display: flex;
+                padding-block: 3rem;
+                margin: 0.4rem 1rem;
+                justify-content: space-around;
+
+                @media screen and (min-width: 801px) {
+                    .setting_container {
+                        display: none;
+                    }
+                }
+
+                @media screen and (max-width: 800px) {
+                    padding-block: 0 0.5rem;
+                    flex-direction: column;
+                    position: sticky;
+                    top: 0;
+
+                    .setting_container {
+                        display: flex;
+                        justify-content: end;
+                        margin-bottom: 1rem;
+
+                        img {
+                            cursor: pointer;
+                        }
+
+                        .card_history_button {
+                            width: 7rem;
+                            height: 2rem;
+                            background: #5694FF;
+                            color: white;
+                            border-radius: 3rem;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin-right: 2rem;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+
+                            &:hover {
+                                background: #3673d9;
+                            }
+                        }
+                    }
+                }
+
+                .card_detail_card {
+                    @media screen and (max-width: 800px) {
+                        margin-inline: auto;
+                    }
+
+                    img {
+                        height: 10rem;
+                        background: white;
+                        object-fit: contain;
+                        box-shadow: 4px 7px 11px 1px rgb(0 0 0 / 59%);
+                    }
+                }
+
+            }
+
 
             .personal_info,
-            .company_info {
+            .company_info,
+            .position_info {
                 background: white;
-                border-radius: 10px;
-                margin-left: 3rem;
-                width: 35rem;
+                width: 100%;
                 padding-block: 1rem;
 
                 &_content {
@@ -315,7 +498,7 @@ body {
                     margin-inline: 1rem;
 
                     &_title {
-                        width: 5rem;
+                        width: 6rem;
                         font-size: 0.8rem;
                     }
 
@@ -325,6 +508,7 @@ body {
                     }
                 }
             }
+
         }
 
         .card_edit_button {
@@ -336,16 +520,22 @@ body {
             width: fit-content;
             margin-inline: auto;
             margin-top: 3rem;
+            display: block;
 
             &:hover {
                 background: #12437c;
             }
+
+            @media screen and (max-width: 1200px) {
+                position: sticky;
+                bottom: 5%;
+            }
+
+
         }
 
     }
-
 }
-
 
 
 
@@ -489,7 +679,7 @@ body {
 .card_regist_container {
     width: fit-content;
     margin-left: 2rem;
-
+    margin-inline: auto;
     @media screen and (max-width: 750px) {
         margin-inline: auto;
     }
@@ -527,7 +717,10 @@ body {
             height: 3rem;
             box-shadow: 2px 5px 6px 0px rgb(155 152 152);
             z-index: 1;
-
+            @media screen and (min-width: 750px) {
+                bottom: 5%;
+                z-index: 101;
+            }
         }
 
         .card_regist_content {
@@ -728,6 +921,7 @@ body {
                                 font-weight: bold;
                                 opacity: 1;
                                 cursor: pointer;
+
                                 &:hover {
                                     background: #a7ceff;
                                 }

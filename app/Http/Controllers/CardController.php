@@ -32,7 +32,6 @@ use App\Models\Card_Company;
 use App\Models\Carduser;
 use App\Models\Department;
 use App\Models\Card_Department;
-use App\Models\Companyhistory;
 
 
 
@@ -54,10 +53,10 @@ class CardController extends Controller
         }
         $server = config('prefix.server');
         $cardusers = DB::table('cardusers')
-            ->select('cardusers.id as carduser_id', 'cardusers.表示名', 'cards.id as card_id', 'cards.*', 'companyhistories.*', 'companies.*')
+            ->select('cardusers.id as carduser_id', 'cardusers.表示名', 'cards.id as card_id', 'cards.*',  'companies.*')
             ->leftJoin('cards', 'cardusers.id', '=', 'cards.名刺ユーザーID')
-            ->leftJoin('companyhistories', 'cards.会社履歴ID', '=', 'companyhistories.id')
             ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
+            ->where('cards.最新フラグ', 1)
             ->get();
         foreach ($cardusers as $carduser) {
             $departments = DB::table('card_department')
@@ -83,8 +82,7 @@ class CardController extends Controller
         $server = config('prefix.server');
         $carduser = Carduser::where('id', $id)->first();
         $cards = DB::table('cards')
-            ->select('cards.id as card_id', 'cards.*', 'companyhistories.*', 'companies.*')
-            ->leftJoin('companyhistories', 'cards.会社履歴ID', '=', 'companyhistories.id')
+            ->select('cards.id as card_id', 'cards.*',  'companies.*')
             ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
             ->where('cards.名刺ユーザーID', $carduser->id)
             ->get();
@@ -102,6 +100,15 @@ class CardController extends Controller
         }
         return view('card.carddetail', compact("prefix", "server", "carduser", "cards", "now_card"));
     }
+    public function cardinfoget(Request $request, $id)
+    {
+        $card = DB::table('cards')
+            ->select('cards.*',  'companies.*')
+            ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
+            ->where('cards.id', $id)
+            ->first();
+        return response()->json($card);
+    }
     public function cardregistget(Request $request)
     {
         $prefix = config('prefix.prefix');
@@ -111,9 +118,9 @@ class CardController extends Controller
         $server = config('prefix.server');
         $edit = 'new';
         $card_id = 0;
-        $carduser = 0;
+        $carduser_id = 0;
         $card = 0;
-        return view('card.cardregist', compact("prefix", "server", "edit", "card_id", "carduser", "card"));
+        return view('card.cardregist', compact("prefix", "server", "edit", "card_id", "carduser_id", "card"));
     }
     public function cardeditget(Request $request, $id)
     {
@@ -130,14 +137,31 @@ class CardController extends Controller
             ->where('cards.id', $id)
             ->first();
         $card_id = $id;
-        $carduser = Carduser::where('id', $card->名刺ユーザーID)->first()->id;
+        $carduser = Carduser::where('id', $card->名刺ユーザーID)->first();
+        $carduser_id = $carduser->id;
         $departments = DB::table('card_department')
             ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
             ->where('card_department.名刺ID', $card->id)
             ->orderBy('card_department.id', 'asc')
             ->get();
         $card->departments = $departments;
-        return view('card.cardregist', compact("prefix", "server", "edit", "carduser", "card_id", "card"));
+        return view('card.cardregist', compact("prefix", "server", "edit", "carduser", "card_id", "card", "carduser_id"));
+    }
+
+    public function cardaddget(Request $request, $id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $edit = 'add';
+        $carduser = Carduser::find($id);
+        $carduser_id = $carduser->id;
+        $card_id = 0;
+        $card = 0;
+
+        return view('card.cardregist', compact("prefix", "server", "edit", "carduser", "card_id", "card", "carduser_id"));
     }
 
     public function cardregistpost(Request $request)
@@ -149,28 +173,27 @@ class CardController extends Controller
             if (!$company) {
                 return redirect()->back()->with('error', '会社が見つかりませんでした。');
             }
-            $company_history = Companyhistory::where('会社ID', $company->id)
-                ->where('最新フラグ', 1)
-                ->first();
         } else {
             $company = new Company();
             $company->会社名 = $request->company_name;
             $company->会社名カナ = $request->company_name_kana;
             $company->save();
-
-            $company_history = new Companyhistory();
-            $company_history->会社ID = $company->id;
-            $company_history->履歴番号 = 1;
-            $company_history->最新フラグ = 1;
-            $company_history->現会社名 = $request->company_name;
-            $company_history->save();
         }
-
+        // その名刺の変更
         if ($edit == 'edit') {
             $carduser = Carduser::where('id', $request->carduser)->first();
             $card = Card::where('id', $request->card_id)->first();
-        }
-        else {
+        } 
+        // 名刺の追加
+        else if ($edit == 'add') {
+            $carduser = Carduser::where('id', $request->carduser)->first();
+            $card = new Card();
+            $card->名刺ユーザーID = $carduser->id;
+            $card->会社ID = $company->id;
+            $card->最新フラグ = 1;
+            $past_card = Card::where('名刺ユーザーID', $carduser->id)->update(['最新フラグ' => 0]);
+        } 
+        else{
             $carduser = new Carduser();
             $carduser->表示名 = $request->name;
             $carduser->表示名カナ = $request->name_kana;
@@ -179,10 +202,15 @@ class CardController extends Controller
             $card = new Card();
             $card->名刺ユーザーID = $carduser->id;
             $card->会社ID = $company->id;
-            $card->会社履歴ID = $company_history->id;
-            $card->名前 = $request->name;
-            $card->名前カナ = $request->name_kana;
+            $card->最新フラグ = 1;
         }
+
+        $card->名前 = $request->name;
+        $card->名前カナ = $request->name_kana;
+        $card->携帯電話番号 = $request->phone_number;
+        $card->メールアドレス = $request->email;
+        $card->役職 = $request->position;
+
 
 
         // 切り取ったblob画像の場合
@@ -194,7 +222,6 @@ class CardController extends Controller
             $request->file('blob-image')->move($filepath, $filename);
 
             $card->名刺ファイル表 = $filename;
-            $card->最新フラグ = 1;
         }
         // 切り取られていない画像の場合
         else if ($request->hasFile('card_file_front')) {
@@ -205,7 +232,6 @@ class CardController extends Controller
             $request->file('card_file_front')->move($filepath, $filename);
 
             $card->名刺ファイル表 = $filename;
-            $card->最新フラグ = 1;
         }
         // 編集の場合で名刺ファイルを変更しない場合は何もかえない
 
@@ -496,6 +522,8 @@ class CardController extends Controller
         $company_name = str_replace('有限会社', '', $company_name);
         $company_name = str_replace('合名会社', '', $company_name);
         $company_name = str_replace('合同会社', '', $company_name);
+        $company_name = str_replace(' ', '', $company_name);
+        $company_name = str_replace('　', '', $company_name);
 
         $companies = Company::where('会社名', 'like', '%' . $company_name . '%')->get();
         foreach ($companies as $company) {

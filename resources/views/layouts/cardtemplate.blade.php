@@ -45,16 +45,10 @@
 <div class="menu001">
 
     <a class="headerIcon001" href="{{route('cardviewget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
-        <div class="iconmessage">Top</div>
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}" class="menuicon01" title="Top">
     </a>
     <a class="headerIcon001" href="{{route('cardregistget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
-        <div class="iconmessage">名刺登録</div>
-    </a>
-    <a class="headerIcon001" href="{{route('cardviewget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
-        <div class="iconmessage">Top</div>
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="menuicon01" title="名刺登録">
     </a>
 
 
@@ -91,38 +85,27 @@
                 </div>
 
             </div>
-            <a href="{{route('workflow')}}" class="button1_01">
-                <div class="button1element01">
-                    <div class="button1logo01">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="flow_right_icon">
-                    </div>
-                    <div class="button1name01">
-                        ワークフロー
-                    </div>
 
-                </div>
-
-            </a>
             <div class="sidebarcontent01">
-                <a href="{{route('adminGet')}}" class="button1_01">
+                <a href="{{route('cardviewget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application.svg') }}" class="flow_right_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                            ワークフロー申請
+                        名刺管理システム
                         </div>
 
                     </div>
 
                 </a>
-                <a href="{{route('workflowapprovalview')}}" class="button1_01">
+                <a href="{{route('cardregistget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_approve.svg') }}" class="flow_right_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                            承認
+                        名刺登録
                         </div>
 
                     </div>
@@ -130,92 +113,6 @@
                 </a>
 
 
-                <a href="{{route('workflowviewget')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application_view.svg') }}" class="flow_right_icon">
-                        </div>
-                        <div class="button1name01">
-                            申請一覧
-                        </div>
-
-                    </div>
-
-                </a>
-                @if (Auth::user()->管理 == '管理')
-                <a href="{{route('workflowmaster')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="flow_right_icon">
-                        </div>
-                        <div class="button1name01">
-                            経路マスタ一覧
-                        </div>
-
-                    </div>
-
-                </a>
-                <a href="{{route('workflowviewget')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="flow_right_icon">
-                        </div>
-                        <div class="button1name01">
-                            経路マスタ登録
-                        </div>
-
-                    </div>
-
-                </a>
-                <a href="{{route('workflowstampget')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_stamp.svg') }}" class="flow_right_icon">
-                        </div>
-                        <div class="button1name01">
-                            印鑑設定
-                        </div>
-
-                    </div>
-
-                </a>
-                <a href="{{route('categoryget')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="flow_right_icon">
-                        </div>
-                        <div class="button1name01">
-                            カテゴリ設定
-                        </div>
-
-                    </div>
-
-                </a>
-                <a href="{{route('mailsettingget')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_mail.svg') }}" class="flow_right_icon">
-                        </div>
-                        <div class="button1name01">
-                            メール設定
-                        </div>
-
-                    </div>
-
-                </a>
-                <a href="{{route('adminGet')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_admin.svg') }}" class="flow_right_icon">
-                        </div>
-                        <div class="button1name01">
-                            ユーザー設定
-                        </div>
-
-                    </div>
-
-                </a>
-                @endif
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">

@@ -1,7 +1,35 @@
+html {
+  font-size: 62.5%;
+}
+@media (min-width: 1441px) {
+  html {
+    font-size: 0.8vw;
+  }
+}
+@media (min-width: 1201px) and (max-width: 1440px) {
+  html {
+    font-size: 1vw;
+  }
+}
+@media (min-width: 401px) and (max-width: 1200px) {
+  html {
+    font-size: 14px;
+  }
+}
+@media (max-width: 400px) {
+  html {
+    font-size: 3.5vw;
+  }
+}
+
 @font-face {
   font-family: "Noto";
   src: url("../font/Noto.ttf");
 }
+.iconmessage {
+  display: none !important;
+}
+
 body {
   font-family: "Noto";
   background: rgb(225, 225, 225);
@@ -214,37 +242,92 @@ body #usersetting {
   height: calc(100vh - 112px);
   overflow: hidden;
 }
+@media screen and (min-width: 801px) {
+  .card_detail_container .card_history_container .card_history_close_button {
+    display: none;
+  }
+}
+@media screen and (max-width: 800px) {
+  .card_detail_container .card_history_container {
+    position: absolute;
+    left: -200%;
+    transition: all 1s;
+    z-index: 10;
+    top: 0;
+  }
+  .card_detail_container .card_history_container.card_history_container_open {
+    display: block;
+    width: 100%;
+    left: 0;
+  }
+  .card_detail_container .card_history_container .card_history_close_button {
+    display: flex;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #676767;
+    color: white;
+    padding: 0.3rem 1rem;
+    cursor: pointer;
+    border-radius: 0.3rem;
+    font-size: 0.8rem;
+    margin-right: 2rem;
+  }
+  .card_detail_container .card_history_container .card_history_close_button:hover {
+    background: #474747;
+  }
+}
 .card_detail_container .card_history_container .card_history_content {
-  display: flex;
-  width: 23rem;
-  padding: 1rem;
+  width: 100%;
   cursor: pointer;
 }
 .card_detail_container .card_history_container .card_history_content:hover {
   background: #12437c;
 }
 .card_detail_container .card_history_container .card_history_content:first-child {
-  margin-top: 3rem;
+  margin-top: 4rem;
 }
 .card_detail_container .card_history_container .card_history_content:last-child {
   margin-bottom: 3rem;
 }
-.card_detail_container .card_history_container .card_history_content .history_card {
-  min-width: 5rem;
-  margin-right: 1rem;
+.card_detail_container .card_history_container .card_history_content input[type=radio] {
+  display: none;
 }
-.card_detail_container .card_history_container .card_history_content .history_card img {
-  height: 5rem;
+.card_detail_container .card_history_container .card_history_content input[type=radio]:checked + .card_history_label {
+  background: #2a8bfa;
+}
+.card_detail_container .card_history_container .card_history_content .card_history_label {
+  display: flex;
+  padding: 1rem;
+}
+.card_detail_container .card_history_container .card_history_content .card_history_label .history_card {
+  min-width: 5rem;
+  width: 35%;
+  margin-inline: 1rem;
+  position: relative;
+}
+.card_detail_container .card_history_container .card_history_content .card_history_label .history_card .new_card_check {
+  width: 2.5rem;
+  height: 2.5rem;
+  position: absolute;
+  top: -1rem;
+  left: -1rem;
+}
+.card_detail_container .card_history_container .card_history_content .card_history_label .history_card img.lazyload {
+  max-height: 5rem;
+  max-width: 100%;
   object-fit: contain;
   box-shadow: 1px 2px 3px 1px rgb(0, 0, 0);
 }
-.card_detail_container .card_history_container .card_history_content .history_card_text {
+.card_detail_container .card_history_container .card_history_content .card_history_label .history_card_text {
   color: white;
+  flex: 1;
 }
-.card_detail_container .card_history_container .card_history_content .history_card_text .card_detail_text_name {
+.card_detail_container .card_history_container .card_history_content .card_history_label .history_card_text .card_detail_text_name {
   font-weight: bold;
 }
 .card_detail_container .card_history_container .card_history_add_button {
+  display: flex;
   background: #2a8bfa;
   color: white;
   border-radius: 1rem;
@@ -258,33 +341,115 @@ body #usersetting {
 .card_detail_container .card_history_container .card_history_add_button:hover {
   background: #1865bd;
 }
-.card_detail_container .card_info_container .card_info_content {
+.card_detail_container .card_info_container {
+  flex: 1;
+  margin-inline: 2rem;
+  height: calc(100vh - 112px);
+}
+.card_detail_container .card_info_container .card_detail_content {
+  display: grid;
+  margin-left: 2rem;
+}
+@media screen and (min-width: 1200px) {
+  .card_detail_container .card_info_container .card_detail_content {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+@media screen and (max-width: 1200px) {
+  .card_detail_container .card_info_container .card_detail_content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-inline: auto;
+    overflow: auto;
+    height: calc(100vh - 130px);
+  }
+  .card_detail_container .card_info_container .card_detail_content::-webkit-scrollbar {
+    display: none;
+  }
+}
+@media screen and (min-width: 1301px) {
+  .card_detail_container .card_info_container .card_detail_content div:first-child {
+    grid-column: 1/2;
+    grid-row: 1/2;
+  }
+  .card_detail_container .card_info_container .card_detail_content div:nth-child(2) {
+    grid-column: 2/3;
+    grid-row: 1/2;
+  }
+  .card_detail_container .card_info_container .card_detail_content div:nth-child(3) {
+    grid-column: 1/2;
+    grid-row: 2/3;
+  }
+  .card_detail_container .card_info_container .card_detail_content div:nth-child(4) {
+    grid-column: 2/3;
+    grid-row: 2/3;
+  }
+}
+.card_detail_container .card_info_container .card_detail_content .card_info_content {
   display: flex;
   padding-block: 3rem;
-  margin: 10px;
-  width: 50rem;
+  margin: 0.4rem 1rem;
   justify-content: space-around;
-  margin-left: 3rem;
 }
-.card_detail_container .card_info_container .card_info_content .card_detail_card img {
+@media screen and (min-width: 801px) {
+  .card_detail_container .card_info_container .card_detail_content .card_info_content .setting_container {
+    display: none;
+  }
+}
+@media screen and (max-width: 800px) {
+  .card_detail_container .card_info_container .card_detail_content .card_info_content {
+    padding-block: 0 0.5rem;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+  }
+  .card_detail_container .card_info_container .card_detail_content .card_info_content .setting_container {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 1rem;
+  }
+  .card_detail_container .card_info_container .card_detail_content .card_info_content .setting_container img {
+    cursor: pointer;
+  }
+  .card_detail_container .card_info_container .card_detail_content .card_info_content .setting_container .card_history_button {
+    width: 7rem;
+    height: 2rem;
+    background: #5694FF;
+    color: white;
+    border-radius: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 2rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .card_detail_container .card_info_container .card_detail_content .card_info_content .setting_container .card_history_button:hover {
+    background: #3673d9;
+  }
+}
+@media screen and (max-width: 800px) {
+  .card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card {
+    margin-inline: auto;
+  }
+}
+.card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card img {
   height: 10rem;
   background: white;
   object-fit: contain;
   box-shadow: 4px 7px 11px 1px rgba(0, 0, 0, 0.59);
 }
-.card_detail_container .card_info_container .card_info_detail_content {
-  display: flex;
-}
-.card_detail_container .card_info_container .card_info_detail_content .personal_info,
-.card_detail_container .card_info_container .card_info_detail_content .company_info {
+.card_detail_container .card_info_container .card_detail_content .personal_info,
+.card_detail_container .card_info_container .card_detail_content .company_info,
+.card_detail_container .card_info_container .card_detail_content .position_info {
   background: white;
-  border-radius: 10px;
-  margin-left: 3rem;
-  width: 35rem;
+  width: 100%;
   padding-block: 1rem;
 }
-.card_detail_container .card_info_container .card_info_detail_content .personal_info_content,
-.card_detail_container .card_info_container .card_info_detail_content .company_info_content {
+.card_detail_container .card_info_container .card_detail_content .personal_info_content,
+.card_detail_container .card_info_container .card_detail_content .company_info_content,
+.card_detail_container .card_info_container .card_detail_content .position_info_content {
   color: #3d3b3b;
   display: flex;
   border-bottom: solid 1px #b6b6b6;
@@ -292,13 +457,15 @@ body #usersetting {
   align-items: center;
   margin-inline: 1rem;
 }
-.card_detail_container .card_info_container .card_info_detail_content .personal_info_content_title,
-.card_detail_container .card_info_container .card_info_detail_content .company_info_content_title {
-  width: 5rem;
+.card_detail_container .card_info_container .card_detail_content .personal_info_content_title,
+.card_detail_container .card_info_container .card_detail_content .company_info_content_title,
+.card_detail_container .card_info_container .card_detail_content .position_info_content_title {
+  width: 6rem;
   font-size: 0.8rem;
 }
-.card_detail_container .card_info_container .card_info_detail_content .personal_info_content_text,
-.card_detail_container .card_info_container .card_info_detail_content .company_info_content_text {
+.card_detail_container .card_info_container .card_detail_content .personal_info_content_text,
+.card_detail_container .card_info_container .card_detail_content .company_info_content_text,
+.card_detail_container .card_info_container .card_detail_content .position_info_content_text {
   width: 15rem;
   font-size: 1rem;
 }
@@ -311,9 +478,16 @@ body #usersetting {
   width: fit-content;
   margin-inline: auto;
   margin-top: 3rem;
+  display: block;
 }
 .card_detail_container .card_info_container .card_edit_button:hover {
   background: #12437c;
+}
+@media screen and (max-width: 1200px) {
+  .card_detail_container .card_info_container .card_edit_button {
+    position: sticky;
+    bottom: 5%;
+  }
 }
 
 .crop_controller_container {
@@ -433,6 +607,7 @@ body #usersetting {
 .card_regist_container {
   width: fit-content;
   margin-left: 2rem;
+  margin-inline: auto;
 }
 @media screen and (max-width: 750px) {
   .card_regist_container {
@@ -472,6 +647,12 @@ body #usersetting {
   height: 3rem;
   box-shadow: 2px 5px 6px 0px rgb(155, 152, 152);
   z-index: 1;
+}
+@media screen and (min-width: 750px) {
+  .card_regist_container .card_regist_form .submit_button {
+    bottom: 5%;
+    z-index: 101;
+  }
 }
 .card_regist_container .card_regist_form .card_regist_content {
   margin-top: 1rem;

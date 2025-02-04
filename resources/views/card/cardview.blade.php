@@ -20,7 +20,7 @@
                 </div>
                 <div class="company_info">
                     <div class="card_view_card_company">
-                        {{ $carduser->現会社名 }}
+                        {{ $carduser->会社名 }}
                     </div>
                     <div class="card_view_card_department">
                         @foreach ($carduser->departments as $department)
