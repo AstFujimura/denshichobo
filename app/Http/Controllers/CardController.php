@@ -167,9 +167,6 @@ class CardController extends Controller
     public function cardregistpost(Request $request)
     {
         $prefix = config('prefix.prefix');
-        if ($prefix !== "") {
-            $prefix = "/" . $prefix;
-        }
         $server = config('prefix.server');
 
         $company_id = $request->company_id;
