@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('t_optionals', function (Blueprint $table) {
+        Schema::table('t_flows', function (Blueprint $table) {
             $table->dropColumn('申請印');
         });
     }
