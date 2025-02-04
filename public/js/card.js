@@ -490,28 +490,23 @@ $(document).ready(function () {
             var img = $(this);
             if ($('#server').val() == "cloud") {
                 $.ajax({
-                    url: prefix + '/img/' + ID, // データを取得するURLを指定
+                    url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
                     method: 'GET',
                     dataType: "json",
                     success: function (response) {
                         if (response.Type === 'application/pdf') {
-                            var embed = $('<embed>');
-                            embed.attr('src', response.path);
-                            embed.attr('width', '100%');
-                            embed.attr('height', '600px');
-                            embed.attr('type', 'application/pdf');
-                            embed.addClass('imgset');
+                            // var embed = $('<embed>');
+                            // embed.attr('src', response.path);
+                            // embed.attr('width', '100%');
+                            // embed.attr('height', '600px');
+                            // embed.attr('type', 'application/pdf');
+                            // embed.addClass('imgset');
 
-                            $('.pastpreview').html(embed);
+                            // $('.pastpreview').html(embed);
                         }
                         else if (response.Type.startsWith('image/')) {
-                            var img = $('<img>');
                             img.attr('src', response.path);
-                            img.attr('width', '100%');
-                            img.attr('height', '600px');
-                            img.addClass('imgset');
-
-                            $('.pastpreview').html(img);
+                            img.addClass(addclass);
                         }
                     }
                 });
@@ -544,29 +539,19 @@ $(document).ready(function () {
     function designateload(img){
         if ($('#server').val() == "cloud") {
             $.ajax({
-                url: prefix + '/img/' + ID, // データを取得するURLを指定
+                url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
                 method: 'GET',
                 dataType: "json",
                 success: function (response) {
-                    if (response.Type === 'application/pdf') {
-                        var embed = $('<embed>');
-                        embed.attr('src', response.path);
-                        embed.attr('width', '100%');
-                        embed.attr('height', '600px');
-                        embed.attr('type', 'application/pdf');
-                        embed.addClass('imgset');
-
-                        $('.pastpreview').html(embed);
+                    var Url = URL.createObjectURL(response);
+                    if (response.type.startsWith('image/')) {
+                        img.attr('src', Url);
                     }
-                    else if (response.Type.startsWith('image/')) {
-                        var img = $('<img>');
-                        img.attr('src', response.path);
-                        img.attr('width', '100%');
-                        img.attr('height', '600px');
-                        img.addClass('imgset');
 
-                        $('.pastpreview').html(img);
-                    }
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(error); // エラー処理
                 }
             });
         }

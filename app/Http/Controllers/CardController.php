@@ -229,17 +229,15 @@ class CardController extends Controller
                 $extension = $request->file('blob-image')->getClientOriginalExtension();
                 $filename = $this->generateRandomCode() . "." . $extension;
                 // S3にファイルを保存
-                $path = Storage::disk('s3')->putFileAs(
+                Storage::disk('s3')->putFileAs(
                     $prefix,
                     $request->file('blob-image'),
                     $filename,
                     'private'
                 );
 
-                // S3のURLを取得
-                $url = $filename;
 
-                $card->名刺ファイル表 = $url;
+                $card->名刺ファイル表 = $filename;
             }
         }
         // 切り取られていない画像の場合
@@ -257,7 +255,14 @@ class CardController extends Controller
                 $filename = $this->generateRandomCode() . "." . $extension;
 
                 // S3にファイルを保存
-                $path = Storage::disk('s3')->putFileAs($prefix, $request->file('card_file_front'), $filename, 'public');
+                Storage::disk('s3')->putFileAs(
+                    $prefix,
+                    $request->file('card_file_front'),
+                    $filename,
+                    'private'
+                );
+                $card->名刺ファイル表 = $filename;
+
             }
         }
         // 編集の場合で名刺ファイルを変更しない場合は何もかえない
@@ -501,7 +506,7 @@ class CardController extends Controller
         if (config('prefix.server') == "cloud") {
             // S3バケットの情報
             $bucket = 'astdocs.com';
-            $key = $filepath;
+            $key = config('prefix.prefix') . $filepath;
             $expiration = '+1 hour'; // 有効期限
 
             $s3Client = new S3Client([
