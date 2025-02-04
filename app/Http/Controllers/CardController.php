@@ -230,7 +230,7 @@ class CardController extends Controller
             else if ($server == 'cloud'){
                 $extension = $request->file('blob-image')->getClientOriginalExtension();
                 $filename = $this->generateRandomCode() . "." . $extension;
-                
+                dd($prefix . '/' . $filename);
                 // S3にファイルを保存
                 $path = Storage::disk('s3')->put($prefix . '/' . $filename, $request->file('blob-image'), 'public');
             
