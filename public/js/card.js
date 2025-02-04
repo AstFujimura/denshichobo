@@ -211,6 +211,7 @@ $(document).ready(function () {
 
         // サーバーに画像データを送信
         function sendImageToServer(file) {
+            var prefix = $('#prefix').val();
             const formData = new FormData();
             if (croppedBlob) {
                 formData.append('blob-image', croppedBlob, 'cropped-image.png'); // Blobをフォームデータに追加
@@ -220,7 +221,7 @@ $(document).ready(function () {
             }
             $('.loading_container').addClass('loading_container_open');
             $.ajax({
-                url: '/card/ocr', // Laravelのルートに合わせて変更
+                url: prefix + '/card/ocr', // Laravelのルートに合わせて変更
                 type: 'POST',
                 data: formData,
                 processData: false,
