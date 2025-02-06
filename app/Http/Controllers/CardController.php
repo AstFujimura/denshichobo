@@ -408,7 +408,7 @@ class CardController extends Controller
                 }
                 // 画像ファイルを削除
                 if ($request->hasFile('image') || $request->hasFile('blob-image')) {
-                    Storage::disk('public')->delete($path);
+                    Storage::delete($path);
                 }
                 // 保存やレスポンスとして返す処理
                 return response()->json([
@@ -421,7 +421,7 @@ class CardController extends Controller
             } finally {
                 // 画像ファイルを削除
                 if ($request->hasFile('image') || $request->hasFile('blob-image')) {
-                    Storage::disk('public')->delete($path);
+                    Storage::delete($path);
                 }
             }
         }
