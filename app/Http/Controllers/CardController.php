@@ -357,7 +357,7 @@ class CardController extends Controller
 
                 // 一時的にパブリックストレージに保存
                 $path = $imageFile->store('public/temp_business_cards');
-                $imageUrl = asset( config('prefix.prefix') .'/' . str_replace('public/', 'storage/', $path));
+                $imageUrl = asset(config('prefix.prefix') . '/' . str_replace('public/', 'storage/', $path));
 
                 if ($server == 'onpre') {
                     // Google Cloud Vision APIを使用
@@ -401,7 +401,7 @@ class CardController extends Controller
                             ],
                         ]
                     ]);
-
+                    dd($aiResponse);
                     $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
                 } else {
                     return response()->json(['status' => 'error', 'message' => 'サーバー種別が不明です。']);
