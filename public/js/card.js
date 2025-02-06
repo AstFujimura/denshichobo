@@ -474,9 +474,11 @@ $(document).ready(function () {
         });
         // 削除ボタンを押したとき
         $('.card_delete_button').on('click', function () {
+            var prefix = $('#prefix').val();
+            
             if (confirm('本当に名刺を削除しますか')) {
                 let cardId = $(this).data('card_id'); // ボタンにdata-id属性があると仮定
-                let actionUrl = '/card/delete'; // 削除用のエンドポイント（適宜変更）
+                let actionUrl = prefix + '/card/delete'; // 削除用のエンドポイント（適宜変更）
 
                 let form = $('<form>', {
                     'method': 'POST',
