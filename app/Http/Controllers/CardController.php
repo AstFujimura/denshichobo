@@ -419,7 +419,7 @@ class CardController extends Controller
             } finally {
                 // 画像ファイルを削除
                 if ($request->hasFile('image')) {
-                    Storage::disk('public')->delete($path);
+                    // Storage::disk('public')->delete($path);
                 }
             }
         }
