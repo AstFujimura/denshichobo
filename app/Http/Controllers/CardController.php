@@ -409,6 +409,7 @@ class CardController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'data' => $structuredData,
+                    'ai' => $aiResponse
                 ]);
                 // }
             } catch (\Exception $e) {
