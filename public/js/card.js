@@ -232,7 +232,6 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.status === 'success') {
                         try {
-                            console.log(response.data)
                             autoFillForm(response.data);
                             getCompanyCandidate(response.data.会社名, true);
                         }

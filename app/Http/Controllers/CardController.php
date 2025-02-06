@@ -410,7 +410,6 @@ class CardController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'data' => $structuredData,
-                    'ai' => $aiResponse
                 ]);
                 // }
             } catch (\Exception $e) {
@@ -418,7 +417,7 @@ class CardController extends Controller
             } finally {
                 // 画像ファイルを削除
                 if ($request->hasFile('image')) {
-                    // Storage::disk('public')->delete($path);
+                    Storage::disk('public')->delete($path);
                 }
             }
         }
