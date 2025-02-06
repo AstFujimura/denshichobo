@@ -76,7 +76,7 @@
         <div class="sidebar01">
 
             <div class="icon01">
-                <div class="user01" onclick="location.href='{{route('usersettingGet', ['system_type' => 'flow'])}}';">
+                <div class="user01" onclick="location.href='{{route('usersettingGet', ['system_type' => 'card'])}}';">
                     <div class="usericon01">
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/user_1_line.svg') }}" class="usericon01">
                     </div>
