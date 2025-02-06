@@ -393,6 +393,7 @@ class CardController extends Controller
                             ],
                         ]
                     ]);
+                    dd($aiResponse);
 
                     $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
                 } else {
