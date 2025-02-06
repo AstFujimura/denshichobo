@@ -407,7 +407,7 @@ class CardController extends Controller
                     return response()->json(['status' => 'error', 'message' => 'サーバー種別が不明です。']);
                 }
                 // 画像ファイルを削除
-                if ($request->hasFile('image')) {
+                if ($request->hasFile('image') || $request->hasFile('blob-image')) {
                     Storage::disk('public')->delete($path);
                 }
                 // 保存やレスポンスとして返す処理
@@ -420,7 +420,7 @@ class CardController extends Controller
                 return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             } finally {
                 // 画像ファイルを削除
-                if ($request->hasFile('image')) {
+                if ($request->hasFile('image') || $request->hasFile('blob-image')) {
                     Storage::disk('public')->delete($path);
                 }
             }
