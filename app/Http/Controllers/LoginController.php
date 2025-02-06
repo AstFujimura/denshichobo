@@ -40,20 +40,21 @@ class LoginController extends Controller
         if ($user && Hash::check($password, $user->password)) {
             Auth::login($user);
             // ログイン前に指定したurlがある場合("/"の場合も含む)
-            if (session('url.intended')) {
+            if (config('prefix.server') == 'onpre') {
                 // もしデモ環境でTAMERUのトップを指定しようとした場合は名刺管理の方に進む
-                if (session('url.intended') == route('topGet') && Version::where('tameru', false)->first()) {
+                if (session('url.intended')) {
+                    return redirect(session('url.intended'));
+
                     return redirect(route('cardviewget'));
                 }
                 return redirect(session('url.intended'));
             }
             // ログアウトボタンを押してログイン画面に遷移してきた場合
-            else {
+            else if (config('prefix.server') == 'cloud') {
                 // デモ環境でTAMERUのトップを指定しようとした場合は名刺管理の方に進む
                 if (Version::where('tameru', false)->first()) {
                     return redirect(route('cardviewget'));
                 }
-                return redirect()->route('startchoiceGet');
             }
         } else {
             // エラーメッセージをフラッシュデータに設定
