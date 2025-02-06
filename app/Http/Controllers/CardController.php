@@ -381,7 +381,7 @@ class CardController extends Controller
                 } else if ($server == 'cloud') {
                     // Cloud 環境: OpenAI に画像URLを直接送信し、一発で JSON を返す
                     $aiResponse = OpenAI::chat()->create([
-                        'model' => 'gpt-4o',
+                        'model' => 'gpt-4-vision-preview',
                         'messages' => [
                             ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
                             [
