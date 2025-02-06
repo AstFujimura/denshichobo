@@ -384,10 +384,13 @@ class CardController extends Controller
                         'model' => 'gpt-4o',
                         'messages' => [
                             ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
-                            ['role' => 'user', 'content' => [
-                                'image_url' => $imageUrl,
-                                'prompt' => $this->getJsonPrompt() // プロンプトの内容
-                            ]],
+                            [
+                                'role' => 'user',
+                                'content' => json_encode([
+                                    'image_url' => $imageUrl,
+                                    'prompt' => $this->getJsonPrompt() // プロンプトの内容
+                                ])
+                            ],
                         ],
                         'max_tokens' => 1000
                     ]);
