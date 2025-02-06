@@ -146,12 +146,15 @@
                 </div>
                 <div class="position_info">
                     <div class="position_info_content">
-                        <div class="position_info_content_title" id="position">
+                        <div class="position_info_content_title">
                             役職
+                        </div>
+                        <div class="position_info_content_text" id="position">
+                            {{ $now_card->役職 }}
                         </div>
                     </div>
                     @foreach ($now_card->departments as $index => $department)
-                    <div class="position_info_content">
+                    <div class="position_info_content department_content">
                         <div class="position_info_content_title">
                             部署{{ $index + 1 }}
                         </div>

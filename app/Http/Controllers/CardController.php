@@ -32,7 +32,7 @@ use App\Models\Card_Company;
 use App\Models\Carduser;
 use App\Models\Department;
 use App\Models\Card_Department;
-
+use Illuminate\Support\Facades\File as Filesystem;
 
 
 
@@ -94,7 +94,7 @@ class CardController extends Controller
             $departments = DB::table('card_department')
                 ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
                 ->leftJoin('cards', 'card_department.名刺ID', '=', 'cards.id')
-                ->where('card_department.名刺ID', $card->id)
+                ->where('card_department.名刺ID', $card->card_id)
                 ->orderBy('cards.id', 'desc')
                 ->get();
             $card->departments = $departments;
@@ -111,6 +111,12 @@ class CardController extends Controller
             ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
             ->where('cards.id', $id)
             ->first();
+
+        $department = DB::table('card_department')
+            ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
+            ->where('card_department.名刺ID', $id)
+            ->get();
+        $card->department = $department;
         return response()->json($card);
     }
     public function cardregistget(Request $request)
@@ -135,7 +141,7 @@ class CardController extends Controller
         $server = config('prefix.server');
         $edit = 'edit';
         $card = DB::table('cards')
-            ->select('cards.*', 'cardusers.*', 'companies.*')
+            ->select('cards.id as card_id', 'cards.*', 'cardusers.*', 'companies.*')
             ->leftJoin('cardusers', 'cards.名刺ユーザーID', '=', 'cardusers.id')
             ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
             ->where('cards.id', $id)
@@ -145,7 +151,7 @@ class CardController extends Controller
         $carduser_id = $carduser->id;
         $departments = DB::table('card_department')
             ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
-            ->where('card_department.名刺ID', $card->id)
+            ->where('card_department.名刺ID', $card->card_id)
             ->orderBy('card_department.id', 'asc')
             ->get();
         $card->departments = $departments;
@@ -171,6 +177,19 @@ class CardController extends Controller
     {
         $card_id = $request->card_id;
         $card = Card::find($card_id);
+        if (config('prefix.server') == 'cloud') {
+            Storage::disk('s3')->delete(config('preix.prefix') .'/'. $card->名刺ファイル表);
+        }
+        else if (config('prefix.server') == 'onpre') {
+            $uploadPath = config('custom.file_upload_path');
+            $fileName = $card->名刺ファイル表; // 削除したいファイル名
+            $filePath = $uploadPath . '/' . $fileName;
+            if (Filesystem::exists($filePath)) {
+                Filesystem::delete($filePath);
+            }
+        }
+
+
         // 名刺のユーザーが他に名刺を登録しているかを取得する
         $user_count = Card::where('名刺ユーザーID', $card->名刺ユーザーID);
 
@@ -207,8 +226,8 @@ class CardController extends Controller
         }
         // その名刺の変更
         if ($edit == 'edit') {
-            $carduser = Carduser::where('id', $request->carduser)->first();
-            $card = Card::where('id', $request->card_id)->first();
+            $carduser = Carduser::find($request->carduser);
+            $card = Card::find($request->card_id);
         }
         // 名刺の追加
         else if ($edit == 'add') {
@@ -301,40 +320,44 @@ class CardController extends Controller
             $card_department = Card_Department::where('名刺ID', $card->id)->delete();
         }
         while ($request->has('department' . $department_number)) {
-            // 部署名を取得
-            $department_name = $request->input('department' . $department_number);
+            // 部署名が入力されている場合
+            if ($request->input('department' . $department_number) != '') {
+                // 部署名を取得
+                $department_name = $request->input('department' . $department_number);
 
-            $existing_department = Department::where('部署名', $department_name)
-                ->where('会社ID', $company->id)
-                ->first();
-            if ($existing_department) {
-                $department = $existing_department;
-            } else {
-                $department = new Department();
-                $department->会社ID = $company->id;
-                $department->部署名 = $department_name;
+                $existing_department = Department::where('部署名', $department_name)
+                    ->where('会社ID', $company->id)
+                    ->first();
+                if ($existing_department) {
+                    $department = $existing_department;
+                } else {
+                    $department = new Department();
+                    $department->会社ID = $company->id;
+                    $department->部署名 = $department_name;
 
-                // 上位部署IDを設定（最初の部署以外）
-                if ($department_number != 1) {
-                    $department->上位部署ID = $upper_department_id;
+                    // 上位部署IDを設定（最初の部署以外）
+                    if ($department_number != 1) {
+                        $department->上位部署ID = $upper_department_id;
+                    }
                 }
+
+                // 部署データを保存
+                $department->save();
+                // 上位部署IDを取得
+                $upper_department_id = $department->id;
+
+
+                $card_department = new Card_Department();
+                $card_department->名刺ID = $card->id;
+                $card_department->部署ID = $department->id;
+                $card_department->save();
             }
-
-            // 部署データを保存
-            $department->save();
-            // 上位部署IDを取得
-            $upper_department_id = $department->id;
-
             // 次の部署番号に進む
             $department_number++;
-            $card_department = new Card_Department();
-            $card_department->名刺ID = $card->id;
-            $card_department->部署ID = $department->id;
-            $card_department->save();
         }
 
         if ($edit == 'edit') {
-            return redirect()->route('cardeditget', ['id' => $carduser->id])->with('success', '名刺を更新しました。');
+            return redirect()->route('carddetailget', ['id' => $carduser->id])->with('success', '名刺を更新しました。');
         } else {
             return redirect()->route('cardregistget')->with('success', '名刺を登録しました。');
         }
@@ -448,7 +471,7 @@ class CardController extends Controller
             \"名前\": \"\",
             \"名前カナ\": \"\",
             \"会社名\": \"\",
-            \"会社名略称\": \"\",
+            \"会社名カナ\": \"\",
             \"役職\": \"\",
             \"部署1\": \"\",
             \"部署2\": \"\",

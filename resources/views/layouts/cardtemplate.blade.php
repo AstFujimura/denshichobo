@@ -142,12 +142,12 @@
 
     @if (session('error'))
     <input type="hidden" id="error_message" value="{{session('error')}}">
-    <div class="error_gray"></div>
+    <!-- <div class="error_gray"></div> -->
     {{session()->forget('error')}}
     @endif
     @if (session('success'))
     <input type="hidden" id="success_message" value="{{session('success')}}">
-    <div class="success_gray"></div>
+    <!-- <div class="success_gray"></div> -->
     {{session()->forget('success')}}
     @endif
 </body>

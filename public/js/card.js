@@ -12,28 +12,15 @@ $(document).ready(function () {
                 var img = $(this);
                 if ($('#server').val() == "cloud") {
                     $.ajax({
-                        url: prefix + '/img/' + ID, // データを取得するURLを指定
+                        url: prefix + '/card/img/' + $('#card_id').val() + '/front', // データを取得するURLを指定
                         method: 'GET',
                         dataType: "json",
                         success: function (response) {
                             if (response.Type === 'application/pdf') {
-                                var embed = $('<embed>');
-                                embed.attr('src', response.path);
-                                embed.attr('width', '100%');
-                                embed.attr('height', '600px');
-                                embed.attr('type', 'application/pdf');
-                                embed.addClass('imgset');
-
-                                $('.pastpreview').html(embed);
                             }
                             else if (response.Type.startsWith('image/')) {
-                                var img = $('<img>');
-                                img.attr('src', response.path);
-                                img.attr('width', '100%');
-                                img.attr('height', '600px');
-                                img.addClass('imgset');
-
-                                $('.pastpreview').html(img);
+                                var Url = URL.createObjectURL(response);
+                                img.attr('src', Url);
                             }
                         }
                     });
@@ -529,7 +516,24 @@ $(document).ready(function () {
             $('#company_phone_number').text(response.電話番号);
             $('#company_fax_number').text(response.FAX番号);
             $('#position').text(response.役職);
-            $('#department_name').text(response.部署名);
+
+
+
+            $('.department_content').each(function () {
+                $(this).remove();
+            })
+            response.department.forEach(function (department, index) {
+                $('.position_info').append(`
+                    <div class="position_info_content department_content">
+                        <div class="position_info_content_title">
+                            部署${index + 1}
+                        </div>
+                        <div class="position_info_content_text" id="department{{$index+1}}">
+                            ${department.部署名}
+                        </div>
+                    </div>
+                `)
+            })
         }
     }
     // data-card_idから画像を読み込んで出力
