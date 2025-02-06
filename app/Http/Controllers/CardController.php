@@ -391,8 +391,7 @@ class CardController extends Controller
                                     'prompt' => $this->getJsonPrompt() // プロンプトの内容
                                 ])
                             ],
-                        ],
-                        'max_tokens' => 1000
+                        ]
                     ]);
 
                     $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
