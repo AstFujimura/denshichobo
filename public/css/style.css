@@ -701,18 +701,17 @@ a {
   padding: 1rem 2rem;
   border-radius: 30px;
   margin-left: 3rem;
+  width: 30rem;
+  max-width: 75%;
 }
-@media screen and (max-width: 800px) {
-  #usersetting {
-    font-size: 0.8rem;
-    margin-inline: auto;
-    width: 30rem;
-    max-width: 75%;
-  }
-  #usersetting .input-container {
-    flex-direction: column;
-    margin-top: 1rem;
-  }
+#usersetting .input-container {
+  flex-direction: column;
+  margin-top: 1rem;
+}
+#usersetting .input-container .dateform .input-field {
+  width: 100%;
+}
+@media screen and (min-width: 801px) {
   #usersetting .important {
     width: 16rem;
     padding: 0;
@@ -729,7 +728,29 @@ a {
   #usersetting .important .importantelement.open {
     display: flex;
     flex-direction: column;
-    align-items: center;
+  }
+}
+@media screen and (max-width: 800px) {
+  #usersetting {
+    font-size: 0.8rem;
+    margin-inline: auto;
+  }
+  #usersetting .important {
+    width: 20rem;
+    padding: 0;
+    position: relative;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.5s ease;
+    border: solid 0.1px #bababa;
+    margin-block: 20px;
+  }
+  #usersetting .important .important_title {
+    margin: 0.7rem 3rem;
+  }
+  #usersetting .important .importantelement.open {
+    display: flex;
+    flex-direction: column;
   }
 }
 #usersetting .important_title::before,

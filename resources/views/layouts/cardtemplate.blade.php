@@ -55,7 +55,7 @@
 
 
 
-    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet', ['system_type' => 'flow'])}}';">
+    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet', ['system_type' => 'card'])}}';">
         <div class="usermenu01">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
         </div>

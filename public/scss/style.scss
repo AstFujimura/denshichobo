@@ -1,11 +1,12 @@
-
 @font-face {
   font-family: 'Noto';
   src: url('../font/Noto.ttf');
 }
+
 body {
   font-family: 'Noto';
 }
+
 html {
   font-size: 62.5%;
 
@@ -771,20 +772,22 @@ a {
   padding: 1rem 2rem;
   border-radius: 30px;
   margin-left: 3rem;
+  width: 30rem;
+  max-width: 75%;
+  .input-container {
+    flex-direction: column;
+    margin-top: 1rem;
 
-  @media screen and (max-width: 800px) {
-    font-size: 0.8rem;
-    margin-inline: auto;
-    width: 30rem;
-    max-width: 75%;
+    .label {
 
-
-    .input-container {
-      flex-direction: column;
-      margin-top: 1rem;
-      .label {}
     }
-
+    .dateform{
+      .input-field{
+        width: 100%;
+      }
+    }
+  }
+  @media screen and (min-width: 801px) {
     .important {
       width: 16rem;
       padding: 0;
@@ -802,7 +805,35 @@ a {
       .importantelement.open {
         display: flex;
         flex-direction: column;
-        align-items: center;
+      }
+
+    }
+  }
+
+  @media screen and (max-width: 800px) {
+    font-size: 0.8rem;
+    margin-inline: auto;
+
+
+
+
+    .important {
+      width: 20rem;
+      padding: 0;
+      position: relative;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all .5s ease;
+      border: solid 0.1px #bababa;
+      margin-block: 20px;
+
+      .important_title {
+        margin: 0.7rem 3rem;
+      }
+
+      .importantelement.open {
+        display: flex;
+        flex-direction: column;
       }
 
     }
@@ -837,6 +868,7 @@ a {
     }
   }
 }
+
 .pagetitle {
   margin-top: 20px;
 }
@@ -1187,6 +1219,7 @@ a {
   width: 13rem;
   margin-top: 20px;
   color: white;
+
   &:hover {
     background: rgb(3, 75, 138);
     color: white;
