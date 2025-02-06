@@ -180,8 +180,7 @@ class CardController extends Controller
         if (config('prefix.server') == 'cloud') {
             // 権限などがまだなので保留
             // Storage::disk('s3')->delete(config('preix.prefix') .'/'. $card->名刺ファイル表);
-        }
-        else if (config('prefix.server') == 'onpre') {
+        } else if (config('prefix.server') == 'onpre') {
             $uploadPath = config('custom.file_upload_path');
             $fileName = $card->名刺ファイル表; // 削除したいファイル名
             $filePath = $uploadPath . '/' . $fileName;
@@ -223,6 +222,9 @@ class CardController extends Controller
             $company = new Company();
             $company->会社名 = $request->company_name;
             $company->会社名カナ = $request->company_name_kana;
+            $company->会社所在地 = $request->company_address;
+            $company->電話番号 = $request->company_phone_number;
+            $company->FAX番号 = $request->company_fax_number;
             $company->save();
         }
         // その名刺の変更
@@ -636,7 +638,11 @@ class CardController extends Controller
         $companies = Company::where('会社名', 'like', '%' . $company_name . '%')->get();
         foreach ($companies as $company) {
             $card = Card::where('会社ID', $company->id)->first();
-            $company->card = $card;
+            if ($card) {
+                $company->card = $card;
+            } else {
+                $companies = $companies->except($company->id);
+            }
         }
         return response()->json($companies);
     }

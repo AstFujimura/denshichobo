@@ -157,12 +157,12 @@ body .usersettingtitle {
   color: #868686;
 }
 .card_view_container .card_view_card .text_container .company_info .card_view_card_company {
-  width: 10rem;
+  width: 20rem;
 }
 @media screen and (max-width: 600px) {
   .card_view_container .card_view_card .text_container .company_info .card_view_card_company {
     font-size: 0.8rem;
-    width: 8rem;
+    width: 11rem;
   }
 }
 @media screen and (max-width: 400px) {
@@ -172,7 +172,9 @@ body .usersettingtitle {
   }
 }
 .card_view_container .card_view_card .text_container .company_info .card_view_card_department {
-  width: 10rem;
+  width: 15rem;
+  height: 3rem;
+  overflow-y: auto;
 }
 @media screen and (max-width: 600px) {
   .card_view_container .card_view_card .text_container .company_info .card_view_card_department {
@@ -369,6 +371,11 @@ body .usersettingtitle {
   display: grid;
   margin-left: 2rem;
 }
+@media screen and (max-width: 800px) {
+  .card_detail_container .card_info_container .card_detail_content .position_info {
+    margin-bottom: 3rem;
+  }
+}
 @media screen and (min-width: 1200px) {
   .card_detail_container .card_info_container .card_detail_content {
     grid-template-columns: 1fr 1fr;
@@ -496,24 +503,41 @@ body .usersettingtitle {
   width: 15rem;
   font-size: 1rem;
 }
-.card_detail_container .card_info_container .card_edit_button {
+.card_detail_container .card_info_container .card_edit_delete_container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+@media screen and (max-width: 1200px) {
+  .card_detail_container .card_info_container .card_edit_delete_container {
+    display: none;
+  }
+}
+.card_detail_container .card_info_container .card_edit_delete_container .card_delete_button {
+  background: #ad3e3e;
+  color: white;
+  border-radius: 1rem;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  width: fit-content;
+  margin-top: 3rem;
+  display: block;
+}
+.card_detail_container .card_info_container .card_edit_delete_container .card_delete_button:hover {
+  background: #803131;
+}
+.card_detail_container .card_info_container .card_edit_delete_container .card_edit_button {
   background: #0B294C;
   color: white;
   border-radius: 1rem;
   padding: 0.7rem 1.2rem;
   cursor: pointer;
   width: fit-content;
-  margin-inline: auto;
   margin-top: 3rem;
   display: block;
 }
-.card_detail_container .card_info_container .card_edit_button:hover {
+.card_detail_container .card_info_container .card_edit_delete_container .card_edit_button:hover {
   background: #12437c;
-}
-@media screen and (max-width: 1200px) {
-  .card_detail_container .card_info_container .card_edit_button {
-    display: none;
-  }
 }
 
 .crop_controller_container {
@@ -645,6 +669,11 @@ body .usersettingtitle {
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
 }
+@media screen and (min-width: 1201px) {
+  .card_regist_container .card_regist_form {
+    margin-bottom: 10rem;
+  }
+}
 @media screen and (max-width: 1200px) {
   .card_regist_container .card_regist_form {
     grid-template-columns: 1fr 1fr;
@@ -700,23 +729,24 @@ body .usersettingtitle {
   display: flex;
 }
 .card_regist_container .card_regist_form .card_regist_content .button_container .send_button {
-  background: #41c9ff;
+  background: #29b6ed;
   color: white;
   border-radius: 1rem;
-  width: 7rem;
-  height: 2rem;
+  width: 10rem;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  box-shadow: 0px 0px 4px 0px #87e569;
 }
 .card_regist_container .card_regist_form .card_regist_content .button_container .send_button:hover {
-  background: #21a9d9;
+  background: #228fbb;
 }
 .card_regist_container .card_regist_form .card_regist_content .button_container .crop_button {
   margin-left: 1rem;
-  width: 6rem;
-  height: 2rem;
+  width: 7rem;
+  height: 3rem;
   border-radius: 1rem;
   cursor: pointer;
   justify-content: center;
@@ -789,6 +819,22 @@ body .usersettingtitle {
     grid-row: 2/3;
   }
 }
+@media screen and (max-width: 800px) {
+  .card_regist_container .card_regist_form .form_container.position_info {
+    margin-bottom: 12rem;
+  }
+}
+.card_regist_container .card_regist_form .form_container .add_department_button {
+  background: #73bb73;
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 2rem;
+  cursor: pointer;
+  border: 0;
+}
+.card_regist_container .card_regist_form .form_container .add_department_button:hover {
+  background: #487748;
+}
 .card_regist_container .card_regist_form .form_container table {
   width: 100%;
 }
@@ -830,6 +876,8 @@ body .usersettingtitle {
   color: #ffffff;
   padding: 0.1rem 0.3rem;
   border-radius: 0.2rem;
+  display: flex;
+  justify-content: center;
 }
 .card_regist_container .card_regist_form .form_container table tr td .delete_department_button:hover {
   background: #ff8585;

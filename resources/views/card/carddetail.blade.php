@@ -167,10 +167,16 @@
             </div>
 
 
+            <div class="card_edit_delete_container">
+                <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" id="card_edit_button" class="card_edit_button" data-card_id="{{ $now_card->id }}">
+                    この名刺を編集する
+                </a>
+                <a class="card_delete_button" data-card_id="{{ $now_card->card_id }}">
+                    @csrf
+                    この名刺を削除する
+                </a>
+            </div>
 
-            <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" id="card_edit_button" class="card_edit_button" data-card_id="{{ $now_card->id }}">
-                この名刺を編集する
-            </a>
         </div>
 
     </div>

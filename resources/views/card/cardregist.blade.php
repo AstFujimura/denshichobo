@@ -162,7 +162,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><button type="button" id="add_department" data-now_department_number="1">部署追加</button></td>
+                        <td colspan="2"><button type="button" class="add_department_button" id="add_department" data-now_department_number="1">部署追加</button></td>
                     </tr>
                     @else
                     @foreach($card->departments as $index => $department)
@@ -181,7 +181,7 @@
                     </tr>
                     @endforeach
                     <tr>
-                        <td colspan="2"><button type="button" id="add_department" data-now_department_number="{{count($card->departments)}}">部署追加</button></td>
+                        <td colspan="2"><button type="button" class="add_department_button" id="add_department" data-now_department_number="{{count($card->departments)}}">部署追加</button></td>
                     </tr>
                     @endif
 
