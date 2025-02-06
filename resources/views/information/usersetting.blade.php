@@ -1,5 +1,8 @@
 
-@extends(@$system_type == "tameru" ? 'layouts.template' : 'layouts.flowtemplate')
+@extends('layouts.'.$system_type.'template')
+
+
+
 
 @section('title')
 TAMERU ~電子帳簿保存

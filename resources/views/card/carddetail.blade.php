@@ -10,6 +10,17 @@
 @section('main')
 <div class="MainElement">
     <div class="card_detail_container">
+        <div class="gray_area">
+            <div class="popup_content">
+                <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" class="card_edit_button" data-card_id="{{ $now_card->card_id }}">
+                    この名刺を編集する
+                </a>
+                <a class="card_delete_button" data-card_id="{{ $now_card->card_id }}">
+                    @csrf
+                    この名刺を削除する
+                </a>
+            </div>
+        </div>
         <div class="card_history_container">
             @foreach ($cards as $card)
             <div class="card_history_content">
@@ -49,8 +60,8 @@
             <div class="card_detail_content">
                 <div class="card_info_content">
                     <div class="setting_container">
-                        <div class="card_history_button">名刺履歴</div>
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/menu_blue.svg')}}" alt="">
+                        <img class="card_history_button" src="{{ asset(config('prefix.prefix').'/'.'img/card/history.svg')}}" alt="">
+                        <img class="card_setting_button" src="{{ asset(config('prefix.prefix').'/'.'img/card/setting.svg')}}" alt="">
                     </div>
                     <div class="card_detail_card">
                         <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="true" alt="">

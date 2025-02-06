@@ -452,9 +452,15 @@ $(document).ready(function () {
     if ($('#card_detail_title').length > 0) {
         var prefix = $('#prefix').val();
         lazyload('imgset');
+        // 歴代の名刺の選択が変わった時
         $(document).on('change', 'input[name="card_history"]', function () {
-            var card_edit_button = $('#card_edit_button');
+            var card_edit_button = $('.card_edit_button');
+            var card_delete_button = $('.card_delete_button');
             card_edit_button.attr('href', prefix + '/card/edit/' + $(this).val());
+            card_edit_button.data('card_id', $(this).val());
+            card_edit_button.attr('data-card_id', $(this).val());
+            card_delete_button.data('card_id', $(this).val());
+            card_delete_button.attr('data-card_id', $(this).val());
             $('.imgset').data('card_id',$(this).val())
             $('.card_history_container').toggleClass('card_history_container_open');
             $.ajax({
@@ -468,10 +474,48 @@ $(document).ready(function () {
             });
 
         });
-
+        // 設定ボタンを押したとき
+        $('.card_setting_button').on('click', function () {
+            $('.gray_area').addClass('gray_area_open');
+        });
+        // グレーエリアをクリックした時
+        $('.gray_area').on('click',function(e){
+            // 編集ボタンや名刺削除ボタンでなければグレーエリアを非表示
+            if($(e.target).closest('.card_setting_button,.card_delete_button').length == 0){
+                $('.gray_area').removeClass('gray_area_open');
+            }
+        });
+        // 削除ボタンを押したとき
+        $('.card_delete_button').on('click',function(){
+            if (confirm('本当に名刺を削除しますか')){
+                let cardId = $(this).data('card_id'); // ボタンにdata-id属性があると仮定
+                let actionUrl = '/card/delete'; // 削除用のエンドポイント（適宜変更）
+            
+                let form = $('<form>', {
+                    'method': 'POST',
+                    'action': actionUrl
+                }).append(
+                    $('<input>', {
+                        'type': 'hidden',
+                        'name': 'card_id',
+                        'value': cardId
+                    }),
+                    $('<input>', {
+                        'type': 'hidden',
+                        'name': '_token',
+                        'value': $('input[name="_token"]').val() // CSRF対策（Laravelの場合）
+                    })
+                );
+            
+                $('body').append(form);
+                form.submit();
+            }
+        })
         
         $('.card_history_button,.card_history_close_button').on('click', function () {
             $('.card_history_container').toggleClass('card_history_container_open');
+
+            
         })
 
         function card_detail_renew(response){

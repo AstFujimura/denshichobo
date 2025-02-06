@@ -728,7 +728,7 @@ class TopController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        $system_type = $request->input('system_type') ?? "tameru";
+        $system_type = $request->input('system_type') ?? "";
 
         $user = Auth::user();
         return view('information.usersetting', compact('user', 'prefix', 'server', 'system_type'));

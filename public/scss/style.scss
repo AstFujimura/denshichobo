@@ -1,3 +1,31 @@
+
+@font-face {
+  font-family: 'Noto';
+  src: url('../font/Noto.ttf');
+}
+body {
+  font-family: 'Noto';
+}
+html {
+  font-size: 62.5%;
+
+  @media (min-width: 1441px) {
+    font-size: 0.8vw;
+  }
+
+  @media (min-width: 1201px) and (max-width: 1440px) {
+    font-size: 1vw;
+  }
+
+  @media (min-width: 401px) and (max-width: 1200px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 3.5vw;
+  }
+}
+
 a {
   text-decoration: none;
 }
@@ -728,22 +756,87 @@ a {
 
 
 
-.input-container {
-  display: flex;
-  margin-top: 20px;
-}
 
-.label {
-  width: 200px;
-}
 
 .red {
   color: red;
   font-size: 12px;
 }
 
+// ユーザー設定
+#usersetting {
+  width: fit-content;
+  max-width: 95%;
+  background: white;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  margin-left: 3rem;
+
+  @media screen and (max-width: 800px) {
+    font-size: 0.8rem;
+    margin-inline: auto;
+    width: 30rem;
+    max-width: 75%;
 
 
+    .input-container {
+      flex-direction: column;
+      margin-top: 1rem;
+      .label {}
+    }
+
+    .important {
+      width: 16rem;
+      padding: 0;
+      position: relative;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all .5s ease;
+      border: solid 0.1px #bababa;
+      margin-block: 20px;
+
+      .important_title {
+        margin: 0.7rem 3rem;
+      }
+
+      .importantelement.open {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+    }
+
+  }
+
+  .important_title::before,
+  .important_title::after {
+    position: absolute;
+    content: "";
+    width: 1rem;
+    height: 2px;
+    background-color: #333;
+    top: 1.35rem;
+    left: 5%;
+    transition: all 0.3s ease;
+  }
+
+  .usersettingbutton {
+    border: 0;
+    background: rgb(0 108 203);
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+    height: 3rem;
+    width: 14rem;
+    font-size: 1rem;
+
+    &:hover {
+      background: rgb(3, 71, 131);
+    }
+  }
+}
 .pagetitle {
   margin-top: 20px;
 }
@@ -984,34 +1077,6 @@ a {
   display: none;
 }
 
-@media(max-width:480px) {
-  .important {
-    position: relative;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: normal;
-    transition: all .5s ease;
-    padding: 10px 50px;
-    border: solid 1px #bababa;
-    margin-block: 20px;
-  }
-
-}
-
-@media(min-width:480px) {
-  .important {
-    position: relative;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: normal;
-    transition: all .5s ease;
-    padding: 10px 50px;
-    width: 360px;
-    border: solid 1px #bababa;
-    margin-block: 20px;
-  }
-
-}
 
 
 /*アイコンの＋と×*/
@@ -1113,20 +1178,21 @@ a {
 }
 
 .adminregistbutton {
-  border: solid #2978a6 2px;
-  background: rgb(196, 243, 255);
+  border: 0;
+  background: rgb(0, 108, 203);
   padding: 5px;
   border-radius: 3px;
   cursor: pointer;
-  height: 32px;
-  width: 100px;
+  height: 3rem;
+  width: 13rem;
   margin-top: 20px;
+  color: white;
+  &:hover {
+    background: rgb(3, 75, 138);
+    color: white;
+  }
 }
 
-.adminregistbutton:hover {
-  background: rgb(24, 115, 189);
-  color: white;
-}
 
 @media (max-width:800px) {
   .top_table_div {
@@ -1293,54 +1359,13 @@ a {
   padding: 5px;
 }
 
-.grouptable_header>div {
-  background: rgb(245, 227, 217);
-  text-align: center;
-  border-right: solid 1px white;
-  padding: 5px;
-}
 
-.documenttable_body>div {
-  padding: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  border-right: solid 1px white;
-  border-bottom: solid 1px rgb(127, 127, 207);
-  height: 30px;
-  line-height: 30px;
-
-
-}
-
-.grouptable_body>div {
-  padding: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  border-right: solid 1px white;
-  border-bottom: solid 1px rgb(127, 127, 207);
-  height: 30px;
-  line-height: 30px;
-
-
-}
-
-.documenttable_header {
-  display: flex;
-}
-
-.grouptable_header {
-  display: flex;
-}
 
 .documenttable_body {
   display: flex;
 }
 
-.grouptable_body {
-  display: flex;
-}
+
 
 .admin_use {
   width: 50px;
@@ -1356,10 +1381,7 @@ a {
   text-align: center;
 }
 
-.admin_group {
-  width: 183px;
-  text-align: left !important;
-}
+
 
 .admin_position {
   width: 110px;
@@ -1370,23 +1392,12 @@ a {
   width: 100px;
 }
 
-.admin_group_change {
-  width: 100px;
-}
 
 .admin_document_delete {
   width: 100px;
 }
 
-.admin_group_delete {
-  width: 100px;
-}
 
-.admin_group_detail_change {
-  width: 100px;
-  display: flex;
-  justify-content: center;
-}
 
 .admin_document_value {
   width: 100px;
@@ -1448,22 +1459,7 @@ a {
   color: white;
 }
 
-.gr_change_button {
-  margin: auto;
-  cursor: pointer;
-  background: rgb(217, 255, 192);
-  border: solid 2px rgb(12, 124, 22);
-  border-radius: 5px;
-  text-align: center;
-  font-size: 15px;
-  width: 44px;
-  height: 27px;
-}
 
-.gr_change_button:hover {
-  background: rgb(12, 124, 22);
-  color: white;
-}
 
 .docu_delete_button {
   margin: auto;
@@ -1483,23 +1479,6 @@ a {
   color: white;
 }
 
-.gr_delete_button {
-  margin: auto;
-  cursor: pointer;
-  background: pink;
-  border: solid 2px red;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 15px;
-  width: 44px;
-  height: 27px;
-
-}
-
-.gr_delete_button:hover {
-  background: red;
-  color: white;
-}
 
 .add_document {
   width: 100px;
@@ -1770,6 +1749,7 @@ a {
   border: solid 1px red !important;
   background: rgb(255, 234, 238);
 }
+
 .errorselect option {
   background: white;
 }

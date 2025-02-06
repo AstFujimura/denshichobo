@@ -327,7 +327,8 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/edit/{id}', [CardController::class, 'cardeditget'])->name('cardeditget');
             // 名刺追加(cardusersのid)
             Route::get('/card/add/{id}', [CardController::class, 'cardaddget'])->name('cardaddget');
-            
+            // 名刺削除
+            Route::post('/card/delete', [CardController::class, 'carddeletepost'])->name('carddeletepost');
             // 名刺登録・編集ポスト
             Route::post('/card/regist', [CardController::class, 'cardregistpost'])->name('cardregistpost');
             // 名刺OCR

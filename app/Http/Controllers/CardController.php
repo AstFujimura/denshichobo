@@ -73,6 +73,7 @@ class CardController extends Controller
     {
         return view('card.cardcompanyview');
     }
+    // 名刺詳細画面
     public function carddetailget(Request $request, $id)
     {
         $prefix = config('prefix.prefix');
@@ -81,6 +82,9 @@ class CardController extends Controller
         }
         $server = config('prefix.server');
         $carduser = Carduser::where('id', $id)->first();
+        if (!$carduser) {
+            return redirect()->route('cardviewget')->with('error', '名刺が見つかりませんでした。');
+        }
         $cards = DB::table('cards')
             ->select('cards.id as card_id', 'cards.*',  'companies.*')
             ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
@@ -162,6 +166,25 @@ class CardController extends Controller
         $card = 0;
 
         return view('card.cardregist', compact("prefix", "server", "edit", "carduser", "card_id", "card", "carduser_id"));
+    }
+    public function carddeletepost(Request $request)
+    {
+        $card_id = $request->card_id;
+        $card = Card::find($card_id);
+        // 名刺のユーザーが他に名刺を登録しているかを取得する
+        $user_count = Card::where('名刺ユーザーID', $card->名刺ユーザーID);
+
+        // 登録している名刺が該当の一つのみである場合は名刺ユーザーごと消去する
+        if ($user_count->count() == 1) {
+            $carduser = Carduser::find($card->名刺ユーザーID);
+            $carduser->delete();
+        }
+        // 他に名刺を登録している場合は名刺のみを消去する
+        else {
+            $card->delete();
+        }
+
+        return redirect()->route('cardviewget')->with('success', '名刺を削除しました。');
     }
 
     public function cardregistpost(Request $request)
@@ -262,7 +285,6 @@ class CardController extends Controller
                     'private'
                 );
                 $card->名刺ファイル表 = $filename;
-
             }
         }
         // 編集の場合で名刺ファイルを変更しない場合は何もかえない
@@ -319,82 +341,115 @@ class CardController extends Controller
     }
     public function cardocrpost(Request $request)
     {
+        $server = config('prefix.server');
+
         // 画像ファイルを保存
         if ($request->hasFile('image') || $request->hasFile('blob-image')) {
 
-            // Google Cloud Vision APIを初期化
-            $imageAnnotator = new ImageAnnotatorClient();
-            // 画像データを取得
-
-            // 切り取ったblob画像の場合
-            if ($request->hasFile('blob-image')) {
-                $imageFile  = $request->file('blob-image');
-                $imageData = file_get_contents($imageFile->getRealPath());
-            }
-            // 切り取られていない画像の場合
-            else {
-                $path = $request->file('image')->store('business_cards', 'public');
-                $imagePath = storage_path('app/public/' . $path);
-                $imageData = file_get_contents($imagePath);
-            }
 
             try {
-                // // 画像データを取得
-                // $imagePath = storage_path('app/public/' . $path);
-                // $imageData = file_get_contents($imagePath);
+                // 切り取ったblob画像の場合
+                if ($request->hasFile('blob-image')) {
+                    $imageFile  = $request->file('blob-image');
+                } else {
+                    $imageFile = $request->file('image');
+                }
 
-                // Vision APIでテキストを抽出
-                $response = $imageAnnotator->documentTextDetection($imageData);
-                $annotation = $response->getFullTextAnnotation();
+                // 一時的にパブリックストレージに保存
+                $path = $imageFile->store('public/temp_business_cards');
+                $imageUrl = asset(str_replace('public/', 'storage/', $path));
 
-                if ($annotation) {
-                    $rawText = $annotation->getText();
+                if ($server == 'onpre') {
+                    // Google Cloud Vision APIを使用
+                    $imageAnnotator = new ImageAnnotatorClient();
+                    $imageData = file_get_contents(storage_path('app/' . $path));
+                    $response = $imageAnnotator->documentTextDetection($imageData);
+                    $annotation = $response->getFullTextAnnotation();
+                    $rawText = $annotation ? $annotation->getText() : '';
+                    $imageAnnotator->close();
 
-                    // OpenAI APIでJSON形式に整形
-                    $prompt = "
-                    以下のテキストは名刺から抽出されたデータです。このデータを以下のフォーマットに従って整理してください。
-
-                    - 住所に郵便番号が含まれている場合、その郵便番号を取り除いて、専用の「郵便番号」フィールドに入れてください。
-                    - 郵便番号と電話番号は数字のみを抽出してください。
-                    - 部署が複数ある場合は、各部署を「部署1」「部署2」といった形式で記入し、3つ以上の部署がある場合は「部署3」「部署4」のように追加してください。
-                    - 「名前カナ」や「会社名カナ」には推測して必ずカタカナで入力してください。
-                    - 「名前」や「名前カナ」は苗字と名前のスペースを区切らないで入力してください。
-                      \"名前\": \"\",
-                      \"名前カナ\": \"\",
-                      \"会社名\": \"\",
-                      \"会社名略称\": \"\",
-                      \"役職\": \"\",
-                      \"部署1\": \"\",
-                      \"部署2\": \"\",
-                      \"メールアドレス\": \"\",
-                      \"電話番号\": \"\",
-                      \"住所\": \"\",
-                      \"郵便番号\": \"\"
-                    }
-
-                    テキスト:
-                    {$rawText}
-                    ";
-
-
+                    // OpenAI に JSON 変換を依頼
                     $aiResponse = OpenAI::chat()->create([
                         'model' => 'gpt-3.5-turbo',
                         'messages' => [
                             ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
-                            ['role' => 'user', 'content' => $prompt],
+                            ['role' => 'user', 'content' => $this->getJsonPrompt($rawText)],
                         ],
                     ]);
 
-                    $structuredData = $aiResponse->choices[0]->message->content;
-
-                    // 保存やレスポンスとして返す処理
-                    return response()->json([
-                        'status' => 'success',
-                        'data' => json_decode($structuredData, true),
+                    $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
+                } else if ($server == 'cloud') {
+                    // Cloud 環境: OpenAI に画像URLを直接送信し、一発で JSON を返す
+                    $aiResponse = OpenAI::chat()->create([
+                        'model' => 'gpt-4-vision-preview',
+                        'messages' => [
+                            ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
+                            ['role' => 'user', 'content' => [
+                                ['type' => 'text', 'text' => $this->getJsonPrompt()],
+                                ['type' => 'image_url', 'image_url' => $imageUrl]
+                            ]],
+                        ],
+                        'max_tokens' => 1000
                     ]);
+
+                    $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
                 } else {
-                    return response()->json(['status' => 'error', 'message' => 'テキストが検出されませんでした。']);
+                    return response()->json(['status' => 'error', 'message' => 'サーバー種別が不明です。']);
                 }
+                $deletePath = str_replace('public/', '', $path);
+                Storage::delete('public/' . $deletePath);
+                // 保存やレスポンスとして返す処理
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $structuredData,
+                ]);
+                // if ($annotation) {
+
+                //     // OpenAI APIでJSON形式に整形
+                //     $prompt = "
+                //         以下のテキストは名刺から抽出されたデータです。このデータを以下のフォーマットに従って整理してください。
+
+                //         - 住所に郵便番号が含まれている場合、その郵便番号を取り除いて、専用の「郵便番号」フィールドに入れてください。
+                //         - 郵便番号と電話番号は数字のみを抽出してください。
+                //         - 部署が複数ある場合は、各部署を「部署1」「部署2」といった形式で記入し、3つ以上の部署がある場合は「部署3」「部署4」のように追加してください。
+                //         - 「名前カナ」や「会社名カナ」には推測して必ずカタカナで入力してください。
+                //         - 「名前」や「名前カナ」は苗字と名前のスペースを区切らないで入力してください。
+                //         フォーマット:
+                //         {
+                //         \"名前\": \"\",
+                //         \"名前カナ\": \"\",
+                //         \"会社名\": \"\",
+                //         \"会社名略称\": \"\",
+                //         \"役職\": \"\",
+                //         \"部署1\": \"\",
+                //         \"部署2\": \"\",
+                //         \"メールアドレス\": \"\",
+                //         \"電話番号\": \"\",
+                //         \"住所\": \"\",
+                //         \"郵便番号\": \"\"
+                //         }
+
+                //         テキスト:
+                //         {$rawText}
+                //         ";
+
+
+                //     $aiResponse = OpenAI::chat()->create([
+                //         'model' => 'gpt-3.5-turbo',
+                //         'messages' => [
+                //             ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
+                //             ['role' => 'user', 'content' => $prompt],
+                //         ],
+                //     ]);
+
+                //     $structuredData = $aiResponse->choices[0]->message->content;
+
+
+                //     // 画像を削除（処理終了後）
+
+                // } else {
+                //     return response()->json(['status' => 'error', 'message' => 'テキストが検出されませんでした。']);
+                // }
             } catch (\Exception $e) {
                 return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             } finally {
@@ -407,6 +462,38 @@ class CardController extends Controller
         }
 
         return response()->json(['status' => 'error', 'message' => '画像がアップロードされていません。']);
+    }
+
+    /**
+     * OpenAI に送る JSON 変換用プロンプト
+     */
+    private function getJsonPrompt($rawText = null)
+    {
+        return "
+        以下の画像（またはテキスト）をOCR解析し、名刺情報を出力フォーマットに従ってJSON形式で返してください。
+
+        - 住所に郵便番号が含まれている場合、その郵便番号を取り除いて、専用の「郵便番号」フィールドに入れてください。
+        - 郵便番号と電話番号は数字のみを抽出してください。
+        - 部署が複数ある場合は、各部署を「部署1」「部署2」といった形式で記入し、3つ以上の部署がある場合は「部署3」「部署4」のように追加してください。
+        - 「名前カナ」や「会社名カナ」には推測して必ずカタカナで入力してください。
+        - 「名前」や「名前カナ」は苗字と名前のスペースを区切らないで入力してください。
+
+        出力フォーマット:
+        {
+            \"名前\": \"\",
+            \"名前カナ\": \"\",
+            \"会社名\": \"\",
+            \"会社名略称\": \"\",
+            \"役職\": \"\",
+            \"部署1\": \"\",
+            \"部署2\": \"\",
+            \"メールアドレス\": \"\",
+            \"電話番号\": \"\",
+            \"住所\": \"\",
+            \"郵便番号\": \"\"
+        }
+
+        " . ($rawText ? "名刺テキスト:\n{$rawText}" : "画像を解析してください。");
     }
     //ランダムな8桁のstring型の数値を出力
     private function generateRandomCode()
@@ -506,7 +593,7 @@ class CardController extends Controller
         if (config('prefix.server') == "cloud") {
             // S3バケットの情報
             $bucket = 'astdocs.com';
-            $key = config('prefix.prefix') .'/'. $filepath;
+            $key = config('prefix.prefix') . '/' . $filepath;
             $expiration = '+1 hour'; // 有効期限
 
             $s3Client = new S3Client([

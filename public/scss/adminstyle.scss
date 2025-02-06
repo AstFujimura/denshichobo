@@ -1,66 +1,90 @@
-.header001{
+.header001 {
     background: rgb(216, 142, 142) !important;
 }
 
-@media(max-width:480px){
-    .admin_top_table_div div{
-        background:rgb(245, 227, 217);
+a {
+    color: black;
+}
+
+@media(max-width:800px) {
+    .headerIcon001:not(.rightmenue001, .menue001) {
+        display: none;
+    }
+}
+
+@media(max-width:480px) {
+    .admin_top_table_div div {
+        background: rgb(245, 227, 217);
         text-align: center;
         border-right: solid 1px white;
         padding: 5px;
-        font-size: 12px;
+        font-size: 1rem;
     }
-    .admin_top_table_body{
+
+    .admin_top_table_body {
         display: flex;
-        font-size: 12px;
+        font-size: 1rem;
     }
-    .name{
-        width: 88px;
+
+    .name {
+        width: 6rem;
+        ;
     }
-    .email{
-        width: 150px;
+
+    .email {
+        width: 13rem;
     }
-    .status{
-        width: 80px;
+
+    .status {
+        width: 4rem;
         text-align: center;
     }
-    .sakujyo{
-        width: 80px;
+
+    .sakujyo {
+        width: 6rem;
     }
-    
+
 }
-@media(min-width:480px){
-    .admin_top_table_div div{
-        background:rgb(245, 227, 217);
+
+@media(min-width:480px) {
+    .admin_top_table_div div {
+        background: rgb(245, 227, 217);
         text-align: center;
         border-right: solid 1px white;
         padding: 5px;
     }
-    .admin_top_table_body{
+
+    .admin_top_table_body {
         display: flex;
     }
-    .name{
-        width: 200px;
+
+    .name {
+        width: 6rem;
+        ;
     }
-    .email{
-        width: 200px;
+
+    .email {
+        width: 13rem;
     }
-    .status{
-        width: 100px;
+
+    .status {
+        width: 6rem;
         text-align: center;
     }
-    .sakujyo{
-        width: 80px;
+
+    .sakujyo {
+        width: 6rem;
     }
 }
-.admin_top_table_div{
+
+.admin_top_table_div {
     display: flex;
 }
 
 
 
 
-.admin_top_table_body > div{
+.admin_top_table_body>div {
     padding: 5px;
     border-right: solid 1px white;
     border-bottom: solid 1px rgb(127, 127, 207);
@@ -68,110 +92,58 @@
 }
 
 
-.important{
-    position: relative;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: normal;
-    transition: all .5s ease;
-    padding: 10px 50px;
-    width: 300px;
-    border: solid 1px #bababa;
+
+
+
+.title::before {
+
+    transform: rotate(0deg);
+
 }
 
-/*アイコンの＋と×*/
-.title::before,
-.title::after{
-    position: absolute;
-    content:'';
-    width: 15px;
-    height: 2px;
-    background-color: #333;
-    top:20px;
-    left: 15px;
-    transition: all 0.3s ease;
-    
-}
-.title::before{
-    
-    transform: rotate(0deg);
-    
-}
-.title::after{    
+.title::after {
     transform: rotate(90deg);
 
 }
+
 /*　closeというクラスがついたら形状変化　*/
-.title.close::before{
+.title.close::before {
     transform: rotate(45deg);
-  }
-  
-  .title.close::after{
+}
+
+.title.close::after {
     transform: rotate(135deg);
-  }
-.importantelement{
-    overflow: hidden;
-    opacity: 0;
-    height: 0;
-    transition: height .5s ease;
-    display: flex;
-}
-.open{
-    opacity: 1;
-    height: 80px;
-}
-.adminresetbutton{
-    border: solid #29a638 2px;
-    background: rgb(210 255 196);
-    padding: 5px;
-    border-radius: 3px;
-    cursor: pointer;
-    height: 32px;
-    width: 150px;
-}
-.adminresetbutton:hover{
-    background: rgb(62, 155, 34);
-    color: white;
-}
-.admindeletebutton{
-    border: solid #a62929 2px;
-    background: rgb(255, 196, 196);
-    padding: 5px;
-    border-radius: 3px;
-    cursor: pointer;
-    height: 32px;
-    width: 50px;
 }
 
-.admindeletebutton:hover{
-    background: rgb(175, 41, 41);
-    color: white;
-}
 
-.adminreset,.adminDelete{
+.adminreset,
+.adminDelete {
     margin-inline: 10px;
     margin-block: auto;
 }
 
-.admineditbutton{
-    border: solid #2978a6 2px;
-    background: rgb(196, 243, 255);
+.admineditbutton {
+    border: 0;
+    background: rgb(0, 108, 203);
+    color: white;
     padding: 5px;
     border-radius: 3px;
     cursor: pointer;
-    height: 32px;
-    width: 100px;
+    height: 3rem;
+    width: 14rem;
     margin: 30px 90px;
+
+    &:hover {
+        background: rgb(0, 67, 126);
+    }
 }
 
-.admineditbutton:hover{
-    background: rgb(24, 115, 189);
-    color: white;
-}
-.resetmessage{
+
+.resetmessage {
     text-align: center;
 }
-.resetpassword{
+
+.resetpassword {
     text-align: center;
     font-size: 50px;
     margin-inline: auto;
@@ -181,3 +153,264 @@
 }
 
 
+// ユーザー変更画面
+#admin-myForm {
+    .input-container {
+        margin-top: 1rem;
+    }
+
+    @media screen and (max-width: 800px) {
+        font-size: 0.8rem;
+        margin-inline: auto;
+        width: 30rem;
+        max-width: 75%;
+
+
+        .input-container {
+            flex-direction: column;
+            margin-top: 1rem;
+
+            .label {}
+        }
+
+
+
+    }
+}
+
+.important {
+    width: 16rem;
+    padding: 0;
+    position: relative;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all .5s ease;
+    border: solid 0.1px #bababa;
+    margin-block: 20px;
+    position: relative;
+
+    @media screen and (max-width: 800px) {
+        margin-inline: auto;
+    }
+
+    .important_title {
+        margin: 0.7rem 3rem;
+    }
+
+    .importantelement.open {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .title {
+
+        margin: 0.8rem 3rem;
+    }
+
+    /*アイコンの＋と×*/
+    .title::before,
+    .title::after {
+        position: absolute;
+        content: "";
+        width: 1rem;
+        height: 2px;
+        background-color: #333;
+        top: 1.35rem;
+        left: 8%;
+        transition: all 0.3s ease;
+
+    }
+
+    .importantelement {
+        overflow: hidden;
+        opacity: 0;
+        height: 0;
+        transition: height .5s ease;
+        display: flex;
+
+    }
+
+    .open {
+        opacity: 1;
+        height: 80px;
+    }
+
+    .adminresetbutton {
+        border: 0;
+        color: white;
+        background: rgb(86 157 58);
+        padding: 5px;
+        border-radius: 3px;
+        cursor: pointer;
+        height: 2.5rem;
+        width: 12rem;
+
+
+        &:hover {
+            background: rgb(62, 155, 34);
+        }
+    }
+
+
+    .admindeletebutton {
+        border: 0;
+        background: rgb(217 84 84);
+        color: white;
+        padding: 5px;
+        border-radius: 3px;
+        cursor: pointer;
+        height: 2.5rem;
+        width: 12rem;
+
+
+        &:hover {
+            background: rgb(175, 41, 41);
+        }
+    }
+
+}
+
+// グループ編集画面
+.grouptable {
+    .grouptable_header {
+        div {
+            background: rgb(245, 227, 217);
+            text-align: center;
+            border-right: solid 1px white;
+            padding: 5px;
+            font-size: 0.8rem;
+        }
+    }
+
+    .documenttable_body {
+        div {
+            padding: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-right: solid 1px white;
+            border-bottom: solid 1px rgb(127, 127, 207);
+            height: 30px;
+            line-height: 30px;
+
+
+        }
+    }
+
+    .admin_group {
+        width: 15rem;
+        text-align: left !important;
+    }
+
+    .admin_group_change {
+        width: 4rem;
+    }
+
+    .admin_group_delete {
+        width: 4rem;
+    }
+
+    .admin_group_detail_change {
+        width: 6rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .grouptable_body {
+        &>div {
+            padding: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-right: solid 1px white;
+            border-bottom: solid 1px rgb(127, 127, 207);
+            height: 30px;
+            line-height: 30px;
+
+            .gr_delete_button {
+                margin: auto;
+                cursor: pointer;
+                background: rgb(189, 54, 77);
+                border: 0;
+                color: white;
+                border-radius: 5px;
+                text-align: center;
+                font-size: 15px;
+                width: 44px;
+                height: 27px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+
+                &:hover {
+                    background: rgb(133, 39, 55);
+                }
+            }
+
+            .gr_change_button {
+                margin: auto;
+                cursor: pointer;
+                background: rgb(86, 141, 49);
+                color: white;
+                border: 0;
+                border-radius: 5px;
+                text-align: center;
+                font-size: 15px;
+                width: 44px;
+                height: 27px;
+                font-size: 0.8rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .gr_change_button:hover {
+                background: rgb(12, 124, 22);
+                color: white;
+            }
+
+
+        }
+    }
+
+    .documenttable_header {
+        display: flex;
+    }
+
+    .grouptable_header {
+        display: flex;
+    }
+
+}
+
+.add {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    .grouptable_body {
+        display: flex;
+
+        .gr_delete_button {
+            margin-inline: 1rem auto;
+            cursor: pointer;
+            background: rgb(189, 54, 77);
+            border: 0;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 15px;
+            width: 44px;
+            height: 27px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+
+            &:hover {
+                background: rgb(133, 39, 55);
+            }
+        }
+    }
+}

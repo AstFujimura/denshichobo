@@ -38,37 +38,30 @@
 </header>
 <div class="menu001">
 
-    <div class="headerIcon001" onclick="location.href='{{route('topGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
-        <div class="iconmessage">Top</div>
-    </div>
-    <div class="headerIcon001" onclick="location.href='{{route('adminGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}" class="menuicon01">
-        <div class="iconmessage">ユーザ一覧</div>
-    </div>
-    <div class="headerIcon001" onclick="location.href='{{route('adminregistGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01">
-        <div class="iconmessage">ユーザー登録</div>
-    </div>
-    <div class="headerIcon001" onclick="location.href='{{route('admingroupregistGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01">
-        <div class="iconmessage">グループ登録・編集</div>
-    </div>
-    <div class="headerIcon001" onclick="location.href='{{route('admindocumentGet')}}';">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01">
-        <div class="iconmessage">書類管理</div>
-    </div>
-    <div class="headerIcon001" onclick="window.open('{{route('question')}}', '_blank');">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
-        <div class="iconmessage">ヘルプ</div>
-    </div>
+    <a class="headerIcon001" href="{{route('topGet')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01" title="Top">
+    </a>
+    <a class="headerIcon001" href="{{route('adminGet')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}" class="menuicon01" title="ユーザ一覧">
+    </a>
+    <a class="headerIcon001" href="{{route('adminregistGet')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01" title="ユーザー登録">
+    </a>
+    <a class="headerIcon001" href="{{route('admingroupregistGet')}}" >
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01" title="グループ登録・編集">
+    </a>
+    <a class="headerIcon001" href="{{route('admindocumentGet')}}" >
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01" title="書類管理">
+    </a>
+    <a class="headerIcon001" href="{{route('question')}}" target="_blank">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01" title="ヘルプ">
+    </a>
 
-    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet')}}';">
+    <a class="headerIcon001 rightmenue001" href="{{route('usersettingGet')}}" onclick="location.href='{{route('usersettingGet')}}';">
         <div class="usermenu01">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
         </div>
-        <div class="iconmessage">ユーザー情報</div>
-    </div>
+    </a>
     <div class="headerIcon001 menue001">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
         <div class="iconmessage">メニュー</div>
@@ -96,17 +89,17 @@
 
             </div>
             <a href="{{route('topGet')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}">
-                        </div>
-                        <div class="button1name01">
-                            電子帳簿システム
-                        </div>
-
+                <div class="button1element01">
+                    <div class="button1logo01">
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}">
+                    </div>
+                    <div class="button1name01">
+                        電子帳簿システム
                     </div>
 
-                </a>
+                </div>
+
+            </a>
             <div class="sidebarcontent01">
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">

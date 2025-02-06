@@ -19,7 +19,7 @@
     <div class="admin_top_table_div">
         <div class="name">ユーザー名</div>
         <div class="email">email</div>
-        <div class="status">アクセス権限</div>
+        <div class="status">権限</div>
         <div class="hennkou">変更</div>
     </div>
     <div class="admin_top_table_element">

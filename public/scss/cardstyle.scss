@@ -1,19 +1,4 @@
-html {
-    font-size: 62.5%;
-    @media (min-width: 1441px) {
-        font-size: 0.8vw;
-    }
-    @media (min-width: 1201px) and (max-width: 1440px) {
-        font-size: 1vw;
-    }
-    @media (min-width: 401px) and (max-width: 1200px) {
-        font-size: 14px;
-    }
 
-    @media (max-width: 400px) {
-        font-size: 3.5vw;
-    }
-}
 
 @font-face {
     font-family: 'Noto';
@@ -24,6 +9,10 @@ html {
     display: none !important;
 }
 
+
+
+
+
 body {
     font-family: 'Noto';
     background: rgb(225 225 225);
@@ -32,18 +21,19 @@ body {
         margin-left: 30px;
     }
 
-    #usersetting {
-        background: white;
-        padding: 10px 50px;
-        border-radius: 30px;
-        margin-left: 30px;
-        width: fit-content;
-    }
+    // #usersetting {
+    //     background: white;
+    //     padding: 10px 50px;
+    //     border-radius: 30px;
+    //     margin-left: 30px;
+    //     width: fit-content;
+    // }
 }
 
 .header001 {
     background: rgb(25 18 65) !important;
     z-index: 13;
+    height: 4rem;
 }
 
 .menu001 {
@@ -238,6 +228,62 @@ body {
 .card_detail_container {
     display: flex;
 
+    .gray_area {
+        position: fixed;
+        background: rgba(53, 53, 53, 0.37);
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 100;
+        display: none;
+
+        &.gray_area_open {
+            display: block;
+        }
+
+        .popup_content {
+            background: #ebffff;
+            width: 26rem;
+            bottom: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+            position: absolute;
+            border-radius: 1rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            a:not(:last-child) {
+                border-bottom: solid 0.1rem #bfbfbf;
+            }
+
+            .card_edit_button {
+                color: #03626d;
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                height: 4rem;
+                background: #ffffff;
+                margin-inline: auto;
+
+            }
+
+            .card_delete_button {
+                color: #e7483d;
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                height: 4rem;
+                background: #ffffff;
+                margin-inline: auto;
+            }
+        }
+    }
+
     .card_history_container {
         width: 26rem;
         background: #0B294C;
@@ -317,13 +363,15 @@ body {
                     width: 35%;
                     margin-inline: 1rem;
                     position: relative;
-                    .new_card_check{
+
+                    .new_card_check {
                         width: 2.5rem;
                         height: 2.5rem;
                         position: absolute;
                         top: -1rem;
                         left: -1rem;
                     }
+
                     img.lazyload {
                         max-height: 5rem;
                         max-width: 100%;
@@ -386,6 +434,7 @@ body {
 
                 overflow: auto;
                 height: calc(100vh - 130px);
+
                 &::-webkit-scrollbar {
                     display: none;
                 }
@@ -425,49 +474,56 @@ body {
                 margin: 0.4rem 1rem;
                 justify-content: space-around;
 
-                @media screen and (min-width: 801px) {
+                @media screen and (min-width: 1201px) {
                     .setting_container {
                         display: none;
                     }
                 }
 
-                @media screen and (max-width: 800px) {
+                @media screen and (max-width: 1201px) {
                     padding-block: 0 0.5rem;
                     flex-direction: column;
                     position: sticky;
                     top: 0;
+                    margin: 0.4rem 0;
+                    background: rgb(225, 225, 225);
 
                     .setting_container {
                         display: flex;
                         justify-content: end;
                         margin-bottom: 1rem;
+                        gap: 1rem;
 
-                        img {
-                            cursor: pointer;
-                        }
-
-                        .card_history_button {
-                            width: 7rem;
-                            height: 2rem;
-                            background: #5694FF;
+                        .card_history_button,
+                        .card_setting_button {
+                            padding: 0.5rem;
+                            height: 1.5rem;
                             color: white;
-                            border-radius: 3rem;
+                            border-radius: 0.5rem;
+                            background: white;
                             display: flex;
                             justify-content: center;
                             align-items: center;
-                            margin-right: 2rem;
                             cursor: pointer;
                             font-size: 0.8rem;
+                            border: solid 0.1rem #777777;
+                            box-shadow: 1px 1px 5px 0 gray;
 
                             &:hover {
-                                background: #3673d9;
+                                background: #b3b3b3;
+                            }
+                        }
+
+                        @media screen and (min-width: 801px) {
+                            .card_history_button {
+                                display: none;
                             }
                         }
                     }
                 }
 
                 .card_detail_card {
-                    @media screen and (max-width: 800px) {
+                    @media screen and (max-width: 1200px) {
                         margin-inline: auto;
                     }
 
@@ -526,9 +582,9 @@ body {
                 background: #12437c;
             }
 
+
             @media screen and (max-width: 1200px) {
-                position: sticky;
-                bottom: 5%;
+                display: none;
             }
 
 
@@ -680,6 +736,7 @@ body {
     width: fit-content;
     margin-left: 2rem;
     margin-inline: auto;
+
     @media screen and (max-width: 750px) {
         margin-inline: auto;
     }
@@ -717,6 +774,7 @@ body {
             height: 3rem;
             box-shadow: 2px 5px 6px 0px rgb(155 152 152);
             z-index: 1;
+
             @media screen and (min-width: 750px) {
                 bottom: 5%;
                 z-index: 101;

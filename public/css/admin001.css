@@ -32,8 +32,8 @@ body{
         display: flex;
         position: relative;
     }
-    .menue001 {
-        margin-right: 100px;
+    .menue001 {       
+         margin-right: 5%;
     }
 }
 
