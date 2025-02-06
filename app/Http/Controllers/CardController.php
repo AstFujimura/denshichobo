@@ -406,8 +406,6 @@ class CardController extends Controller
                 } else {
                     return response()->json(['status' => 'error', 'message' => 'サーバー種別が不明です。']);
                 }
-                $deletePath = str_replace('public/', '', $path);
-                Storage::delete('public/' . $deletePath);
                 // 保存やレスポンスとして返す処理
                 return response()->json([
                     'status' => 'success',
