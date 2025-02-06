@@ -178,7 +178,8 @@ class CardController extends Controller
         $card_id = $request->card_id;
         $card = Card::find($card_id);
         if (config('prefix.server') == 'cloud') {
-            Storage::disk('s3')->delete(config('preix.prefix') .'/'. $card->名刺ファイル表);
+            // 権限などがまだなので保留
+            // Storage::disk('s3')->delete(config('preix.prefix') .'/'. $card->名刺ファイル表);
         }
         else if (config('prefix.server') == 'onpre') {
             $uploadPath = config('custom.file_upload_path');
