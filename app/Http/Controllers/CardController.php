@@ -406,6 +406,10 @@ class CardController extends Controller
                 } else {
                     return response()->json(['status' => 'error', 'message' => 'サーバー種別が不明です。']);
                 }
+                // 画像ファイルを削除
+                if ($request->hasFile('image')) {
+                    Storage::disk('public')->delete($path);
+                }
                 // 保存やレスポンスとして返す処理
                 return response()->json([
                     'status' => 'success',
