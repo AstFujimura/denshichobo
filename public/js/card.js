@@ -231,11 +231,12 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.status === 'success') {
-                        try{
-                        autoFillForm(response.data);
-                        getCompanyCandidate(response.data.会社名, true);
+                        try {
+                            console.log(response.data)
+                            autoFillForm(response.data);
+                            getCompanyCandidate(response.data.会社名, true);
                         }
-                        catch(e){
+                        catch (e) {
                             console.log(e);
                             $('.loading_container').removeClass('loading_container_open');
                         }
@@ -461,7 +462,7 @@ $(document).ready(function () {
             card_edit_button.attr('data-card_id', $(this).val());
             card_delete_button.data('card_id', $(this).val());
             card_delete_button.attr('data-card_id', $(this).val());
-            $('.imgset').data('card_id',$(this).val())
+            $('.imgset').data('card_id', $(this).val())
             $('.card_history_container').toggleClass('card_history_container_open');
             $.ajax({
                 url: prefix + '/card/history/' + $(this).val(),
@@ -479,18 +480,18 @@ $(document).ready(function () {
             $('.gray_area').addClass('gray_area_open');
         });
         // グレーエリアをクリックした時
-        $('.gray_area').on('click',function(e){
+        $('.gray_area').on('click', function (e) {
             // 編集ボタンや名刺削除ボタンでなければグレーエリアを非表示
-            if($(e.target).closest('.card_setting_button,.card_delete_button').length == 0){
+            if ($(e.target).closest('.card_setting_button,.card_delete_button').length == 0) {
                 $('.gray_area').removeClass('gray_area_open');
             }
         });
         // 削除ボタンを押したとき
-        $('.card_delete_button').on('click',function(){
-            if (confirm('本当に名刺を削除しますか')){
+        $('.card_delete_button').on('click', function () {
+            if (confirm('本当に名刺を削除しますか')) {
                 let cardId = $(this).data('card_id'); // ボタンにdata-id属性があると仮定
                 let actionUrl = '/card/delete'; // 削除用のエンドポイント（適宜変更）
-            
+
                 let form = $('<form>', {
                     'method': 'POST',
                     'action': actionUrl
@@ -506,19 +507,19 @@ $(document).ready(function () {
                         'value': $('input[name="_token"]').val() // CSRF対策（Laravelの場合）
                     })
                 );
-            
+
                 $('body').append(form);
                 form.submit();
             }
         })
-        
+
         $('.card_history_button,.card_history_close_button').on('click', function () {
             $('.card_history_container').toggleClass('card_history_container_open');
 
-            
+
         })
 
-        function card_detail_renew(response){
+        function card_detail_renew(response) {
             $('#name').text(response.名前);
             $('#name_kana').text(response.名前カナ);
             $('#phone_number').text(response.携帯電話番号);
@@ -586,7 +587,7 @@ $(document).ready(function () {
         });
     }
     // 指定したimgの画像を再読み込み
-    function designateload(img){
+    function designateload(img) {
         if ($('#server').val() == "cloud") {
             $.ajax({
                 url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定

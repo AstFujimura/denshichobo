@@ -401,7 +401,6 @@ class CardController extends Controller
                             ],
                         ]
                     ]);
-                    dd($aiResponse);
                     $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
                 } else {
                     return response()->json(['status' => 'error', 'message' => 'サーバー種別が不明です。']);
