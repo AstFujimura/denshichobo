@@ -386,14 +386,21 @@ class CardController extends Controller
                             ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
                             [
                                 'role' => 'user',
-                                'content' => json_encode([
-                                    'image_url' => $imageUrl,
-                                    'prompt' => $this->getJsonPrompt() // プロンプトの内容
-                                ])
+                                'content' => [
+                                    [
+                                        "type" => "text",
+                                        "text" => $this->getJsonPrompt() // プロンプトの内容
+                                    ],
+                                    [
+                                        "type" => "image_url",
+                                        "image_url" => [
+                                            "url" => $imageUrl,
+                                        ]
+                                    ]
+                                ]
                             ],
                         ]
                     ]);
-                    dd($aiResponse);
 
                     $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
                 } else {
