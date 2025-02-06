@@ -53,6 +53,8 @@ Route::prefix($prefix)->group(function () {
 
     // フォントフォルダへのルーティング
     Route::get('/font/{file}', [AssetController::class, 'font'])->where('file', '.*\.(TTC|TTF|ttf|otf|woff|woff2)');
+    // ストレージフォルダへのルーティング
+    Route::get('/storage/{folder}/{file}', [AssetController::class, 'storage'])->where('file', '.*');
 
 
     //  ログインページ
