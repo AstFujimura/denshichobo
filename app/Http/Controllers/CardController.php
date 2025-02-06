@@ -385,8 +385,10 @@ class CardController extends Controller
                         'messages' => [
                             ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
                             ['role' => 'user', 'content' => [
-                                ['type' => 'text', 'text' => $this->getJsonPrompt()],
-                                ['type' => 'image_url', 'image_url' => $imageUrl]
+                                'image_url' => [
+                                    'url' => $imageUrl // 画像URLをここに指定
+                                ],
+                                'prompt' => $this->getJsonPrompt() // プロンプトの内容
                             ]],
                         ],
                         'max_tokens' => 1000
