@@ -403,52 +403,6 @@ class CardController extends Controller
                     'status' => 'success',
                     'data' => $structuredData,
                 ]);
-                // if ($annotation) {
-
-                //     // OpenAI APIでJSON形式に整形
-                //     $prompt = "
-                //         以下のテキストは名刺から抽出されたデータです。このデータを以下のフォーマットに従って整理してください。
-
-                //         - 住所に郵便番号が含まれている場合、その郵便番号を取り除いて、専用の「郵便番号」フィールドに入れてください。
-                //         - 郵便番号と電話番号は数字のみを抽出してください。
-                //         - 部署が複数ある場合は、各部署を「部署1」「部署2」といった形式で記入し、3つ以上の部署がある場合は「部署3」「部署4」のように追加してください。
-                //         - 「名前カナ」や「会社名カナ」には推測して必ずカタカナで入力してください。
-                //         - 「名前」や「名前カナ」は苗字と名前のスペースを区切らないで入力してください。
-                //         フォーマット:
-                //         {
-                //         \"名前\": \"\",
-                //         \"名前カナ\": \"\",
-                //         \"会社名\": \"\",
-                //         \"会社名略称\": \"\",
-                //         \"役職\": \"\",
-                //         \"部署1\": \"\",
-                //         \"部署2\": \"\",
-                //         \"メールアドレス\": \"\",
-                //         \"電話番号\": \"\",
-                //         \"住所\": \"\",
-                //         \"郵便番号\": \"\"
-                //         }
-
-                //         テキスト:
-                //         {$rawText}
-                //         ";
-
-
-                //     $aiResponse = OpenAI::chat()->create([
-                //         'model' => 'gpt-3.5-turbo',
-                //         'messages' => [
-                //             ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
-                //             ['role' => 'user', 'content' => $prompt],
-                //         ],
-                //     ]);
-
-                //     $structuredData = $aiResponse->choices[0]->message->content;
-
-
-                //     // 画像を削除（処理終了後）
-
-                // } else {
-                //     return response()->json(['status' => 'error', 'message' => 'テキストが検出されませんでした。']);
                 // }
             } catch (\Exception $e) {
                 return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
@@ -457,7 +411,6 @@ class CardController extends Controller
                 if ($request->hasFile('image')) {
                     Storage::disk('public')->delete($path);
                 }
-                $imageAnnotator->close();
             }
         }
 
