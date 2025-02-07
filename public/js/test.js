@@ -1,97 +1,54 @@
-$(document).ready(function () {
-  let video = $("#video")[0];
-  let canvas = $("#canvas")[0];
-  let ctx = canvas.getContext("2d");
-  let outputCanvas = $("#output")[0];
-  let outputCtx = outputCanvas.getContext("2d");
+// -------------------------------------
+// OpenCV.js 読み込み完了後に呼ばれる
+// -------------------------------------
+function onOpenCvReady() {
+  console.log("OpenCV.js is ready!");
+  // OpenCV が使える状態になったら、あとは通常通りの処理を書ける
+  initCamera();
+}
 
-  // 📌 カメラ起動
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-          .then(function (stream) {
-              video.srcObject = stream;
-          })
-          .catch(function (err) {
-              console.error("カメラのアクセスエラー:", err);
-          });
-  } else {
-      console.error("getUserMedia がサポートされていません。");
-  }
+function initCamera() {
+  let video = document.getElementById("video");
 
-  // 📌 OpenCV 読み込み完了時の処理
-  window.onOpenCvReady = function () {
-      console.log("OpenCV.js がロードされました。");
-  };
+  // カメラ起動 (デスクトップ開発時は "user" のほうが無難)
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+      .then(function (stream) {
+          video.srcObject = stream;
+          video.play();
+          console.log("カメラ起動成功");
+      })
+      .catch(function (err) {
+          console.error("カメラのアクセスエラー:", err);
+      });
+}
 
-  // 📌 キャプチャ処理
-  $("#capture").click(function () {
+// DOM操作は jQuery でも生JS でもお好みで
+document.addEventListener("DOMContentLoaded", function () {
+  // キャプチャボタンクリック時の処理
+  document.getElementById("capture").addEventListener("click", function() {
+      let video = document.getElementById("video");
+      let canvas = document.getElementById("canvas");
+      let outputCanvas = document.getElementById("output");
+
+      // video のサイズに合わせる
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
+
+      // canvas に現在の映像を描画
+      let ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      let src = cv.imread(canvas);
-      let dst = new cv.Mat();
+      // OpenCVで画像取得
+      let src = new cv.Mat(canvas.height, canvas.width, cv.CV_8UC4);
+      src.data.set(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
 
-      // 🟢 グレースケール化
-      cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
-
-      // 🟢 エッジ検出（Canny）
-      let edges = new cv.Mat();
-      cv.Canny(dst, edges, 50, 150);
-
-      // 🟢 輪郭検出
-      let contours = new cv.MatVector();
-      let hierarchy = new cv.Mat();
-      cv.findContours(edges, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-
-      // 🟢 最大の四角形を探す
-      let biggest = null;
-      let maxArea = 0;
-      for (let i = 0; i < contours.size(); i++) {
-          let cnt = contours.get(i);
-          let area = cv.contourArea(cnt, false);
-          if (area > maxArea) {
-              let approx = new cv.Mat();
-              cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
-              if (approx.rows === 4) {
-                  biggest = approx;
-                  maxArea = area;
-              }
-          }
-      }
-
-      if (biggest) {
-          // 🟢 射影変換（トリミング）
-          let rect = biggest.data32S;
-          let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
-              rect[0], rect[1],
-              rect[2], rect[3],
-              rect[4], rect[5],
-              rect[6], rect[7]
-          ]);
-
-          let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, 300, 0, 300, 400, 0, 400]);
-          let M = cv.getPerspectiveTransform(srcTri, dstTri);
-          let dstWarped = new cv.Mat();
-          cv.warpPerspective(src, dstWarped, M, new cv.Size(300, 400));
-
-          // 🟢 出力Canvasに表示
-          outputCanvas.width = 300;
-          outputCanvas.height = 400;
-          cv.imshow(outputCanvas, dstWarped);
-
-          // メモリ解放
-          srcTri.delete();
-          dstTri.delete();
-          M.delete();
-          dstWarped.delete();
-      }
+      // ---- まずはそのまま表示 ----
+      // outputCanvas のサイズは適当に video と同じにしておく
+      outputCanvas.width = canvas.width;
+      outputCanvas.height = canvas.height;
+      cv.imshow(outputCanvas, src);
 
       // メモリ解放
       src.delete();
-      dst.delete();
-      edges.delete();
-      contours.delete();
-      hierarchy.delete();
   });
 });
