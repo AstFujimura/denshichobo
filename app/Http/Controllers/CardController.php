@@ -652,4 +652,14 @@ class CardController extends Controller
         $company = Company::where('id', $id)->first();
         return response()->json($company);
     }
+
+    public function cardtestget()
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        return view('card.test', compact('prefix', 'server'));
+    }
 }

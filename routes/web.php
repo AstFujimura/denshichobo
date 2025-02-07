@@ -341,6 +341,8 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/company/candidate', [CardController::class, 'companycandidateget'])->name('cardcompanycandidateget');
             // 会社情報API
             Route::get('/card/company/info/{id}', [CardController::class, 'companyinfoget'])->name('companyinfoget');
+            // 名刺テスト
+            Route::get('/card/test', [CardController::class, 'cardtestget'])->name('cardtestget');
         }
     });
 });
