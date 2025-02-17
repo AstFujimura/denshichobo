@@ -55,6 +55,12 @@ body #usersetting {
   z-index: 13;
 }
 
+@media screen and (max-width: 1000px) {
+  .headerIcon001:not(.menue001, .rightmenue001) {
+    display: none;
+  }
+}
+
 .main01 {
   background: rgb(225, 225, 225);
   display: block;
@@ -68,7 +74,8 @@ body #usersetting {
   color: #454545;
   background: #f9f9f9;
   display: flex;
-  width: 1000px;
+  width: 70rem;
+  max-width: 90%;
 }
 
 .button1name01 {
@@ -131,8 +138,13 @@ body #usersetting {
 }
 
 .Mainelement {
-  padding: 10px 30px;
+  padding: 1rem 3rem;
   background: rgb(225, 225, 225);
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement {
+    padding: 1rem 1rem;
+  }
 }
 
 .flow_master_element {
@@ -147,13 +159,14 @@ body #usersetting {
 .main_menu_container {
   background: white;
   border-radius: 30px;
-  width: fit-content;
+  width: 77rem;
+  max-width: 90%;
 }
 
 .main_general_container {
-  padding: 40px;
+  padding: 3rem;
   max-width: 1100px;
-  gap: 25px;
+  gap: 1.7rem;
 }
 
 .main_general_title {
@@ -168,7 +181,22 @@ body #usersetting {
   justify-content: center;
   margin-top: 10px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 15px;
+  gap: 1.7rem;
+}
+@media screen and (max-width: 1000px) {
+  .main_general_content {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media screen and (max-width: 700px) {
+  .main_general_content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media screen and (max-width: 550px) {
+  .main_general_content {
+    grid-template-columns: 1fr;
+  }
 }
 
 .main_general_button {
@@ -176,8 +204,8 @@ body #usersetting {
   text-align: center;
   box-shadow: 2px 3px 7px 0 #7e7a7a;
   display: flex;
-  width: 250px;
-  height: 150px;
+  width: 100%;
+  aspect-ratio: 1.5;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -188,36 +216,36 @@ body #usersetting {
 }
 
 .flow_title_icon {
-  width: 72px;
+  width: 4rem;
 }
 
 .main_button_title {
   color: #6b6b6b;
   font-weight: bold;
-  font-size: 18px;
-  margin-top: 8px;
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
 }
 
-.ribbon {
+.ribbon_container {
   position: absolute;
-  width: 60px;
-  height: 30px;
-  background: red;
   right: 0;
-  top: 15px;
+  top: 0;
   color: white;
   font-weight: bold;
   padding-left: 10px;
+  width: 3rem;
 }
-
-.ribbon::before {
-  content: "";
-  background: white;
+.ribbon_container .ribbon_icon {
+  width: 3rem;
   position: absolute;
-  height: 30px;
-  width: 30px;
-  transform: rotate(45deg);
-  left: -20px;
+  top: 0;
+  right: 0.5rem;
+}
+.ribbon_container .ribbon_text {
+  position: absolute;
+  font-size: 1.2rem;
+  right: 50%;
+  transform: translateX(50%);
 }
 
 .main_general_button:hover .ribbon::before {
@@ -233,7 +261,7 @@ body #usersetting {
 }
 
 .main_admin_container {
-  padding: 40px;
+  padding: 3rem;
   max-width: 1100px;
 }
 
@@ -244,14 +272,29 @@ body #usersetting {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 15px;
 }
+@media screen and (max-width: 1000px) {
+  .main_admin_content {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media screen and (max-width: 700px) {
+  .main_admin_content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media screen and (max-width: 550px) {
+  .main_admin_content {
+    grid-template-columns: 1fr;
+  }
+}
 
 .main_admin_button {
   background: white;
   text-align: center;
   box-shadow: 2px 3px 7px 0 #7e7a7a;
   display: flex;
-  width: 250px;
-  height: 150px;
+  width: 100%;
+  aspect-ratio: 1.5;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -981,17 +1024,33 @@ body #usersetting {
 
 /* フロー申請 */
 .application_annotation {
-  margin-bottom: 25px;
-  margin-left: 50px;
+  margin-bottom: 2.5rem;
+  margin-left: 5rem;
   background: gainsboro;
-  padding: 10px 20px;
+  padding: 1rem 2rem;
   border-radius: 10px;
-  width: 550px;
+}
+@media (max-width: 1200px) {
+  .application_annotation {
+    width: 47rem;
+    max-width: 80%;
+    margin-inline: auto;
+  }
+}
+@media (max-width: 860px) {
+  .application_annotation {
+    margin-left: 0;
+  }
 }
 
 .flow_application_main_content {
   display: flex;
   max-height: 80%;
+}
+@media (max-width: 1200px) {
+  .flow_application_main_content {
+    flex-direction: column;
+  }
 }
 
 /* フロー再申請 */
@@ -1005,9 +1064,36 @@ body #usersetting {
 }
 
 .category_choice_container {
-  width: 300px;
-  margin-inline: 30px;
+  width: 21rem;
+  margin-inline: 3rem;
   overflow: auto;
+}
+@media (max-width: 1200px) {
+  .category_choice_container {
+    width: 47rem;
+    max-width: 90%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    height: 26rem;
+    margin-inline: auto;
+  }
+  .category_choice_container .flow_application_title {
+    position: sticky;
+    top: 0;
+    grid-row: 1/2;
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 860px) {
+  .category_choice_container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 660px) {
+  .category_choice_container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .category_input {
@@ -1043,6 +1129,14 @@ body #usersetting {
 .flow_application_content {
   display: flex;
   flex-direction: column;
+  width: 50rem;
+}
+@media (max-width: 1200px) {
+  .flow_application_content {
+    width: 47rem;
+    max-width: 90%;
+    margin-inline: auto;
+  }
 }
 
 .flow_application_area_message {
@@ -1059,13 +1153,24 @@ body #usersetting {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 200px;
+  width: 14rem;
   margin-inline: auto;
-  height: 100px;
-  margin-block: 20px;
+  height: 8rem;
+  margin-block: 2rem;
   border: solid 1px rgb(184, 184, 184);
   cursor: pointer;
   border-radius: 5px;
+}
+@media (max-width: 1200px) {
+  .category_element {
+    margin-block: 0;
+  }
+}
+@media (max-width: 860px) {
+  .category_element {
+    width: 14rem;
+    height: 6rem;
+  }
 }
 
 .category_element:hover {
@@ -1118,13 +1223,23 @@ body #usersetting {
 .application_form_content {
   display: flex;
   position: relative;
-  margin-bottom: 25px;
-  margin-left: 50px;
+  margin-bottom: 2rem;
+  margin-left: 5rem;
+}
+@media (max-width: 860px) {
+  .application_form_content {
+    margin-left: 0;
+  }
 }
 
 .application_form_label {
-  margin-right: 20px;
-  width: 150px;
+  margin-right: 2rem;
+  width: 9rem;
+}
+@media (max-width: 860px) {
+  .application_form_label {
+    width: 6rem;
+  }
 }
 
 .application_form_text {
@@ -1141,7 +1256,19 @@ body #usersetting {
   flex-direction: column;
   /* width: 800px; */
   overflow: hidden;
-  height: calc(100vh - 240px);
+}
+@media screen and (min-width: 1200px) {
+  .flow_application_container {
+    height: calc(100vh - 240px);
+  }
+}
+@media (max-width: 1200px) {
+  .flow_application_container {
+    width: 60rem;
+    max-width: 90%;
+    margin-inline: auto;
+    padding-bottom: 6rem;
+  }
 }
 
 .flow_application_button_content {
@@ -1177,11 +1304,12 @@ body #usersetting {
 }
 
 .text_long_content {
-  width: 500px;
+  flex: 1;
 }
 
 .text_short_content {
-  width: 200px;
+  max-width: 20rem;
+  flex: 1;
 }
 
 .text_area_content {
@@ -1217,11 +1345,11 @@ body #usersetting {
   border: solid 3px rgb(187, 187, 187);
   color: rgb(187, 187, 187);
   text-align: center;
-  width: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex: 1;
 }
 
 .dragover {
@@ -1253,6 +1381,7 @@ body #usersetting {
   display: flex;
   flex-direction: column;
   width: 1200px;
+  max-width: 95%;
 }
 
 /* 経路選択画面 */
@@ -2667,7 +2796,7 @@ body #usersetting {
 /* カテゴリ詳細 */
 .category_detail_container {
   background: white;
-  padding: 30px;
+  padding: 10px 30px 40px 40px;
 }
 
 .category_detail_optional_container {
@@ -2815,9 +2944,9 @@ body #usersetting {
 }
 
 .category_detail_button_content {
-  height: 57px;
+  height: 80px;
   display: flex;
-  align-items: end;
+  align-items: center;
   margin-bottom: 22px;
 }
 
@@ -2837,6 +2966,22 @@ body #usersetting {
 
 .category_detail_optional_add_button:hover {
   background: #3b9b3b;
+}
+
+.category_detail_delete_button {
+  background: #ff1f1f;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 200px;
+  border-radius: 3px;
+  margin-top: 30px;
+  cursor: pointer;
+}
+.category_detail_delete_button:hover {
+  background: #b41a1a;
 }
 
 .display_flex {
@@ -2870,7 +3015,7 @@ body #usersetting {
 }
 
 .change_button {
-  background: rgb(69, 212, 2);
+  background: rgb(47, 113, 255);
   color: white;
   width: 120px;
   padding: 7px;
@@ -2878,12 +3023,11 @@ body #usersetting {
   text-align: center;
   cursor: pointer;
   border: none;
-  height: 45px;
   font-size: 16px;
 }
 
 .change_button:hover {
-  background: rgb(46, 143, 1);
+  background: rgb(34, 83, 189);
 }
 
 /* 承認設定 */
@@ -3332,7 +3476,7 @@ body #usersetting {
 
 .flow_stamp_lettter_change_button {
   margin-left: 20px;
-  background: #2b86ff;
+  background: rgb(41, 175, 41);
   height: 20px;
   color: white;
   padding: 10px 20px;
@@ -3343,7 +3487,7 @@ body #usersetting {
 }
 
 .flow_stamp_lettter_change_button:hover {
-  background: #1f5aa7;
+  background: rgb(37, 133, 37);
 }
 
 .flow_stamp_letter {

@@ -55,9 +55,9 @@
 
             </div>
             <div class="flow_master_button_container">
-                <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
+                <a href="{{route('workflowmaster')}}" class="back_button " id="flow_next_button">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
-                    トップへもどる
+                    もどる
                 </a>
                 <button class="workflow_submit_button">
                     変更

@@ -14,7 +14,7 @@
     <h2 class="pagetitle" id="category_detail"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="title_icon">カテゴリ - {{$m_category->カテゴリ名}}</h2>
     <form action="{{route('categorydetailpost')}}" method="post">
         @csrf
-        <input type="hidden" name="id" value="{{$id}}">
+        <input type="hidden" name="id" id="category_id" value="{{$id}}">
         <input type="hidden" name="order" id="order" value="{{$order}}">
         <input type="hidden" name="delete" id="delete" value="">
         <input type="hidden" name="optional_max" id="optional_max" value="50000">
@@ -100,8 +100,13 @@
                     </div>
                     @endforeach
                 </div>
+
+                <div class="category_detail_delete_button">
+                    このカテゴリを削除する
+                </div>
             </div>
         </div>
+
     </form>
 </div>
 @endsection

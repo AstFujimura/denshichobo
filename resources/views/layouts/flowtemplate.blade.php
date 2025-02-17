@@ -60,30 +60,30 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application_view.svg') }}" class="menuicon01">
         <div class="iconmessage">申請一覧</div>
     </a>
+    <a class="headerIcon001" href="{{route('workflowmaster')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_checkview.svg') }}" class="menuicon01">
+        <div class="iconmessage">閲覧一覧</div>
+    </a>
     <a class="headerIcon001" href="{{route('workflowstampget')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_stamp.svg') }}" class="menuicon01">
         <div class="iconmessage">印鑑設定</div>
     </a>
     @if (Auth::user()->管理 == '管理')
     <a class="headerIcon001" href="{{route('workflowmaster')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="menuicon01">
-        <div class="iconmessage">経路マスタ一覧</div>
-    </a>
-    <a class="headerIcon001" href="{{route('workflowregistget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="menuicon01">
-        <div class="iconmessage">経路マスタ登録</div>
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_flow.svg') }}" class="menuicon01">
+        <div class="iconmessage">経路マスタ</div>
     </a>
     <a class="headerIcon001" href="{{route('mailsettingget')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_mail.svg') }}" class="menuicon01">
         <div class="iconmessage">メール設定</div>
     </a>
     <a class="headerIcon001" href="{{route('categoryget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="menuicon01">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_category.svg') }}" class="menuicon01">
         <div class="iconmessage">カテゴリ設定</div>
     </a>
     <a class="headerIcon001" href="{{route('adminGet')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_admin.svg') }}" class="menuicon01">
-        <div class="iconmessage">ユーザー情報</div>
+        <div class="iconmessage">ユーザー設定</div>
     </a>
     @endif
     <a class="headerIcon001" href="{{route('question')}}">
@@ -174,32 +174,19 @@
                     </div>
 
                 </a>
-                @if (Auth::user()->管理 == '管理')
-                <a href="{{route('workflowmaster')}}" class="button1_01">
+                <a href="{{route('workflowviewget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_view.svg') }}" class="flow_right_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_checkview.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
-                            経路マスタ一覧
+                            閲覧一覧
                         </div>
 
                     </div>
 
                 </a>
                 <a href="{{route('workflowviewget')}}" class="button1_01">
-                    <div class="button1element01">
-                        <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_master_regist.svg') }}" class="flow_right_icon">
-                        </div>
-                        <div class="button1name01">
-                            経路マスタ登録
-                        </div>
-
-                    </div>
-
-                </a>
-                <a href="{{route('workflowstampget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_stamp.svg') }}" class="flow_right_icon">
@@ -211,10 +198,35 @@
                     </div>
 
                 </a>
+                @if (Auth::user()->管理 == '管理')
+                <a href="{{route('workflowmaster')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_flow.svg') }}" class="flow_right_icon">
+                        </div>
+                        <div class="button1name01">
+                            経路マスタ
+                        </div>
+
+                    </div>
+
+                </a>
+                <a href="{{route('workflowstampget')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_mail.svg') }}" class="flow_right_icon">
+                        </div>
+                        <div class="button1name01">
+                        メール設定
+                        </div>
+
+                    </div>
+
+                </a>
                 <a href="{{route('categoryget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_setting.svg') }}" class="flow_right_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_category.svg') }}" class="flow_right_icon">
                         </div>
                         <div class="button1name01">
                             カテゴリ設定

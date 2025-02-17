@@ -31,7 +31,10 @@
                         承認
                     </div>
                     @if ($t_approval_count != 0)
-                    <div class="ribbon">{{$t_approval_count}}</div>
+                    <div class="ribbon_container">
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/ribbon.svg') }}" alt="" class="ribbon_icon">
+                        <span class="ribbon_text">{{$t_approval_count}}</span>
+                    </div>
                     @endif
                 </a>
                 <a href="{{route('workflowviewget')}}" class="main_general_button">
@@ -40,12 +43,15 @@
                         申請一覧
                     </div>
                     @if ($t_reapplication_count != 0)
-                    <div class="ribbon">{{$t_reapplication_count}}</div>
+                    <div class="ribbon_container">
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/ribbon.svg') }}" alt="" class="ribbon_icon">
+                        <span class="ribbon_text">{{$t_approval_count}}</span>
+                    </div>
                     @endif
 
                 </a>
                 <a href="{{route('workflowcheckviewget')}}" class="main_general_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="flow_title_icon">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/checkview.svg') }}" alt="" class="flow_title_icon">
                     <div class="main_button_title">
                         閲覧一覧
                     </div>

@@ -1659,6 +1659,36 @@ $(document).ready(function () {
         }
       })
     })
+
+    $('.category_detail_delete_button').on('click', function () {
+      var prefix = $('#prefix').val();
+      if (confirm('このカテゴリを削除しますか？')) {
+        var token = $('input[name="_token"]').val()
+        let actionUrl = prefix + '/workflow/category/delete'; // 削除用のエンドポイント（適宜変更）
+        var category_id = $('#category_id').val()
+
+        let form = $('<form>', {
+            'method': 'POST',
+            'action': actionUrl
+        }).append(
+            $('<input>', {
+                'type': 'hidden',
+                'name': 'category_id',
+                'value': category_id
+            }),
+
+            $('<input>', {
+                'type': 'hidden',
+                'name': '_token',
+                'value': token // CSRF対策（Laravelの場合）
+
+            })
+        );
+
+        $('body').append(form);
+        form.submit();
+      }
+    })
   }
 
 

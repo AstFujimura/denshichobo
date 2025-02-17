@@ -533,7 +533,8 @@ class FlowController extends Controller
             $flow_master = DB::table("m_flows")
                 ->select("m_flows.*", "m_categories.カテゴリ名")
                 ->leftJoin("m_categories", "m_categories.id", "=", "m_flows.カテゴリマスタID")
-                ->where("削除フラグ", false)
+                ->where("m_flows.削除フラグ", false)
+                ->where("m_categories.削除フラグ", false)
                 ->orderBy("カテゴリマスタID")
                 ->get();
             $flow_groups = DB::table("m_flow_groups")
@@ -598,10 +599,14 @@ class FlowController extends Controller
             $flow_master = M_flow::find($id);
             $categories = M_category::all();
             foreach ($categories as $category) {
-                if ($category->id == $flow_master->カテゴリマスタID) {
-                    $category->selected = "selected";
+                if ($flow_master->カテゴリマスタID == $category->id || $category->削除フラグ == false) {
+                    if ($category->id == $flow_master->カテゴリマスタID) {
+                        $category->selected = "selected";
+                    } else {
+                        $category->selected = "";
+                    }
                 } else {
-                    $category->selected = "";
+                    $categories = $categories->except($category->id);
                 }
             }
             $flow_points = M_flow_point::where("フローマスタID", $id)
@@ -890,7 +895,7 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         if (Auth::user()->管理 == "管理") {
-            $m_categories = M_category::all();
+            $m_categories = M_category::where("削除フラグ", false)->get();
 
             return view('flow.workflowcategory', compact("prefix", "server", "m_categories"));
         } else {
@@ -1087,6 +1092,25 @@ class FlowController extends Controller
                 $new_m_category->save();
             }
             return redirect()->route('categorydetailget', ["id" => $new_m_category->id]);
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+    // カテゴリ削除
+    public function categorydeletepost(Request $request)
+    {
+        if (Auth::user()->管理 == "管理") {
+            $category_id = $request->input('category_id');
+            $m_category = M_category::find($category_id);
+
+            $existing_m_flow = M_flow::where('カテゴリマスタID', $category_id)->first();
+            if ($existing_m_flow) {
+                $m_category->削除フラグ = true;
+                $m_category->save();
+            } else {
+                $m_category->delete();
+            }
+            return redirect()->route('categoryget');
         } else {
             return redirect()->route('workflow');
         }
@@ -2604,15 +2628,134 @@ class FlowController extends Controller
             ->where('group_user.ユーザーID', Auth::id())
             ->pluck('m_flow_view_groups.フローマスタID')
             ->unique();
-        $t_flows = T_flow::whereIn('フローマスタID', $viewable_m_flows)->get();
-        return view('flow.workflowcheckview', compact("prefix", "server", "m_categories", "users", "title", "category", "user", "start_day", "end_day", "status", "t_flows"));
+
+
+        $t_flows_ongoing = DB::table("t_flows")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->where("申請者ID", Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
+            ->where("ステータス", 1)
+            ->get();
+
+        foreach ($t_flows_ongoing as $t_flow_ongoing) {
+            $t_flow_points_ongoing = T_flow_point::where("フローテーブルID", $t_flow_ongoing->flow_id)->get();
+            // フロー地点数をカウント、申請者も含まれるのでマイナス1
+            $t_flow_ongoing->母数 = $t_flow_points_ongoing->count() - 1;
+            // 承認ステータスから承認済みのものをカウント、申請者も含まれるのでマイナス1
+            $t_flow_ongoing->承認数 = $t_flow_points_ongoing->where("承認ステータス", 0)->count() - 1;
+        }
+
+
+        $t_flows_reject = DB::table("t_flows")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->where("申請者ID", Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
+            ->where("ステータス", 2)
+            ->get();
+
+        // 決裁済かつTAMERUに保存、未保存どちらのレコードも取得
+        $t_flows_approved = DB::table("t_flows")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->where("申請者ID", Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
+            ->where(function ($query) {
+                $query->where("ステータス", 3)
+                    ->orwhere("ステータス", 4);
+            })
+            ->get();
+
+        $t_flows_reapplication = DB::table("t_flows")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->where("申請者ID", Auth::id())
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
+            ->where('users.id', 'like', $user ? $user : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
+            ->where("ステータス", 5)
+            ->get();
+
+        $status = $request->input('status');
+        if ($status == null) {
+            if ($t_flows_reapplication->count() == 0) {
+                $status = "ongoing_tab";
+            } else {
+                $status = "reapplication_tab";
+            }
+        }
+
+        return view('flow.workflowcheckview', compact("prefix", "server", "m_categories", "users", "title", "category", "user", "start_day", "end_day", "status", "t_flows_ongoing", "t_flows_reject", "t_flows_approved", "t_flows_reapplication"));
     }
     // 閲覧詳細
-    public function workflowcheckviewdetailget(Request $request, $id) {}
+    public function workflowcheckdetailget(Request $request, $id)
+    {
+
+        $t_flow = T_flow::find($id);
+        $m_flow = M_flow::find($t_flow->フローマスタID);
+        $m_category = M_category::find($m_flow->カテゴリマスタID);
+        $t_optionals =  $this->application_items($id, $t_flow->再承認番号);
+
+        $user = User::find($t_flow->申請者ID);
+
+        $past_approvals = DB::table('t_approvals')
+            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
+            ->leftJoin('t_flow_points', 't_approvals.フロー地点テーブルID', '=', 't_flow_points.id')
+            ->leftJoin('users', 't_approvals.ユーザーID', '=', 'users.id')
+            ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
+            ->where(function ($query) {
+                $query->where('ステータス', 0)
+                    ->orWhere('ステータス', 4)
+                    ->orWhere('ステータス', 5)
+                    ->orWhere('ステータス', 6)
+                    ->orWhere('ステータス', 8);
+            })
+            ->where('t_flow_points.フローテーブルID', $id)
+            ->orderBy('承認日', 'asc')
+            ->get();
+
+
+
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        return view('flow.workflowcheckdetail', compact("prefix", "server", "t_flow", "user", "t_optionals", "past_approvals", "m_category"));
+    }
 
     // ワークフロー申請一覧
     public function workflowviewget(Request $request)
     {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+
         $m_categories = M_category::all();
         $users = DB::table('t_flows')
             ->select('users.id as user_id', 'users.name')
@@ -2708,20 +2851,10 @@ class FlowController extends Controller
         }
 
 
-        $prefix = config('prefix.prefix');
-        if ($prefix !== "") {
-            $prefix = "/" . $prefix;
-        }
-        $server = config('prefix.server');
         return view('flow.workflowview', compact("prefix", "server", "users", "m_categories", "status", "title", "category", "user", "start_day", "end_day", "t_flows_ongoing", "t_flows_reject", "t_flows_approved", "t_flows_reapplication"));
     }
     public function workflowapplicationdetailget($id)
     {
-        // $flow_table =  DB::table('t_flows')
-        //     ->select('t_flows.*', 't_flows.id as t_flow_id', 'users.name')
-        //     ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
-        //     ->where('t_flows.id', $id)
-        //     ->first();
 
         $t_flow = T_flow::find($id);
         $m_flow = M_flow::find($t_flow->フローマスタID);

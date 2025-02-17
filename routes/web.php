@@ -210,6 +210,10 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/category/regist', [FlowController::class, 'categoryregistget'])->name('categoryregistget');
             //カテゴリ追加ポスト
             Route::post('/workflow/category/regist', [FlowController::class, 'categoryregistpost'])->name('categoryregistpost');
+            // カテゴリ削除
+            Route::post('/workflow/category/delete', [FlowController::class, 'categorydeletepost'])->name('categorydeletepost');
+
+
 
             //カテゴリ詳細変更ポスト
             Route::post('/workflow/category/detail', [FlowController::class, 'categorydetailpost'])->name('categorydetailpost');
@@ -290,7 +294,7 @@ Route::prefix($prefix)->group(function () {
             // 閲覧一覧
             Route::get('/workflow/checkview', [FlowController::class, 'workflowcheckviewget'])->name('workflowcheckviewget');
             // 閲覧詳細
-            Route::get('/workflow/checkview/detail/{id}', [FlowController::class, 'workflowcheckviewdetailget'])->name('workflowcheckviewdetailget');
+            Route::get('/workflow/checkview/detail/{id}', [FlowController::class, 'workflowcheckdetailget'])->name('workflowcheckdetailget');
 
 
 

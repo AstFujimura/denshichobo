@@ -7,7 +7,7 @@
 
 @section('main')
 <div class="MainElement">
-    <h2 class="pagetitle" id="flow_master"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/flow.svg') }}" alt="" class="title_icon">ワークフローマスタ一覧</h2>
+    <h2 class="pagetitle" id="flow_master"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/flow.svg') }}" alt="" class="title_icon">経路マスタ一覧</h2>
     <div class="flow_master_container">
         <div class="flow_application_button_content">
             <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
