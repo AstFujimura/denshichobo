@@ -67,6 +67,7 @@
             <input type="hidden" id="left" name="left" value="">
             <input type="hidden" id="width" name="width" value="">
             <input type="hidden" id="height" name="height" value="">
+            <input type="hidden" id="scale" name="scale" value="">
 
             <!-- <img src="" alt=""> -->
         </div>

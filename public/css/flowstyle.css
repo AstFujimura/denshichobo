@@ -1866,45 +1866,74 @@ body #usersetting {
   padding: 1rem 3rem 3rem;
   width: fit-content;
   max-width: 90vw;
-  border-radius: 29px;
 }
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 800px) {
   .flow_view_container {
-    padding: 1rem 1rem;
+    padding: 1rem 2rem;
+    max-width: 95%;
+    margin-inline: auto;
   }
 }
 
-.tab_container {
+@media screen and (max-width: 800px) {
+  .flow_view_container_inner {
+    display: flex;
+  }
+}
+.flow_view_container_inner .tab_container {
   display: flex;
-  margin-left: 12px;
+  margin-left: 0.8rem;
 }
-
-.flow_view_content {
-  padding: 30px;
-  border-radius: 8px;
-  background: white;
-  border: solid 1px #00b500;
-  top: -15px;
-  position: relative;
-  overflow: auto;
+@media screen and (max-width: 800px) {
+  .flow_view_container_inner .tab_container {
+    order: 1;
+    flex-direction: column;
+    margin-left: -0.8rem;
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+  }
 }
-
-.flow_tab {
-  padding: 13px;
-  border-radius: 11px;
+.flow_view_container_inner .tab_container .flow_tab {
+  padding: 1rem;
+  border-radius: 1rem;
   background: #f7f7f7;
-  width: 150px;
+  width: 12rem;
   text-align: center;
   border: solid 1px #bdbcbc;
-  margin-right: 16px;
-  height: 30px;
+  margin-right: 1rem;
+  height: 2rem;
   cursor: pointer;
 }
-
-.tab_focus {
+@media screen and (max-width: 800px) {
+  .flow_view_container_inner .tab_container .flow_tab {
+    margin-bottom: 1rem;
+    height: fit-content;
+    width: fit-content;
+    writing-mode: vertical-rl;
+    /* 縦書き。行の流れは右から左 */
+    text-orientation: upright;
+    /* 文字をまっすぐ立てる */
+  }
+}
+.flow_view_container_inner .tab_container .tab_focus {
   background: #00b500;
   color: white;
   border: solid 1px #00b500;
+}
+.flow_view_container_inner .flow_view_content {
+  padding: 1.6rem;
+  border-radius: 1rem;
+  background: white;
+  border: solid 1px #00b500;
+  top: -1rem;
+  position: relative;
+  overflow: auto;
+}
+@media screen and (max-width: 800px) {
+  .flow_view_container_inner .flow_view_content {
+    margin-top: 1rem;
+    width: 90%;
+  }
 }
 
 .ongoing_tab {
@@ -1926,13 +1955,31 @@ body #usersetting {
 .flow_view_thead_tr {
   display: flex;
 }
+@media screen and (max-width: 800px) {
+  .flow_view_thead_tr {
+    display: none;
+  }
+}
 
 .flow_view_tbody_tr {
   display: flex;
   border-bottom: solid 1px #a1a1a1;
-  padding-block: 13px;
+  padding-block: 1rem;
   cursor: pointer;
   color: black;
+}
+@media screen and (max-width: 800px) {
+  .flow_view_tbody_tr {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 5rem 5rem 6rem 4rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: black;
+    box-shadow: 1px 2px 3px 1px #919191;
+    margin-bottom: 0.6rem;
+    border: none;
+  }
 }
 
 .flow_view_tbody_tr:hover {
@@ -1945,44 +1992,81 @@ body #usersetting {
 }
 
 .flow_view_title {
-  padding-left: 10px;
-  width: 600px;
+  padding-left: 1rem;
+  width: 50rem;
+  font-weight: 500;
+}
+@media screen and (max-width: 800px) {
+  .flow_view_title {
+    grid-row: 1/2;
+    grid-column: 1/3;
+    font-size: 1.2rem;
+    padding-left: 0;
+  }
 }
 
 .flow_view_status {
   width: 104px;
 }
+@media screen and (max-width: 800px) {
+  .flow_view_status {
+    grid-column: 3/4;
+    grid-row: 1/2;
+    font-size: 1.2rem;
+  }
+}
 
 .flow_view_category {
   width: 132px;
+}
+@media screen and (max-width: 800px) {
+  .flow_view_category {
+    grid-row: 2/3;
+    grid-column: 1/2;
+    font-size: 0.8rem;
+  }
 }
 
 .flow_view_applicant {
   width: 100px;
 }
+@media screen and (max-width: 800px) {
+  .flow_view_applicant {
+    grid-row: 2/3;
+    grid-column: 2/3;
+    font-size: 0.8rem;
+  }
+}
 
 .flow_view_date {
   width: 120px;
 }
+@media screen and (max-width: 800px) {
+  .flow_view_date {
+    grid-row: 2/3;
+    grid-column: 3/4;
+    font-size: 0.8rem;
+  }
+}
 
 .ongoing {
   color: #ff7a4a;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .completion {
   color: #008eff;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .rejected {
   color: #464b06;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .reapplication {
   color: #740707;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 /* 承認一覧 */
@@ -2021,7 +2105,8 @@ body #usersetting {
 }
 
 .flow_search_button {
-  background: #81d281;
+  background: #57a157;
+  font-size: 1rem;
   border-radius: 5px;
   color: white;
   height: 2.5rem;
@@ -2035,6 +2120,9 @@ body #usersetting {
   border: none;
   grid-column: 2/3;
   grid-row: -1/-2;
+}
+.flow_search_button:hover {
+  background: #366636;
 }
 @media screen and (max-width: 600px) {
   .flow_search_button {
@@ -2055,23 +2143,19 @@ body #usersetting {
   width: 7rem;
 }
 
-.flow_search_button:hover {
-  background: #609960;
-}
-
 .unapproved {
   color: #ff7a4a;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .approved {
   color: #008eff;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .rejected {
   color: #575106;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .approvable_tab {
@@ -2092,18 +2176,18 @@ body #usersetting {
 
 .none_data_message {
   text-align: center;
-  padding-block: 5px;
+  padding-block: 0.4rem;
   color: #434343;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 /* 承認 */
 .approval_sub_title {
-  margin-bottom: 24px;
-  font-size: 20px;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
   border-bottom: solid 1px #bab5b5;
   color: #002d8c;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .approve_tab {
@@ -2115,8 +2199,14 @@ body #usersetting {
 }
 
 .approve_container {
-  margin: 30px;
+  margin: 2rem;
   display: flex;
+}
+@media screen and (max-width: 800px) {
+  .approve_container {
+    flex-direction: column;
+    margin: 1rem;
+  }
 }
 
 .approve_person_icon {
@@ -2142,7 +2232,7 @@ body #usersetting {
 }
 
 .approve_content_title {
-  width: 100px;
+  width: 8rem;
   color: gray;
 }
 
@@ -2179,8 +2269,9 @@ body #usersetting {
     background: #8f2121;
 } */
 .approve_authorizer_container {
-  margin-right: 20px;
-  width: 451px;
+  margin-right: 1.6rem;
+  width: 30rem;
+  max-width: 95%;
 }
 
 .approvalbutton {
@@ -2402,16 +2493,26 @@ body #usersetting {
 .approve_condition_container {
   display: flex;
 }
+@media screen and (max-width: 1200px) {
+  .approve_condition_container {
+    flex-direction: column;
+  }
+}
 
 .approve_condition_table {
-  margin: 40px;
+  margin: 3rem;
+}
+@media screen and (max-width: 800px) {
+  .approve_condition_table {
+    margin: 1rem;
+  }
 }
 
 .approve_condition_thead_tr {
   display: flex;
   text-align: center;
-  font-size: 14px;
-  background: #e7e7e7;
+  font-size: 0.9rem;
+  border-bottom: solid 0.1rem #c7c7c7;
 }
 .approve_condition_thead_tr .approve_condition_th {
   display: flex;
@@ -2423,6 +2524,11 @@ body #usersetting {
 .approve_condition_thead_tr .approve_condition_th:not(:last-child) {
   border-right: solid 1px #ffffff;
 }
+@media screen and (max-width: 1200px) {
+  .approve_condition_thead_tr {
+    display: none;
+  }
+}
 
 .approve_condition_tbody_tr {
   display: flex;
@@ -2430,14 +2536,29 @@ body #usersetting {
   cursor: pointer;
   color: black;
 }
+@media screen and (max-width: 600px) {
+  .approve_condition_tbody_tr {
+    display: grid;
+    grid-template-columns: 5rem 5rem;
+    border-bottom: 0;
+    box-shadow: 1px 2px 4px 0 #a5a4a4;
+    margin-bottom: 0.5rem;
+    padding: 0.3rem;
+  }
+}
 .approve_condition_tbody_tr .approve_condition_td {
-  padding: 13px 5px;
+  padding: 0.8rem 0.3rem;
 }
-.approve_condition_tbody_tr .approve_condition_td:not(:last-child) {
-  border-right: solid 1px #e9e9e9;
+@media screen and (min-width: 601px) {
+  .approve_condition_tbody_tr .approve_condition_td:not(:last-child) {
+    border-right: solid 1px #e9e9e9;
+  }
 }
-.approve_condition_tbody_tr .approve_condition_comment {
-  max-width: 300px;
+@media screen and (max-width: 600px) {
+  .approve_condition_tbody_tr .approve_condition_td {
+    padding: 0 0.2rem;
+    border-right: 0px;
+  }
 }
 
 .bold_underline {
@@ -2449,48 +2570,81 @@ body #usersetting {
 }
 
 .approve_condition_name {
-  width: 120px;
+  width: 10rem;
+}
+@media screen and (max-width: 600px) {
+  .approve_condition_name {
+    grid-row: 1/2;
+    grid-column: 1/3;
+    font-size: 1.2rem;
+    width: fit-content;
+  }
 }
 
 .approve_condition_status {
-  width: 75px;
+  width: 7rem;
   text-align: center;
+}
+@media screen and (max-width: 600px) {
+  .approve_condition_status {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    font-size: 1.2rem;
+    text-align: start;
+    width: fit-content;
+  }
 }
 
 .approve_condition_date {
-  width: 110px;
+  width: 10rem;
+}
+@media screen and (max-width: 600px) {
+  .approve_condition_date {
+    grid-column: 2/3;
+    grid-row: 2/3;
+    font-size: 0.8rem;
+    width: fit-content;
+  }
 }
 
 .approve_condition_comment {
-  min-width: 110px;
+  width: 10rem;
+}
+@media screen and (max-width: 600px) {
+  .approve_condition_comment {
+    grid-column: 3/4;
+    grid-row: 1/3;
+    font-size: 0.8rem;
+    width: fit-content;
+  }
 }
 
 .applicant_status,
 .reapply_status {
   color: #897c06;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .approved_status {
   color: #ff7a4a;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .approve_wait_status {
   color: #4a92ff;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .reject_status {
   color: yellow;
-  font-weight: bold;
+  font-weight: 500;
   background: #616161;
   padding: 2px 15px;
 }
 
 .remand_status {
   color: #5f0707;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .approve_hover {
@@ -2567,27 +2721,37 @@ body #usersetting {
 .approve_flow_status > .view_grid {
   position: relative;
   display: grid;
-  font-size: 13px;
+  font-size: 1rem;
   background: white;
-  border-radius: 30px;
-  margin-left: 100px;
+  border-radius: 3rem;
+  margin-left: 10rem;
   margin-top: 0;
   padding: 0;
+}
+@media screen and (max-width: 1200px) {
+  .approve_flow_status > .view_grid {
+    margin-inline: 0;
+  }
 }
 
 .approve_preview_button {
   margin-top: auto;
-  height: 30px;
-  line-height: 30px;
+  height: 2rem;
+  line-height: 2rem;
   background: #68ad89;
   border-radius: 3px;
-  padding: 5px 10px;
+  padding: 0.3rem 0.5rem;
   color: white;
   cursor: pointer;
-  width: 100px;
+  width: 6rem;
   text-align: center;
   top: 0;
-  margin-right: 20px;
+  margin-right: 1.6rem;
+}
+@media screen and (max-width: 800px) {
+  .approve_preview_button {
+    margin-right: 0;
+  }
 }
 
 .approve_preview_button:hover {
@@ -2625,10 +2789,11 @@ body #usersetting {
 }
 
 .approve_download {
-  height: 25px;
-  padding: 3px;
+  height: 2rem;
+  padding: 0.2rem;
   border-radius: 2px;
   cursor: pointer;
+  margin-left: 0.5rem;
 }
 
 .approve_download:hover {

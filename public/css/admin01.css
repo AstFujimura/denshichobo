@@ -54,11 +54,12 @@
   margin-left: 10px;
 }
 .logoelement01 .snapflow_logo {
-  width: 66px;
+  width: 3rem;
+  margin-left: 0.5rem;
 }
 .logoelement01 .snapflow_char {
-  height: 28px;
-  margin-left: 10px;
+  height: 1.5rem;
+  margin-left: 0.5rem;
 }
 
 .user01 {
