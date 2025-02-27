@@ -732,6 +732,15 @@ $(document).ready(function () {
         else {
           $('.flow_application_document_container').addClass('display_none')
         }
+        // 任意のidのところへスクロールする
+        if (response[1] && window.innerWidth < 1200) {
+          var targetElement = $('.flow_application_title');
+          if (targetElement.length) {
+            $('html, body').animate({
+              scrollTop: targetElement.offset().top + 200
+            }, 500);
+          }
+        }
 
 
       },
@@ -1112,78 +1121,135 @@ $(document).ready(function () {
       }
 
     }
-
     var dragging = false; // ドラッグ中かどうかのフラグ
     var offsetX, offsetY; // ドラッグ開始位置と要素の左上端との差
-    var nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
-    var clicked = false
+    var startX, startY, nowX = 0, nowY = 0; // 現在の要素の相対位置を保持
+    var clicked = false;
 
-    var width, height, pdf_canvas_width, pdf_canvas_height
-    var scrollX, scrollY
+    var width, height, pdf_canvas_width, pdf_canvas_height;
+    var scaleFactor = 1; // ズーム倍率
 
+    // スケール倍率の取得
+    function updateScaleFactor() {
+      // CSSの transform: scale() を取得
+      let canvas = document.querySelector(".pdf_canvas");
+      let transform = window.getComputedStyle(canvas).transform;
+      let matrix = transform.match(/matrix\((.+)\)/);
+
+      if (matrix) {
+        scaleFactor = parseFloat(matrix[1].split(", ")[0]); // X軸のスケール値を取得
+      } else {
+        scaleFactor = 1;
+      }
+    }
+
+    // クリック時（スタンプ追加）
     $(document).on('click', '.canvas_container', function (event) {
       if (!clicked) {
-        offsetX = canvas_offset("x")
-        offsetY = canvas_offset("y")
-        nowX = event.pageX - offsetX - 18
-        nowY = event.pageY - offsetY - 18
+        updateScaleFactor(); // ズーム倍率を更新
 
+        var adjust = $('#scale').val() * 18;
 
-        width = $('#width').val()
-        height = $('#height').val()
-        pdf_canvas_width = $(".pdf_canvas").width()
-        pdf_canvas_height = $(".pdf_canvas").height()
-        var clonedElement = $('.origin').first().clone()
-        clonedElement.addClass('application_stamp')
-        clonedElement.removeClass('origin')
+        offsetX = canvas_offset("x");
+        offsetY = canvas_offset("y");
+
+        nowX = (event.pageX - offsetX - adjust) / scaleFactor;
+        nowY = (event.pageY - offsetY - adjust) / scaleFactor;
+
+        width = $('#width').val();
+        height = $('#height').val();
+        pdf_canvas_width = $(".pdf_canvas").width();
+        pdf_canvas_height = $(".pdf_canvas").height();
+
+        var clonedElement = $('.origin').first().clone();
+        clonedElement.addClass('application_stamp');
+        clonedElement.removeClass('origin');
         clonedElement.css({
           left: nowX,
           top: nowY,
-          width: 9.5 / width * 100 + "%"
+          width: (9.5 / width) * 100 + "%"
         });
-        $(this).append(clonedElement)
-        clicked = true
-        $('#left').val(nowX * width / pdf_canvas_width)
-        $('#top').val(nowY * height / pdf_canvas_height)
-      }
 
-    })
+        $(this).append(clonedElement);
+        clicked = true;
 
-
-    // 要素をクリックしたときの処理
-    $(document).on("mousedown", ".application_stamp", function (event) {
-      event.preventDefault(); // ブラウザのデフォルトのドラッグ動作を停止
-      var position = $(this).parent();
-      offsetX = canvas_offset("x")
-      offsetY = canvas_offset("y")
-      dragging = true; // ドラッグ開始
-      $(this).data("dragging", true)
-      $(this).attr("data-dragging", true)
-    })
-    // ドラッグ中の処理
-    $(document).on("mousemove", function (event) {
-
-      if (dragging) {
-        // ドラッグ中の座標を取得し、要素を移動
-        offsetX = canvas_offset("x")
-        offsetY = canvas_offset("y")
-        nowX = event.pageX - offsetX - 18;
-        nowY = event.pageY - offsetY - 18;
-        $(".application_stamp").css({ left: nowX, top: nowY });
-      }
-    })
-    // ドラッグ終了時の処理
-    $(document).on("mouseup", function () {
-      if (dragging) {
-        dragging = false; // ドラッグ終了
-        $(".application_stamp").data("dragging", false)
-        $(".application_stamp").attr("data-dragging", false)
-        $(".application_stamp").css({ cursor: "default", opacity: 1 }); // スタイルを元に戻す
-        $('#left').val(nowX * width / pdf_canvas_width)
-        $('#top').val(nowY * height / pdf_canvas_height)
+        $('#left').val(nowX * width / pdf_canvas_width);
+        $('#top').val(nowY * height / pdf_canvas_height);
       }
     });
 
+    // スタンプをドラッグ開始
+    $(document).on("mousedown touchstart", ".application_stamp", function (event) {
+      event.preventDefault(); // デフォルトの動作を防ぐ
+
+      updateScaleFactor(); // ズーム倍率を更新
+
+      offsetX = canvas_offset("x");
+      offsetY = canvas_offset("y");
+
+      let clientX = event.type === "touchstart" ? event.touches[0].clientX : event.pageX;
+      let clientY = event.type === "touchstart" ? event.touches[0].clientY : event.pageY;
+
+      var adjust = $('#scale').val() * 18;
+
+      // ドラッグ開始時のスタンプの初期位置
+      startX = $(this).position().left;
+      startY = $(this).position().top;
+
+      // マウスの位置を基準に調整
+      nowX = (clientX - offsetX - adjust) / scaleFactor;
+      nowY = (clientY - offsetY - adjust) / scaleFactor;
+
+      $(this).data("dragging", true).attr("data-dragging", true);
+      dragging = true;
+    });
+
+    // スタンプのドラッグ処理
+    function handleMove(event) {
+      if (!dragging) return;
+
+      let clientX, clientY;
+      if (event.type === "touchmove") {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else {
+        clientX = event.pageX;
+        clientY = event.pageY;
+      }
+
+      var adjust = $('#scale').val() * 18;
+      // 移動量を求めて scaleFactor で補正
+      let deltaX = (clientX - offsetX - adjust) / scaleFactor - nowX;
+      let deltaY = (clientY - offsetY - adjust) / scaleFactor - nowY;
+
+      $(".application_stamp[data-dragging='true']").css({
+        left: startX + deltaX,
+        top: startY + deltaY
+      });
+
+      event.preventDefault(); // タッチスクロール防止
+    }
+
+    // ドラッグ終了時の処理
+    function handleEnd() {
+      if (!dragging) return;
+
+      dragging = false;
+      $(".application_stamp").data("dragging", false).attr("data-dragging", false);
+      $(".application_stamp").css({ cursor: "default", opacity: 1 });
+
+      $('#left').val(nowX * width / pdf_canvas_width);
+      $('#top').val(nowY * height / pdf_canvas_height);
+    }
+
+    // イベント登録
+    document.addEventListener("touchmove", handleMove, { passive: false });
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchend", handleEnd);
+
+    document.addEventListener("mousemove", handleMove, { passive: false });
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("mouseleave", handleEnd);
 
   }
 
@@ -1668,21 +1734,21 @@ $(document).ready(function () {
         var category_id = $('#category_id').val()
 
         let form = $('<form>', {
-            'method': 'POST',
-            'action': actionUrl
+          'method': 'POST',
+          'action': actionUrl
         }).append(
-            $('<input>', {
-                'type': 'hidden',
-                'name': 'category_id',
-                'value': category_id
-            }),
+          $('<input>', {
+            'type': 'hidden',
+            'name': 'category_id',
+            'value': category_id
+          }),
 
-            $('<input>', {
-                'type': 'hidden',
-                'name': '_token',
-                'value': token // CSRF対策（Laravelの場合）
+          $('<input>', {
+            'type': 'hidden',
+            'name': '_token',
+            'value': token // CSRF対策（Laravelの場合）
 
-            })
+          })
         );
 
         $('body').append(form);
@@ -2025,4 +2091,53 @@ $(document).ready(function () {
       })
     })
   }
+
+  // -----------------------------ファイル管理--------------------------------
+  if ($('#fileget').length != 0) {
+    var prefix = $('#prefix').val()
+    $('.folder_tr').on('click', function () {
+      if ($('#hierarchy').val() == 'category') {
+        var category_id = $(this).data('id')
+        window.location.href = prefix + '/workflow/file/?category_id=' + category_id + '&hierarchy=t_flow'
+      }
+      else if ($('#hierarchy').val() == 't_flow') {
+        var t_flow_id = $(this).data('id')
+        window.location.href = prefix + '/workflow/file/?t_flow_id=' + t_flow_id + '&hierarchy=file'
+      }
+    })
+
+    $('.controller_icon').on('click', function () {
+      if ($(this).hasClass('disabled')) {
+        return
+      }
+      else if ($(this).data('controller') == 'up') {
+        var id = $(this).data('id')
+        if ($('#hierarchy').val() == 't_flow') {
+          window.location.href = prefix + '/workflow/file/'
+        }
+        else if ($('#hierarchy').val() == 'file') {
+          var category_id = $('#category_id').val()
+          window.location.href = prefix + '/workflow/file/?category_id=' + category_id + '&hierarchy=t_flow'
+        }
+      }
+      else if ($(this).data('controller') == 'reload') {
+        window.location.reload()
+      }
+    })
+
+    //ダウンロードボタンを押したとき
+    $('.download_icon').on('click', function () {
+      window.location.href = $(this).attr("data-url")
+    });
+  }
+
+  // -----------------------------TAMERU設定--------------------------------
+  if ($('#tameru_setting').length != 0) {
+    $('.tameru_setting_change_button').on('click', function () {
+      if (confirm('変更しますか？')) {
+        $('#tameru_setting_form').submit()
+      }
+    })
+  }
+
 });

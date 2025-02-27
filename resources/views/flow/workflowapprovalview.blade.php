@@ -53,7 +53,7 @@
 
                 <div class="flow_search_application_box">
                     <div class="flow_search_application_title">
-                        申請日
+                        申請日 :
                     </div> 
                     <input type="text" class="flow_search_input search_form_date"  name="start_day" value="{{$start_day}}">
                     　～　

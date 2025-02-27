@@ -6,36 +6,36 @@
         fill: none;
       }
 
-      .cls-1, .cls-5, .cls-3, .cls-4 {
-        stroke: #1d2088;
+      .cls-1, .cls-2, .cls-5 {
+        stroke-width: 8px;
+      }
+
+      .cls-1, .cls-2, .cls-5, .cls-4 {
+        stroke: #f39800;
         stroke-miterlimit: 10;
       }
 
-      .cls-1, .cls-5, .cls-4 {
-        stroke-width: 8px;
+      .cls-2 {
+        stroke-linecap: round;
       }
 
       .cls-5 {
         fill: #fff;
       }
 
-      .cls-3 {
-        stroke-width: 10px;
-      }
-
       .cls-4 {
-        stroke-linecap: round;
+        stroke-width: 10px;
       }
     </style>
   </defs>
   <g id="_レイヤー_1-2" data-name="レイヤー 1">
     <g>
-      <rect class="cls-2" width="223.04" height="244.17"/>
-      <polygon class="cls-3" points="42.49 34.58 42.49 202.32 168.98 202.32 168.98 87.54 117.85 34.58 42.49 34.58"/>
-      <polyline class="cls-3" points="168.98 87.54 117.85 87.54 117.85 34.58"/>
+      <rect class="cls-3" width="223.04" height="244.17"/>
+      <polygon class="cls-4" points="42.49 34.58 42.49 202.32 168.98 202.32 168.98 87.54 117.85 34.58 42.49 34.58"/>
+      <polyline class="cls-4" points="168.98 87.54 117.85 87.54 117.85 34.58"/>
       <polygon class="cls-5" points="179.15 228.37 202.79 211.45 185.93 188.29 196.43 180.67 151.24 159.9 150.85 209.23 161.76 202.61 179.15 228.37"/>
       <circle class="cls-1" cx="96.46" cy="123.54" r="21.91"/>
-      <line class="cls-4" x1="111.52" y1="143.17" x2="131.28" y2="165.67"/>
+      <line class="cls-2" x1="111.52" y1="143.17" x2="131.28" y2="165.67"/>
     </g>
   </g>
 </svg>

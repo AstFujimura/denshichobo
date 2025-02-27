@@ -683,6 +683,18 @@ a {
   display: flex;
 }
 
+.form {
+  .input-container {
+    display: flex;
+    margin-top: 1rem;
+    font-size: 1rem;
+
+    .label {
+      width: 15rem;
+    }
+  }
+}
+
 .previewbox {
   display: flex;
 }
@@ -774,19 +786,20 @@ a {
   margin-left: 3rem;
   width: 30rem;
   max-width: 75%;
+
   .input-container {
     flex-direction: column;
     margin-top: 1rem;
 
-    .label {
+    .label {}
 
-    }
-    .dateform{
-      .input-field{
+    .dateform {
+      .input-field {
         width: 100%;
       }
     }
   }
+
   @media screen and (min-width: 801px) {
     .important {
       width: 16rem;
@@ -1885,6 +1898,8 @@ a {
   background: #a0a0a0;
 }
 
+
 .dateform {
   display: flex;
 }
+

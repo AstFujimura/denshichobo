@@ -25,6 +25,7 @@ use App\Models\T_flow_draft;
 use App\Models\Position;
 use App\Models\T_optional;
 use App\Models\M_flow_view_group;
+use App\Models\M_tameru_regist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -936,6 +937,12 @@ class FlowController extends Controller
             $parts = explode("_", $order);
 
             $items = array();
+            $tameru_condition = [
+                "file" => false,
+                "date" => false,
+                "price" => false,
+                "company" => false
+            ];
             foreach ($parts as $part) {
                 $columns = array();
                 $columns["id"] = $part;
@@ -949,9 +956,122 @@ class FlowController extends Controller
                 $columns["金額条件"] = ($m_optional->金額条件 !== 0) ? "checked" : null;
 
                 $items[] = $columns;
+                if ($m_optional->型 == 4) {
+                    $tameru_condition["file"] = true;
+                }
+                if ($m_optional->型 == 3) {
+                    $tameru_condition["date"] = true;
+                }
+                if ($m_optional->型 == 2) {
+                    $tameru_condition["price"] = true;
+                }
+                if ($m_optional->型 == 1 && $m_optional->デフォルト == false) {
+                    $tameru_condition["company"] = true;
+                }
+            }
+            if ($tameru_condition["file"] == true && $tameru_condition["date"] == true && $tameru_condition["price"] == true && $tameru_condition["company"] == true) {
+                $tameru_condition = true;
+            } else {
+                $tameru_condition = false;
             }
 
-            return view('flow.workflowcategorydetail', compact("prefix", "server", "m_category", "items", "order", "annotation", "id"));
+            return view('flow.workflowcategorydetail', compact("prefix", "server", "m_category", "items", "order", "annotation", "id", "tameru_condition"));
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+
+    // カテゴリTAMERU設定
+    public function categorytamerusettingget(Request $request, $id)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        if (Auth::user()->管理 == "管理") {
+            $m_category = M_category::find($id);
+
+            // カテゴリの項目順を取得してその項目のみを取得する
+            $optionals = explode("_", $m_category->項目順);
+            // 型が4のもの(ファイル型)を取得する
+            $m_optionals = M_optional::where("カテゴリマスタID", $id)
+                ->whereIn("id", $optionals)
+                ->where("型", 4)
+                ->get();
+            foreach ($m_optionals as $m_optional) {
+                $m_tameru_regist = M_tameru_regist::where("ファイル", $m_optional->id)->first();
+                if ($m_tameru_regist) {
+                    $m_optional->checked = 'checked';
+                    $m_optional->date_optional = $m_tameru_regist->取引日;
+                    $m_optional->price_optional = $m_tameru_regist->金額;
+                    $m_optional->company_optional = $m_tameru_regist->取引先;
+                    $m_optional->document_optional = $m_tameru_regist->書類区分;
+                    $m_optional->submit_optional = $m_tameru_regist->提出;
+                    $m_optional->save_optional = $m_tameru_regist->保存方法;
+                    $m_optional->search_optional = $m_tameru_regist->検索ワード;
+                } else {
+                    $m_optional->date_optional = "";
+                    $m_optional->price_optional = "";
+                    $m_optional->company_optional = "";
+                    $m_optional->document_optional = "";
+                    $m_optional->submit_optional = "";
+                    $m_optional->save_optional = "";
+                    $m_optional->search_optional = "";
+                }
+            }
+
+            $date_optionals = M_optional::where("カテゴリマスタID", $id)
+                ->whereIn("id", $optionals)
+                ->where("型", 3)
+                ->where("必須", true)
+                ->get();
+            $price_optionals = M_optional::where("カテゴリマスタID", $id)
+                ->whereIn("id", $optionals)
+                ->where("型", 2)
+                ->where("必須", true)
+                ->get();
+            $company_optionals = M_optional::where("カテゴリマスタID", $id)
+                ->whereIn("id", $optionals)
+                ->where("型", 1)
+                ->where("デフォルト", false)
+                ->get();
+
+            $documents = Document::all();
+            return view('flow.workflowtamerusetting', compact("prefix", "server", "id", "m_category", "m_optionals", "documents", "date_optionals", "price_optionals", "company_optionals"));
+        } else {
+            return redirect()->route('workflow');
+        }
+    }
+    // カテゴリTAMERU設定ポスト
+    public function categorytamerusettingpost(Request $request)
+    {
+        if (Auth::user()->管理 == "管理") {
+            $category_id = $request->input('category_id');
+            $m_optionals = M_optional::where("カテゴリマスタID", $category_id)
+                ->where("型", 4)
+                ->get();
+            foreach ($m_optionals as $m_optional) {
+                if ($request->input("optional" . $m_optional->id)) {
+                    $m_tameru_regist = M_tameru_regist::updateOrCreate(
+                        ['ファイル' => $m_optional->id],
+                        [
+                            'カテゴリマスタID' => $category_id,
+                            '取引日' => $request->input("date_optional" . $m_optional->id),
+                            '金額' => $request->input("price_optional" . $m_optional->id),
+                            '取引先' => $request->input("company_optional" . $m_optional->id),
+                            '書類区分' => $request->input("document_optional" . $m_optional->id),
+                            '提出' => $request->input("submit_optional" . $m_optional->id),
+                            '保存方法' => $request->input("save_optional" . $m_optional->id),
+                            '検索ワード' => $request->input("search_optional" . $m_optional->id) ?? ''
+                        ]
+                    );
+                } else {
+                    // チェックボックスが外された場合は削除
+                    M_tameru_regist::where('ファイル', $m_optional->id)->delete();
+                }
+            }
+            return redirect()->route('categorytamerusettingget', ["id" => $category_id]);
         } else {
             return redirect()->route('workflow');
         }
@@ -2413,6 +2533,70 @@ class FlowController extends Controller
                             $this->workflowmailpost($t_flow->申請者ID, 'completion', $t_flow->id);
                         }
                         $t_flow->save();
+                        // TAMERUに保存
+                        $category_id = $t_flow->カテゴリマスタID;
+                        $m_tameru = M_tameru_regist::where('カテゴリマスタID', $category_id)->get();
+                        if ($m_tameru->count() > 0) {
+                            foreach ($m_tameru as $m_tameru) {
+                                $t_optional = T_optional::where('フローテーブルID', $t_flow->id)
+                                    ->where('任意項目マスタID', $m_tameru->ファイル)
+                                    ->where('ファイルパス', '!=', null)
+                                    ->first();
+
+                                if ($t_optional) {
+                                    // 新規にTAMERUファイルを作成
+                                    $file = new File();
+
+                                    // フローマスタから申請のグループを取得
+                                    $flow_group = M_flow_group::where('フローマスタID', $t_flow->フローマスタID)->pluck('グループID');
+                                    $application_user_id = $t_flow->申請者ID;
+                                    // 申請者が属しているグループかつフローマスタに登録されているグループの中から
+                                    // グループIDを取得(最初に取得したものを採用)
+                                    $group_user = Group_user::where('ユーザーID', $application_user_id)
+                                        ->whereIn('グループID', $flow_group)
+                                        ->first();
+                                    if ($group_user) {
+                                        $file->グループID = $group_user->グループID;
+                                    }
+                                    // フローマスタからすでにグループが外されていた場合
+                                    // 個人として保存
+                                    else {
+                                        $group_user = Group_user::where('ユーザーID', $application_user_id)
+                                            ->where('グループID', '<', 100000)
+                                            ->first();
+                                        $file->グループID = $group_user->グループID;
+                                    }
+
+                                    // 任意項目から取引日、金額、取引先を取得
+                                    $date_optional = T_optional::where('フローテーブルID', $t_flow->id)
+                                        ->where('任意項目マスタID', $m_tameru->取引日)
+                                        ->first();
+                                    $price_optional = T_optional::where('フローテーブルID', $t_flow->id)
+                                        ->where('任意項目マスタID', $m_tameru->金額)
+                                        ->first();
+                                    $company_optional = T_optional::where('フローテーブルID', $t_flow->id)
+                                        ->where('任意項目マスタID', $m_tameru->取引先)
+                                        ->first();
+                                    $file->日付 = Carbon::parse($date_optional->日付)->format('Ymd');
+                                    $file->金額 = $price_optional->数値;
+                                    $file->取引先 = $company_optional->文字列;
+                                    $file->提出 = $m_tameru->提出 == 1 ? '提出' : '受領';
+                                    $file->保存 = $m_tameru->保存方法 == 1 ? '電子保存' : 'スキャナ保存';
+                                    $file->書類ID = $m_tameru->書類区分;
+                                    $file->備考 = $m_tameru->検索ワード;
+
+                                    $file->ファイルパス = $t_optional->ファイルパス;
+                                    $file->ファイル変更 = "";
+                                    $file->削除フラグ = "";
+                                    $file->ファイル形式 = $t_optional->ファイル形式;
+                                    $file->過去データID = $t_flow->過去データID;
+                                    $file->バージョン = 1;
+                                    $file->保存者ID = $application_user_id;
+                                    $file->更新者ID = $application_user_id;
+                                    $file->save();
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -3013,6 +3197,57 @@ class FlowController extends Controller
         }
     }
 
+    public function workflowfileget(Request $request)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $server = config('prefix.server');
+        $hierarchy = $request->input('hierarchy') ?? 'category';
+        $lists = [];
+        if ($hierarchy == 'category') {
+            $lists = M_category::all();
+            return view('flow.workflowfile', compact("prefix", "server", "lists", "hierarchy"));
+        } else if ($hierarchy == 't_flow') {
+            $category_id = $request->input('category_id') ?? '';
+            $lists = T_flow::where('カテゴリマスタID', $category_id)
+                ->where('ステータス', 3)
+                ->get();
+            $category = M_category::find($category_id);
+            return view('flow.workflowfile', compact("prefix", "server", "lists", "hierarchy", "category"));
+        } else if ($hierarchy == 'file') {
+            $t_flow_id = $request->input('t_flow_id') ?? '';
+            $t_flow = T_flow::find($t_flow_id);
+            $category_id = $t_flow->カテゴリマスタID;
+            $category = M_category::find($category_id);
+            $lists = DB::table('t_optionals')
+                ->select('t_optionals.*', 'm_optionals.項目名')
+                ->leftJoin('m_optionals', 't_optionals.任意項目マスタID', '=', 'm_optionals.id')
+                ->where('フローテーブルID', $t_flow_id)
+                ->whereNotNull('ファイルパス')
+                ->get();
+            if ($t_flow->変更後承認ファイルパス) {
+                // 
+                $application_file = new \stdClass();
+                $application_file->項目名 = "承認用紙";
+                $application_file->id = $t_flow->id;
+                $application_file->ファイルパス = $t_flow->変更後承認ファイルパス;
+                $application_file->ファイル形式 = pathinfo($t_flow->変更後承認ファイルパス, PATHINFO_EXTENSION);
+                $lists->push($application_file);
+            }
+            return view('flow.workflowfile', compact("prefix", "server", "lists", "hierarchy", "category", "t_flow"));
+        }
+    }
+
+    // 一括ダウンロード
+    public function workflowfilealldownload()
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+    }
 
     public function flowimgget(Request $request, $id)
     {
@@ -3120,6 +3355,39 @@ class FlowController extends Controller
         return response()->download($filepath);
     }
 
+    public function workflowapprovaldownload($id)
+    {
+        $t_flow = T_flow::find($id);
+        if (config('prefix.server') == "cloud") {
+
+            if ($t_flow->変更後承認ファイルパス == "") {
+                $key = $t_flow->変更前承認ファイルパス;
+            } else {
+                $key = $t_flow->変更後承認ファイルパス;
+            }
+            $parts = explode('/', $key);
+            $filename = end($parts); // 最後の要素を取得       
+
+
+            $headers = [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+            ];
+
+            return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
+        } else {
+            //拡張子がないファイルの場合分け
+            if ($t_flow->変更後承認ファイルパス == "") {
+                $filepath = Config::get('custom.file_upload_path') . "\\" . $t_flow->変更前承認ファイルパス;
+            } else {
+                $filepath = Config::get('custom.file_upload_path') . "\\" . $t_flow->変更後承認ファイルパス;
+            }
+        }
+
+        // ファイルのダウンロード
+        return response()->download($filepath);
+    }
+
 
     //ランダムな8桁のstring型の数値を出力
     private function generateRandomCode()
@@ -3133,6 +3401,8 @@ class FlowController extends Controller
     }
     private function isCompanyCodeExists($code)
     {
-        return T_flow::where('過去データID', $code)->exists();
+        $t_flow = T_flow::where('過去データID', $code)->exists();
+        $tameru = File::where('過去データID', $code)->exists();
+        return $t_flow || $tameru;
     }
 }

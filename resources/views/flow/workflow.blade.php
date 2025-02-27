@@ -62,6 +62,12 @@
                         印鑑設定
                     </div>
                 </a>
+                <a href="{{route('workflowfileget')}}" class="main_general_button">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/file.svg') }}" alt="" class="flow_title_icon">
+                    <div class="main_button_title">
+                        ファイル管理
+                    </div>
+                </a>
             </div>
 
         </div>

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Models\User;
 use App\Models\File;
+use App\Models\T_flow;
 use App\Models\Document;
 use App\Models\Group;
 use App\Models\Group_User;
@@ -286,6 +287,8 @@ class RegistController extends Controller
     }
     private function isCompanyCodeExists($code)
     {
-        return File::where('過去データID', $code)->exists();
+        $t_flow = T_flow::where('過去データID', $code)->exists();
+        $tameru = File::where('過去データID', $code)->exists();
+        return $t_flow || $tameru;
     }
 }

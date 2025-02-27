@@ -53,6 +53,13 @@
   height: 20px;
   margin-left: 10px;
 }
+.logoelement01 .snapflow_logo {
+  width: 66px;
+}
+.logoelement01 .snapflow_char {
+  height: 28px;
+  margin-left: 10px;
+}
 
 .user01 {
   padding: 10px;
@@ -153,6 +160,7 @@
 .menuicon01 {
   padding: 5px;
   width: 2rem;
+  height: 2rem;
   cursor: pointer;
   border-radius: 30%;
   margin-left: 30px;

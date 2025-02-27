@@ -1842,7 +1842,7 @@ function application_input_item(item) {
       content += `<input type="number" name="item` + item["id"] + `" id="" class="application_form_text text_short_content" data-required="` + item["必須"] + `">`
       break;
     case 3:
-      content += `<input type="text" name="item` + item["id"] + `" id="" class="application_form_text application_form_date text_short_content" data-required="` + item["必須"] + `">`
+      content += `<div class="date_form_container"><input type="text" name="item` + item["id"] + `" id="" class="application_form_text application_form_date text_short_content" data-required="` + item["必須"] + `"></div>`
 
       break;
     case 4:
@@ -1979,8 +1979,14 @@ function displayPdf(pdfData) {
       }
 
       return pdf.getPage(pageNum).then(function (page) {
-        var scaleMain = 1.3;
-        var scalePage = 0.3;
+        if (window.innerWidth < 1400) {
+          var scaleMain = window.innerWidth / 620;
+          var scalePage = window.innerWidth / 620;
+        }
+        else {
+          var scaleMain = 1.3;
+          var scalePage = 1.3;
+        }
         var viewportMain = page.getViewport({ scale: scaleMain });
         var viewportPage = page.getViewport({ scale: scalePage });
 
@@ -1988,8 +1994,9 @@ function displayPdf(pdfData) {
         var contextMain = canvasMain.getContext('2d');
         canvasMain.height = viewportMain.height;
         canvasMain.width = viewportMain.width;
-        $('#width').val(canvasMain.width * 0.352 / 1.3)
-        $('#height').val(canvasMain.height * 0.352 / 1.3)
+        $('#width').val(canvasMain.width * 0.352 / scaleMain)
+        $('#height').val(canvasMain.height * 0.352 / scaleMain)
+        $('#scale').val(scaleMain)
         var canvasPage = $('<canvas class="pdf_page_view"></canvas>').get(0);
         var contextPage = canvasPage.getContext('2d');
         canvasPage.height = viewportPage.height;

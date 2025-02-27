@@ -2,7 +2,7 @@ body{
     margin: 0;
 }
 .header001{
-    height: 64px;
+    height: 4rem;
     background: rgb(155, 204, 96);
     margin: none;
     display: flex;
@@ -40,7 +40,7 @@ body{
 
 .menu001fixed{
     width: 100%;
-    position: fixed;
+    position: sticky;
     top: 0;
     left:0;
     z-index: 11;

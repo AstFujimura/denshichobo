@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 294.63 66.97">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: #231815;
+      }
+
+      .cls-1, .cls-3 {
+        letter-spacing: 0em;
+      }
+
+      .cls-2 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-4 {
+        font-family: UDDigiKyokashoNK-Bold, 'UD Digi Kyokasho NK';
+        font-size: 60px;
+        font-weight: 700;
+      }
+
+      .cls-3 {
+        fill: #378dcd;
+      }
+    </style>
+  </defs>
+  <g id="_レイヤー_1-2" data-name="レイヤー 1">
+    <text class="cls-4" transform="translate(0 52.79)"><tspan class="cls-2" x="0" y="0">Snap</tspan><tspan class="cls-3" x="154.57" y="0">Flo</tspan><tspan class="cls-1" x="247.11" y="0">w</tspan></text>
+  </g>
+</svg>

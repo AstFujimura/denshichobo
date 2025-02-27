@@ -621,6 +621,15 @@ a {
   display: flex;
 }
 
+.form .input-container {
+  display: flex;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+.form .input-container .label {
+  width: 15rem;
+}
+
 .previewbox {
   display: flex;
 }

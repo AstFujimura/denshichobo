@@ -67,7 +67,7 @@ body {
 
 .headerIcon001 {
     &:not(.menue001, .rightmenue001) {
-        @media screen and (max-width: 1000px) {
+        @media screen and (max-width: 1100px) {
             display: none;
         }
     }
@@ -88,6 +88,10 @@ body {
     display: flex;
     width: 70rem;
     max-width: 90%;
+
+    @media screen and (max-width: 1000px) {
+        display: none;
+    }
 }
 
 .button1name01 {
@@ -156,7 +160,7 @@ body {
     background: rgb(225 225 225);
 
     @media screen and (max-width: 1200px) {
-        padding: 1rem 1rem;
+        padding: 1rem 0;
     }
 }
 
@@ -174,19 +178,27 @@ body {
     background: white;
     border-radius: 30px;
     width: 77rem;
-    max-width: 90%;
+    max-width: 100%;
+
+    @media screen and (max-width: 700px) {
+        margin-inline: auto;
+    }
 }
 
 .main_general_container {
-    padding: 3rem;
+    padding: 1rem 3rem;
     max-width: 1100px;
     gap: 1.7rem;
+
+    @media screen and (max-width: 700px) {
+        padding: 1.5rem;
+    }
 }
 
 .main_general_title {
     border-bottom: solid 1px #0b5eb2;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 1.6rem;
+    font-weight: 500;
     color: #004b8e;
 }
 
@@ -203,10 +215,7 @@ body {
 
     @media screen and (max-width: 700px) {
         grid-template-columns: 1fr 1fr;
-    }
-
-    @media screen and (max-width: 550px) {
-        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 }
 
@@ -217,7 +226,7 @@ body {
     box-shadow: 2px 3px 7px 0 #7e7a7a;
     display: flex;
     width: 100%;
-    aspect-ratio: 1.5;
+    aspect-ratio: 1.7;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -229,14 +238,28 @@ body {
 
 .flow_title_icon {
     width: 4rem;
+    height: 4rem;
 
+    @media screen and (max-width: 700px) {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    @media screen and (max-width: 500px) {
+        width: 2rem;
+        height: 2rem;
+    }
 }
 
 .main_button_title {
     color: #6b6b6b;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 1.2rem;
     margin-top: 0.5rem;
+
+    @media screen and (max-width: 700px) {
+        font-size: 1rem;
+    }
 }
 
 .ribbon_container {
@@ -277,8 +300,12 @@ body {
 }
 
 .main_admin_container {
-    padding: 3rem;
+    padding: 1rem 3rem;
     max-width: 1100px;
+
+    @media screen and (max-width: 700px) {
+        padding: 1.5rem;
+    }
 }
 
 .main_admin_content {
@@ -286,6 +313,7 @@ body {
     justify-content: center;
     margin-top: 10px;
     grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1.7rem;
 
     @media screen and (max-width: 1000px) {
         grid-template-columns: 1fr 1fr 1fr;
@@ -293,13 +321,9 @@ body {
 
     @media screen and (max-width: 700px) {
         grid-template-columns: 1fr 1fr;
+        gap: 1rem;
     }
 
-    @media screen and (max-width: 550px) {
-        grid-template-columns: 1fr;
-    }
-
-    gap: 15px;
 }
 
 .main_admin_button {
@@ -308,7 +332,7 @@ body {
     box-shadow: 2px 3px 7px 0 #7e7a7a;
     display: flex;
     width: 100%;
-    aspect-ratio: 1.5;
+    aspect-ratio: 1.7;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -327,8 +351,8 @@ body {
 
 .main_admin_title {
     border-bottom: solid 1px #b20b0b;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 1.6rem;
+    font-weight: 500;
     color: #8e0000;
 }
 
@@ -1128,11 +1152,14 @@ body {
 .category_choice_container {
     width: 21rem;
     margin-inline: 3rem;
-
     overflow: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1rem;
+    height: fit-content;
 
     @media (max-width: 1200px) {
-        width: 47rem;
+        width: 50rem;
         max-width: 90%;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -1145,19 +1172,16 @@ body {
             top: 0;
             grid-row: 1 / 2;
             grid-column: 1 / -1;
+            height: 2.5rem;
         }
 
     }
 
-    @media (max-width: 860px) {
+    @media (max-width: 900px) {
         grid-template-columns: repeat(2, 1fr);
 
     }
 
-    @media (max-width: 660px) {
-        grid-template-columns: 1fr;
-
-    }
 }
 
 .category_input {
@@ -1175,15 +1199,16 @@ body {
 }
 
 .flow_application_title {
-    font-size: 20px;
+    font-size: 1.6rem;
     border-bottom: solid 1px #bab5b5;
     color: #002d8c;
-    font-weight: bold;
+    font-weight: 500;
     margin-bottom: 10px;
     position: sticky;
     top: 0;
     background: white;
     z-index: 1;
+    grid-column: 1 / -1;
 }
 
 .flow_application_element_container {
@@ -1205,8 +1230,8 @@ body {
 .flow_application_area {}
 
 .flow_application_area_message {
-    font-size: 22px;
-    font-weight: bold;
+    font-size: 1.6rem;
+    font-weight: 500;
     color: #b4b4b4;
     margin-top: 35px;
     margin-left: 10px;
@@ -1219,23 +1244,23 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 14rem;
+    width: 95%;
+    max-width: 14rem;
     margin-inline: auto;
-    height: 8rem;
-    margin-block: 2rem;
+    aspect-ratio: 5 / 3;
     border: solid 1px rgb(184, 184, 184);
     cursor: pointer;
     border-radius: 5px;
 
-    @media (max-width: 1200px) {
+    // @media (max-width: 1200px) {
 
-        margin-block: 0;
-    }
+    //     margin-block: 0;
+    // }
 
-    @media (max-width: 860px) {
-        width: 14rem;
-        height: 6rem;
-    }
+    // @media (max-width: 860px) {
+    //     width: 14rem;
+    //     height: 6rem;
+    // }
 }
 
 .category_element:hover {
@@ -1248,13 +1273,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    left: 20px;
-    width: 20px;
-    height: 20px;
-    border-radius: 10px;
+    left: 1rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 1rem;
     background: white;
     border: solid 1px rgb(156, 156, 156);
-    top: 40%;
+    top: 14%;
 }
 
 .category_check::before {
@@ -1277,7 +1302,7 @@ body {
 
 .category_name {
     color: rgb(114, 114, 114);
-    font-weight: bold;
+    font-weight: 500;
 }
 
 .application_red {
@@ -1288,11 +1313,13 @@ body {
 .application_form_content {
     display: flex;
     position: relative;
-    margin-bottom: 2rem;
-    margin-left: 5rem;
+    margin-bottom: 1rem;
+    margin-inline: 3rem;
 
     @media (max-width: 860px) {
         margin-left: 0;
+        flex-direction: column;
+        min-height: 3.5rem;
     }
 }
 
@@ -1301,15 +1328,21 @@ body {
     width: 9rem;
 
     @media (max-width: 860px) {
-        width: 6rem;
+        // width: 6rem;
     }
 }
 
 .application_form_text {
     height: 30px;
     width: 100%;
+    max-width: 30rem;
     border: solid 1px rgb(165, 163, 163);
     border-radius: 3px;
+}
+
+.date_form_container {
+    display: flex;
+    align-items: center;
 }
 
 .flow_application_container {
@@ -1318,24 +1351,31 @@ body {
     grid-template-columns: repeat(2, 1fr);
     flex-direction: column;
     /* width: 800px; */
-    overflow: hidden;
 
     @media screen and (min-width: 1200px) {
         height: calc(100vh - 240px);
+        overflow: hidden;
     }
 
     @media (max-width: 1200px) {
         width: 60rem;
-        max-width: 90%;
+        max-width: 97%;
         margin-inline: auto;
         padding-bottom: 6rem;
     }
 }
 
 .flow_application_button_content {
-    height: 80px;
+    height: 5rem;
     display: flex;
     align-items: center;
+    background: #ffffff;
+
+    @media (max-width: 1200px) {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
 }
 
 .flow_next_button {}
@@ -1349,13 +1389,14 @@ body {
 .next_button {
     background: rgb(47, 113, 255);
     color: white;
-    width: 120px;
-    padding: 7px;
+    width: 7rem;
+    padding: 0.5rem;
     border-radius: 3px;
     text-align: center;
     cursor: pointer;
     border: none;
     height: 38px;
+    font-size: 1rem;
 }
 
 .next_button:hover {
@@ -1369,16 +1410,16 @@ body {
 }
 
 .text_long_content {
-    flex: 1;
+    // flex: 1;
 }
 
 .text_short_content {
     max-width: 20rem;
-    flex: 1;
+    // flex: 1;
 }
 
 .text_area_content {
-    width: 500px;
+    width: 100%;
     height: 100px;
 }
 
@@ -1406,7 +1447,7 @@ body {
 }
 
 .flow_application_droparea {
-    height: 100px;
+    height: 7rem;
     border: solid 3px rgb(187, 187, 187);
     color: rgb(187, 187, 187);
     text-align: center;
@@ -1414,7 +1455,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex: 1;
+    width: 25rem;
+    max-width: 100%;
 }
 
 .dragover {
@@ -1445,16 +1487,16 @@ body {
 .flow_application_form {
     display: flex;
     flex-direction: column;
-    width: 1200px;
-    max-width: 95%;
+    // max-width: 95%;
 }
 
 
 
 /* 経路選択画面 */
 .button_icon {
-    width: 20px;
-    margin-inline: 5px;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-inline: 0.5rem;
 }
 
 .back_button {
@@ -1463,13 +1505,13 @@ body {
     border-radius: 3px;
     text-align: center;
     cursor: pointer;
-    margin-inline: 30px;
-    font-weight: bold;
+    margin-inline: 1rem;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    height: 38px;
+    font-size: 1rem;
+    height: 3rem;
     padding: 0 10px;
 }
 
@@ -1524,18 +1566,25 @@ body {
 .flow_choice_container {
     display: flex;
     padding: 17px 35px;
+
+    @media (max-width: 700px) {
+        flex-direction: column;
+    }
 }
 
 .flow_choice_annotation {
-
-    font-size: 14px;
+    font-size: 1rem;
     font-weight: bold;
-    height: 20px;
-    padding: 10px 20px;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
     margin-top: auto;
-    margin-left: 30px;
+    margin-left: 2rem;
     display: flex;
     border-radius: 5px;
+
+    @media (max-width: 700px) {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
 }
 
 .unselected {
@@ -1563,20 +1612,30 @@ body {
 .flow_choice_view_container {
     display: flex;
     background: #f0f7ff;
-    padding: 32px;
+    padding: 2.5rem;
+
+    @media (max-width: 1200px) {
+        flex-direction: column;
+        padding: 1rem;
+    }
 }
 
 .view_meta_container {
-    width: 400px;
+    width: 30rem;
     background: white;
-    padding: 20px;
+    padding: 1rem;
+    max-width: 90%;
+
+    @media (max-width: 1200px) {
+        order: 2;
+    }
 }
 
 .view_condition_title {
-    font-size: 20px;
+    font-size: 1.4rem;
     border-bottom: solid 1px #bab5b5;
     color: #002d8c;
-    font-weight: bold;
+    font-weight: 500;
 }
 
 .view_condition_group_content {
@@ -1661,13 +1720,35 @@ body {
 
 .view_grid_container {
     background: white;
-    padding: 30px;
+    padding: 1rem;
+    max-width: 90%;
+
+    @media (max-width: 1200px) {
+        width: 30rem;
+        overflow: auto;
+        order: 1;
+    }
 }
 
 .view_grid {
     position: relative;
     display: grid;
-    font-size: 13px;
+    font-size: 1rem;
+
+    @media (max-width: 1200px) {
+        scale: 0.8;
+        transform-origin: left top;
+    }
+
+    @media (max-width: 560px) {
+        scale: 0.7;
+        transform-origin: left top;
+    }
+
+    @media (max-width: 460px) {
+        scale: 0.6;
+        transform-origin: left top;
+    }
 }
 
 .approval_container {
@@ -1705,15 +1786,28 @@ body {
 
 .flow_confirm_view_container {
     display: block;
-    border-radius: 30px;
-    padding: 32px;
+    border-radius: 3rem;
+    padding: 3rem;
     min-width: 540px;
+
+    .flow_confirm_meta_container {
+        width: 40rem;
+        background: white;
+
+        @media (max-width: 1400px) {
+            max-width: 90%;
+        }
+    }
+
+    @media (max-width: 1400px) {
+        min-width: 0;
+        max-width: 90%;
+        padding: 1rem;
+        overflow: auto;
+    }
 }
 
-.flow_confirm_meta_container {
-    width: 400px;
-    background: white;
-}
+
 
 .condition_accordion_trigger {
     margin-left: 10px;
@@ -1799,25 +1893,38 @@ body {
 }
 
 .view_application_title {
-    margin-bottom: 24px;
-    font-size: 20px;
+    margin-bottom: 2rem;
+    font-size: 1.4rem;
     border-bottom: solid 1px #bab5b5;
     color: #002d8c;
-    font-weight: bold;
+    font-weight: 500;
 }
 
-.flow_meta_information_container {
-    background: white;
-    padding: 32px;
-    width: 500px;
-    border-radius: 30px;
-    margin-right: 32px;
-}
+
 
 
 .flow_confirm_container {
     display: flex;
     background: white;
+
+    @media (max-width: 1400px) {
+        flex-direction: column;
+    }
+
+    .flow_meta_information_container {
+        background: white;
+        padding: 3rem;
+        width: 40rem;
+        border-radius: 3rem;
+        margin-right: 3rem;
+
+        @media (max-width: 1400px) {
+            width: 40rem;
+            max-width: 90%;
+            padding: 1rem;
+        }
+    }
+
 }
 
 .flow_confirm_content {
@@ -1843,10 +1950,13 @@ body {
 
 .flow_view_container {
     background: white;
-    padding: 10px 40px 40px;
+    padding: 1rem 3rem 3rem;
     width: fit-content;
     max-width: 90vw;
     border-radius: 29px;
+    @media screen and (max-width: 1200px) {
+        padding: 1rem 1rem;
+    }
 }
 
 .tab_container {
@@ -1966,50 +2076,79 @@ body {
 
 .flow_search_box {
     display: grid;
-    grid-template-rows: 50px 40px;
-    grid-template-columns: 339px 196px 190px 465px;
-    margin-bottom: 30px;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
     background: rgb(242 242 242);
     align-items: center;
-    padding: 13px;
+    padding: 1rem;
+    font-size: 0.8rem;
+    width: 45rem;
+    max-width: 95%;
+    border-radius: 1rem;
+    .flow_search_application_title {
+        margin-right: 1rem;
+        width: 4rem;
+
+    }
+
+    .flow_search_application_box {
+        display: flex;
+        align-items: center;
+
+        &:first-child {
+            grid-row: 1 / 2;
+        }
+
+        &:nth-child(2) {
+            grid-row: 2 / 3;
+        }
+
+        &:nth-child(3) {
+            grid-row: 3 / 4;
+        }
+
+        &:nth-child(4) {
+            grid-row: 4 / 5;
+        }
+    }
 }
 
-.flow_search_application_title {
-    margin-right: 10px;
-}
-
-.flow_search_application_box {
-    display: flex;
-    align-items: center;
-}
-
-
-.flow_search_input {
-    height: 30px;
-    border: solid 1px rgb(179, 179, 179);
-    border-radius: 3px;
-}
-
-.search_form_date {
-    width: 100px;
-}
 
 .flow_search_button {
     background: #81d281;
     border-radius: 5px;
     color: white;
-    height: 30px;
-    width: 78px;
+    height: 2.5rem;
+    width: 6rem;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    grid-column: 4 / 5;
     margin-left: auto;
-    margin-right: 30px;
+    margin-right: 2rem;
     border: none;
-
+    grid-column: 2 / 3;
+    grid-row: -1 / -2;
+    @media screen and (max-width: 600px) {
+        grid-row: 5 / 6;
+        grid-column: 1 / 2;
+        margin-inline: auto;
+        margin-top: 1rem;
+    }
 }
+
+.flow_search_input {
+    height: 2rem;
+    border: solid 0.1rem rgb(179, 179, 179);
+    border-radius: 0.2rem;
+}
+
+.search_form_date {
+    width: 7rem;
+}
+
+
 
 .flow_search_button:hover {
     background: #609960;
@@ -2596,14 +2735,20 @@ body {
 .approve_preview_container {
     position: fixed;
     z-index: 14;
-    background: white;
+    background: rgb(255, 255, 255);
     width: 60vw;
     height: 90vh;
     left: 50%;
     top: 4%;
     transform: translateX(-50%);
-    border-radius: 30px;
+    border-radius: 1rem;
     display: none;
+
+    @media (max-width: 1400px) {
+        width: 90vw;
+        max-height: 70vh;
+        top: 4%;
+    }
 }
 
 .approve_download {
@@ -2980,7 +3125,7 @@ body {
 
 .category_detail_optional_content {
     display: flex;
-    width: 636px;
+    width: fit-content;
     cursor: pointer;
 }
 
@@ -3095,14 +3240,31 @@ body {
     background: #3b9b3b;
 }
 
+.tameru_setting_button {
+    background: #4bc54b;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2.5rem;
+    width: 17rem;
+    border-radius: 3px;
+    margin-top: 30px;
+    cursor: pointer;
+
+    &:hover {
+        background: #3b9b3b;
+    }
+}
+
 .category_detail_delete_button {
     background: #ff1f1f;
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30px;
-    width: 200px;
+    height: 2.5rem;
+    width: 17rem;
     border-radius: 3px;
     margin-top: 30px;
     cursor: pointer;
@@ -3280,6 +3442,9 @@ body {
     height: calc(100vh - 240px);
     overflow-y: auto;
 
+    @media (max-width: 1400px) {
+        display: none;
+    }
 }
 
 .preview_property_container {
@@ -3328,6 +3493,10 @@ body {
     background: #c6c6c6;
     height: calc(100vh - 220px);
     overflow-y: auto;
+
+    @media (max-width: 1400px) {
+        height: fit-content;
+    }
 }
 
 .testelement {
@@ -3397,12 +3566,47 @@ body {
     height: calc(100vh - 220px);
     display: flex;
     flex-direction: column;
+
+    @media (max-width: 1400px) {
+        position: fixed;
+        background: transparent;
+        width: fit-content;
+        right: 1rem;
+        bottom: 1rem;
+        height: fit-content;
+    }
 }
 
 .preview_control_items {
     margin-top: 40px;
     max-height: 60vh;
     overflow-y: auto;
+
+    @media (max-width: 1400px) {
+        overflow: visible;
+
+        .application_stamp_back_button {
+            width: 7rem;
+            margin-inline: auto 0;
+            font-size: 1rem;
+        }
+
+        .application_stamp_submit_button {
+            width: 10rem;
+            height: 3rem;
+            margin-top: 1rem;
+            margin-left: auto;
+            font-size: 1rem;
+        }
+
+        .change_stamp_button {
+            margin-left: auto;
+            width: 10rem;
+            height: 3rem;
+            padding: 0;
+            font-size: 1rem;
+        }
+    }
 }
 
 .preview_control_item {
@@ -3526,6 +3730,11 @@ body {
     margin-inline: auto;
     width: auto;
     display: table;
+
+    @media (max-width: 1400px) {
+        margin-top: 10px;
+        padding-bottom: 15rem;
+    }
 }
 
 .pdf_canvas {}
@@ -3550,27 +3759,35 @@ body {
     padding-block: 0 10px;
     border-radius: 20px;
     width: fit-content;
+
+    @media (max-width: 1100px) {
+        margin-inline: auto;
+        width: 90%;
+    }
 }
 
 .flow_stamp_button_content {
-    height: 80px;
+    height: 5rem;
     display: flex;
     align-items: center;
-    background: white;
     padding: 2px 12px;
     width: 1000px;
+
+    @media (max-width: 1100px) {
+        width: fit-content;
+    }
 }
 
 .stamp_regist_button {
     cursor: pointer;
     background: rgb(48, 113, 253);
     border: solid 0;
-    width: 160px;
+    width: 9rem;
     text-align: center;
-    padding: 8px;
+    padding: 0.7rem;
     border-radius: 5px;
     color: white;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .stamp_regist_button:hover {
@@ -3581,6 +3798,11 @@ body {
     display: flex;
     height: 557px;
     margin-top: 24px;
+
+    @media (max-width: 1100px) {
+        display: inline-block;
+        height: fit-content;
+    }
 }
 
 .flow_stamp_left_container {
@@ -3598,6 +3820,16 @@ body {
     width: fit-content;
     border-radius: 10px;
 
+    @media (max-width: 1100px) {
+        display: inline-block;
+        height: 25rem;
+        width: 35rem;
+    }
+
+    @media (max-width: 600px) {
+        height: calc(441px - 8rem);
+        width: 23rem;
+    }
 }
 
 .flow_stamp_right_container {
@@ -3607,26 +3839,38 @@ body {
     background: #f9f9f9;
     border-radius: 20px;
     overflow-y: auto;
+
+    @media (max-width: 1100px) {
+        width: 100%;
+        margin-inline: auto;
+    }
 }
 
 .flow_stamp_letter_content {
-    width: 500px;
-    margin-inline: 50px;
+    width: 27rem;
+    margin-inline: 5rem;
     display: flex;
     align-items: center;
+
+    @media (max-width: 1100px) {
+        width: 100%;
+        margin-inline: 2rem auto;
+        justify-content: start;
+    }
+
 }
 
 .flow_stamp_lettter_change_button {
-    margin-left: 20px;
+    margin-left: 1.6rem;
     background: rgb(41, 175, 41);
-    height: 20px;
+    height: 1.3rem;
     color: white;
-    padding: 10px 20px;
+    padding: 0.8rem 1.5rem;
     border-radius: 5px;
     cursor: pointer;
     display: flex;
     align-items: center;
-
+    font-size: 1.2rem;
 }
 
 .flow_stamp_lettter_change_button:hover {
@@ -3634,12 +3878,17 @@ body {
 }
 
 .flow_stamp_letter {
-    height: 40px;
-    width: 200px;
-    font-size: 20px;
+    height: 3rem;
+    width: 15rem;
+    font-size: 1.2rem;
     border: solid 1px rgb(187, 187, 187);
     border-radius: 3px;
-    margin-block: 15px;
+    margin-block: 1rem;
+
+    @media (max-width: 600px) {
+        height: 2rem;
+        width: 12rem;
+    }
 }
 
 .flow_stamp_preview {
@@ -3649,6 +3898,16 @@ body {
     height: 400px;
     position: relative;
     overflow: hidden;
+
+    @media (max-width: 1100px) {
+        scale: 0.6;
+        transform-origin: top;
+        margin-inline: 2rem auto;
+    }
+
+    @media (max-width: 600px) {
+        transform-origin: top left;
+    }
 }
 
 .stamp_canvas {
@@ -3777,6 +4036,10 @@ body {
     top: 100px;
     position: absolute;
     display: flex;
+
+    @media (max-width: 1400px) {
+        top: 0;
+    }
 }
 
 .application_stamp_button_content {
@@ -3804,6 +4067,10 @@ body {
 
 .application_stamp_button_container {
     background: white;
+
+    @media (max-width: 1400px) {
+        background: transparent;
+    }
 }
 
 .application_stamp_back_button {
@@ -3826,4 +4093,236 @@ body {
 .application_stamp {
     position: absolute;
     /* width: 36px; */
+}
+
+// ファイル管理
+.file_container {
+    .file_controller_container {
+        margin-bottom: 1rem;
+        display: flex;
+
+        .file_controller_button {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            margin-inline: 1rem;
+
+            .controller_icon {
+                width: 1rem;
+                height: 1rem;
+                cursor: pointer;
+                border-radius: 0.2rem;
+                padding: 0.4rem;
+
+                &:hover {
+                    background: #c5c5c5;
+                }
+            }
+
+        }
+
+        .hierarchy_container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #ffffff;
+            width: fit-content;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+
+            .hierarchy_icon {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+
+            .pankuzu_icon {
+                width: 0.8rem;
+                height: 0.8rem;
+            }
+
+            a {
+                text-decoration: none;
+                color: black;
+                height: 2rem;
+                line-height: 2rem;
+                padding-inline: 0.5rem;
+                border-radius: 0.1rem;
+
+                &:hover {
+                    background: #f0f0f0;
+                }
+            }
+
+            span {
+                padding-inline: 0.5rem;
+            }
+        }
+    }
+
+    .file_list_table {
+        width: 70rem;
+        max-width: 90%;
+        border-collapse: collapse;
+        background: white;
+
+        tr {
+            height: 3rem;
+
+            td:first-child {
+                width: 3rem;
+            }
+
+            td:nth-child(2) {}
+
+            &.folder_tr:hover {
+                background: #f0f0f0;
+                cursor: pointer;
+            }
+
+            .download_icon {
+                width: 1.5rem;
+                height: 1.5rem;
+                cursor: pointer;
+                padding: 0.2rem;
+                border-radius: 0.2rem;
+
+                &:hover {
+                    background: #b6b6b6;
+                }
+            }
+
+            &.title_tr {
+                color: gray;
+
+            }
+        }
+    }
+}
+
+
+// TAMERU設定
+
+.tameru_setting_container {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+
+    .tameru_setting_change_button {
+        background: #2c71ff;
+        color: white;
+        padding: 0.5rem 4rem;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-left: 1rem;
+        font-size: 1.2rem;
+
+        &:hover {
+            background: #18459e;
+        }
+    }
+
+    .tameru_setting_title {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: #f0f0f0;
+        border-radius: 0.5rem;
+        width: fit-content;
+    }
+
+    .tameru_setting_item {
+        margin-bottom: 1rem;
+
+        .tameru_setting_content {
+            display: flex;
+
+            .tameru_setting_toggle_container {
+
+                .toggle_button {
+                    display: flex;
+                    width: 4rem;
+                    height: 1.8rem;
+                    background: #ccc;
+                    border-radius: 2rem;
+                    cursor: pointer;
+                    align-items: center;
+                    position: relative;
+                    margin-left: 1rem;
+
+                    .toggle_inner {
+                        aspect-ratio: 1/1;
+                        height: 80%;
+                        background: #fff;
+                        border-radius: 2rem;
+                        transition: all 0.3s ease;
+                        position: absolute;
+                        left: 5%;
+                    }
+                }
+            }
+        }
+
+        .tameru_input_list_container {
+            display: none;
+            margin-top: 1rem;
+
+            table {
+                background: #ffffff;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                box-shadow: 2px 3px 5px 3px #d9d4d4;
+
+                tr {
+                    td {
+                        border-bottom: solid 1px #ccc;
+                        height: 2.5rem;
+
+                        &:first-child {
+                            width: 12rem;
+                        }
+
+                        &:nth-child(2) {
+                            width: 12rem;
+                        }
+
+                        select {
+                            height: 1.8rem;
+                            border: solid 1px #ccc;
+                            padding-inline: 0.5rem;
+
+                        }
+                    }
+
+                    &:first-child {
+                        height: 2rem;
+
+                        td {
+                            border: 0;
+                            color: gray;
+                            text-align: center;
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        .tameru_setting_checkbox {
+            display: none;
+
+            &:checked+.tameru_setting_content .toggle_button {
+                background: #00ff2a;
+
+                .toggle_inner {
+                    left: 95%;
+                    transform: translateX(-100%);
+                }
+            }
+
+            &:checked~.tameru_input_list_container {
+                display: block;
+            }
+        }
+    }
+
 }

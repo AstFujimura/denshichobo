@@ -145,7 +145,7 @@
                             </div>
                             <div class="approve_content_element">
                                 <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_before">プレビュー</div>
-                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/download/-{{$t_flow->id}}">
+                                <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" id="{{$prefix}}/workflow/approval/download/{{$t_flow->id}}">
                             </div>
                         </div>
                         @endif

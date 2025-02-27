@@ -92,6 +92,9 @@
                                 <input name="price" type="checkbox" id="radio{{$item['id']}}" value="{{$item['id']}}" {{$item['金額条件']}}>
                             </label>
                         </div>
+                        <div class="category_detail_optional_tameru">
+
+                        </div>
                         <div class="category_detail_optional_delete">
                             <div class="category_detail_optional_delete_button">
                                 ×
@@ -100,7 +103,11 @@
                     </div>
                     @endforeach
                 </div>
-
+                @if ($tameru_condition)
+                <a href="{{route('categorytamerusettingget', $id)}}" class="tameru_setting_button">
+                    TAMERUの設定
+                </a>
+                @endif
                 <div class="category_detail_delete_button">
                     このカテゴリを削除する
                 </div>

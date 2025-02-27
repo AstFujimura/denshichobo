@@ -206,6 +206,10 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/category/change/{id}/{value}', [FlowController::class, 'categorychangeget'])->name('categorychangeget');
             //カテゴリ詳細変更
             Route::get('/workflow/category/detail/{id}', [FlowController::class, 'categorydetailget'])->name('categorydetailget');
+            // カテゴリTAMERU設定　idはcategoryのid
+            Route::get('/workflow/category/tameru/setting/{id}', [FlowController::class, 'categorytamerusettingget'])->name('categorytamerusettingget');
+            // カテゴリTAMERU設定ポスト
+            Route::post('/workflow/category/tameru/setting', [FlowController::class, 'categorytamerusettingpost'])->name('categorytamerusettingpost');
             //カテゴリ追加
             Route::get('/workflow/category/regist', [FlowController::class, 'categoryregistget'])->name('categoryregistget');
             //カテゴリ追加ポスト
@@ -277,7 +281,9 @@ Route::prefix($prefix)->group(function () {
             Route::get('/workflow/img/{id}', [FlowController::class, 'flowimgget'])->name('flowimgget');
             // ワークフローファイルダウンロード
             Route::get('/workflow/download/{id}', [FlowController::class, 'flowdownload'])->name('flowdownload');
-
+            // 承認用紙ダウンロード
+            Route::get('/workflow/approval/download/{id}', [FlowController::class, 'workflowapprovaldownload'])->name('workflowapprovaldownload');
+            
             // 承認一覧
             Route::get('/workflow/approvalview', [FlowController::class, 'workflowapprovalview'])->name('workflowapprovalview');
             // 承認(idはt_approvalsのid)
@@ -296,6 +302,10 @@ Route::prefix($prefix)->group(function () {
             // 閲覧詳細
             Route::get('/workflow/checkview/detail/{id}', [FlowController::class, 'workflowcheckdetailget'])->name('workflowcheckdetailget');
 
+            // ファイル管理画面
+            Route::get('/workflow/file', [FlowController::class, 'workflowfileget'])->name('workflowfileget');
+            // 一括ダウンロード
+            Route::get('/workflow/file/download/all', [FlowController::class, 'workflowfilealldownload'])->name('workflowfilealldownload');
 
 
             //    グループの役職設定画面
@@ -311,6 +321,8 @@ Route::prefix($prefix)->group(function () {
 
             //    グループの役職削除API
             Route::get('/admin/grouppositiondelete/{id}', [AdminController::class, 'admingrouppositiondeleteGet'])->name('admingrouppositiondeleteGet');
+
+
 
             //    ワークフローエラーコード
             Route::get('/workflowerror/{code}', [ErrorController::class, 'workflowerrorGet'])->name('workflowerrorGet');

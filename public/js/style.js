@@ -45,9 +45,8 @@ $(document).ready(function () {
 
     // 画面をスクロールをしたら動かしたい場合の記述
     $(window).scroll(function () {
-
-
-        if ($('#cardtemplate').length == 0) {
+        var windowWidth = $(window).width();
+        if (windowWidth > 700) {
             FixedAnime();/* スクロール途中からヘッダーを出現させる関数を呼ぶ*/
             const scrollX = $(window).scrollLeft();
             $('.header001').css('left', `${scrollX}px`);

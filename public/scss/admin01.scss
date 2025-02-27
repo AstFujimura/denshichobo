@@ -8,9 +8,11 @@
     text-align: center;
     display: flex;
     font-size: 1.5rem;
+
     @media screen and (max-width: 600px) {
         height: 3rem;
         margin-block: auto;
+
         .tameru_banner {
             margin-left: 30px;
             margin-block: auto;
@@ -23,6 +25,7 @@
             font-size: 0.8rem;
             display: flex;
             align-items: center;
+
             &:hover {
                 background: white;
                 color: rgb(105, 105, 105);
@@ -39,6 +42,7 @@
     display: flex;
     align-items: center;
     height: 2rem;
+
     @media screen and (max-width: 600px) {
         font-size: 1rem;
     }
@@ -51,6 +55,17 @@
         height: 20px;
         margin-left: 10px;
     }
+
+    .snapflow_logo {
+        width: 66px;
+    }   
+
+    .snapflow_char {
+        height: 28px;
+        margin-left: 10px;
+    }
+    
+    
 }
 
 .user01 {
@@ -158,6 +173,7 @@
 .menuicon01 {
     padding: 5px;
     width: 2rem;
+    height: 2rem;
     cursor: pointer;
     border-radius: 30%;
     margin-left: 30px;
