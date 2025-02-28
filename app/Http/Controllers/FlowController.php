@@ -3125,19 +3125,10 @@ class FlowController extends Controller
         $imagename = "stamp_" . Auth::id() . ".png";
         if (config('prefix.server') == "cloud") {
             $imagename = 'stamp/' . $imagename;
-            $s3Client = new S3Client([
-                'region' => 'ap-northeast-1',
-                'version' => 'latest',
-            ]);
-            $s3Client->putFileAs([
-                'Bucket' => config('filesystems.disks.s3.bucket'),
-                'Key' => $prefix . '/' . $imagename,
-                'Body' => $imageBinaryData,
-                'ACL' => 'private'
+            // S3にファイルを保存
+            Storage::disk('s3')->put($imagename, $imageBinaryData);
 
-            ]);
-        }
-        else if (config('prefix.server') == "onpre") {
+        } else if (config('prefix.server') == "onpre") {
             $imagepath = Config::get('custom.file_upload_path') . '\\' . $imagename;
             file_put_contents($imagepath, $imageBinaryData);
         }
