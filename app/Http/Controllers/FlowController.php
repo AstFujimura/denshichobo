@@ -3129,10 +3129,12 @@ class FlowController extends Controller
                 'region' => 'ap-northeast-1',
                 'version' => 'latest',
             ]);
-            $s3Client->putObject([
+            $s3Client->putFileAs([
                 'Bucket' => config('filesystems.disks.s3.bucket'),
                 'Key' => $prefix . '/' . $imagename,
-                'Body' => $imageBinaryData
+                'Body' => $imageBinaryData,
+                'ACL' => 'private'
+
             ]);
         }
         else if (config('prefix.server') == "onpre") {
