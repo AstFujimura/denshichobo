@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Document;
 use App\Models\File;
 use App\Models\Group;
@@ -1521,7 +1522,19 @@ class FlowController extends Controller
             $pdf = new Fpdi();
             $pdf->setPrintHeader(false);
             $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
-            $pdfpath = Config::get('custom.file_upload_path') . '\\' . $m_category->ファイルパス;
+            if (config('prefix.server') == "cloud") {
+                // // S3からPDFを一時的にダウンロード
+                // $s3Path = 'pdfs/sample.pdf'; // S3のファイルパス
+                // $tempPath = storage_path('app/temp_pdf.pdf');
+
+                // Storage::disk('s3')->getDriver()->getAdapter()->getClient()->getObject([
+                //     'Bucket' => config('filesystems.disks.s3.bucket'),
+                //     'Key'    => $s3Path,
+                //     'SaveAs' => $tempPath
+                // ]);
+            } else if (config('prefix.server') == "onpre") {
+                $pdfpath = Config::get('custom.file_upload_path') . '\\' . $m_category->ファイルパス;
+            }
             // 入力されたPDFデータを新しいPDFに結合
             $pdf->setSourceFile($pdfpath);
             $tplIdx = $pdf->importPage(1);
@@ -1554,22 +1567,16 @@ class FlowController extends Controller
                     $currentTime = $now->format('YmdHis');
                     $filepath = $currentTime . '_' . $pastID;
                     //アップロードされたファイルに拡張子がない場合
-                    if (!$extension) {
-                        if (config('app.env') == 'production') {
-                            // 本番環境用の設定
-                        } else {
-                            // 開発環境用の設定
-                            copy($file->getRealPath(), $filename . "\\" . $filepath);
-                        }
-                        //extensionがnullになっているためエラー回避
-                        $extension = "";
+                    if (config('app.env') == 'production') {
+                        // S3にアップロード
+                        $s3Path = $filepath . ($extension ? '.' . $extension : '');
+                        Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
+
+                        // S3のフルパスを取得（必要に応じて）
+                        $fileUrl = Storage::disk('s3')->url($s3Path);
                     } else {
-                        if (config('app.env') == 'production') {
-                            // 本番環境用の設定
-                        } else {
-                            // 開発環境用の設定
-                            copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-                        }
+                        // 開発環境: ローカルに保存
+                        copy($file->getRealPath(), $filename . "\\" . $filepath . ($extension ? '.' . $extension : ''));
                     }
 
                     $t_optional->ファイルパス = $filepath;
@@ -3116,8 +3123,22 @@ class FlowController extends Controller
         // Base64デコード
         $imageBinaryData = base64_decode($imageData);
         $imagename = "stamp_" . Auth::id() . ".png";
-        $imagepath = Config::get('custom.file_upload_path') . '\\' . $imagename;
-        file_put_contents($imagepath, $imageBinaryData);
+        if (config('prefix.server') == "cloud") {
+            $imagename = 'stamp/' . $imagename;
+            $s3Client = new S3Client([
+                'region' => 'ap-northeast-1',
+                'version' => 'latest',
+            ]);
+            $s3Client->putObject([
+                'Bucket' => config('filesystems.disks.s3.bucket'),
+                'Key' => $prefix . '/' . $imagename,
+                'Body' => $imageBinaryData
+            ]);
+        }
+        else if (config('prefix.server') == "onpre") {
+            $imagepath = Config::get('custom.file_upload_path') . '\\' . $imagename;
+            file_put_contents($imagepath, $imageBinaryData);
+        }
 
         if ($m_stamp) {
             $m_stamp->フォント = $request->input("font");
