@@ -906,9 +906,9 @@ body #usersetting {
 /* フローマスタ一覧 */
 .flow_master_container {
   background: white;
-  padding: 0 30px 30px 30px;
-  border-radius: 29px;
-  max-width: 1000px;
+  padding: 0 2rem 2rem 2rem;
+  width: 70rem;
+  max-width: 90%;
 }
 
 .flow_master_content {
@@ -1298,6 +1298,8 @@ body #usersetting {
   display: flex;
   align-items: center;
   background: #ffffff;
+  width: 70rem;
+  max-width: 90%;
 }
 @media (max-width: 1200px) {
   .flow_application_button_content {
@@ -2916,8 +2918,7 @@ body #usersetting {
 /* メール設定 */
 .mail_setting_container {
   background: white;
-  border-radius: 30px;
-  padding: 30px;
+  padding: 2rem;
 }
 
 .mail_setting_button_content {
@@ -4118,6 +4119,7 @@ body #usersetting {
 .file_container .file_controller_container {
   margin-bottom: 1rem;
   display: flex;
+  margin-top: 1rem;
 }
 .file_container .file_controller_container .file_controller_button {
   display: flex;
@@ -4128,11 +4130,11 @@ body #usersetting {
 .file_container .file_controller_container .file_controller_button .controller_icon {
   width: 1rem;
   height: 1rem;
-  cursor: pointer;
   border-radius: 0.2rem;
   padding: 0.4rem;
 }
-.file_container .file_controller_container .file_controller_button .controller_icon:hover {
+.file_container .file_controller_container .file_controller_button .controller_icon:not(.disabled):hover {
+  cursor: pointer;
   background: #c5c5c5;
 }
 .file_container .file_controller_container .hierarchy_container {

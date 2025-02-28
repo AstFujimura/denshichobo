@@ -18,6 +18,12 @@
         - {{$t_flow->標題}}
         @endif
     </h2>
+    <div class="flow_application_button_content">
+            <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                トップへもどる
+            </a>
+        </div>
     <div class="file_container">
         <div class="file_controller_container">
             <div class="file_controller_button">

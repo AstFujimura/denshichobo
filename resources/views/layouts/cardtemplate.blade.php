@@ -33,11 +33,12 @@
         <a href="{{route('cardviewget')}}" class="logoelement01" id="cardtemplate">
             名刺管理システム
         </a>
+
         @if (App\Models\Version::where('tameru', true)->first())
-        <a href="{{route('topGet')}}" class="tameru_banner">TAMERU</a>
+        <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
         @endif
         @if (App\Models\Version::where('フロー', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner">電子承認</a>
+        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/snapflow_logo_only.svg') }}" alt="SnapFlow"></a>
         @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">

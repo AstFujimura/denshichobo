@@ -33,10 +33,10 @@
             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/snapflow.svg') }}" alt="SnapFlow" class="snapflow_char">
         </a>
         @if (App\Models\Version::where('tameru', true)->first())
-        <a href="{{route('topGet')}}" class="tameru_banner">TAMERU</a>
+        <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
         @endif
         @if (App\Models\Version::where('名刺', true)->first())
-        <a href="{{route('cardviewget')}}" class="tameru_banner">名刺管理システム</a>
+        <a href="{{route('cardviewget')}}" class="tameru_banner">名</a>
         @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
@@ -66,7 +66,7 @@
     <a class="headerIcon001" href="{{route('workflowstampget')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_stamp.svg') }}" class="menuicon01" title="印鑑設定">
     </a>
-    <a class="headerIcon001" href="">
+    <a class="headerIcon001" href="{{route('workflowfileget')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_file.svg') }}" class="menuicon01" title="ファイル管理">
     </a>
     @if (Auth::user()->管理 == '管理')
@@ -191,7 +191,7 @@
                     </div>
 
                 </a>
-                <a href="" class="button1_01">
+                <a href="{{route('workflowfileget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_file.svg') }}" class="flow_right_icon">

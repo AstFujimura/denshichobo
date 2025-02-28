@@ -19,17 +19,21 @@
     margin-block: auto;
     border-radius: 3px;
     border: solid 2px #ffffff;
-    color: white;
+    color: rgb(30, 45, 95);
     padding: 2px 5px;
     font-size: 1rem;
     height: 1.5rem;
     font-size: 0.8rem;
     display: flex;
     align-items: center;
+    width: 2rem;
   }
   .logo01 .tameru_banner:hover {
     background: white;
-    color: rgb(105, 105, 105);
+  }
+  .logo01 .tameru_banner img {
+    width: 2rem;
+    height: 2rem;
   }
 }
 
@@ -242,15 +246,20 @@
     align-items: center;
   }
   .logo01 .tameru_banner {
-    margin-left: 30px;
+    margin-left: 3rem;
     border-radius: 3px;
-    border: solid 2px #ffffff;
-    color: white;
+    border: solid 2px #436da3;
+    color: rgb(30, 45, 95);
     padding: 2px 5px;
+    font-size: 1rem;
+    width: 2rem;
   }
   .logo01 .tameru_banner:hover {
     background: white;
-    color: rgb(105, 105, 105);
+  }
+  .logo01 .tameru_banner img {
+    width: 2rem;
+    height: 2rem;
   }
   .sidebar01 {
     background: rgb(255, 255, 255);

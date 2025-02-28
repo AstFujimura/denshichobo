@@ -31,10 +31,10 @@
             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru.svg') }}" alt="TAMERU" class="tameru_char">
         </a>
         @if (App\Models\Version::where('フロー', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner">電子承認システム</a>
+        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/snapflow_logo_only.svg') }}" alt="TAMERU"></a>
         @endif
         @if (App\Models\Version::where('名刺', true)->first())
-        <a href="{{route('cardviewget')}}" class="tameru_banner">名刺管理システム</a>
+        <a href="{{route('cardviewget')}}" class="tameru_banner">名</a>
         @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
