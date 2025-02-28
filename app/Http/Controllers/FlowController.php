@@ -1392,8 +1392,13 @@ class FlowController extends Controller
                 $randomID = $this->generateRandomCode();
 
                 $pdffilename = $currentTime . '_' . $randomID . '.pdf';
-                $pdfpath = Config::get('custom.file_upload_path') . '\\' . $pdffilename;
-                copy($pdfData->getRealPath(), $pdfpath);
+                if (config('prefix.server') == 'cloud') {
+                    $pdfpath = $pdffilename;
+                    Storage::disk('s3')->put($pdfpath, file_get_contents($pdfData->getRealPath()));
+                } else {
+                    $pdfpath = Config::get('custom.file_upload_path') . '\\' . $pdffilename;
+                    copy($pdfData->getRealPath(), $pdfpath);
+                }
 
 
                 $m_category->ファイルパス = $pdffilename;
@@ -1524,14 +1529,17 @@ class FlowController extends Controller
             $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
             if (config('prefix.server') == "cloud") {
                 // // S3からPDFを一時的にダウンロード
-                // $s3Path = 'pdfs/sample.pdf'; // S3のファイルパス
-                // $tempPath = storage_path('app/temp_pdf.pdf');
+                $s3Path = $m_category->ファイルパス; // S3のファイルパス
+                $now = Carbon::now();
+                $currentTime = $now->format('YmdHis');
+                $tempPath = $currentTime . '_flow.pdf';
 
-                // Storage::disk('s3')->getDriver()->getAdapter()->getClient()->getObject([
-                //     'Bucket' => config('filesystems.disks.s3.bucket'),
-                //     'Key'    => $s3Path,
-                //     'SaveAs' => $tempPath
-                // ]);
+                Storage::disk('s3')->getDriver()->getAdapter()->getClient()->getObject([
+                    'Bucket' => config('filesystems.disks.s3.bucket'),
+                    'Key'    => $s3Path,
+                    'SaveAs' => $tempPath
+                ]);
+                $pdfpath = $tempPath;
             } else if (config('prefix.server') == "onpre") {
                 $pdfpath = Config::get('custom.file_upload_path') . '\\' . $m_category->ファイルパス;
             }
@@ -1565,16 +1573,14 @@ class FlowController extends Controller
                     $filename = Config::get('custom.file_upload_path');
                     $now = Carbon::now();
                     $currentTime = $now->format('YmdHis');
-                    $filepath = $currentTime . '_' . $pastID;
-                    //アップロードされたファイルに拡張子がない場合
-                    if (config('app.env') == 'production') {
+                    $filepath = $currentTime . '_' . $pastID . '_flow';
+                    if (config('prefix.server') == 'cloud') {
+                        $filepath = $filepath . '_flow';
                         // S3にアップロード
                         $s3Path = $filepath . ($extension ? '.' . $extension : '');
                         Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
 
-                        // S3のフルパスを取得（必要に応じて）
-                        $fileUrl = Storage::disk('s3')->url($s3Path);
-                    } else {
+                    } else if (config('prefix.server') == 'onpre') {
                         // 開発環境: ローカルに保存
                         copy($file->getRealPath(), $filename . "\\" . $filepath . ($extension ? '.' . $extension : ''));
                     }
@@ -1624,25 +1630,19 @@ class FlowController extends Controller
                 $filename = Config::get('custom.file_upload_path');
                 $now = Carbon::now();
                 $currentTime = $now->format('YmdHis');
-                $filepath = $currentTime . '_' . $pastID;
-                //アップロードされたファイルに拡張子がない場合
-                if (!$extension) {
-                    if (config('app.env') == 'production') {
-                        // 本番環境用の設定
-                    } else {
-                        // 開発環境用の設定
-                        copy($file->getRealPath(), $filename . "\\" . $filepath);
-                    }
-                    //extensionがnullになっているためエラー回避
-                    $extension = "";
-                } else {
-                    if (config('app.env') == 'production') {
-                        // 本番環境用の設定
-                    } else {
-                        // 開発環境用の設定
-                        copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-                    }
+                $filepath = $currentTime . '_' . $pastID . '_flow' . ($extension ? '.' . $extension : '');
+
+                if (config('prefix.server') == 'cloud') {
+                    Storage::disk('s3')->put($filepath, file_get_contents($file->getRealPath()));
+
+                } else if (config('prefix.server') == 'onpre') {
+                    // 開発環境: ローカルに保存
+                    copy($file->getRealPath(), $filename . "\\" . $filepath);
                 }
+
+
+
+
                 // pdfの縦と横のサイズを取得
                 $width = $request->input("width");
                 $height = $request->input("height");
@@ -1654,9 +1654,9 @@ class FlowController extends Controller
                 $new_t_flow->横 = $width;
                 $new_t_flow->縦 = $height;
 
-                $new_t_flow->変更前承認ファイルパス = $filepath . '.' . $extension;
+                $new_t_flow->変更前承認ファイルパス = $filepath;
                 if (!$m_category->申請印) {
-                    $new_t_flow->変更後承認ファイルパス = $filepath . '.' . $extension;
+                    $new_t_flow->変更後承認ファイルパス = $filepath;
                 }
                 $new_t_flow->save();
             }
