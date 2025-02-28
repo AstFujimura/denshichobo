@@ -3126,7 +3126,7 @@ class FlowController extends Controller
         if (config('prefix.server') == "cloud") {
             $imagename = 'stamp/' . $imagename;
             // S3にファイルを保存
-            Storage::disk('s3')->put($imagename, $imageBinaryData);
+            Storage::disk('s3')->put($prefix . '/' . $imagename, $imageBinaryData);
 
         } else if (config('prefix.server') == "onpre") {
             $imagepath = Config::get('custom.file_upload_path') . '\\' . $imagename;
