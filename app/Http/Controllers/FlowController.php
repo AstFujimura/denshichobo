@@ -1393,7 +1393,7 @@ class FlowController extends Controller
 
                 if (config('prefix.server') == 'cloud') {
                     $pdffilename = 'flow/application/' . $currentTime . '_' . $randomID . '.pdf';
-                    $pdfpath = $prefix . $pdffilename;
+                    $pdfpath = $prefix . '/' . $pdffilename;
                     Storage::disk('s3')->put($pdfpath, file_get_contents($pdfData->getRealPath()));
                 } else {
                     $pdffilename = 'flow\\application\\' . $currentTime . '_' . $randomID . '.pdf';
