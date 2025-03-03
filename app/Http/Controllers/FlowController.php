@@ -1391,11 +1391,12 @@ class FlowController extends Controller
                 $currentTime = $now->format('YmdHis');
                 $randomID = $this->generateRandomCode();
 
-                $pdffilename = $currentTime . '_' . $randomID . '.pdf';
                 if (config('prefix.server') == 'cloud') {
-                    $pdfpath = $pdffilename;
+                    $pdffilename = '/flow/application/' . $currentTime . '_' . $randomID . '.pdf';
+                    $pdfpath = $prefix . $pdffilename;
                     Storage::disk('s3')->put($pdfpath, file_get_contents($pdfData->getRealPath()));
                 } else {
+                    $pdffilename = 'flow\\application\\' . $currentTime . '_' . $randomID . '.pdf';
                     $pdfpath = Config::get('custom.file_upload_path') . '\\' . $pdffilename;
                     copy($pdfData->getRealPath(), $pdfpath);
                 }
@@ -1532,7 +1533,7 @@ class FlowController extends Controller
                 $s3Path = $m_category->ファイルパス; // S3のファイルパス
                 $now = Carbon::now();
                 $currentTime = $now->format('YmdHis');
-                $tempPath = $currentTime . '_flow.pdf';
+                $tempPath = storage_path('app/application/temp/' . $currentTime . '_flow.pdf');
 
                 Storage::disk('s3')->getDriver()->getAdapter()->getClient()->getObject([
                     'Bucket' => config('filesystems.disks.s3.bucket'),
@@ -1570,19 +1571,20 @@ class FlowController extends Controller
                 if ($file) {
                     $pastID = $this->generateRandomCode();
                     $extension = $file->getClientOriginalExtension();
-                    $filename = Config::get('custom.file_upload_path');
+                    $root = Config::get('custom.file_upload_path');
                     $now = Carbon::now();
                     $currentTime = $now->format('YmdHis');
-                    $filepath = $currentTime . '_' . $pastID . '_flow';
+                    $filepath = $currentTime . '_' . $pastID;
                     if (config('prefix.server') == 'cloud') {
-                        $filepath = $filepath . '_flow';
+                        $filepath = 'flow/attachment/' . $filepath;
                         // S3にアップロード
-                        $s3Path = $filepath . ($extension ? '.' . $extension : '');
+                        $s3Path = $prefix . $filepath . ($extension ? '.' . $extension : '');
                         Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
 
                     } else if (config('prefix.server') == 'onpre') {
+                        $filepath = 'flow\\attachment\\' . $filepath;
                         // 開発環境: ローカルに保存
-                        copy($file->getRealPath(), $filename . "\\" . $filepath . ($extension ? '.' . $extension : ''));
+                        copy($file->getRealPath(), $root . "\\" . $filepath . ($extension ? '.' . $extension : ''));
                     }
 
                     $t_optional->ファイルパス = $filepath;
@@ -1607,12 +1609,19 @@ class FlowController extends Controller
             $now = Carbon::now();
             $currentTime = $now->format('YmdHis');
             $randomID = $this->generateRandomCode();
+            $root = Config::get('custom.file_upload_path');
+            if (config('prefix.server') == 'cloud') {
+                $new_pdf_name =  'flow/attachment/application/' .$currentTime . '_' . $randomID . '.pdf';
+                $new_pdf_path = $prefix . $new_pdf_name;
+                $pdfcontent = $pdf->Output('', 'S');
+                Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
+            } else if (config('prefix.server') == 'onpre') {
+                $new_pdf_name = 'flow\\application\\' . $currentTime . '_' . $randomID . '.pdf';
+                $new_pdf_path = $root . '\\' . $new_pdf_name;
+                $pdfcontent = $pdf->Output('', 'S');
+                file_put_contents($new_pdf_path, $pdfcontent);
+            }
 
-            $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
-
-            $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
-            $pdfcontent = $pdf->Output('', 'S');
-            file_put_contents($new_pdf_path, $pdfcontent);
 
             $new_t_flow->変更前承認ファイルパス = $new_pdf_name;
             // 申請印を押さない場合は変更後承認ファイルパスへの記述がないため
@@ -1625,19 +1634,23 @@ class FlowController extends Controller
             $file = $request->file("approval_document");
 
             if ($file) {
-                $pastID = $this->generateRandomCode();
+                $randomID = $this->generateRandomCode();
                 $extension = $file->getClientOriginalExtension();
-                $filename = Config::get('custom.file_upload_path');
+                $root = Config::get('custom.file_upload_path');
                 $now = Carbon::now();
                 $currentTime = $now->format('YmdHis');
-                $filepath = $currentTime . '_' . $pastID . '_flow' . ($extension ? '.' . $extension : '');
+
+                
 
                 if (config('prefix.server') == 'cloud') {
-                    Storage::disk('s3')->put($filepath, file_get_contents($file->getRealPath()));
+                    $filepath= 'flow/attachment/application/' . $currentTime . '_' . $randomID . ($extension ? '.' . $extension : '');
+                    $s3Path = $prefix . $filepath;
+                    Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
 
                 } else if (config('prefix.server') == 'onpre') {
                     // 開発環境: ローカルに保存
-                    copy($file->getRealPath(), $filename . "\\" . $filepath);
+                    $filepath = 'flow\\attachment\\application\\' . $currentTime . '_' . $randomID . ($extension ? '.' . $extension : '');
+                    copy($file->getRealPath(), $root . '\\' . $filepath);
                 }
 
 
