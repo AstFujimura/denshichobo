@@ -249,6 +249,9 @@ a {
   display: flex;
   justify-content: center;
 }
+.grouptable .grouptable_body {
+  display: flex;
+}
 .grouptable .grouptable_body > div {
   padding: 5px;
   white-space: nowrap;
