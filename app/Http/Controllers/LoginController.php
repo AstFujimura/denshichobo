@@ -55,6 +55,7 @@ class LoginController extends Controller
                 if (Version::where('tameru', false)->first()) {
                     return redirect(route('cardviewget'));
                 }
+                return redirect(session('url.intended'));
             }
         } else {
             // エラーメッセージをフラッシュデータに設定
