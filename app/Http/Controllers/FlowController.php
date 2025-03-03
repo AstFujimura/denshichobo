@@ -2486,16 +2486,15 @@ class FlowController extends Controller
                 'Key' => $key
             ]);
             // 署名付きURLを生成
-            $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+            $presignedUrl = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+            
+            // 署名付きURLをJSON形式で返す  
+            return response()->json([
+                'path' => (string)$presignedUrl,
+                'Type' => 'application/pdf'
+            ]);
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
-        }
-
-
-
-        if (config('prefix.server') == "cloud") {
-            return response()->json(['path' => $path, 'Type' => 'application/pdf']);
-        } else {
             return response()->file($path, ['Content-Type' => 'application/pdf']);
         }
     }
