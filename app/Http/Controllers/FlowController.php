@@ -1535,7 +1535,9 @@ class FlowController extends Controller
                 $currentTime = $now->format('YmdHis');
                 $tempPath = storage_path('app/application/temp/' . $currentTime . '_flow.pdf');
 
-                Storage::disk('s3')->getDriver()->getAdapter()->getClient()->getObject([
+                $s3Client = Storage::disk('s3')->getClient(); // S3 クライアントを取得
+
+                $s3Client->getObject([
                     'Bucket' => config('filesystems.disks.s3.bucket'),
                     'Key'    => $s3Path,
                     'SaveAs' => $tempPath
