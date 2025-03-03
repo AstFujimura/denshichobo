@@ -2473,7 +2473,7 @@ class FlowController extends Controller
         if (config('prefix.server') == "cloud") {
             // S3バケットの情報
             $bucket = 'astdocs.com';
-            $key = $filepath;
+            $key = $prefix . '/' . $filepath;
 
             $s3Client = new S3Client([
                 'region' => 'ap-northeast-1',
