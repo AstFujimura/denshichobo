@@ -1533,7 +1533,12 @@ class FlowController extends Controller
                 $s3Path = $m_category->ファイルパス; // S3のファイルパス
                 $now = Carbon::now();
                 $currentTime = $now->format('YmdHis');
-                $tempPath = storage_path('app/application/temp/' . $currentTime . '_flow.pdf');
+                $tempDir = storage_path('app/application/temp');
+                if (!file_exists($tempDir)) {
+                    mkdir($tempDir, 0777, true);
+                }
+                
+                $tempPath = storage_path("app/application/temp/{$currentTime}_flow.pdf");
 
                 $s3Client = Storage::disk('s3')->getClient(); // S3 クライアントを取得
 
