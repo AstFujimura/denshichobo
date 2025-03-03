@@ -2474,6 +2474,8 @@ class FlowController extends Controller
             // S3バケットの情報
             $bucket = 'astdocs.com';
             $key = $filepath;
+
+            dd($key);
             $s3Client = new S3Client([
                 'region' => 'ap-northeast-1',
                 'version' => 'latest',
