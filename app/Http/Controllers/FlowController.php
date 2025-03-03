@@ -2454,6 +2454,8 @@ class FlowController extends Controller
     // 申請印や承認印のpdfを取得
     public function approvalsettingpdf(Request $request, $id)
     {
+        $prefix = config('prefix.prefix');
+
         if ($request->input("status") == "application") {
             $t_flow = T_flow::find($id);
             $filepath = $t_flow->変更前承認ファイルパス;
