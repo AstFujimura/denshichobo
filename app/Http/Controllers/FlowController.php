@@ -2476,23 +2476,24 @@ class FlowController extends Controller
             $key = $filepath;
             $expiration = '+1 hour'; // 有効期限
 
-            $s3Client = new S3Client([
-                'region' => 'ap-northeast-1',
-                'version' => 'latest',
-            ]);
+            // S3からファイルを取得
+            try {
+                $result = $s3Client->getObject([
+                    'Bucket' => $bucket,
+                    'Key' => $key,
+                ]);
 
-            $command = $s3Client->getCommand('GetObject', [
-                'Bucket' => $bucket,
-                'Key' => $key
-            ]);
-            // 署名付きURLを生成
-            $presignedUrl = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-            
-            // 署名付きURLをJSON形式で返す  
-            return response()->json([
-                'path' => (string)$presignedUrl,
-                'Type' => 'application/pdf'
-            ]);
+                // ファイルのコンテンツ（Body）を取得
+                $fileContent = $result['Body'];
+
+                // ファイルデータをBlobとして返す
+                return response($fileContent, 200)
+                    ->header('Content-Type', 'application/pdf')
+                    ->header('Content-Disposition', 'inline; filename="file.pdf"');
+
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'File not found on S3'], 404);
+            }
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
             return response()->file($path, ['Content-Type' => 'application/pdf']);

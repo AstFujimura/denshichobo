@@ -1827,7 +1827,7 @@ function application_input_item(item) {
   var required = item["必須"] ? '*' : ''
   var content = `<div class="application_form_content">
     <div class="application_form_label">
-    `+ item["項目名"] + `<span class="application_red">` + required + `</span>
+    `+ item["項目名"] + `<span class="application_red">`+required+`</span>
     </div>`
   switch (item["型"]) {
     case 1:
@@ -2085,33 +2085,19 @@ function fillTextWithWrap(ctx, text, x, y, maxWidth, lineHeight) {
 }
 
 function approval_setting_pdf(prefix, ID, status) {
-  if ($('#server').val() == "cloud") {
-    $.ajax({
-      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp + "&status=" + status, // データを取得するURLを指定
-      method: 'GET',
-      dataType: "json",
-      success: function (response) {
-        if (response.Type === 'application/pdf') {
-          // S3の署名付きURLを使ってBlobデータを取得
-          var url = response.path;
-          fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
-              // BlobデータをPDFとして表示する
-              var fileReader = new FileReader();
-              fileReader.onload = function () {
-                var arrayBuffer = this.result;
-                var uint8Array = new Uint8Array(arrayBuffer);
-                displayPdf(uint8Array); // Uint8Arrayを処理
-              };
-              fileReader.readAsArrayBuffer(blob);
-            })
-            .catch(error => console.error('Error fetching the PDF:', error));
-        }
-      }
-    });
-  }
-  else {
+  // if ($('#server').val() == "cloud") {
+  //   $.ajax({
+  //     url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp + "&status=" + status, // データを取得するURLを指定
+  //     method: 'GET',
+  //     dataType: "json",
+  //     success: function (response) {
+  //       if (response.Type === 'application/pdf') {
+  //         // 今後コード書く
+  //       }
+  //     }
+  //   });
+  // }
+  // else {
     var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
     $.ajax({
       url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp + "&status=" + status, // データを取得するURLを指定
@@ -2140,7 +2126,7 @@ function approval_setting_pdf(prefix, ID, status) {
         console.error(error); // エラー処理
       }
     });
-  }
+  // }
 }
 
 function canvas_offset(xy, page = 1) {
