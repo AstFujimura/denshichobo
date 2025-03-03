@@ -2489,6 +2489,10 @@ class FlowController extends Controller
                 // ファイルのコンテンツ（Body）を取得
                 $fileContent = $result['Body'];
 
+                // ストリームを文字列として返す
+                if (is_resource($fileContent)) {
+                    $fileContent = stream_get_contents($fileContent);
+                }
                 // ファイルデータをBlobとして返す
                 return response($fileContent, 200)
                     ->header('Content-Type', 'application/pdf')
