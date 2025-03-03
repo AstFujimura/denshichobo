@@ -1301,9 +1301,7 @@ class FlowController extends Controller
     public function categoryapprovalsettingpost(Request $request)
     {
         $prefix = config('prefix.prefix');
-        if ($prefix !== "") {
-            $prefix = "/" . $prefix;
-        }
+
         $category_id = $request->input('category_id');
         $m_category = M_category::find($category_id);
         $approval_setting = $request->input('approval_setting');
@@ -1653,7 +1651,7 @@ class FlowController extends Controller
 
                 if (config('prefix.server') == 'cloud') {
                     $filepath= 'flow/attachment/application/' . $currentTime . '_' . $randomID . ($extension ? '.' . $extension : '');
-                    $s3Path = $prefix . $filepath;
+                    $s3Path = $prefix .'/' . $filepath;
                     Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
 
                 } else if (config('prefix.server') == 'onpre') {
