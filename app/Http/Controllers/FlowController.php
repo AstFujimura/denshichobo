@@ -2474,8 +2474,10 @@ class FlowController extends Controller
             // S3バケットの情報
             $bucket = 'astdocs.com';
             $key = $filepath;
-            $expiration = '+1 hour'; // 有効期限
-
+            $s3Client = new S3Client([
+                'region' => 'ap-northeast-1',
+                'version' => 'latest',
+            ]);
             // S3からファイルを取得
             try {
                 $result = $s3Client->getObject([
