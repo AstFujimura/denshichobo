@@ -1538,7 +1538,7 @@ class FlowController extends Controller
                     mkdir($tempDir, 0777, true);
                 }
                 
-                $tempPath = storage_path("app/application/temp/{$currentTime}_flow.pdf");
+                $tempPath = $prefix . '/' . storage_path("app/application/temp/{$currentTime}_flow.pdf");
 
                 $s3Client = Storage::disk('s3')->getClient(); // S3 クライアントを取得
 
