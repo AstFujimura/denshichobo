@@ -1530,6 +1530,7 @@ class FlowController extends Controller
             $pdf->AddPage($m_category->縦横, [$m_category->横, $m_category->縦]);
             if (config('prefix.server') == "cloud") {
                 // // S3からPDFを一時的にダウンロード
+                $prefix = str_replace('/', '', $prefix);
                 $s3Path = $prefix . '/' . $m_category->ファイルパス; // S3のファイルパス
                 $now = Carbon::now();
                 $currentTime = $now->format('YmdHis');
