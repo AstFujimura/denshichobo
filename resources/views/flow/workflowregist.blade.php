@@ -105,6 +105,26 @@
                         </div>
 
                     </div>
+                    <div class="left_side_section">
+                        <div class="left_side_content_title">
+                            閲覧者
+                        </div>
+                        <div class="accordion_menu accordion_menu_group">
+                            <div class="accordion_menu_title accordion_group accordion_menu_title_open">
+                                閲覧者グループ
+                            </div>
+                            <div class="accordion_content accordion_content_open">
+
+                                @foreach ($groups as $index=>$group)
+                                <div>
+                                    <input type="checkbox" class="group_checkbox" name="flow_view_group[]" id="flow_view_group{{ $loop->index + 1}}" value="{{$group->id}}" {{$group->view_checked}}>
+                                    <label for="flow_view_group{{ $loop->index + 1}}">{{$group->グループ名}}</label>
+                                </div>
+                                @endforeach
+                            </div>
+
+                        </div>
+                    </div>
 
                 </div>
                 <div class="grid_container">

@@ -290,7 +290,7 @@ class FlowController extends Controller
         $category_id = $request->input("flow_category");
         $flow_name = $request->input("flow_name");
         $flow_groups = $request->input("flow_group");
-        $flow_view_groups = $request->input("flow_view_group");
+        $flow_view_groups = $request->input("flow_view_group") ?? [];
         $start_flow_price = $request->input("start_flow_price");
         $end_flow_price = $request->input("end_flow_price");
         $arrays = $request->input("arrays");
@@ -333,6 +333,7 @@ class FlowController extends Controller
         // -------------フローグループ条件マスタ-------------------
 
 
+        $m_flow_group = M_flow_group::where("フローマスタID", $flow_master->id)->delete();
         // フローグループ条件マスタをそれぞれ登録
         foreach ($flow_groups as $groupid) {
             $flow_group_master = new M_flow_group();
@@ -345,7 +346,7 @@ class FlowController extends Controller
 
         // -------------閲覧グループ条件マスタ-------------------
 
-
+        $m_flow_view_group = M_flow_view_group::where("フローマスタID", $flow_master->id)->delete();
         // 閲覧グループ条件マスタをそれぞれ登録
         foreach ($flow_view_groups as $groupid) {
             $flow_view_group_master = new M_flow_view_group();

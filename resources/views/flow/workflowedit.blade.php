@@ -139,7 +139,7 @@
                         </div>
                         <div class="accordion_menu accordion_menu_group">
                             <div class="accordion_menu_title accordion_group accordion_menu_title_open">
-                                閲覧者グループ<span class="red">　※</span>
+                                閲覧者グループ
                             </div>
                             <div class="accordion_content accordion_content_open">
 
