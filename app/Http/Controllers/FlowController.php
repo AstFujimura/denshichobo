@@ -2498,8 +2498,10 @@ class FlowController extends Controller
                     ->header('Content-Type', 'application/pdf')
                     ->header('Content-Disposition', 'inline; filename="file.pdf"');
 
+            }  catch (S3Exception $e) {
+                return response()->json(['error' => 'S3 Error: ' . $e->getMessage()], 500);
             } catch (\Exception $e) {
-                return response()->json(['error' => 'File not found on S3'], 404);
+                return response()->json(['error' => 'General Error: ' . $e->getMessage()], 500);
             }
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
