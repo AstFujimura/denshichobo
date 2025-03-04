@@ -1537,7 +1537,7 @@ class FlowController extends Controller
                 if (!file_exists($tempDir)) {
                     mkdir($tempDir, 0777, true);
                 }
-                
+
                 $tempPath = storage_path("app/application/temp/{$currentTime}_flow.pdf");
 
                 $s3Client = Storage::disk('s3')->getClient(); // S3 クライアントを取得
@@ -1585,9 +1585,8 @@ class FlowController extends Controller
                     if (config('prefix.server') == 'cloud') {
                         $filepath = 'flow/attachment/' . $filepath;
                         // S3にアップロード
-                        $s3Path = $prefix .'/' . $filepath . ($extension ? '.' . $extension : '');
+                        $s3Path = $prefix . '/' . $filepath . ($extension ? '.' . $extension : '');
                         Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
-
                     } else if (config('prefix.server') == 'onpre') {
                         $filepath = 'flow\\attachment\\' . $filepath;
                         // 開発環境: ローカルに保存
@@ -1618,8 +1617,8 @@ class FlowController extends Controller
             $randomID = $this->generateRandomCode();
             $root = Config::get('custom.file_upload_path');
             if (config('prefix.server') == 'cloud') {
-                $new_pdf_name =  'flow/application/' .$currentTime . '_' . $randomID . '.pdf';
-                $new_pdf_path = $prefix .'/'. $new_pdf_name;
+                $new_pdf_name =  'flow/application/' . $currentTime . '_' . $randomID . '.pdf';
+                $new_pdf_path = $prefix . '/' . $new_pdf_name;
                 $pdfcontent = $pdf->Output('', 'S');
                 Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
             } else if (config('prefix.server') == 'onpre') {
@@ -1647,13 +1646,12 @@ class FlowController extends Controller
                 $now = Carbon::now();
                 $currentTime = $now->format('YmdHis');
 
-                
+
 
                 if (config('prefix.server') == 'cloud') {
-                    $filepath= 'flow/attachment/application/' . $currentTime . '_' . $randomID . ($extension ? '.' . $extension : '');
-                    $s3Path = $prefix .'/' . $filepath;
+                    $filepath = 'flow/attachment/application/' . $currentTime . '_' . $randomID . ($extension ? '.' . $extension : '');
+                    $s3Path = $prefix . '/' . $filepath;
                     Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
-
                 } else if (config('prefix.server') == 'onpre') {
                     // 開発環境: ローカルに保存
                     $filepath = 'flow\\attachment\\application\\' . $currentTime . '_' . $randomID . ($extension ? '.' . $extension : '');
@@ -1730,14 +1728,14 @@ class FlowController extends Controller
 
             if (config('prefix.server') == "cloud") {
                 // // S3からPDFを一時的にダウンロード
-                $s3Path = $prefix . '/' . $t_approval->承認ファイルパス;// S3のファイルパス
+                $s3Path = $prefix . '/' . $t_approval->承認ファイルパス; // S3のファイルパス
                 $now = Carbon::now();
                 $currentTime = $now->format('YmdHis');
                 $tempDir = storage_path('app/application/temp');
                 if (!file_exists($tempDir)) {
                     mkdir($tempDir, 0777, true);
                 }
-                
+
                 $tempPath = storage_path("app/application/temp/{$currentTime}_flow.pdf");
 
                 $s3Client = Storage::disk('s3')->getClient(); // S3 クライアントを取得
@@ -1825,8 +1823,8 @@ class FlowController extends Controller
 
             $root = Config::get('custom.file_upload_path');
             if (config('prefix.server') == 'cloud') {
-                $new_pdf_name =  'flow/application/' .$new_pdf_name;
-                $new_pdf_path = $prefix .'/'. $new_pdf_name;
+                $new_pdf_name =  'flow/application/' . $new_pdf_name;
+                $new_pdf_path = $prefix . '/' . $new_pdf_name;
                 $pdfcontent = $pdf->Output('', 'S');
                 Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
             } else if (config('prefix.server') == 'onpre') {
@@ -1848,7 +1846,7 @@ class FlowController extends Controller
 
         if (config('prefix.server') == "cloud") {
             Storage::delete("application/temp/{$currentTime}_flow.pdf");
-        } 
+        }
 
         if ($t_flow->申請印 == 1) {
             return redirect()->route('workflowreapplicationstampget', ["id" => $t_flow_id]);
@@ -1969,7 +1967,7 @@ class FlowController extends Controller
             if (!file_exists($tempDir)) {
                 mkdir($tempDir, 0777, true);
             }
-            
+
             $tempimgPath = storage_path("app/application/temp/{$currentTime}_img.png");
             $temppdfPath = storage_path("app/application/temp/{$currentTime}_pdf.pdf");
 
@@ -1987,7 +1985,6 @@ class FlowController extends Controller
             ]);
             $imgpath = $tempimgPath;
             $pdfpath = $temppdfPath;
-
         } else if (config('prefix.server') == "onpre") {
             $imgpath = Config::get('custom.file_upload_path') . '\\' . $m_stamp->ファイルパス;
             $pdfpath = Config::get('custom.file_upload_path') . '\\' . $t_flow->変更前承認ファイルパス;
@@ -2008,8 +2005,8 @@ class FlowController extends Controller
         $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
         $root = Config::get('custom.file_upload_path');
         if (config('prefix.server') == 'cloud') {
-            $new_pdf_name =  'flow/application/' .$new_pdf_name;
-            $new_pdf_path = $prefix .'/'. $new_pdf_name;
+            $new_pdf_name =  'flow/application/' . $new_pdf_name;
+            $new_pdf_path = $prefix . '/' . $new_pdf_name;
             $pdfcontent = $pdf->Output('', 'S');
             Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
         } else if (config('prefix.server') == 'onpre') {
@@ -2026,7 +2023,7 @@ class FlowController extends Controller
         if (config('prefix.server') == "cloud") {
             Storage::delete("application/temp/{$currentTime}_img.png");
             Storage::delete("application/temp/{$currentTime}_pdf.pdf");
-        } 
+        }
 
         return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
     }
@@ -2087,7 +2084,7 @@ class FlowController extends Controller
             if (!file_exists($tempDir)) {
                 mkdir($tempDir, 0777, true);
             }
-            
+
             $tempimgPath = storage_path("app/application/temp/{$currentTime}_img.png");
             $temppdfPath = storage_path("app/application/temp/{$currentTime}_pdf.pdf");
 
@@ -2105,7 +2102,6 @@ class FlowController extends Controller
             ]);
             $imgpath = $tempimgPath;
             $pdfpath = $temppdfPath;
-
         } else if (config('prefix.server') == "onpre") {
             $imgpath = Config::get('custom.file_upload_path') . '\\' . $m_stamp->ファイルパス;
             $pdfpath = Config::get('custom.file_upload_path') . '\\' . $t_flow->変更前承認ファイルパス;
@@ -2127,8 +2123,8 @@ class FlowController extends Controller
         $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
         $root = Config::get('custom.file_upload_path');
         if (config('prefix.server') == 'cloud') {
-            $new_pdf_name =  'flow/application/' .$new_pdf_name;
-            $new_pdf_path = $prefix .'/'. $new_pdf_name;
+            $new_pdf_name =  'flow/application/' . $new_pdf_name;
+            $new_pdf_path = $prefix . '/' . $new_pdf_name;
             $pdfcontent = $pdf->Output('', 'S');
             Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
         } else if (config('prefix.server') == 'onpre') {
@@ -2145,7 +2141,7 @@ class FlowController extends Controller
         if (config('prefix.server') == "cloud") {
             Storage::delete("application/temp/{$currentTime}_img.png");
             Storage::delete("application/temp/{$currentTime}_pdf.pdf");
-        } 
+        }
 
         return redirect()->route('workflowconfirmget', ["id" => $t_flow_id]);
     }
@@ -2398,51 +2394,53 @@ class FlowController extends Controller
     private function workflowmailpost($user_id, $content, $content_id)
     {
         $m_mail = M_mail::first();
-        $name = $m_mail->name;
-        $mail = $m_mail->mail;
-        $host = $m_mail->host;
-        $port = $m_mail->port;
-        $username = $m_mail->username;
-        $password = Crypt::decryptString($m_mail->password);
+        if ($m_mail) {
+            $name = $m_mail->name;
+            $mail = $m_mail->mail;
+            $host = $m_mail->host;
+            $port = $m_mail->port;
+            $username = $m_mail->username;
+            $password = Crypt::decryptString($m_mail->password);
 
-        $user = User::find($user_id);
-        if ($user->メール許可) {
-            $recipient = $user->email;
+            $user = User::find($user_id);
+            if ($user->メール許可) {
+                $recipient = $user->email;
 
-            $mailConfig = [
-                'driver' => 'smtp',
-                'host' => $host,
-                'port' => $port,
-                'username' => $username,
-                'password' => $password,
-                'encryption' => 'tls',
-            ];
-            if ($content == "approval") {
-                $url = route('workflowapprovalget', ['id' => $content_id]);
-                $subject = '【ワークフローシステム】承認依頼';
-                $t_flow = T_flow::find(T_approval::find($content_id)->フローテーブルID);
-                $applicant_name = User::find($t_flow->申請者ID)->name;
-                $parameter = compact('url', 'applicant_name');
-            } else if ($content == "reject") {
-                $url = route('workflowapplicationdetailget', ['id' => $content_id]);
-                $subject = '【ワークフローシステム】申請却下';
-                $parameter = compact('url');
-            } else if ($content == "completion") {
-                $url = route('workflowapplicationdetailget', ['id' => $content_id]);
-                $subject = '【ワークフローシステム】決裁';
-                $parameter = compact('url');
-            }
-            config(['mail' => $mailConfig]);
-            try {
-                Mail::send('mail.mail_' . $content, $parameter, function ($message) use ($recipient, $mail, $name, $subject) {
-                    $message->to($recipient)
-                        ->subject($subject)
-                        ->from($mail, $name);
-                });
-                return response()->json('送信しました');
-                // return redirect()->route('workflow');
-            } catch (\Exception) {
-                return response()->json('送信できませんでした');
+                $mailConfig = [
+                    'driver' => 'smtp',
+                    'host' => $host,
+                    'port' => $port,
+                    'username' => $username,
+                    'password' => $password,
+                    'encryption' => 'tls',
+                ];
+                if ($content == "approval") {
+                    $url = route('workflowapprovalget', ['id' => $content_id]);
+                    $subject = '【ワークフローシステム】承認依頼';
+                    $t_flow = T_flow::find(T_approval::find($content_id)->フローテーブルID);
+                    $applicant_name = User::find($t_flow->申請者ID)->name;
+                    $parameter = compact('url', 'applicant_name');
+                } else if ($content == "reject") {
+                    $url = route('workflowapplicationdetailget', ['id' => $content_id]);
+                    $subject = '【ワークフローシステム】申請却下';
+                    $parameter = compact('url');
+                } else if ($content == "completion") {
+                    $url = route('workflowapplicationdetailget', ['id' => $content_id]);
+                    $subject = '【ワークフローシステム】決裁';
+                    $parameter = compact('url');
+                }
+                config(['mail' => $mailConfig]);
+                try {
+                    Mail::send('mail.mail_' . $content, $parameter, function ($message) use ($recipient, $mail, $name, $subject) {
+                        $message->to($recipient)
+                            ->subject($subject)
+                            ->from($mail, $name);
+                    });
+                    return response()->json('送信しました');
+                    // return redirect()->route('workflow');
+                } catch (\Exception) {
+                    return response()->json('送信できませんでした');
+                }
             }
         }
     }
@@ -2627,8 +2625,7 @@ class FlowController extends Controller
                 return response($fileContent, 200)
                     ->header('Content-Type', 'application/pdf')
                     ->header('Content-Disposition', 'inline; filename="file.pdf"');
-
-            }  catch (S3Exception $e) {
+            } catch (S3Exception $e) {
                 return response()->json(['error' => 'S3 Error: ' . $e->getMessage()], 500);
             } catch (\Exception $e) {
                 return response()->json(['error' => 'General Error: ' . $e->getMessage()], 500);
@@ -2931,7 +2928,7 @@ class FlowController extends Controller
             if (!file_exists($tempDir)) {
                 mkdir($tempDir, 0777, true);
             }
-            
+
             $tempimgPath = storage_path("app/application/temp/{$currentTime}_img.png");
             $temppdfPath = storage_path("app/application/temp/{$currentTime}_pdf.pdf");
 
@@ -2949,7 +2946,6 @@ class FlowController extends Controller
             ]);
             $imgpath = $tempimgPath;
             $pdfpath = $temppdfPath;
-
         } else if (config('prefix.server') == "onpre") {
             $imgpath = Config::get('custom.file_upload_path') . '\\' . $m_stamp->ファイルパス;
             $pdfpath = Config::get('custom.file_upload_path') . '\\' . $t_flow->変更前承認ファイルパス;
@@ -2970,8 +2966,8 @@ class FlowController extends Controller
         $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
         $root = Config::get('custom.file_upload_path');
         if (config('prefix.server') == 'cloud') {
-            $new_pdf_name =  'flow/application/' .$new_pdf_name;
-            $new_pdf_path = $prefix .'/'. $new_pdf_name;
+            $new_pdf_name =  'flow/application/' . $new_pdf_name;
+            $new_pdf_path = $prefix . '/' . $new_pdf_name;
             $pdfcontent = $pdf->Output('', 'S');
             Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
         } else if (config('prefix.server') == 'onpre') {
@@ -2990,7 +2986,7 @@ class FlowController extends Controller
         if (config('prefix.server') == "cloud") {
             Storage::delete("application/temp/{$currentTime}_img.png");
             Storage::delete("application/temp/{$currentTime}_pdf.pdf");
-        } 
+        }
 
         return redirect()->route('workflowapprovalget', ["id" => $t_approval->id, "comment" => $comment, "approval" => "approve"]);
     }
@@ -3334,7 +3330,6 @@ class FlowController extends Controller
             $imagename = 'stamp/' . $imagename;
             // S3にファイルを保存
             Storage::disk('s3')->put($prefix . '/' . $imagename, $imageBinaryData);
-
         } else if (config('prefix.server') == "onpre") {
             $imagepath = Config::get('custom.file_upload_path') . '\\' . $imagename;
             file_put_contents($imagepath, $imageBinaryData);
