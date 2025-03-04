@@ -1479,9 +1479,9 @@ class FlowController extends Controller
     public function workflowapplicationpost(Request $request)
     {
         $prefix = config('prefix.prefix');
-        if ($prefix !== "") {
-            $prefix = "/" . $prefix;
-        }
+        // if ($prefix !== "") {
+        //     $prefix = "/" . $prefix;
+        // }
         $server = config('prefix.server');
 
 
