@@ -1621,6 +1621,7 @@ class FlowController extends Controller
                 $new_pdf_name =  'flow/application/' .$currentTime . '_' . $randomID . '.pdf';
                 $new_pdf_path = $prefix . $new_pdf_name;
                 $pdfcontent = $pdf->Output('', 'S');
+                dd($new_pdf_path);
                 Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
             } else if (config('prefix.server') == 'onpre') {
                 $new_pdf_name = 'flow\\application\\' . $currentTime . '_' . $randomID . '.pdf';
