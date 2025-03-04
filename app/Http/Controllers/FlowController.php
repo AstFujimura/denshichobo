@@ -1585,7 +1585,7 @@ class FlowController extends Controller
                     if (config('prefix.server') == 'cloud') {
                         $filepath = 'flow/attachment/' . $filepath;
                         // S3にアップロード
-                        $s3Path = $prefix . $filepath . ($extension ? '.' . $extension : '');
+                        $s3Path = $prefix .'/' . $filepath . ($extension ? '.' . $extension : '');
                         Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
 
                     } else if (config('prefix.server') == 'onpre') {
@@ -3203,7 +3203,7 @@ class FlowController extends Controller
     public function workflowstampimgget($id)
     {
         $M_stamp = M_stamp::where("ユーザーID", $id)->first();
-
+        $prefix = config('prefix.prefix');
         if ($M_stamp) {
 
             $filepath = $M_stamp->ファイルパス;
@@ -3212,7 +3212,7 @@ class FlowController extends Controller
             if (config('prefix.server') == "cloud") {
                 // S3バケットの情報
                 $bucket = 'astdocs.com';
-                $key = $filepath;
+                $key = $prefix . '/' . $filepath;
                 $expiration = '+1 hour'; // 有効期限
 
                 $s3Client = new S3Client([
