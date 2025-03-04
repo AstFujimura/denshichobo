@@ -1823,9 +1823,19 @@ class FlowController extends Controller
 
             $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
 
-            $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
-            $pdfcontent = $pdf->Output('', 'S');
-            file_put_contents($new_pdf_path, $pdfcontent);
+            $root = Config::get('custom.file_upload_path');
+            if (config('prefix.server') == 'cloud') {
+                $new_pdf_name =  'flow/application/' .$new_pdf_name;
+                $new_pdf_path = $prefix .'/'. $new_pdf_name;
+                $pdfcontent = $pdf->Output('', 'S');
+                Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
+            } else if (config('prefix.server') == 'onpre') {
+                $new_pdf_path = $root . '\\' . $new_pdf_name;
+                $pdfcontent = $pdf->Output('', 'S');
+                file_put_contents($new_pdf_path, $pdfcontent);
+            }
+
+
 
             $t_flow->変更前承認ファイルパス = $new_pdf_name;
             // 申請印を押さない場合は変更後承認ファイルパスへの記述がないため
@@ -1996,10 +2006,17 @@ class FlowController extends Controller
         $randomID = $this->generateRandomCode();
 
         $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
-
-        $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
-        $pdfcontent = $pdf->Output('', 'S');
-        file_put_contents($new_pdf_path, $pdfcontent);
+        $root = Config::get('custom.file_upload_path');
+        if (config('prefix.server') == 'cloud') {
+            $new_pdf_name =  'flow/application/' .$new_pdf_name;
+            $new_pdf_path = $prefix .'/'. $new_pdf_name;
+            $pdfcontent = $pdf->Output('', 'S');
+            Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
+        } else if (config('prefix.server') == 'onpre') {
+            $new_pdf_path = $root . '\\' . $new_pdf_name;
+            $pdfcontent = $pdf->Output('', 'S');
+            file_put_contents($new_pdf_path, $pdfcontent);
+        }
 
 
         $t_flow->ステータス = 0;
@@ -2108,10 +2125,17 @@ class FlowController extends Controller
         $randomID = $this->generateRandomCode();
 
         $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
-
-        $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
-        $pdfcontent = $pdf->Output('', 'S');
-        file_put_contents($new_pdf_path, $pdfcontent);
+        $root = Config::get('custom.file_upload_path');
+        if (config('prefix.server') == 'cloud') {
+            $new_pdf_name =  'flow/application/' .$new_pdf_name;
+            $new_pdf_path = $prefix .'/'. $new_pdf_name;
+            $pdfcontent = $pdf->Output('', 'S');
+            Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
+        } else if (config('prefix.server') == 'onpre') {
+            $new_pdf_path = $root . '\\' . $new_pdf_name;
+            $pdfcontent = $pdf->Output('', 'S');
+            file_put_contents($new_pdf_path, $pdfcontent);
+        }
 
 
         // $t_flow->ステータス = 0;
@@ -2944,10 +2968,17 @@ class FlowController extends Controller
         $randomID = $this->generateRandomCode();
 
         $new_pdf_name = $currentTime . '_' . $randomID . '.pdf';
-
-        $new_pdf_path = Config::get('custom.file_upload_path')  . '\\' . $new_pdf_name;
-        $pdfcontent = $pdf->Output('', 'S');
-        file_put_contents($new_pdf_path, $pdfcontent);
+        $root = Config::get('custom.file_upload_path');
+        if (config('prefix.server') == 'cloud') {
+            $new_pdf_name =  'flow/application/' .$new_pdf_name;
+            $new_pdf_path = $prefix .'/'. $new_pdf_name;
+            $pdfcontent = $pdf->Output('', 'S');
+            Storage::disk('s3')->put($new_pdf_path, $pdfcontent);
+        } else if (config('prefix.server') == 'onpre') {
+            $new_pdf_path = $root . '\\' . $new_pdf_name;
+            $pdfcontent = $pdf->Output('', 'S');
+            file_put_contents($new_pdf_path, $pdfcontent);
+        }
 
 
         $t_flow->ステータス = 0;
