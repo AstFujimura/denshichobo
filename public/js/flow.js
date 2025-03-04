@@ -1082,8 +1082,6 @@ $(document).ready(function () {
             if (response.Type.startsWith('image/')) {
               var img = $('<img>');
               img.attr('src', response.path);
-              img.attr('width', '100%');
-              img.attr('height', '600px');
               img.addClass('origin');
 
               $('#inputs').append(img);
