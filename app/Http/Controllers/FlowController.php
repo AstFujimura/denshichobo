@@ -3467,6 +3467,8 @@ class FlowController extends Controller
 
     public function flowimgget(Request $request, $id)
     {
+        $prefix = config('prefix.prefix');
+        
         if ($request->input("type") == "t_flow_before") {
             $img = T_flow::find($id);
             $filepath = str_replace(".pdf", "", $img->変更前承認ファイルパス);
@@ -3496,7 +3498,7 @@ class FlowController extends Controller
         if (config('prefix.server') == "cloud") {
             // S3バケットの情報
             $bucket = 'astdocs.com';
-            $key = $img->ファイルパス . "." . $img->ファイル形式;
+            $key = $prefix . '/' . $img->ファイルパス . "." . $img->ファイル形式;
             $expiration = '+1 hour'; // 有効期限
 
             $s3Client = new S3Client([
