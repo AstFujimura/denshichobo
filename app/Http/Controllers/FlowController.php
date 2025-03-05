@@ -996,11 +996,13 @@ class FlowController extends Controller
 
             // カテゴリの項目順を取得してその項目のみを取得する
             $optionals = explode("_", $m_category->項目順);
+   
             // 型が4のもの(ファイル型)を取得する
             $m_optionals = M_optional::where("カテゴリマスタID", $id)
                 ->whereIn("id", $optionals)
                 ->where("型", 4)
                 ->get();
+                dd($m_optionals);
             foreach ($m_optionals as $m_optional) {
                 $m_tameru_regist = M_tameru_regist::where("ファイル", $m_optional->id)->first();
                 if ($m_tameru_regist) {
