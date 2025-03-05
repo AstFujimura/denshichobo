@@ -64,40 +64,45 @@ label {
 }
 
 .start_choice_container {
-  margin: 30px;
+  margin: 3rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: 3rem;
   background-color: #fbfbfb;
-  border-radius: 10px;
-  padding: 50px;
-  width: fit-content;
+  border-radius: 1rem;
+  padding-block: 3rem;
   margin-inline: auto;
-  min-width: 500px;
-  height: 300px;
-
+  min-width: 40rem;
+  height: 20rem;
+  @media screen and (max-width: 800px) {
+    flex-direction: column;
+    max-width: 90%;
+    min-width: 0;
+  }
   .start_choice_element {
     background-color: #f3f3f3;
     border-radius: 10px;
     box-shadow: 1px 4px 5px #ccc;
-    height: 133px;
-    width: 247px;
+    height: 10rem;
+    width: 18rem;
+    max-width: 100%;
     font-size: 18px;
     color: black;
     text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
+
     &:hover {
       background-color: #91d7ff;
       color: white;
     }
-    .smart_circuit_logo{
-    width: 120px;
+    .snapflow_logo{
+    width: 8rem;
     }
     .tameru_logo{
-      width: 120px;
+      width: 8rem;
     }
   }
 }

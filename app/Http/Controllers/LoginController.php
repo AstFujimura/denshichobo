@@ -47,7 +47,7 @@ class LoginController extends Controller
 
                     return redirect(route('cardviewget'));
                 }
-                return redirect(session('url.intended'));
+                return redirect(route('startchoiceGet'));
             }
             // ログアウトボタンを押してログイン画面に遷移してきた場合
             else if (config('prefix.server') == 'cloud') {
@@ -55,7 +55,7 @@ class LoginController extends Controller
                 if (Version::where('tameru', false)->first()) {
                     return redirect(route('cardviewget'));
                 }
-                return redirect(session('url.intended'));
+                return redirect(route('startchoiceGet'));
             }
         } else {
             // エラーメッセージをフラッシュデータに設定
