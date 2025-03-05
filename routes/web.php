@@ -282,7 +282,7 @@ Route::prefix($prefix)->group(function () {
             // ワークフローファイルダウンロード
             Route::get('/workflow/download/{id}', [FlowController::class, 'flowdownload'])->name('flowdownload');
             // 承認用紙ダウンロード
-            Route::get('/workflow/approval/download/{id}', [FlowController::class, 'workflowapprovaldownload'])->name('workflowapprovaldownload');
+            // Route::get('/workflow/approval/download/{id}', [FlowController::class, 'workflowapprovaldownload'])->name('workflowapprovaldownload');
             
             // 承認一覧
             Route::get('/workflow/approvalview', [FlowController::class, 'workflowapprovalview'])->name('workflowapprovalview');

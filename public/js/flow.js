@@ -1386,7 +1386,7 @@ $(document).ready(function () {
 
   //ダウンロードボタンを押したとき
   $('.approve_download').on('click', function () {
-    window.location.href = $(this).attr("id")
+    window.location.href = $(this).attr("data-url")
   });
 
   // プレビューボタンを押したとき

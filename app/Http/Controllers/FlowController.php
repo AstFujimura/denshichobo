@@ -3539,20 +3539,33 @@ class FlowController extends Controller
         }
     }
 
-    public function flowdownload($id)
-
+    public function flowdownload(Request $request, $id)
     {
-        $file = T_optional::find($id);
+        $prefix = config('prefix.prefix');
+        $type = $request->input("type");
+        if ($type == "t_optional") {
+            $file = T_optional::find($id);
+            $filepath = $file->ファイルパス . ($file->ファイル形式 == null ? "" : "." . $file->ファイル形式);
+        } else if ($type == "t_flow_before") {
+            $file = T_flow::find($id);
+            $filepath = $file->変更前承認ファイルパス;
+        } else if ($type == "t_flow_after") {
+            $file = T_flow::find($id);
+            $filepath = $file->変更後承認ファイルパス;
+        }
+
         if (config('prefix.server') == "cloud") {
 
-            if ($file->ファイル形式 == "") {
-                $key = $file->ファイルパス;
-            } else {
-                $key = $file->ファイルパス . "." . $file->ファイル形式;
-            }
-            $parts = explode('/', $key);
-            $filename = end($parts); // 最後の要素を取得       
+            // if ($file->ファイル形式 == "") {
+            //     $key = $file->ファイルパス;
+            // } else {
+            //     $key = $file->ファイルパス . "." . $file->ファイル形式;
+            // }
 
+            
+            $key = $prefix . '/' . $filepath;
+            $parts = explode('/', $key);
+            $filename = end($parts); // 最後の要素を取得     
 
             $headers = [
                 'Content-Type' => 'application/octet-stream',
@@ -3561,50 +3574,45 @@ class FlowController extends Controller
 
             return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
         } else {
-            //拡張子がないファイルの場合分け
-            if ($file->ファイル形式 == "") {
-                $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス;
-            } else {
-                $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
-            }
+            $filepath = Config::get('custom.file_upload_path') . "\\" . $filepath;
         }
 
         // ファイルのダウンロード
         return response()->download($filepath);
     }
 
-    public function workflowapprovaldownload($id)
-    {
-        $t_flow = T_flow::find($id);
-        if (config('prefix.server') == "cloud") {
+    // public function workflowapprovaldownload($id)
+    // {
+    //     $t_flow = T_flow::find($id);
+    //     if (config('prefix.server') == "cloud") {
 
-            if ($t_flow->変更後承認ファイルパス == "") {
-                $key = $t_flow->変更前承認ファイルパス;
-            } else {
-                $key = $t_flow->変更後承認ファイルパス;
-            }
-            $parts = explode('/', $key);
-            $filename = end($parts); // 最後の要素を取得       
+    //         if ($t_flow->変更後承認ファイルパス == "") {
+    //             $key = $t_flow->変更前承認ファイルパス;
+    //         } else {
+    //             $key = $t_flow->変更後承認ファイルパス;
+    //         }
+    //         $parts = explode('/', $key);
+    //         $filename = end($parts); // 最後の要素を取得       
 
 
-            $headers = [
-                'Content-Type' => 'application/octet-stream',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-            ];
+    //         $headers = [
+    //             'Content-Type' => 'application/octet-stream',
+    //             'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+    //         ];
 
-            return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
-        } else {
-            //拡張子がないファイルの場合分け
-            if ($t_flow->変更後承認ファイルパス == "") {
-                $filepath = Config::get('custom.file_upload_path') . "\\" . $t_flow->変更前承認ファイルパス;
-            } else {
-                $filepath = Config::get('custom.file_upload_path') . "\\" . $t_flow->変更後承認ファイルパス;
-            }
-        }
+    //         return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
+    //     } else {
+    //         //拡張子がないファイルの場合分け
+    //         if ($t_flow->変更後承認ファイルパス == "") {
+    //             $filepath = Config::get('custom.file_upload_path') . "\\" . $t_flow->変更前承認ファイルパス;
+    //         } else {
+    //             $filepath = Config::get('custom.file_upload_path') . "\\" . $t_flow->変更後承認ファイルパス;
+    //         }
+    //     }
 
-        // ファイルのダウンロード
-        return response()->download($filepath);
-    }
+    //     // ファイルのダウンロード
+    //     return response()->download($filepath);
+    // }
 
 
     //ランダムな8桁のstring型の数値を出力
