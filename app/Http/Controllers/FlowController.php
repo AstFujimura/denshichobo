@@ -2017,7 +2017,6 @@ class FlowController extends Controller
 
 
         $t_flow->ステータス = 0;
-        dd($new_pdf_name);
         $t_flow->変更後承認ファイルパス = $new_pdf_name;
         $t_flow->save();
 
