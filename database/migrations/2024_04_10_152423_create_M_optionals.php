@@ -90,7 +90,7 @@ return new class extends Migration
             ],
             [
                 'id' => 6,
-                'カテゴリマスタID' => 2,
+                'カテゴリマスタID' => 1,
                 '項目名' => '請求書',
                 '型' => 4,
                 '必須' => true,
