@@ -1701,18 +1701,43 @@ class FlowController extends Controller
                 $now = Carbon::now();
                 $currentTime = $now->format('YmdHis');
 
+                $originalPath = $file->getRealPath();
+                $pdfVersion = $this->getPdfVersion($originalPath);
 
+                $tempDir = storage_path('app/pdf/temp');
+                if (!file_exists($tempDir)) {
+                    mkdir($tempDir, 0777, true);
+                }
+
+                $tempPath = storage_path("app/pdf/temp/{$currentTime}temp.pdf");
+            
+            
+                if ($pdfVersion && $pdfVersion >= 1.5) {
+                    // PDFバージョンが1.5以上なら1.4に変換
+                    $convertedPath = $this->downgradePdf($originalPath, $tempPath);
+                    if (!$convertedPath) {
+                        return response()->json(['error' => 'PDFの変換に失敗しました'], 500);
+                    }
+                    $finalPath = $convertedPath;
+                } else {
+                    // そのまま使用
+                    $finalPath = $originalPath;
+                }
 
                 if (config('prefix.server') == 'cloud') {
                     $filepath = 'flow/attachment/application/' . $currentTime . '_' . $randomID . ($extension ? '.' . $extension : '');
                     $s3Path = $prefix . '/' . $filepath;
-                    Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
+                    Storage::disk('s3')->put($s3Path, file_get_contents($finalPath));
                 } else if (config('prefix.server') == 'onpre') {
                     // 開発環境: ローカルに保存
                     $filepath = 'flow\\attachment\\application\\' . $currentTime . '_' . $randomID . ($extension ? '.' . $extension : '');
-                    copy($file->getRealPath(), $root . '\\' . $filepath);
+                    copy($finalPath, $root . '\\' . $filepath);
                 }
-
+                if ($pdfVersion && $pdfVersion >= 1.5) {
+                    if (file_exists($tempPath)) {
+                        unlink($tempPath);
+                    }                    
+                }
 
 
 
