@@ -2687,6 +2687,8 @@ class FlowController extends Controller
     // 承認ポスト
     public function workflowapprovalpost(Request $request)
     {
+        $prefix = config('prefix.prefix');
+
         $approval_id = $request->input("approval_id");
         $result = $request->input("approval");
         $approvecomment = $request->input("approvecomment");
@@ -2799,7 +2801,7 @@ class FlowController extends Controller
                                     $file->書類ID = $m_tameru->書類区分;
                                     $file->備考 = $m_tameru->検索ワード;
 
-                                    $file->ファイルパス = $t_optional->ファイルパス;
+                                    $file->ファイルパス = config('prefix.server') == "cloud" ? $prefix . '/' . $t_optional->ファイルパス : $t_optional->ファイルパス;
                                     $file->ファイル変更 = "";
                                     $file->削除フラグ = "";
                                     $file->ファイル形式 = $t_optional->ファイル形式;
