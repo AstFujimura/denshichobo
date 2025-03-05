@@ -21,9 +21,9 @@
         <input type="hidden" name="t_flow_id" value="{{$t_flow->id}}">
         <div class="flow_application_container">
             <div class="flow_application_button_content">
-                <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
+                <a href="{{route('categorydetailget',['id'=>$t_flow->id])}}" class="back_button " id="flow_next_button">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
-                    トップへもどる
+                    もどる
                 </a>
                 <button class="next_button flow_next_button" id="flow_next_button">
                     次へ
@@ -53,7 +53,9 @@
                             @elseif ($t_optional->型 == 2)
                             <input type="number" class="application_form_text text_long_content" name="application_form_input{{$t_optional->id}}" value="{{$t_optional->値}}" data-required="{{$t_optional->必須}}">
                             @elseif ($t_optional->型 == 3)
-                            <input type="text" class="application_form_text application_form_date text_short_content" name="application_form_input{{$t_optional->id}}" value="{{$t_optional->値}}" data-required="{{$t_optional->必須}}">
+                            <div class="date_form_container">
+                                <input type="text" class="application_form_text application_form_date text_short_content" name="application_form_input{{$t_optional->id}}" value="{{$t_optional->値}}" data-required="{{$t_optional->必須}}">
+                            </div>
                             @elseif ($t_optional->型 == 4)
                             <div class="flow_application_droparea">
                                 <p>ここにドラッグ&ドロップ</p>
