@@ -45,7 +45,7 @@
                     @if ($t_reapplication_count > 0)
                     <div class="ribbon_container">
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/ribbon.svg') }}" alt="" class="ribbon_icon">
-                        <span class="ribbon_text">{{$t_approval_count}}</span>
+                        <span class="ribbon_text">{{$t_reapplication_count}}</span>
                     </div>
                     @endif
 
