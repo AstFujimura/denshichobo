@@ -117,9 +117,9 @@
                 </td>
                 <td>
                     @if ($list->項目名 == "承認用紙")
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" alt="" class="title_icon download_icon" data-url="{{$prefix}}/workflow/download/{{$list->id}}?type=t_optional&timestamp={{time()}}">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" alt="" class="title_icon download_icon" data-url="{{$prefix}}/workflow/download/{{$list->id}}?type=t_flow_before&timestamp={{time()}}">
                     @else
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_file/download.svg') }}" alt="" class="title_icon download_icon" data-url="{{$prefix}}/workflow/download/{{$list->id}}?type=t_flow_before&timestamp={{time()}}">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_file/download.svg') }}" alt="" class="title_icon download_icon" data-url="{{$prefix}}/workflow/download/{{$list->id}}?type=t_optional&timestamp={{time()}}">
                     @endif
 
                 </td>
