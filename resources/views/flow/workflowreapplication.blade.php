@@ -21,7 +21,7 @@
         <input type="hidden" name="t_flow_id" value="{{$t_flow->id}}">
         <div class="flow_application_container">
             <div class="flow_application_button_content">
-                <a href="{{route('categorydetailget',['id'=>$t_flow->id])}}" class="back_button " id="flow_next_button">
+                <a href="{{route('workflowapplicationdetailget',['id'=>$t_flow->id])}}" class="back_button " id="flow_next_button">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
                     もどる
                 </a>
