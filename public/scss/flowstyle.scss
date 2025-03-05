@@ -4343,7 +4343,7 @@ body {
         max-width: 90%;
         border-collapse: collapse;
         background: white;
-
+        table-layout: fixed;  /* 固定幅でテーブルを表示 */
         tr {
             height: 3rem;
 

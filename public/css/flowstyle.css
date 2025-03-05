@@ -4190,6 +4190,7 @@ body #usersetting {
   max-width: 90%;
   border-collapse: collapse;
   background: white;
+  table-layout: fixed; /* 固定幅でテーブルを表示 */
 }
 .file_container .file_list_table tr {
   height: 3rem;
