@@ -996,7 +996,6 @@ class FlowController extends Controller
 
             // カテゴリの項目順を取得してその項目のみを取得する
             $optionals = explode("_", $m_category->項目順);
-            dd($optionals);
    
             // 型が4のもの(ファイル型)を取得する
             $m_optionals = M_optional::where("カテゴリマスタID", $id)
