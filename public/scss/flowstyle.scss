@@ -4343,7 +4343,9 @@ body {
         max-width: 90%;
         border-collapse: collapse;
         background: white;
-        table-layout: fixed;  /* 固定幅でテーブルを表示 */
+        @media screen and (max-width: 800px) {
+            width: 90%;
+        }
         tr {
             height: 3rem;
 

@@ -4190,7 +4190,11 @@ body #usersetting {
   max-width: 90%;
   border-collapse: collapse;
   background: white;
-  table-layout: fixed; /* 固定幅でテーブルを表示 */
+}
+@media screen and (max-width: 800px) {
+  .file_container .file_list_table {
+    width: 90%;
+  }
 }
 .file_container .file_list_table tr {
   height: 3rem;
