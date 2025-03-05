@@ -3471,15 +3471,15 @@ class FlowController extends Controller
         
         if ($request->input("type") == "t_flow_before") {
             $img = T_flow::find($id);
-            $filepath = str_replace(".pdf", "", $img->変更前承認ファイルパス);
+            $filepath = $img->変更前承認ファイルパス;
             $extension = "pdf";
         } else if ($request->input("type") == "t_flow_after") {
             $img = T_flow::find($id);
-            $filepath = str_replace(".pdf", "", $img->変更後承認ファイルパス);
+            $filepath = $img->変更後承認ファイルパス;
             $extension = "pdf";
         } else if ($request->input("type") == "t_optional") {
             $img = T_optional::find($id);
-            $filepath = $img->ファイルパス;
+            $filepath = $img->ファイルパス . ($img->ファイル形式 == null ? "" : "." . $img->ファイル形式);
             $extension = $img->ファイル形式;
         }
         // // 承認用紙の場合はt_flowのIDを負の数でAPIをたたくため
@@ -3498,7 +3498,7 @@ class FlowController extends Controller
         if (config('prefix.server') == "cloud") {
             // S3バケットの情報
             $bucket = 'astdocs.com';
-            $key = $prefix . '/' . $img->ファイルパス . "." . $img->ファイル形式;
+            $key = $prefix . '/' . $filepath;
             $expiration = '+1 hour'; // 有効期限
 
             $s3Client = new S3Client([
@@ -3513,7 +3513,7 @@ class FlowController extends Controller
             // 署名付きURLを生成
             $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
         } else {
-            $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
+            $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
         }
 
 
