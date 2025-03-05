@@ -1774,28 +1774,22 @@ class FlowController extends Controller
                 if ($file) {
                     $pastID = $this->generateRandomCode();
                     $extension = $file->getClientOriginalExtension();
-                    $filename = Config::get('custom.file_upload_path');
+                    $root = Config::get('custom.file_upload_path');
                     $now = Carbon::now();
                     $currentTime = $now->format('YmdHis');
                     $filepath = $currentTime . '_' . $pastID;
-                    //アップロードされたファイルに拡張子がない場合
-                    if (!$extension) {
-                        if (config('app.env') == 'production') {
-                            // 本番環境用の設定
-                        } else {
-                            // 開発環境用の設定
-                            copy($file->getRealPath(), $filename . "\\" . $filepath);
-                        }
-                        //extensionがnullになっているためエラー回避
-                        $extension = "";
-                    } else {
-                        if (config('app.env') == 'production') {
-                            // 本番環境用の設定
-                        } else {
-                            // 開発環境用の設定
-                            copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-                        }
+
+                    if (config('prefix.server') == 'cloud') {
+                        $filepath = 'flow/attachment/' . $filepath;
+                        // S3にアップロード
+                        $s3Path = $prefix . '/' . $filepath . ($extension ? '.' . $extension : '');
+                        Storage::disk('s3')->put($s3Path, file_get_contents($file->getRealPath()));
+                    } else if (config('prefix.server') == 'onpre') {
+                        $filepath = 'flow\\attachment\\' . $filepath;
+                        // 開発環境: ローカルに保存
+                        copy($file->getRealPath(), $root . "\\" . $filepath . ($extension ? '.' . $extension : ''));
                     }
+
 
                     $new_t_optional->ファイルパス = $filepath;
                     $new_t_optional->ファイル形式 = $extension;
