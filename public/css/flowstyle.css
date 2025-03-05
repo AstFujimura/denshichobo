@@ -2666,7 +2666,7 @@ body #usersetting {
 
 .reject_mark {
   color: yellow;
-  font-weight: bold;
+  font-weight: 500;
   background: #616161;
   padding: 5px 20px;
   border-radius: 3px;
@@ -2682,7 +2682,7 @@ body #usersetting {
   font-size: 20px;
   background: #ffebaa;
   color: #afb34b;
-  font-weight: bold;
+  font-weight: 500;
   border: solid 2px #afb34b;
 }
 
@@ -2695,7 +2695,7 @@ body #usersetting {
   font-size: 16px;
   background: #ddf5ff;
   color: #4b84b3;
-  font-weight: bold;
+  font-weight: 500;
   border: solid 2px #4b84b3;
 }
 
@@ -2708,7 +2708,7 @@ body #usersetting {
   font-size: 16px;
   background: #ffebdd;
   color: #b3764b;
-  font-weight: bold;
+  font-weight: 500;
   border: solid 2px #b3764b;
 }
 
@@ -2721,7 +2721,7 @@ body #usersetting {
   font-size: 19px;
   background: #ffdddd;
   color: #ff4242;
-  font-weight: bold;
+  font-weight: 500;
   border: solid 2px #ff3131;
 }
 
@@ -2809,20 +2809,20 @@ body #usersetting {
 
 /* 申請内容 */
 .application_cancel_container {
-  width: 500px;
   display: flex;
   justify-content: center;
 }
 
 .application_cancel_button {
-  width: 200px;
+  width: 13rem;
   background: red;
-  padding: 10px;
+  padding: 0.6rem;
   text-align: center;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: bold;
   color: white;
   cursor: pointer;
+  border-radius: 0.3rem;
 }
 
 .application_cancel_button:hover {
