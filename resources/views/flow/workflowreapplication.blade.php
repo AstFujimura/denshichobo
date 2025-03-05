@@ -57,9 +57,9 @@
                             @elseif ($t_optional->型 == 4)
                             <div class="flow_application_droparea">
                                 <p>ここにドラッグ&ドロップ</p>
-                                <input type="file" class="file_input" name="application_form_input{{$optional->id}}" data-required="{{$optional->必須}}">
+                                <input type="file" class="file_input" name="application_form_input{{$t_optional->id}}" data-required="{{$t_optional->必須}}">
                             </div>
-                            <div class="flow_application_preview_button" data-id="{{$optional->id}}">プレビュー</div>
+                            <div class="flow_application_preview_button" data-id="{{$t_optional->id}}">プレビュー</div>
                             @endif
                         </div>
                         @endforeach
