@@ -1391,14 +1391,43 @@ class FlowController extends Controller
                 $currentTime = $now->format('YmdHis');
                 $randomID = $this->generateRandomCode();
 
+                $originalPath = $pdfData->getRealPath();
+                $pdfVersion = $this->getPdfVersion($originalPath);
+
+                $tempDir = storage_path('app/pdf/temp');
+                if (!file_exists($tempDir)) {
+                    mkdir($tempDir, 0777, true);
+                }
+
+                $tempPath = storage_path("app/pdf/temp/{$currentTime}temp.pdf");
+            
+            
+                if ($pdfVersion && $pdfVersion >= 1.5) {
+                    // PDFバージョンが1.5以上なら1.4に変換
+                    $convertedPath = $this->downgradePdf($originalPath, $tempPath);
+                    if (!$convertedPath) {
+                        return response()->json(['error' => 'PDFの変換に失敗しました'], 500);
+                    }
+                    $finalPath = $convertedPath;
+                } else {
+                    // そのまま使用
+                    $finalPath = $originalPath;
+                }
+
                 if (config('prefix.server') == 'cloud') {
                     $pdffilename = 'flow/application/' . $currentTime . '_' . $randomID . '.pdf';
                     $pdfpath = $prefix . '/' . $pdffilename;
-                    Storage::disk('s3')->put($pdfpath, file_get_contents($pdfData->getRealPath()));
+                    Storage::disk('s3')->put($pdfpath, file_get_contents($finalPath));
                 } else {
                     $pdffilename = 'flow\\application\\' . $currentTime . '_' . $randomID . '.pdf';
                     $pdfpath = Config::get('custom.file_upload_path') . '\\' . $pdffilename;
-                    copy($pdfData->getRealPath(), $pdfpath);
+                    copy($finalPath, $pdfpath);
+                }
+
+                if ($pdfVersion && $pdfVersion >= 1.5) {
+                    if (file_exists($tempPath)) {
+                        unlink($tempPath);
+                    }                    
                 }
 
 
@@ -1410,6 +1439,7 @@ class FlowController extends Controller
             }
         }
         $m_category->save();
+        
         return redirect()->route('categoryapprovalsettingget', ['id' => $category_id])->with('success', '承認用紙の設定を更新しました。');
 
         // -----------以降はテストで作成したコードのため後で消す-----------------
@@ -1458,8 +1488,32 @@ class FlowController extends Controller
     //     return $pdfsize;
     // }
 
-
-
+    public function getPdfVersion($filePath) {
+        $fp = fopen($filePath, 'rb');
+        if (!$fp) return false;
+    
+        $firstLine = fgets($fp, 20); // 最初の行を取得
+        fclose($fp);
+    
+        if (preg_match('/%PDF-(\d+\.\d+)/', $firstLine, $matches)) {
+            return (float)$matches[1]; // バージョンを小数として返す
+        }
+    
+        return false;
+    }
+    
+    function downgradePdf($inputPath, $outputPath) {
+        $gsCommand = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') 
+            ? '"C:\\Program Files\\gs\\gs10.04.0\\bin\\gswin64c.exe"'  // Windows用
+            : 'gs';  // Linux用
+    
+        $command = $gsCommand . " -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o " . 
+            escapeshellarg($outputPath) . " -f " . escapeshellarg($inputPath);
+        
+        exec($command, $output, $returnVar);
+        return $returnVar === 0 ? $outputPath : false;
+    }
+    
 
 
     // ワークフロー申請
