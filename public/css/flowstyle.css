@@ -1871,8 +1871,8 @@ body #usersetting {
 }
 @media screen and (max-width: 800px) {
   .flow_view_container {
-    padding: 1rem 2rem;
-    max-width: 95%;
+    padding: 0rem 1rem;
+    max-width: 90%;
     margin-inline: auto;
   }
 }
