@@ -30,7 +30,7 @@
                     <div class="main_button_title">
                         承認
                     </div>
-                    @if ($t_approval_count != 0)
+                    @if ($t_approval_count > 0)
                     <div class="ribbon_container">
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/ribbon.svg') }}" alt="" class="ribbon_icon">
                         <span class="ribbon_text">{{$t_approval_count}}</span>
@@ -42,7 +42,7 @@
                     <div class="main_button_title">
                         申請一覧
                     </div>
-                    @if ($t_reapplication_count != 0)
+                    @if ($t_reapplication_count > 0)
                     <div class="ribbon_container">
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/ribbon.svg') }}" alt="" class="ribbon_icon">
                         <span class="ribbon_text">{{$t_approval_count}}</span>
