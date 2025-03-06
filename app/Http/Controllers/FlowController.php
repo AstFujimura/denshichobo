@@ -3053,7 +3053,7 @@ class FlowController extends Controller
         }
 
 
-        $t_flow->ステータス = 0;
+        // $t_flow->ステータス = 0;
         $t_flow->save();
         $t_approval->承認ファイルパス = $new_pdf_name;
         $t_approval->save();
