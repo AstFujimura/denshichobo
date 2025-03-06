@@ -116,9 +116,9 @@
         </div>
         <input type="hidden" id="stamp_img" name="stamp_img" value="">
         <input type="hidden" id="毛筆体" value="{{ asset(config('prefix.prefix').'/'.'font/毛筆体.ttf') }}">
-        <input type="hidden" id="HG正楷書体" value="{{ asset(config('prefix.prefix').'/'.'font/HG正楷書体.TTF') }}">
-        <input type="hidden" id="HGゴシック体" value="{{ asset(config('prefix.prefix').'/'.'font/HGゴシック体.TTC') }}">
-        <input type="hidden" id="HGR明朝体" value="{{ asset(config('prefix.prefix').'/'.'font/HGR明朝体.TTC') }}">
+        <input type="hidden" id="HG正楷書体" value='https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HG正楷書体.TTF'>
+        <input type="hidden" id="HGゴシック体" value='https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HGゴシック体.TTC'>
+        <input type="hidden" id="HGR明朝体" value='https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HGR明朝体.TTC'>
         <input type="hidden" name="t_flow" value="{{$t_flow_id}}">
         <input type="hidden" name="t_approval" value="{{$t_approval_id}}">
     </form>
