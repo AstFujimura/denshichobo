@@ -55,9 +55,6 @@ class LoginController extends Controller
                 if (Version::where('tameru', false)->first()) {
                     return redirect(route('cardviewget'));
                 }
-                if (Version::where('フロー', true)->first()) {
-                    return redirect(route('startchoiceGet'));
-                }
                 else {
                     return redirect(route('topGet'));
                 }
