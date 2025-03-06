@@ -1,39 +1,23 @@
 @charset "UTF-8";
 @font-face {
   font-family: "Noto";
-  src: url("../font/Noto.ttf");
-}
-@font-face {
-  font-family: "HGR教科書体";
-  src: url("../font/HGR教科書体.TTC");
-}
-@font-face {
-  font-family: "HGR行書体";
-  src: url("../font/HGR行書体.TTC");
+  src: url("https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto.ttf");
 }
 @font-face {
   font-family: "HG正楷書体";
-  src: url("../font/HG正楷書体.TTF");
+  src: url("https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HG正楷書体.TTF");
 }
 @font-face {
   font-family: "HGゴシック体";
-  src: url("../font/HGゴシック体.TTC");
+  src: url("https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HGゴシック体.TTC");
 }
 @font-face {
   font-family: "HGR明朝体";
-  src: url("../font/HGR明朝体.TTC");
+  src: url("https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HGR明朝体.TTC");
 }
 @font-face {
   font-family: "arial";
-  src: url("../font/arial.ttf");
-}
-@font-face {
-  font-family: "HK隷書体";
-  src: url("../font/HK隷書.ttf");
-}
-@font-face {
-  font-family: "毛筆体";
-  src: url("../font/毛筆体.ttf");
+  src: url("https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/arial.ttf");
 }
 body {
   font-family: "Noto";
