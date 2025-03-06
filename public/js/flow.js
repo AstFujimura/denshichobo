@@ -1238,17 +1238,23 @@ $(document).ready(function () {
       $(".application_stamp").data("dragging", false).attr("data-dragging", false);
       $(".application_stamp").css({ cursor: "default", opacity: 1 });
 
-      offsetX = canvas_offset("x");
-      offsetY = canvas_offset("y");
-      let clientX = event.type === "touchend" ? event.touches[0].clientX : event.pageX;
-      let clientY = event.type === "touchend" ? event.touches[0].clientY : event.pageY;
+      let clientX, clientY;
 
+      if (event.type === "touchend") {
+        // `event.touches[0]` ではなく `event.changedTouches[0]` を使用
+        clientX = event.changedTouches[0].clientX;
+        clientY = event.changedTouches[0].clientY;
+      } else {
+        clientX = event.pageX;
+        clientY = event.pageY;
+      }
+    
       var adjust = $('#scale').val() * 18;
-
+    
       // マウスの位置を基準に調整
       nowX = (clientX - offsetX - adjust) / scaleFactor;
       nowY = (clientY - offsetY - adjust) / scaleFactor;
-
+    
       $('#left').val(nowX * width / pdf_canvas_width);
       $('#top').val(nowY * height / pdf_canvas_height);
     }
