@@ -47,7 +47,7 @@ class LoginController extends Controller
 
                     return redirect(route('cardviewget'));
                 }
-                return redirect(route('startchoiceGet'));
+                return redirect(route('topGet'));
             }
             // ログアウトボタンを押してログイン画面に遷移してきた場合
             else if (config('prefix.server') == 'cloud') {
