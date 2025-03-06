@@ -13,7 +13,7 @@
 
 <div class="start_choice_container">
     <a class="start_choice_element" href="{{route('workflow')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/snapflow_logo.svg') }}" alt="snapflow" class="snapflow_logo">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapirio_logo.svg') }}" alt="rapirio" class="rapirio_logo">
     </a>
     <a class="start_choice_element" href="{{route('topGet')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo.svg') }}" alt="TAMERU" class="tameru_logo">

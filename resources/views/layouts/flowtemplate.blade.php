@@ -83,9 +83,7 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_admin.svg') }}" class="menuicon01" title="ユーザー設定">
     </a>
     @endif
-    <a class="headerIcon001" href="{{route('question')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01" title="ヘルプ">
-    </a>
+
 
     <a class="headerIcon001 rightmenue001" href="{{route('usersettingGet', ['system_type' => 'flow'])}}">
         <div class="usermenu01">
