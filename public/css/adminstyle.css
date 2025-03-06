@@ -12,6 +12,25 @@ a {
     display: none;
   }
 }
+.admin_header_container {
+  display: flex;
+  margin-bottom: 1rem;
+}
+.admin_header_container .admin_header_container_button {
+  background: #2ac02a;
+  padding: 0.5rem 2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  text-align: center;
+}
+.admin_header_container .admin_header_container_button:hover {
+  background: #1c881c;
+}
+
 @media (max-width: 480px) {
   .admin_top_table_div div {
     background: rgb(245, 227, 217);

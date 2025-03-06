@@ -27,9 +27,11 @@
         <a href="{{route('adminGet')}}" class="logoelement01">
             管理画面
         </a>
-        <a href="{{route('topGet')}}" class="tameru_banner">TAMERU</a>
+        @if (App\Models\Version::where('tameru', true)->first())
+        <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
+        @endif
         @if (App\Models\Version::where('フロー', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner">電子承認システム</a>
+        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapirio_logo_only.svg') }}" alt="TAMERU"></a>
         @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
@@ -38,9 +40,6 @@
 </header>
 <div class="menu001">
 
-    <a class="headerIcon001" href="{{route('topGet')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01" title="Top">
-    </a>
     <a class="headerIcon001" href="{{route('adminGet')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}" class="menuicon01" title="ユーザ一覧">
     </a>

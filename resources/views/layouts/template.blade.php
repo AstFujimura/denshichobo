@@ -31,7 +31,7 @@
             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru.svg') }}" alt="TAMERU" class="tameru_char">
         </a>
         @if (App\Models\Version::where('フロー', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/snapflow_logo_only.svg') }}" alt="TAMERU"></a>
+        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapirio_logo_only.svg') }}" alt="TAMERU"></a>
         @endif
         @if (App\Models\Version::where('名刺', true)->first())
         <a href="{{route('cardviewget')}}" class="tameru_banner">名</a>

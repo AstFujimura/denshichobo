@@ -29,8 +29,8 @@
 <header class="header001">
     <div class="logo01">
         <a href="{{route('workflow')}}" class="logoelement01">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/snapflow_logo_only.svg') }}" alt="SnapFlow" class="snapflow_logo">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/snapflow.svg') }}" alt="SnapFlow" class="snapflow_char">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapirio_logo_only.svg') }}" alt="Rapirio" class="rapirio_logo">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapirio.svg') }}" alt="Rapirio" class="rapirio_char">
         </a>
         @if (App\Models\Version::where('tameru', true)->first())
         <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
