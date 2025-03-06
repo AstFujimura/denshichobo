@@ -1225,16 +1225,29 @@ $(document).ready(function () {
         top: startY + deltaY
       });
 
+
+
       event.preventDefault(); // タッチスクロール防止
     }
 
     // ドラッグ終了時の処理
-    function handleEnd() {
+    function handleEnd(event) {
       if (!dragging) return;
 
       dragging = false;
       $(".application_stamp").data("dragging", false).attr("data-dragging", false);
       $(".application_stamp").css({ cursor: "default", opacity: 1 });
+
+      offsetX = canvas_offset("x");
+      offsetY = canvas_offset("y");
+      let clientX = event.type === "touchend" ? event.touches[0].clientX : event.pageX;
+      let clientY = event.type === "touchend" ? event.touches[0].clientY : event.pageY;
+
+      var adjust = $('#scale').val() * 18;
+
+      // マウスの位置を基準に調整
+      nowX = (clientX - offsetX - adjust) / scaleFactor;
+      nowY = (clientY - offsetY - adjust) / scaleFactor;
 
       $('#left').val(nowX * width / pdf_canvas_width);
       $('#top').val(nowY * height / pdf_canvas_height);
