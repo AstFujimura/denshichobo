@@ -878,7 +878,7 @@ class FlowController extends Controller
             try {
                 Mail::send('mail.testmail', [], function ($message) use ($test_mail, $mail, $name) {
                     $message->to($test_mail)
-                        ->subject('Rapirioからのテスト送信')
+                        ->subject('Rapidからのテスト送信')
                         ->from($mail, $name);
                 });
                 return response()->json('送信しました');
@@ -2490,17 +2490,17 @@ class FlowController extends Controller
                 ];
                 if ($content == "approval") {
                     $url = route('workflowapprovalget', ['id' => $content_id]);
-                    $subject = '【Rapirio】承認依頼';
+                    $subject = '【Rapid】承認依頼';
                     $t_flow = T_flow::find(T_approval::find($content_id)->フローテーブルID);
                     $applicant_name = User::find($t_flow->申請者ID)->name;
                     $parameter = compact('url', 'applicant_name');
                 } else if ($content == "reject") {
                     $url = route('workflowapplicationdetailget', ['id' => $content_id]);
-                    $subject = '【Rapirio】申請却下';
+                    $subject = '【Rapid】申請却下';
                     $parameter = compact('url');
                 } else if ($content == "completion") {
                     $url = route('workflowapplicationdetailget', ['id' => $content_id]);
-                    $subject = '【Rapirio】決裁';
+                    $subject = '【Rapid】決裁';
                     $parameter = compact('url');
                 }
                 config(['mail' => $mailConfig]);

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
     <title>@yield('title')</title>
-    <link rel="icon" href="{{ asset(config('prefix.prefix').'/'.'icon/rapirio.ico') }}" id="favicon">
+    <link rel="icon" href="{{ asset(config('prefix.prefix').'/'.'icon/rapid.ico') }}" id="favicon">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin01.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin001.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
@@ -29,8 +29,8 @@
 <header class="header001">
     <div class="logo01">
         <a href="{{route('workflow')}}" class="logoelement01">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapirio_logo_only.svg') }}" alt="Rapirio" class="rapirio_logo">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapirio.svg') }}" alt="Rapirio" class="rapirio_char">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapid_logo_only.svg') }}" alt="Rapid" class="rapid_logo">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapid.svg') }}" alt="Rapid" class="rapid_char">
         </a>
         @if (App\Models\Version::where('tameru', true)->first())
         <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
