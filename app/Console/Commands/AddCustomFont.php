@@ -13,7 +13,7 @@ class AddCustomFont extends Command
     public function handle()
     {
         // Laravelの `public/font/Noto.ttf` を取得
-        $fontFile = public_path('font/Noto.ttf');
+        $fontFile = 'https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto.ttf';
 
         if (!file_exists($fontFile)) {
             $this->error("Font file not found: $fontFile");

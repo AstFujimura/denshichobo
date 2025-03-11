@@ -75,7 +75,6 @@
                                 <option value="2">数値</option>
                                 <option value="3">日付</option>
                                 <option value="4">ファイル</option>
-                                <option value="5">bool</option>
                             </select>
                         </div>
                         <div class="category_detail_optional_max">
