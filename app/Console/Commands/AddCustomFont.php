@@ -12,36 +12,38 @@ class AddCustomFont extends Command
 
     public function handle()
     {
-        // Laravelの `public/font/Noto.ttf` を取得
-        $s3FontUrl  = 'https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto.ttf';
-        $localFontPath = storage_path('fonts/Noto.ttf');
-
-        // **ディレクトリが存在しなければ作成**
         $fontDir = storage_path('fonts');
+
         if (!file_exists($fontDir)) {
             mkdir($fontDir, 0775, true);
         }
 
-        // フォントをローカルに保存
-        if (!file_exists($localFontPath)) {
-            $this->info("Downloading font from S3...");
-            $fontData = file_get_contents($s3FontUrl);
+        // 通常フォント
+        $regularFontPath = storage_path('fonts/Noto-Regular.ttf');
+        $boldFontPath = storage_path('fonts/Noto-Bold.ttf');
 
+        // S3 からダウンロード（既にある場合はスキップ）
+        $this->downloadFont('https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto_Sans_JP/NotoSansJP-Regular.ttf', $regularFontPath);
+        $this->downloadFont('https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto_Sans_JP/NotoSansJP-Bold.ttf', $boldFontPath);
+
+        // フォントを TCPDF に登録
+        $fontNameRegular = TCPDF_FONTS::addTTFfont($regularFontPath, 'TrueTypeUnicode', '', 96);
+        $fontNameBold = TCPDF_FONTS::addTTFfont($boldFontPath, 'TrueTypeUnicode', '', 96);
+
+        $this->info("Regular font added: $fontNameRegular");
+        $this->info("Bold font added: $fontNameBold");
+    }
+
+    private function downloadFont($url, $path)
+    {
+        if (!file_exists($path)) {
+            $this->info("Downloading font: $url");
+            $fontData = file_get_contents($url);
             if ($fontData === false) {
-                $this->error("Failed to download font file.");
+                $this->error("Failed to download font: $url");
                 return;
             }
-
-            file_put_contents($localFontPath, $fontData);
-        }
-
-        // TCPDF にフォントを追加
-        $fontName = TCPDF_FONTS::addTTFfont($localFontPath, 'TrueTypeUnicode', '', 96);
-
-        if ($fontName) {
-            $this->info("Font successfully added: $fontName");
-        } else {
-            $this->error("Failed to add font.");
+            file_put_contents($path, $fontData);
         }
     }
 }
