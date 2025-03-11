@@ -17,6 +17,7 @@ use App\Models\M_mail;
 use App\Models\M_next_flow_point;
 use App\Models\M_optional;
 use App\Models\M_pointer;
+use App\Models\M_basic_pointer;
 use App\Models\M_stamp;
 use App\Models\M_stamp_char;
 use App\Models\T_flow;
@@ -996,7 +997,7 @@ class FlowController extends Controller
 
             // カテゴリの項目順を取得してその項目のみを取得する
             $optionals = explode("_", $m_category->項目順);
-   
+
             // 型が4のもの(ファイル型)を取得する
             $m_optionals = M_optional::where("カテゴリマスタID", $id)
                 ->whereIn("id", $optionals)
@@ -1272,6 +1273,7 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         if (Auth::user()->管理 == "管理") {
+            // 項目の情報を取得
             $m_optionals = [];
             $m_category = M_category::find($id);
             $m_category->status = ($m_category->発行 == 1) ? "none_change" : "empty";
@@ -1284,17 +1286,34 @@ class FlowController extends Controller
                     ->where('任意項目マスタID', $part)
                     ->get();
                 if ($m_optional->型 != 4) {
+                    if ($m_optional->型 == 1) {
+                        $m_pointers = M_pointer::where('カテゴリマスタID', $id)
+                            ->where('任意項目マスタID', $part)
+                            ->get();
+                    }
                     $item = [
                         "id" => $part,
                         "項目名" => $m_optional->項目名,
+                        "型" => $m_optional->型,
                         "pointers" => $m_pointers,
                     ];
 
                     $m_optionals[] = $item;
                 }
             }
+            // 基本情報の情報を取得
+            $basic_users = [];
+            $basic_dates = [];
+            $m_basic_pointers = M_basic_pointer::where("カテゴリマスタID", $id)->get();
+            foreach ($m_basic_pointers as $m_basic_pointer) {
+                if ($m_basic_pointer->基本情報 == 1) {
+                    $basic_users[] = $m_basic_pointer;
+                } else if ($m_basic_pointer->基本情報 == 2) {
+                    $basic_dates[] = $m_basic_pointer;
+                }
+            }
 
-            return view('flow.workflowcategory_approval', compact("prefix", "server", "id", "m_category", "m_optionals"));
+            return view('flow.workflowcategory_approval', compact("prefix", "server", "id", "m_category", "m_optionals", "basic_users", "basic_dates"));
         }
     }
 
@@ -1354,22 +1373,43 @@ class FlowController extends Controller
                 $m_category->申請印 = false;
             }
             M_pointer::where("カテゴリマスタID", $category_id)->delete();
+            M_basic_pointer::where("カテゴリマスタID", $category_id)->delete();
             if ($pointers) {
                 foreach ($pointers as $pointer) {
-                    $new_m_pointer = new M_pointer();
-                    if ($pointer < 10000) {
-                        // 過去に登録してあったIDは明示的にidを振る
-                        // 新規のものは自動インクリメントのため明示しない
-                        $new_m_pointer->id = $pointer;
+                    // 基本情報の場合
+                    if ($request->input('basic_info' . $pointer) > 0) {
+                        $new_m_basic_pointer = new M_basic_pointer();
+                        if ($pointer < 100000) {
+                            $new_m_basic_pointer->id = $pointer;
+                        }
+                        $new_m_basic_pointer->カテゴリマスタID = $category_id;
+                        $new_m_basic_pointer->基本情報 = $request->input('basic_info' . $pointer);
+                        $new_m_basic_pointer->top = $request->input('top' . $pointer);
+                        $new_m_basic_pointer->left = $request->input('left' . $pointer);
+                        $new_m_basic_pointer->フォントサイズ = $request->input('font_size' . $pointer);
+                        $new_m_basic_pointer->ページ = $request->input('page' . $pointer);
+
+                        $new_m_basic_pointer->save();
+                    } else {
+                        // 任意項目の場合
+                        $new_m_pointer = new M_pointer();
+                        if ($pointer < 100000) {
+                            // 過去に登録してあったIDは明示的にidを振る
+                            // 新規のものは自動インクリメントのため明示しない
+                            $new_m_pointer->id = $pointer;
+                        }
+                        if ($request->input('comma' . $pointer)) {
+                            $new_m_pointer->桁区切り = true;
+                        }
+                        $new_m_pointer->カテゴリマスタID = $category_id;
+                        $new_m_pointer->任意項目マスタID = $request->input('optional_id' . $pointer);
+                        $new_m_pointer->top = $request->input('top' . $pointer);
+                        $new_m_pointer->left = $request->input('left' . $pointer);
+                        $new_m_pointer->フォントサイズ = $request->input('font_size' . $pointer);
+                        // $new_m_pointer->フォント = $request->input('font'.$pointer);
+                        $new_m_pointer->ページ = $request->input('page' . $pointer);
+                        $new_m_pointer->save();
                     }
-                    $new_m_pointer->カテゴリマスタID = $category_id;
-                    $new_m_pointer->任意項目マスタID = $request->input('optional_id' . $pointer);
-                    $new_m_pointer->top = $request->input('top' . $pointer);
-                    $new_m_pointer->left = $request->input('left' . $pointer);
-                    $new_m_pointer->フォントサイズ = $request->input('font_size' . $pointer);
-                    // $new_m_pointer->フォント = $request->input('font'.$pointer);
-                    $new_m_pointer->ページ = $request->input('page' . $pointer);
-                    $new_m_pointer->save();
                 }
             }
 
@@ -1400,8 +1440,8 @@ class FlowController extends Controller
                 }
 
                 $tempPath = storage_path("app/pdf/temp/{$currentTime}temp.pdf");
-            
-            
+
+
                 if ($pdfVersion && $pdfVersion >= 1.5) {
                     // PDFバージョンが1.5以上なら1.4に変換
                     $convertedPath = $this->downgradePdf($originalPath, $tempPath);
@@ -1427,7 +1467,7 @@ class FlowController extends Controller
                 if ($pdfVersion && $pdfVersion >= 1.5) {
                     if (file_exists($tempPath)) {
                         unlink($tempPath);
-                    }                    
+                    }
                 }
 
 
@@ -1439,7 +1479,7 @@ class FlowController extends Controller
             }
         }
         $m_category->save();
-        
+
         return redirect()->route('categoryapprovalsettingget', ['id' => $category_id])->with('success', '承認用紙の設定を更新しました。');
 
         // -----------以降はテストで作成したコードのため後で消す-----------------
@@ -1488,32 +1528,34 @@ class FlowController extends Controller
     //     return $pdfsize;
     // }
 
-    public function getPdfVersion($filePath) {
+    public function getPdfVersion($filePath)
+    {
         $fp = fopen($filePath, 'rb');
         if (!$fp) return false;
-    
+
         $firstLine = fgets($fp, 20); // 最初の行を取得
         fclose($fp);
-    
+
         if (preg_match('/%PDF-(\d+\.\d+)/', $firstLine, $matches)) {
             return (float)$matches[1]; // バージョンを小数として返す
         }
-    
+
         return false;
     }
-    
-    function downgradePdf($inputPath, $outputPath) {
-        $gsCommand = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') 
+
+    function downgradePdf($inputPath, $outputPath)
+    {
+        $gsCommand = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
             ? '"C:\\Program Files\\gs\\gs10.04.0\\bin\\gswin64c.exe"'  // Windows用
             : 'gs';  // Linux用
-    
-        $command = $gsCommand . " -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o " . 
+
+        $command = $gsCommand . " -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -o " .
             escapeshellarg($outputPath) . " -f " . escapeshellarg($inputPath);
-        
+
         exec($command, $output, $returnVar);
         return $returnVar === 0 ? $outputPath : false;
     }
-    
+
 
 
     // ワークフロー申請
@@ -1656,17 +1698,38 @@ class FlowController extends Controller
 
             if ($m_category->発行 == 1) {
                 // 項目位置マスタに項目マスタのIDが含まれていた場合
-                $m_pointer = M_pointer::where('任意項目マスタID', $m_optional->id)
+                $m_pointers = M_pointer::where('任意項目マスタID', $m_optional->id)
                     ->where('カテゴリマスタID', $m_category->id)
-                    ->first();
-                if ($m_pointer) {
+                    ->get();
+                foreach ($m_pointers as $m_pointer) {
                     $pdf->SetFont('Noto', 'B', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
-                    $pdf->Write(0, $value);
+                    if ($m_pointer->桁区切り) {
+                        $modified_value = number_format(intval($value));
+                    } else {
+                        $modified_value = $value;
+                    }
+                    $pdf->Write(0, $modified_value);
                 }
             }
         }
         if ($m_category->発行 == 1) {
+            // 基本情報のデータを取得
+            $m_basic_pointers = M_basic_pointer::where('カテゴリマスタID', $m_category->id)
+                ->get();
+            // 基本情報のデータをpdfに記述
+            foreach ($m_basic_pointers as $m_basic_pointer) {
+                $pdf->SetFont('Noto', 'B', $m_basic_pointer->フォントサイズ . "pt");
+                $pdf->SetXY($m_basic_pointer->left, $m_basic_pointer->top);  // (x, y)座標を指定
+                if ($m_basic_pointer->基本情報 == 1) {
+                    $value = Auth::user()->name;
+                } else if ($m_basic_pointer->基本情報 == 2) {
+                    $value = Carbon::now()->format('Y/m/d');
+                }
+                $pdf->Write(0, $value);
+            }
+
+
             $now = Carbon::now();
             $currentTime = $now->format('YmdHis');
             $randomID = $this->generateRandomCode();
@@ -1710,8 +1773,8 @@ class FlowController extends Controller
                 }
 
                 $tempPath = storage_path("app/pdf/temp/{$currentTime}temp.pdf");
-            
-            
+
+
                 if ($pdfVersion && $pdfVersion >= 1.5) {
                     // PDFバージョンが1.5以上なら1.4に変換
                     $convertedPath = $this->downgradePdf($originalPath, $tempPath);
@@ -1736,7 +1799,7 @@ class FlowController extends Controller
                 if ($pdfVersion && $pdfVersion >= 1.5) {
                     if (file_exists($tempPath)) {
                         unlink($tempPath);
-                    }                    
+                    }
                 }
 
 
@@ -3323,6 +3386,7 @@ class FlowController extends Controller
 
         return view('flow.workflowview', compact("prefix", "server", "users", "m_categories", "status", "title", "category", "user", "start_day", "end_day", "t_flows_ongoing", "t_flows_reject", "t_flows_approved", "t_flows_reapplication"));
     }
+    // ワークフロー申請詳細
     public function workflowapplicationdetailget($id)
     {
 
@@ -3357,6 +3421,18 @@ class FlowController extends Controller
         }
         $server = config('prefix.server');
         return view('flow.workflowapplicationdetail', compact("prefix", "server", "t_flow", "user", "t_optionals", "past_approvals", "m_category"));
+    }
+    // ワークフロー申請取消し
+    public function workflowapplicationcancelget($id)
+    {
+        $t_flow = T_flow::where('申請者ID', Auth::id())
+            ->where('id', $id)
+            ->where('ステータス', 1)
+            ->first();
+        if ($t_flow) {
+            $t_flow->delete();
+        }
+        return redirect()->route('workflowviewget');
     }
 
     public function workflowstampget(Request $request)
@@ -3544,7 +3620,7 @@ class FlowController extends Controller
     public function flowimgget(Request $request, $id)
     {
         $prefix = config('prefix.prefix');
-        
+
         if ($request->input("type") == "t_flow_before") {
             $img = T_flow::find($id);
             $filepath = $img->変更前承認ファイルパス;
@@ -3638,7 +3714,7 @@ class FlowController extends Controller
             //     $key = $file->ファイルパス . "." . $file->ファイル形式;
             // }
 
-            
+
             $key = $prefix . '/' . $filepath;
             $parts = explode('/', $key);
             $filename = end($parts); // 最後の要素を取得     

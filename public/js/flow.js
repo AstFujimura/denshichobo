@@ -1248,13 +1248,13 @@ $(document).ready(function () {
         clientX = event.pageX;
         clientY = event.pageY;
       }
-    
+
       var adjust = $('#scale').val() * 18;
-    
+
       // マウスの位置を基準に調整
       nowX = (clientX - offsetX - adjust) / scaleFactor;
       nowY = (clientY - offsetY - adjust) / scaleFactor;
-    
+
       $('#left').val(nowX * width / pdf_canvas_width);
       $('#top').val(nowY * height / pdf_canvas_height);
     }
@@ -1283,6 +1283,7 @@ $(document).ready(function () {
     $('.' + tabname).addClass('open_tab')
     $('#status').val(tabname)
   })
+  
 
   // 承認画面
   if ($("#approve_phase").length != 0) {
@@ -1485,6 +1486,14 @@ $(document).ready(function () {
 
 
 
+  }
+  // 申請内容
+  if ($('#application_cancel_button').length != 0) {
+    $('#application_cancel_button').on('click', function () {
+      if (confirm('本当に申請を取り消しますか')) {
+        window.location.href = prefix + '/workflow/application/cancel/' + $(this).data('id')
+      }
+    })
   }
 
 
@@ -1932,31 +1941,60 @@ $(document).ready(function () {
 
 
     $(document).on('click', '.preview_control_item', function () {
-
+      var basic_info = $(this).data('basic_info')
+      var type = $(this).data('type')
 
       var pointer_num = $('#pointer_num').val()
-      var pointertext = $(this).find(".preview_control_item_title").text();
+      if (basic_info == 1) {
+        var pointertext = $('#user_name').val();
+      }
+      else if (basic_info == 2) {
+        var pointertext = $('#date').val();
+      }
+      else {
+        var pointertext = $(this).find(".preview_control_item_title").text();
+      }
       // ここは後程変える
       var page = 1
 
-      pointer_input_create($(this).data('optional_id'), pointer_num)
+      pointer_input_create($(this).data('optional_id'), pointer_num, basic_info)
       pointer_create(pointer_num, pointertext, page)
 
-
-      var item_pointer =
-        $(`<div class="preview_test_str" data-pointer_id="` + pointer_num + `">
-      <input type="text" class="preview_test_str_input" value="`+ pointertext + `">
-      <div class="preview_item_batsu">×</div>
-    </div>`)
-      item_pointer.insertAfter($(this))
+      // 型が2の場合(数値)の場合はカンマ区切りを採用するかの要素を追加する
+      if (type == 2) {
+        var item_pointer =
+          $(`<div class="preview_test_str" data-pointer_id="` + pointer_num + `">
+                <input type="text" class="preview_test_str_input" value="`+ pointertext + `">
+                <div class="preview_item_batsu">×</div>
+                <label for="preview_test_str_comma` + pointer_num + `" class="preview_test_str_comma">
+                    桁区切り
+                    <input type="checkbox" name="comma` + pointer_num + `" id="preview_test_str_comma` + pointer_num + `" class="preview_test_str_comma_checkbox">
+                </label>
+             </div>`)
+      }
+      else {
+        var item_pointer =
+          $(`<div class="preview_test_str" data-pointer_id="` + pointer_num + `">
+                <input type="text" class="preview_test_str_input" value="`+ pointertext + `">
+                <div class="preview_item_batsu">×</div>
+             </div>`)
+      }
+      var item_pointer_content = $(this).closest('.preview_control_item_content')
+      item_pointer_content.append(item_pointer)
 
 
 
       pointer_num = parseInt(pointer_num) + 1
       $('#pointer_num').val(pointer_num)
 
-    })
 
+    })
+    // テキスト入力時の処理
+    $(document).on('input', '.preview_test_str_input', function () {
+      var pointer_num = $(this).closest('.preview_test_str').data('pointer_id')
+      $('.optional_item[data-pointer_id="' + pointer_num + '"] .optional_item_text').text($(this).val())
+    })
+    // 罰ボタンを押したとき
     $(document).on('click', '.preview_item_batsu', function () {
       var pointer_id = $(this).parent().data("pointer_id")
       $("[data-pointer_id='" + pointer_id + "']").remove()

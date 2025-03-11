@@ -1827,7 +1827,7 @@ function application_input_item(item) {
   var required = item["必須"] ? '*' : ''
   var content = `<div class="application_form_content">
     <div class="application_form_label">
-    `+ item["項目名"] + `<span class="application_red">`+required+`</span>
+    `+ item["項目名"] + `<span class="application_red">` + required + `</span>
     </div>`
   switch (item["型"]) {
     case 1:
@@ -2035,22 +2035,33 @@ function displayPdf(pdfData) {
 }
 
 // pointerを追加するときにデフォルトのinput要素の作成
-function pointer_input_create(optional_id, pointer_num) {
+function pointer_input_create(optional_id, pointer_num, basic_info = 0) {
   var input_pointer_array = $('<input type="hidden">')
   input_pointer_array.attr('name', 'pointer_array[]')
   input_pointer_array.attr('data-pointer_id', pointer_num)
   input_pointer_array.val(pointer_num)
   $('#inputs').append(input_pointer_array)
   canvas_width = $("#width").val()
-
-  var vararray = [
-    ["optional_id", optional_id],
-    ["top", 10],
-    ["left", canvas_width / 2],
-    ["font_size", 10],
-    ["font", null],
-    ["page", 1],
-  ]
+  if (basic_info == 0) {
+    var vararray = [
+      ["optional_id", optional_id],
+      ["top", 10],
+      ["left", canvas_width / 2],
+      ["font_size", 10],
+      ["font", null],
+      ["page", 1],
+    ]
+  }
+  else {
+    vararray = [
+      ["basic_info", basic_info],
+      ["top", 10],
+      ["left", canvas_width / 2],
+      ["font_size", 10],
+      ["font", null],
+      ["page", 1],
+    ]
+  }
   vararray.forEach(element => {
     var input_element = $('<input type="hidden">')
     input_element.attr('name', element[0] + pointer_num)
@@ -2098,34 +2109,34 @@ function approval_setting_pdf(prefix, ID, status) {
   //   });
   // }
   // else {
-    var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
-    $.ajax({
-      url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp + "&status=" + status, // データを取得するURLを指定
-      method: 'GET',
-      cache: false, // キャッシュを無効にする
-      xhrFields: {
-        responseType: 'blob' // ファイルをBlobとして受け取る
-      },
-      success: function (response) {
-        // Blobオブジェクトからファイルを生成
-        var file = new File([response], 'filename.pdf', { type: 'application/pdf' });
+  var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
+  $.ajax({
+    url: prefix + '/workflow/approval/setting/img/' + ID + "?timestamp=" + timestamp + "&status=" + status, // データを取得するURLを指定
+    method: 'GET',
+    cache: false, // キャッシュを無効にする
+    xhrFields: {
+      responseType: 'blob' // ファイルをBlobとして受け取る
+    },
+    success: function (response) {
+      // Blobオブジェクトからファイルを生成
+      var file = new File([response], 'filename.pdf', { type: 'application/pdf' });
 
-        // FileReaderを使用してファイルを読み込む
-        var fileReader = new FileReader();
-        fileReader.onload = function () {
-          // 読み込んだバイナリデータをUint8Arrayに変換
-          var arrayBuffer = this.result;
-          var uint8Array = new Uint8Array(arrayBuffer);
+      // FileReaderを使用してファイルを読み込む
+      var fileReader = new FileReader();
+      fileReader.onload = function () {
+        // 読み込んだバイナリデータをUint8Arrayに変換
+        var arrayBuffer = this.result;
+        var uint8Array = new Uint8Array(arrayBuffer);
 
-          // Uint8Arrayを処理する
-          displayPdf(uint8Array)
-        };
-        fileReader.readAsArrayBuffer(file);
-      },
-      error: function (xhr, status, error) {
-        console.error(error); // エラー処理
-      }
-    });
+        // Uint8Arrayを処理する
+        displayPdf(uint8Array)
+      };
+      fileReader.readAsArrayBuffer(file);
+    },
+    error: function (xhr, status, error) {
+      console.error(error); // エラー処理
+    }
+  });
   // }
 }
 
@@ -2157,7 +2168,7 @@ function pointer_create(pointer_num, pointertext, page) {
     // item_element.attr('width', 100);
     // item_element.attr('height', 30);
 
-    item_element.text(pointertext)
+    item_element.append('<div class="optional_item_text">' + pointertext + '</div>')
     // fillTextWithWrap(ctx, pointertext, 0, 20, 200, 20); // テキストを改行しながら描画
 
     item_element.css({

@@ -22,6 +22,9 @@
                     カテゴリ一覧へもどる
                 </a>
                 <button class="approval_setting_button">送信</button>
+                <a href="javascript:void(0);" onclick="window.location.reload();" class="cancel_button " id="flow_next_button">
+                    キャンセル
+                </a>
             </div>
             <div class="approval_setting_container">
                 <div class="approval_setting_content">
@@ -68,6 +71,11 @@
             </div>
         </div>
         <div class="approval_setting_detail_container display_none">
+            <div class="preview_control_button_container">
+                <div class="preview_control_close_button">
+                    閉じる
+                </div>
+            </div>
             <div class="preview_property_container">
                 <div class="font_size_content">
                     <div class="property_title">
@@ -83,31 +91,63 @@
 
             </div>
             <div class="preview_control_container">
+                <div class="preview_control_items basic_items">
+                    <div class="preview_control_item_content">
+                        <div class="preview_control_item" data-basic_info="1">
+                            <span class="preview_control_plus">＋</span>
+                            <span class="preview_control_item_title">ユーザー名</span>
+                        </div>
+                        @foreach ($basic_users as $basic_user)
+                        <div class="preview_test_str" data-pointer_id="{{$basic_user->id}}">
+                            <input type="text" class="preview_test_str_input" value='{{Auth::user()->name}}'>
+                            <div class="preview_item_batsu">×</div>
+                        </div>
+                        @endforeach
+                    </div>
+                    <div class="preview_control_item_content">
+                        <div class="preview_control_item" data-basic_info="2">
+                            <span class="preview_control_plus">＋</span>
+                            <span class="preview_control_item_title">申請日</span>
+                        </div>
+                        @foreach ($basic_dates as $basic_date)
+                        <div class="preview_test_str" data-pointer_id="{{$basic_date->id}}">
+                            <input type="text" class="preview_test_str_input" value='{{Carbon\Carbon::now()->format('Y/m/d')}}'>
+                            <div class="preview_item_batsu">×</div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
                 <div class="preview_control_items">
                     @foreach ($m_optionals as $m_optional)
-                    <div class="preview_control_item" data-optional_id="{{$m_optional['id']}}">
-                        <span class="preview_control_plus">＋</span>
-                        <span class="preview_control_item_title">{{$m_optional["項目名"]}}</span>
+                    <div class="preview_control_item_content">
+                        <div class="preview_control_item" data-optional_id="{{$m_optional['id']}}" data-basic_info="0" data-type="{{$m_optional['型']}}">
+                            <span class="preview_control_plus">＋</span>
+                            <span class="preview_control_item_title">{{$m_optional["項目名"]}}</span>
+                        </div>
+                        @foreach ($m_optional["pointers"] as $pointer)
+                        <div class="preview_test_str" data-pointer_id="{{$pointer->id}}">
+                            <input type="text" class="preview_test_str_input" value='{{$m_optional["項目名"]}}'>
+                            <div class="preview_item_batsu">×</div>
+                            @if ($m_optional["型"] == 2)
+                            <label for="preview_test_str_comma{{$pointer->id}}" class="preview_test_str_comma">
+                                桁区切り
+                                <input type="checkbox" name="comma{{$pointer->id}}" id="preview_test_str_comma{{$pointer->id}}" class="preview_test_str_comma_checkbox" {{$pointer->桁区切り ? 'checked' : ''}}>
+                            </label>
+                            @endif
+                        </div>
+                        @endforeach
                     </div>
-                    @foreach ($m_optional["pointers"] as $pointer)
-                    <div class="preview_test_str" data-pointer_id="{{$pointer->id}}">
-                        <input type="text" class="preview_test_str_input" value='{{$m_optional["項目名"]}}'>
-                        <div class="preview_item_batsu">×</div>
-                    </div>
-                    @endforeach
                     @endforeach
                 </div>
 
-                <div class="preview_control_button_container">
-                    <div class="preview_control_close_button">
-                        閉じる
-                    </div>
-                </div>
+
             </div>
 
         </div>
         <div id="inputs">
-            <input type="hidden" id="pointer_num" value="10000">
+            <input type="hidden" id="user_name" value="{{Auth::user()->name}}">
+            <input type="hidden" id="date" value="{{Carbon\Carbon::now()->format('Y/m/d')}}">
+            <input type="hidden" id="pointer_num" value="100000">
             <input type="hidden" id="category_id" name="category_id" value="{{$id}}">
             <input type="hidden" id="width" name="width" value="">
             <input type="hidden" id="height" name="height" value="">
@@ -126,6 +166,24 @@
             <input type="hidden" name="page{{$pointer->id}}" value="{{$pointer->ページ}}" data-prop="page" data-pointer_id="{{$pointer->id}}">
             @endforeach
 
+            @endforeach
+            @foreach ($basic_users as $basic_user)
+            <input type="hidden" name="pointer_array[]" value="{{$basic_user->id}}" data-pointer_id="{{$basic_user->id}}">
+            <input type="hidden" name="basic_info{{$basic_user->id}}" value="{{$basic_user->基本情報}}" data-prop="basic_info" data-pointer_id="{{$basic_user->id}}">
+            <input type="hidden" name="top{{$basic_user->id}}" value="{{$basic_user->top}}" data-prop="top" data-pointer_id="{{$basic_user->id}}">
+            <input type="hidden" name="left{{$basic_user->id}}" value="{{$basic_user->left}}" data-prop="left" data-pointer_id="{{$basic_user->id}}">
+            <input type="hidden" name="font_size{{$basic_user->id}}" value="{{$basic_user->フォントサイズ}}" data-prop="font_size" data-pointer_id="{{$basic_user->id}}">
+            <input type="hidden" name="font{{$basic_user->id}}" value="{{$basic_user->フォント}}" data-prop="font" data-pointer_id="{{$basic_user->id}}">
+            <input type="hidden" name="page{{$basic_user->id}}" value="{{$basic_user->ページ}}" data-prop="page" data-pointer_id="{{$basic_user->id}}">
+            @endforeach
+            @foreach ($basic_dates as $basic_date)
+            <input type="hidden" name="pointer_array[]" value="{{$basic_date->id}}" data-pointer_id="{{$basic_date->id}}">
+            <input type="hidden" name="basic_info{{$basic_date->id}}" value="{{$basic_date->基本情報}}" data-prop="basic_info" data-pointer_id="{{$basic_date->id}}">
+            <input type="hidden" name="top{{$basic_date->id}}" value="{{$basic_date->top}}" data-prop="top" data-pointer_id="{{$basic_date->id}}">
+            <input type="hidden" name="left{{$basic_date->id}}" value="{{$basic_date->left}}" data-prop="left" data-pointer_id="{{$basic_date->id}}">
+            <input type="hidden" name="font_size{{$basic_date->id}}" value="{{$basic_date->フォントサイズ}}" data-prop="font_size" data-pointer_id="{{$basic_date->id}}">
+            <input type="hidden" name="font{{$basic_date->id}}" value="{{$basic_date->フォント}}" data-prop="font" data-pointer_id="{{$basic_date->id}}">
+            <input type="hidden" name="page{{$basic_date->id}}" value="{{$basic_date->ページ}}" data-prop="page" data-pointer_id="{{$basic_date->id}}">
             @endforeach
         </div>
 

@@ -268,6 +268,9 @@ Route::prefix($prefix)->group(function () {
             // ワークフロー申請情報(idはt_flowsのid)
             Route::get('/workflow/application/detail/{id}', [FlowController::class, 'workflowapplicationdetailget'])->name('workflowapplicationdetailget');
 
+            // ワークフロー申請取消し
+            Route::get('/workflow/application/cancel/{id}', [FlowController::class, 'workflowapplicationcancelget'])->name('workflowapplicationcancelget');
+
             // 印鑑設定
             Route::get('/workflow/stamp', [FlowController::class, 'workflowstampget'])->name('workflowstampget');
             // 印鑑設定ポスト

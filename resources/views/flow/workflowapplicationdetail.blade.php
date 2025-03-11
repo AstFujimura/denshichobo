@@ -46,7 +46,7 @@
                             </div>
                             <div class="application_cancel_container">
 
-                                <div class="application_cancel_button" id="application_cancel_button">
+                                <div class="application_cancel_button" id="application_cancel_button" data-id="{{$t_flow->id}}">
                                     申請取り消し
                                 </div>
                             </div>

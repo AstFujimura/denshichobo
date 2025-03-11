@@ -2944,6 +2944,7 @@ body {
 .application_status_container {
     width: 50rem;
     height: 5rem;
+
     @media screen and (max-width: 800px) {
         width: 100%;
         height: 3rem;
@@ -3475,6 +3476,7 @@ body {
     cursor: pointer;
     border: none;
     font-size: 16px;
+    height: 3rem;
 }
 
 .change_button:hover {
@@ -3491,7 +3493,8 @@ body {
     text-align: center;
     cursor: pointer;
     border: none;
-    height: 38px;
+    height: 3rem;
+    font-size: 1rem;
 }
 
 .approval_setting_button:hover {
@@ -3587,7 +3590,7 @@ body {
 .approval_setting_detail_container {
     background: #d7d7d7;
     width: 97%;
-    height: 100%;
+    height: fit-content;
     z-index: 10;
     top: 100px;
     position: absolute;
@@ -3595,10 +3598,10 @@ body {
 }
 
 .preview_pages_container {
-    padding-top: 20px;
+    padding-top: 80px;
     width: 197px;
     background: #e7e7e7;
-    height: calc(100vh - 240px);
+    height: calc(100vh - 300px);
     overflow-y: auto;
 
     @media (max-width: 1400px) {
@@ -3607,8 +3610,10 @@ body {
 }
 
 .preview_property_container {
-    height: 49px;
-    width: 97%;
+    height: 3.5rem;
+    width: 39rem;
+    left: 50%;
+    transform: translateX(-50%);
     position: fixed;
     background: whitesmoke;
     z-index: -1;
@@ -3708,7 +3713,7 @@ body {
 .lower_right {
     bottom: -5px;
     right: -5px;
-    cursor: nwse-resize;
+    // cursor: nwse-resize;
 
 }
 
@@ -3720,7 +3725,7 @@ body {
 }
 
 .preview_control_container {
-    width: 300px;
+    width: 20rem;
     background: white;
     height: calc(100vh - 220px);
     display: flex;
@@ -3736,9 +3741,15 @@ body {
     }
 }
 
+.basic_items {
+    background: #f7f7f7;
+    border-bottom: solid 1px #d9d9d9;
+    padding-bottom: 1rem;
+}
+
 .preview_control_items {
-    margin-top: 40px;
-    max-height: 60vh;
+    padding-top: 1rem;
+    max-height: 50%;
     overflow-y: auto;
 
     @media (max-width: 1400px) {
@@ -3770,13 +3781,13 @@ body {
 
 .preview_control_item {
     background: white;
-    width: 200px;
+    width: 18rem;
     margin-inline: auto;
     border-bottom: solid 1px gray;
-    height: 40px;
+    height: 2.5rem;
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 1rem;
     cursor: pointer;
     border-radius: 5px 5px 0 0;
     transition: all 0.4s;
@@ -3796,10 +3807,16 @@ body {
 
 .preview_test_str {
     display: flex;
-    width: 200px;
+    width: 18rem;
     margin-inline: auto;
     align-items: center;
     height: 40px;
+    .preview_test_str_comma{
+        font-size: 0.8rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 .preview_test_str:hover {
@@ -3807,9 +3824,9 @@ body {
 }
 
 .preview_test_str_input {
-    height: 30px;
+    height: 2.5rem;
     border: solid 1px rgb(228, 227, 227);
-    width: 160px;
+    width: 13rem;
     margin-inline: auto;
 }
 
@@ -3860,18 +3877,20 @@ body {
 }
 
 .preview_control_button_container {
-    background: #eef8ff;
     flex-grow: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .preview_control_close_button {
     background: #8dd02f;
     border-radius: 5px;
     color: white;
-    width: 135px;
-    margin-left: 40px;
-    margin-top: 30px;
-    height: 35px;
+    width: 8rem;
+    margin-inline: 2rem;
+    margin-top: 1rem;
+    height: 2.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -4324,9 +4343,11 @@ body {
         max-width: 90%;
         border-collapse: collapse;
         background: white;
+
         @media screen and (max-width: 800px) {
             width: 90%;
         }
+
         tr {
             height: 3rem;
 
