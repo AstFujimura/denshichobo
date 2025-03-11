@@ -13,15 +13,23 @@ class AddCustomFont extends Command
     public function handle()
     {
         // Laravelの `public/font/Noto.ttf` を取得
-        $fontFile = 'https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto.ttf';
+        $s3FontUrl  = 'https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto.ttf';
+        $localFontPath = storage_path('fonts/Noto.ttf');
+        // フォントをローカルに保存
+        if (!file_exists($localFontPath)) {
+            $this->info("Downloading font from S3...");
+            $fontData = file_get_contents($s3FontUrl);
 
-        if (!file_exists($fontFile)) {
-            $this->error("Font file not found: $fontFile");
-            return;
+            if ($fontData === false) {
+                $this->error("Failed to download font file.");
+                return;
+            }
+
+            file_put_contents($localFontPath, $fontData);
         }
 
-        // TCPDF フォントフォルダに登録
-        $fontName = TCPDF_FONTS::addTTFfont($fontFile, 'TrueTypeUnicode', '', 96);
+        // TCPDF にフォントを追加
+        $fontName = TCPDF_FONTS::addTTFfont($localFontPath, 'TrueTypeUnicode', '', 96);
 
         if ($fontName) {
             $this->info("Font successfully added: $fontName");
