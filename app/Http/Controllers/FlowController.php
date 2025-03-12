@@ -1702,6 +1702,7 @@ class FlowController extends Controller
                     ->where('カテゴリマスタID', $m_category->id)
                     ->get();
                 foreach ($m_pointers as $m_pointer) {
+                    $pdf->SetLineWidth(0.2); // デフォルトより少し太め
                     $pdf->SetFont('noto', '', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
                     if ($m_pointer->桁区切り) {
@@ -1719,6 +1720,7 @@ class FlowController extends Controller
                 ->get();
             // 基本情報のデータをpdfに記述
             foreach ($m_basic_pointers as $m_basic_pointer) {
+                $pdf->SetLineWidth(0.2); // デフォルトより少し太め
                 $pdf->SetFont('noto', '', $m_basic_pointer->フォントサイズ . "pt");
                 $pdf->SetXY($m_basic_pointer->left, $m_basic_pointer->top);  // (x, y)座標を指定
                 if ($m_basic_pointer->基本情報 == 1) {
@@ -1943,6 +1945,7 @@ class FlowController extends Controller
                 $m_pointer = M_pointer::where('任意項目マスタID', $m_optional->id)
                     ->first();
                 if ($m_pointer) {
+                    $pdf->SetLineWidth(0.2); // デフォルトより少し太め
                     $pdf->SetFont('noto', '', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
                     $pdf->Write(0, $value);
