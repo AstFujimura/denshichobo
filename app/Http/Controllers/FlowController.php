@@ -1669,7 +1669,7 @@ class FlowController extends Controller
                 $value = $t_optional->数値;
             } else if ($m_optional->型 == 3) {
                 $t_optional->日付 = $request->input("item" . $part);
-                $value = $t_optional->日付;
+                $value = Carbon::parse($t_optional->日付)->format('Y年m月d日');
             } else if ($m_optional->型 == 4) {
                 $file = $request->file("item" . $part);
                 if ($file) {
@@ -1724,7 +1724,7 @@ class FlowController extends Controller
                 if ($m_basic_pointer->基本情報 == 1) {
                     $value = Auth::user()->name;
                 } else if ($m_basic_pointer->基本情報 == 2) {
-                    $value = Carbon::now()->format('Y/m/d');
+                    $value = Carbon::now()->format('Y年m月d日');
                 }
                 $pdf->Write(0, $value);
             }
