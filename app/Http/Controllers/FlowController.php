@@ -1702,8 +1702,7 @@ class FlowController extends Controller
                     ->where('カテゴリマスタID', $m_category->id)
                     ->get();
                 foreach ($m_pointers as $m_pointer) {
-                    $pdf->SetLineWidth(0.2); // デフォルトより少し太め
-                    $pdf->SetFont('notomedium', '', $m_pointer->フォントサイズ . "pt");
+                    $pdf->SetFont('NotoSansJP-Regular', '', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
                     if ($m_pointer->桁区切り) {
                         $modified_value = number_format(intval($value));
@@ -1720,8 +1719,7 @@ class FlowController extends Controller
                 ->get();
             // 基本情報のデータをpdfに記述
             foreach ($m_basic_pointers as $m_basic_pointer) {
-                $pdf->SetLineWidth(0.2); // デフォルトより少し太め
-                $pdf->SetFont('notomedium', '', $m_basic_pointer->フォントサイズ . "pt");
+                $pdf->SetFont('NotoSansJP-Regular', '', $m_basic_pointer->フォントサイズ . "pt");
                 $pdf->SetXY($m_basic_pointer->left, $m_basic_pointer->top);  // (x, y)座標を指定
                 if ($m_basic_pointer->基本情報 == 1) {
                     $value = Auth::user()->name;
@@ -1945,8 +1943,7 @@ class FlowController extends Controller
                 $m_pointer = M_pointer::where('任意項目マスタID', $m_optional->id)
                     ->first();
                 if ($m_pointer) {
-                    $pdf->SetLineWidth(0.2); // デフォルトより少し太め
-                    $pdf->SetFont('notomedium', '', $m_pointer->フォントサイズ . "pt");
+                    $pdf->SetFont('NotoSansJP-Regular', '', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
                     $pdf->Write(0, $value);
                 }
