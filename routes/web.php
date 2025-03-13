@@ -12,9 +12,9 @@ use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\FlowController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Middleware\CheckSessionTimeout;
 use Illuminate\Support\Facades\Config;
-
 
 use App\Models\Version;
 
@@ -362,6 +362,19 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/company/info/{id}', [CardController::class, 'companyinfoget'])->name('companyinfoget');
             // 名刺テスト
             Route::get('/card/test', [CardController::class, 'cardtestget'])->name('cardtestget');
+        }
+
+        // -----------------------------スケジュール--------------------------------
+        if (Version::where('スケジュール', true)->first()) {
+            Route::get('/schedule', [ScheduleController::class, 'scheduleget'])->name('scheduleget');
+            Route::get('/schedule/week', [ScheduleController::class, 'scheduleweekget'])->name('scheduleweekget');
+            Route::get('/schedule/month', [ScheduleController::class, 'schedulemonthget'])->name('schedulemonthget');
+            Route::get('/schedule/regist', [ScheduleController::class, 'scheduleregistget'])->name('scheduleregistget');
+            Route::post('/schedule/regist', [ScheduleController::class, 'scheduleregistpost'])->name('scheduleregistpost');
+            Route::post('/schedule/delete', [ScheduleController::class, 'scheduledeletepost'])->name('scheduledeletepost');
+            Route::get('/schedule/holiday', [ScheduleController::class, 'scheduleholidayget'])->name('scheduleholidayget');
+            Route::get('/schedule/holiday/regist', [ScheduleController::class, 'scheduleholidayregistget'])->name('scheduleholidayregistget');
+            Route::post('/schedule/holiday/regist', [ScheduleController::class, 'scheduleholidayregistpost'])->name('scheduleholidayregistpost');
         }
     });
 });

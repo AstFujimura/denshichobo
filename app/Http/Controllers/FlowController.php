@@ -1669,7 +1669,11 @@ class FlowController extends Controller
                 $value = $t_optional->数値;
             } else if ($m_optional->型 == 3) {
                 $t_optional->日付 = $request->input("item" . $part);
-                $value = Carbon::parse($t_optional->日付)->format('Y年m月d日');
+                if ($t_optional->日付) {
+                    $value = Carbon::parse($t_optional->日付)->format('Y年m月d日');
+                } else {
+                    $value = "";
+                }
             } else if ($m_optional->型 == 4) {
                 $file = $request->file("item" . $part);
                 if ($file) {
