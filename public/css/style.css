@@ -837,6 +837,10 @@ a {
   overflow: hidden;
   white-space: nowrap;
 }
+.torihikisakielement_select {
+  background: rgb(74, 145, 251);
+  color: white;
+}
 
 .torihikisakielement:hover {
   background: rgb(74, 145, 251);

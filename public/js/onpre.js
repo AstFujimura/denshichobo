@@ -295,11 +295,48 @@ $(document).ready(function () {
 
 
 
-
+  var torihikisaki_focus = false
+  $(document).on('keydown', function(e){
+    if (e.key === 'ArrowDown' || e.keyCode === 40) { // 矢印下キー
+      if (torihikisaki_focus) {
+        e.preventDefault(); // デフォルトのスクロール動作を防ぐ
+        if ($('.torihikisakielement_select').length == 0) {
+          $('.torihikisakielement').first().addClass('torihikisakielement_select');
+        }
+        else {
+          var now_select = $('.torihikisakielement_select');
+          now_select.removeClass('torihikisakielement_select');
+          now_select.next().addClass('torihikisakielement_select');
+        }
+      }
+    }
+    else if (e.key === 'ArrowUp' || e.keyCode === 38) { // 矢印上キー
+      if (torihikisaki_focus) {
+        e.preventDefault(); // デフォルトのスクロール動作を防ぐ
+        if ($('.torihikisakielement_select').length == 0) {
+          $('.torihikisakielement').last().addClass('torihikisakielement_select');
+        }
+        else {
+          var now_select = $('.torihikisakielement_select');
+          now_select.removeClass('torihikisakielement_select');
+          now_select.prev().addClass('torihikisakielement_select');
+        }
+      }
+    }
+    else if (e.key === 'Enter' || e.keyCode === 13) { // Enterキー
+      if (torihikisaki_focus) {
+        e.preventDefault(); // デフォルトのスクロール動作を防ぐ
+        var now_select = $('.torihikisakielement_select');
+        now_select.click();
+      }
+    }
+    
+  })
 
 
 
   $("#torihikisaki").on("focus", function () {
+    torihikisaki_focus = true
     $("#torihikisakiselect").show()
     var searchText = $(this).val();
     torihikiselect(searchText, "torihikisakiselect")

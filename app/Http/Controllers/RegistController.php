@@ -191,7 +191,7 @@ class RegistController extends Controller
         //バージョンはデフォルトで1になるのでここでは記載しない。変更の時には記述
         //最新フラグはデフォルトで最新になるのでここでは記載しない。変更の時に過去データの最新フラグを外す
         $file->save();
-        return redirect()->route('topGet');
+        return redirect()->route('registGet');
     }
 
     //クラウドでjqueryから直接アップロードされる場合の機能
