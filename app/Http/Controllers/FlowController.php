@@ -1713,7 +1713,8 @@ class FlowController extends Controller
                     } else {
                         $modified_value = $value;
                     }
-                    $pdf->Write(0, $modified_value);
+                    // $pdf->Write(0, $modified_value);
+                    $pdf->Cell(0, 0, $modified_value, 0, 0, 'L'); // 'L' = 左寄せ
                 }
             }
         }
@@ -1730,7 +1731,8 @@ class FlowController extends Controller
                 } else if ($m_basic_pointer->基本情報 == 2) {
                     $value = Carbon::now()->format('Y年m月d日');
                 }
-                $pdf->Write(0, $value);
+                // $pdf->Write(0, $value);
+                $pdf->Cell(0, 0, $value, 0, 0, 'L'); // 'L' = 左寄せ
             }
 
 
@@ -1949,7 +1951,8 @@ class FlowController extends Controller
                 if ($m_pointer) {
                     $pdf->SetFont('notomedium', '', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
-                    $pdf->Write(0, $value);
+                    // $pdf->Write(0, $value);
+                    $pdf->Cell(0, 0, $value, 0, 0, 'L'); // 'L' = 左寄せ
                 }
             }
 

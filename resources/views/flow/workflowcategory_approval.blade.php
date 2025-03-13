@@ -111,7 +111,7 @@
                         </div>
                         @foreach ($basic_dates as $basic_date)
                         <div class="preview_test_str" data-pointer_id="{{$basic_date->id}}">
-                            <input type="text" class="preview_test_str_input" value='{{Carbon\Carbon::now()->format('Y/m/d')}}'>
+                            <input type="text" class="preview_test_str_input" value='{{Carbon\Carbon::now()->format('Y年m月d日')}}'>
                             <div class="preview_item_batsu">×</div>
                         </div>
                         @endforeach
