@@ -10,14 +10,33 @@
 @section('main')
 <div class="MainElement">
     <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">スケジュール</h2>
-    <div class="schedule_group_container">
-        <select class="schedule_group_select" name="" id="">
-            <option value="">アステック</option>
-            <option value="">ダイワボウ</option>
-            <option value="">ダイワボウ</option>
-            <option value="">ダイワボウ</option>
-            <option value="">ダイワボウ</option>
-        </select>
+    <input type="hidden" id="selected_group_id" value="{{ $selected_group_id }}">
+    <div class="schedule_controll_container">
+        <div class="schedule_group_container">
+            <select class="schedule_group_select" name="" id="">
+                @foreach ($groups as $group)
+                <option value="{{ $group->id }}" {{ $selected_group_id == $group->id ? 'selected' : '' }}>{{ $group->グループ名 }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="date_change_container">
+            <a href="{{ route('scheduleget', ['selected_group_id' => $selected_group_id, 'base_date' => Carbon\Carbon::parse($base_date)->subWeek()->format('Y-m-d')]) }}" class="date_change_button" data-when="last_week">
+                先週
+            </a>
+            <a href="{{ route('scheduleget', ['selected_group_id' => $selected_group_id, 'base_date' => Carbon\Carbon::parse($base_date)->subDay()->format('Y-m-d')]) }}" class="date_change_button" data-when="yesterday">
+                前日
+            </a>
+            <a href="{{ route('scheduleget', ['selected_group_id' => $selected_group_id, 'base_date' => Carbon\Carbon::now()->format('Y-m-d')]) }}" class="date_change_button" data-when="today">
+                今日
+            </a>
+            <a href="{{ route('scheduleget', ['selected_group_id' => $selected_group_id, 'base_date' => Carbon\Carbon::parse($base_date)->addDay()->format('Y-m-d')]) }}" class="date_change_button" data-when="tomorrow">
+                翌日
+            </a>
+            <a href="{{ route('scheduleget', ['selected_group_id' => $selected_group_id, 'base_date' => Carbon\Carbon::parse($base_date)->addWeek()->format('Y-m-d')]) }}" class="date_change_button" data-when="next_week">
+                翌週
+            </a>
+            <input type="text" class="search_date" value="">
+        </div>
     </div>
     <div class="schedule_container">
         <div class="schedule_header">
@@ -68,7 +87,7 @@
                             <span class="plan">
                                 {{ $event->予定ID }}
                             </span>
-                            <a href="/schedule">{{ $event->予定詳細 }}</a>
+                            <a href="{{ route('scheduleregistget', ['event_id' => $event->event_id]) }}">{{ $event->予定詳細 }}</a>
                         </div>
                     </div>
                     @endforeach
