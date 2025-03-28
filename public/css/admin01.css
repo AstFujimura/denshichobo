@@ -27,13 +27,14 @@
     display: flex;
     align-items: center;
     width: 2rem;
+    justify-content: center;
   }
   .logo01 .tameru_banner:hover {
     background: white;
   }
   .logo01 .tameru_banner img {
-    width: 2rem;
-    height: 2rem;
+    max-width: 2rem;
+    max-height: 1.5rem;
   }
 }
 
@@ -267,7 +268,7 @@
   }
   .logo01 .tameru_banner img {
     width: 2rem;
-    height: 2rem;
+    height: 1.5rem;
   }
   .sidebar01 {
     background: rgb(255, 255, 255);

@@ -26,12 +26,13 @@
             display: flex;
             align-items: center;
             width: 2rem;
+            justify-content: center;
             &:hover {
                 background: white;
             }
             img{
-                width: 2rem;
-                height: 2rem;
+                max-width: 2rem;
+                max-height: 1.5rem;
             }
         }
     }
@@ -291,7 +292,7 @@
             }
             img{
                 width: 2rem;
-                height: 2rem;
+                height: 1.5rem;
             }
         }
     }
