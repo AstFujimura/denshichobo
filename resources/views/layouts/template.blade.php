@@ -31,10 +31,18 @@
             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru.svg') }}" alt="TAMERU" class="tameru_char">
         </a>
         @if (App\Models\Version::where('フロー', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapid_logo_only.svg') }}" alt="TAMERU"></a>
+        <a href="{{route('workflow')}}" class="tameru_banner">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapid_logo_only.svg') }}" alt="TAMERU">
+        </a>
         @endif
         @if (App\Models\Version::where('名刺', true)->first())
         <a href="{{route('cardviewget')}}" class="tameru_banner">名</a>
+        @endif
+        
+        @if (App\Models\Version::where('スケジュール', true)->first())
+        <a href="{{route('scheduleget')}}" class="tameru_banner">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/skett_logo_only.svg') }}" alt="TAMERU">
+        </a>
         @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">

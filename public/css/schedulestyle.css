@@ -145,8 +145,33 @@ body #usersetting {
   align-items: center;
   justify-content: space-between;
 }
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedule_controll_container {
+    flex-direction: column;
+    align-items: start;
+  }
+}
+.Mainelement .schedule_base_container {
+  display: flex;
+  justify-content: center;
+}
+.Mainelement .schedule_base_container .schedule_base_element {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedule_base_container .schedule_base_element {
+    font-size: 1rem;
+  }
+}
 .Mainelement .schedule_group_container {
   display: flex;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedule_group_container {
+    margin-left: 0.5rem;
+    font-size: 0.8rem;
+  }
 }
 .Mainelement .schedule_group_container .schedule_group_select {
   width: 10rem;
@@ -154,10 +179,50 @@ body #usersetting {
   border-radius: 0.2rem;
   border: solid 1px #adadad;
 }
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedule_group_container .schedule_group_select {
+    width: 8rem;
+    height: 1.5rem;
+    font-size: 0.8rem;
+  }
+}
+.Mainelement .schedule_group_container .schedule_group_regist_button,
+.Mainelement .schedule_group_container .schedule_group_edit_button {
+  width: 10rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent;
+  color: rgb(47, 104, 209);
+  border: solid 1px rgb(47, 104, 209);
+  margin-left: 1rem;
+}
+.Mainelement .schedule_group_container .schedule_group_regist_button:hover,
+.Mainelement .schedule_group_container .schedule_group_edit_button:hover {
+  background: rgb(47, 104, 209);
+  color: white;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedule_group_container .schedule_group_regist_button,
+  .Mainelement .schedule_group_container .schedule_group_edit_button {
+    width: 8rem;
+    height: 1.5rem;
+    font-size: 0.8rem;
+  }
+}
 .Mainelement .date_change_container {
   display: flex;
   gap: 1rem;
   margin-left: 1rem;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .date_change_container {
+    margin-top: 0.5rem;
+  }
 }
 .Mainelement .date_change_container .date_change_button {
   width: 5rem;
@@ -174,17 +239,29 @@ body #usersetting {
 .Mainelement .date_change_container .date_change_button:hover {
   background: rgb(207, 207, 207);
 }
+@media screen and (max-width: 1200px) {
+  .Mainelement .date_change_container .date_change_button {
+    width: 3.5rem;
+    font-size: 0.8rem;
+  }
+}
 .Mainelement .date_change_container .search_date {
   display: none;
 }
 .Mainelement .schedule_container {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  margin-inline: 0.5rem;
 }
 .Mainelement .schedule_container .schedule_header {
   display: flex;
   position: sticky;
   top: 48px;
   z-index: 1;
+}
+@media screen and (max-width: 700px) {
+  .Mainelement .schedule_container .schedule_header {
+    top: 0;
+  }
 }
 .Mainelement .schedule_container .schedule_header .schedule_header_cell {
   width: 12.5%;
@@ -193,6 +270,11 @@ body #usersetting {
   align-items: center;
   justify-content: center;
   border: solid 1px #adadad;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedule_container .schedule_header .schedule_header_cell {
+    font-size: 0.8rem;
+  }
 }
 .Mainelement .schedule_container .schedule_header .schedule_header_cell[data-day-num="0"] {
   background: rgb(255, 222, 212);
@@ -205,10 +287,16 @@ body #usersetting {
 }
 .Mainelement .schedule_container .schedule_row .schedule_cell {
   width: 12.5%;
-  min-height: 5rem;
+  min-height: 3rem;
   background: white;
   border: solid 1px #adadad;
   position: relative;
+  padding-bottom: 2rem;
+}
+@media screen and (max-width: 1000px) {
+  .Mainelement .schedule_container .schedule_row .schedule_cell {
+    font-size: 0.7rem;
+  }
 }
 .Mainelement .schedule_container .schedule_row .schedule_cell .schedule_user {
   width: 100%;
@@ -226,14 +314,46 @@ body #usersetting {
   flex-direction: column;
   align-items: start;
   justify-content: center;
+  margin-bottom: 0.3rem;
 }
 .Mainelement .schedule_container .schedule_row .schedule_cell .event_container .event_content .event_time {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+@media screen and (max-width: 800px) {
+  .Mainelement .schedule_container .schedule_row .schedule_cell .event_container .event_content .event_time {
+    flex-direction: column;
+  }
+  .Mainelement .schedule_container .schedule_row .schedule_cell .event_container .event_content .event_time .event_time_dash {
+    display: none;
+  }
+}
 .Mainelement .schedule_container .schedule_row .schedule_cell .event_container .event_content .event_name {
   margin-left: 0.5rem;
+  display: flex;
+}
+@media screen and (max-width: 800px) {
+  .Mainelement .schedule_container .schedule_row .schedule_cell .event_container .event_content .event_name {
+    flex-direction: column;
+  }
+}
+.Mainelement .schedule_container .schedule_row .schedule_cell .event_container .event_content .event_name .event_name_text {
+  text-decoration: underline;
+  color: rgb(47, 104, 209);
+}
+.Mainelement .schedule_container .schedule_row .schedule_cell .event_container .event_content .event_name .event_name_text:hover {
+  color: rgb(30, 68, 138);
+}
+.Mainelement .schedule_container .schedule_row .schedule_cell .event_container .event_content .event_name .plan {
+  padding-inline: 0.4rem;
+  border-radius: 0.2rem;
+  color: white;
+  border-radius: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
 }
 .Mainelement .schedule_container .schedule_row .schedule_cell .regist_button {
   cursor: pointer;
@@ -248,11 +368,160 @@ body #usersetting {
   background: rgb(207, 207, 207);
 }
 .Mainelement .schedule_container .schedule_row .schedule_cell .regist_button .regist_icon {
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.Mainelement .schedule_container .schedule_term_container {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  background: #e2f7ed;
+}
+@media screen and (max-width: 1000px) {
+  .Mainelement .schedule_container .schedule_term_container {
+    font-size: 0.7rem;
+  }
+}
+.Mainelement .schedule_container .schedule_term_container .schedule_term_element {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  background: rgb(104, 163, 27);
+  margin-block: 0.1rem;
+  border-radius: 0.5rem;
+}
+@media screen and (max-width: 1000px) {
+  .Mainelement .schedule_container .schedule_term_container .schedule_term_element {
+    height: 1.8rem;
+  }
+}
+.Mainelement .schedule_container .schedule_term_container .schedule_term_element .plan {
+  padding-inline: 0.4rem;
+  border-radius: 0.2rem;
+  color: white;
+  border-radius: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+}
+.Mainelement .schedule_container .schedule_term_container .schedule_term_element .schedule_term_element_title {
+  color: white;
+  text-decoration: underline;
+}
+.Mainelement .page_reload_container {
+  display: flex;
+  align-items: center;
+  width: 70rem;
+  max-width: 90%;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  background: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .page_reload_container {
+    width: 85%;
+    font-size: 1rem;
+    padding: 1rem 1rem;
+    margin-left: 0.5rem;
+  }
+}
+.Mainelement .page_reload_container .page_back_button {
+  width: 12rem;
+  height: 3rem;
+  border-radius: 0.2rem;
+  background: #e7b954;
+  color: rgb(95, 88, 77);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.Mainelement .page_reload_container .page_back_button:hover {
+  background: #9c7d38;
+  color: white;
+}
+.Mainelement .page_reload_container .page_cancel_button {
+  width: 12rem;
+  height: 3rem;
+  border-radius: 0.2rem;
+  background: #686867;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.Mainelement .page_reload_container .page_cancel_button:hover {
+  background: #4b4b4a;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .page_reload_container .page_back_button,
+  .Mainelement .page_reload_container .page_cancel_button {
+    width: 10rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+}
+.Mainelement .menu_container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 3rem;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .menu_container {
+    margin-top: 1rem;
+  }
+}
+.Mainelement .menu_container .menu_element {
+  width: 10rem;
+  height: 4rem;
+  background: rgb(224, 232, 255);
+  display: flex;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .menu_container .menu_element {
+    width: 8rem;
+    height: 3rem;
+    font-size: 0.8rem;
+  }
+}
+.Mainelement .menu_container .menu_element a {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4c4c4c;
+  border-radius: 0.6rem;
+  border: solid 1px #adadad;
+  box-shadow: 3px 4px 0px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+.Mainelement .menu_container .menu_element a:hover {
+  transform: translateY(3px);
+  background: rgb(183, 190, 209);
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedule_regist_container {
+    width: 85%;
+    font-size: 1rem;
+    padding: 1rem 1rem;
+    margin-left: 0.5rem;
+  }
 }
 .Mainelement .schedule_regist_container .schedule_switch_container {
   display: flex;
@@ -282,14 +551,31 @@ body #usersetting {
   margin-bottom: 0.5rem;
   gap: 1rem;
 }
+@media screen and (max-width: 800px) {
+  .Mainelement .schedule_regist_container .schedule_regist_content {
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
+  }
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element_container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
 .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_content_title {
-  width: 5rem;
+  width: 7rem;
 }
 .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 0.5rem;
+}
+@media screen and (max-width: 800px) {
+  .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element {
+    align-items: start;
+  }
 }
 .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .schedule_input_date {
   width: 10rem;
@@ -318,19 +604,58 @@ body #usersetting {
   border-radius: 0.2rem;
   border: solid 1px #adadad;
 }
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .schedule_regular_select {
+  width: 5rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .schedule_regular_select_detail {
+  width: 5rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+  margin-left: 0.5rem;
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .display_none {
+  display: none;
+}
 .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .join_member_container {
   width: 10rem;
-  min-height: 10rem;
+  height: 10rem;
+  overflow-y: auto;
   border-radius: 0.2rem;
   border: solid 1px #adadad;
   background: white;
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .join_member_container .join_member_element {
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  margin-left: 0.5rem;
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .join_member_container .join_member_element .join_member_name {
+  width: 7rem;
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .join_member_container .join_member_element .join_member_delete_button {
+  color: white;
+  background: #e58686;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  aspect-ratio: 1/1;
+  width: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .join_member_container .join_member_element .join_member_delete_button:hover {
+  background: #b80000;
 }
 .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .candidate_member_container {
   width: 10rem;
   min-height: 10rem;
   border-radius: 0.2rem;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   margin-left: 0.5rem;
 }
@@ -349,9 +674,19 @@ body #usersetting {
   display: flex;
   margin-top: 0.5rem;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   overflow-y: auto;
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .candidate_member_container .candidate_list_container .candidate_list_element {
+  display: flex;
+  align-items: center;
+  height: 1.5rem;
+  margin-left: 0.5rem;
+}
+.Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element .schedule_memo_textarea {
+  width: 26rem;
+  height: 9rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
 }
 .Mainelement .schedule_regist_container .schedule_regist_content .regist_button {
   width: 10rem;
@@ -374,7 +709,7 @@ body #usersetting {
   width: 10rem;
   height: 2rem;
   border-radius: 0.2rem;
-  background: #ff0000;
+  background: #b91b1b;
   padding: 0.5rem;
   color: #ffffff;
   display: flex;
@@ -386,4 +721,294 @@ body #usersetting {
 }
 .Mainelement .schedule_regist_container .schedule_regist_content .delete_button:hover {
   background: #b80000;
+}
+.Mainelement .schedule_group_regist_form {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+}
+@media screen and (max-width: 800px) {
+  .Mainelement .schedule_group_regist_form .schedule_regist_content {
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
+  }
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element_container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_content_title {
+  width: 7rem;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+}
+@media screen and (max-width: 800px) {
+  .Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element {
+    align-items: start;
+  }
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .schedule_input_text {
+  width: 20rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .schedule_input_date {
+  width: 10rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .join_member_container {
+  width: 10rem;
+  height: 10rem;
+  overflow-y: auto;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+  background: white;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .join_member_container .join_member_element {
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  margin-left: 0.5rem;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .join_member_container .join_member_element .join_member_name {
+  width: 7rem;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .join_member_container .join_member_element .join_member_delete_button {
+  color: white;
+  background: #e58686;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  aspect-ratio: 1/1;
+  width: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .join_member_container .join_member_element .join_member_delete_button:hover {
+  background: #b80000;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .candidate_member_container {
+  width: 10rem;
+  min-height: 10rem;
+  border-radius: 0.2rem;
+  justify-content: center;
+  margin-left: 0.5rem;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .candidate_member_container .group_candidate_container .group_candidate_select {
+  width: 8rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .candidate_member_container .candidate_list_container {
+  width: 100%;
+  height: 7.5rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+  background: white;
+  display: flex;
+  margin-top: 0.5rem;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element .candidate_member_container .candidate_list_container .candidate_list_element {
+  display: flex;
+  align-items: center;
+  height: 1.5rem;
+  margin-left: 0.5rem;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .regist_button {
+  width: 10rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  background: #1571ff;
+  padding: 0.5rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .regist_button:hover {
+  background: #1556b8;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .delete_button {
+  width: 10rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  background: #b91b1b;
+  padding: 0.5rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+.Mainelement .schedule_group_regist_form .schedule_regist_content .delete_button:hover {
+  background: #b80000;
+}
+.Mainelement .schedulemaster_regist_form .schedule_add_button {
+  width: 10rem;
+  height: 2.5rem;
+  border-radius: 0.2rem;
+  background: #21c272;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_add_button:hover {
+  background: #18864f;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedulemaster_regist_form .schedule_add_button {
+    width: 8rem;
+    height: 2rem;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+  }
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table {
+  border-collapse: collapse;
+  width: 40rem;
+  max-width: 90%;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedulemaster_regist_form .schedule_master_table {
+    margin-left: 0.5rem;
+  }
+}
+@media screen and (max-width: 600px) {
+  .Mainelement .schedulemaster_regist_form .schedule_master_table {
+    font-size: 1rem;
+    width: 90%;
+    margin-left: 0.5rem;
+  }
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table tr {
+  border-bottom: solid 1px #adadad;
+  background: white;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table th {
+  background: rgb(245, 245, 245);
+  color: #514545;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table th:nth-child(1) {
+  width: 12rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table th:nth-child(2) {
+  width: 4rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table th:nth-child(3) {
+  width: 8rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table th:nth-child(4) {
+  width: 4rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table td {
+  padding: 0.5rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table td .schedule_master_preview {
+  color: rgb(255, 255, 255);
+  width: fit-content;
+  padding-inline: 1rem;
+  border-radius: 0.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-inline: auto;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table td input {
+  width: 100%;
+  height: 2rem;
+  border-radius: 0.2rem;
+  border: solid 1px #adadad;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedulemaster_regist_form .schedule_master_table td input {
+    font-size: 0.8rem;
+  }
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table td:nth-child(1) {
+  width: 12rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table td:nth-child(2) {
+  width: 4rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table td:nth-child(3) {
+  width: 8rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table td:nth-child(4) {
+  width: 4rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table .delete_button {
+  color: white;
+  background: #e58686;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  aspect-ratio: 1/1;
+  width: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-inline: auto;
+}
+.Mainelement .schedulemaster_regist_form .schedule_master_table .delete_button:hover {
+  background: #b80000;
+}
+.Mainelement .schedulemaster_regist_form .schedule_regist_content {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_regist_content .regist_button {
+  width: 10rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  background: #1571ff;
+  padding: 0.5rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+.Mainelement .schedulemaster_regist_form .schedule_regist_content .regist_button:hover {
+  background: #1556b8;
+}
+@media screen and (max-width: 1200px) {
+  .Mainelement .schedulemaster_regist_form .schedule_regist_content .regist_button {
+    width: 8rem;
+    height: 1.5rem;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+  }
 }

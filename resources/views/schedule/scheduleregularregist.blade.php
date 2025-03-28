@@ -9,36 +9,70 @@
 
 @section('main')
 <div class="MainElement">
-    <h2 id="schedule_regist" class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/regist.svg') }}" alt="" class="title_icon">スケジュール登録</h2>
+    <h2 id="schedule_regular_regist" class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/regist.svg') }}" alt="" class="title_icon">スケジュール登録</h2>
     <div class="page_reload_container">
         <a class="page_back_button" href="{{ route('scheduleget')}}">
             トップへもどる
         </a>
-        <a class="page_cancel_button" href="{{ route('scheduleregistget', ['user_id' => $user_id, 'event_id' => $event_id]) }}">
+        <a class="page_cancel_button" href="{{ route('scheduleregularregistget', ['user_id' => $user_id , 'regular_event_id' => $regular_event_id]) }}">
             キャンセル
         </a>
     </div>
-    <form id="schedule_regist_form" action="{{ route('scheduleregistpost') }}" method="post">
+    <form id="schedule_regular_regist_form" action="{{ route('scheduleregularregistpost') }}" method="post">
         @csrf
-        <input type="hidden" name="event_id" value="{{ $event_id }}">
+        <input type="hidden" name="regular_event_id" value="{{ $regular_event_id }}">
         <input type="hidden" name="delete_flag" value="false" id="delete_flag">
         <div class="schedule_regist_container">
+            @if (!$regular_event_id)
             <div class="schedule_switch_container">
-                <a href="{{ route('scheduletermregistget', ['user_id' => $user_id, 'event_id' => $event_id]) }}" class="switch_button term_button">
-                    期間入力
+                <a href="{{ route('scheduleregistget', ['user_id' => $user_id]) }}" class="switch_button multiple_button">
+                    通常登録
                 </a>
-                @if (!$event_id)
-                <a href="{{ route('scheduleregularregistget', ['user_id' => $user_id, 'event_id' => $event_id]) }}" class="switch_button multiple_button">
-                    繰り返し登録
-                </a>
-                @endif
             </div>
+            @endif
+
             <div class="schedule_regist_content">
                 <div class="schedule_regist_content_title">
-                    日付
+                    繰り返し頻度
                 </div>
                 <div class="schedule_regist_element">
-                    <input class="schedule_input_date" type="text" name="date" id="date" data-required="true" value="{{ Carbon\Carbon::parse($date)->format('Y/m/d') }}">
+                    <select class="schedule_regular_select" name="regular_frequency" id="regular_frequency">
+                        <option value="0" {{ $regular_frequency == 0 ? 'selected' : '' }}>毎日</option>
+                        <option value="1" {{ $regular_frequency == 1 ? 'selected' : '' }}>毎週</option>
+                        <option value="2" {{ $regular_frequency == 2 ? 'selected' : '' }}>毎月</option>
+                    </select>
+                    <select class="schedule_regular_select_detail display_none" name="regular_frequency_day_detail" id="regular_frequency_day_detail">
+                        <option value="1" {{ $regular_frequency_day_detail == 1 ? 'selected' : '' }}>月曜日</option>
+                        <option value="2" {{ $regular_frequency_day_detail == 2 ? 'selected' : '' }}>火曜日</option>
+                        <option value="3" {{ $regular_frequency_day_detail == 3 ? 'selected' : '' }}>水曜日</option>
+                        <option value="4" {{ $regular_frequency_day_detail == 4 ? 'selected' : '' }}>木曜日</option>
+                        <option value="5" {{ $regular_frequency_day_detail == 5 ? 'selected' : '' }}>金曜日</option>
+                        <option value="6" {{ $regular_frequency_day_detail == 6 ? 'selected' : '' }}>土曜日</option>
+                        <option value="7" {{ $regular_frequency_day_detail == 7 ? 'selected' : '' }}>日曜日</option>
+                    </select>
+                    <select class="schedule_regular_select_detail display_none" name="regular_frequency_date_detail" id="regular_frequency_date_detail">
+                        @for ($i = 1; $i <= 31; $i++)
+                            <option value="{{ $i }}">{{ $i }}日</option>
+                            @endfor
+                            <option value="100">月末</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="schedule_regist_content">
+                <div class="schedule_regist_content_title">
+                    期間
+                </div>
+                <div class="schedule_regist_element_container">
+                    <div class="schedule_regist_element">
+                        <input class="schedule_input_date" type="text" name="start_date" id="start_date" data-required="true" value="{{ $start_date }}">
+                    </div>
+                    <div class="schedule_regist_element">
+                        ～
+                    </div>
+                    <div class="schedule_regist_element">
+                        <input class="schedule_input_date" type="text" name="end_date" id="end_date" value="{{ $end_date }}">
+                    </div>
                 </div>
 
             </div>
@@ -132,6 +166,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="schedule_regist_content">
                 <div class="schedule_regist_content_title">
                     メモ
@@ -149,8 +184,8 @@
                 <div class="regist_button" id="regist_button">
                     登録
                 </div>
-                @if ($event_id)
-                <div class="delete_button">
+                @if ($regular_event_id)
+                <div class="delete_button" id="delete_button">
                     削除
                 </div>
                 @endif

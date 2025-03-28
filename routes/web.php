@@ -375,6 +375,17 @@ Route::prefix($prefix)->group(function () {
             Route::get('/schedule/holiday', [ScheduleController::class, 'scheduleholidayget'])->name('scheduleholidayget');
             Route::get('/schedule/holiday/regist', [ScheduleController::class, 'scheduleholidayregistget'])->name('scheduleholidayregistget');
             Route::post('/schedule/holiday/regist', [ScheduleController::class, 'scheduleholidayregistpost'])->name('scheduleholidayregistpost');
+            Route::get('/schedule/candidate', [ScheduleController::class, 'schedulecandidateget'])->name('schedulecandidateget');
+            Route::get('/schedule/group/regist', [ScheduleController::class, 'schedulegroupregistget'])->name('schedulegroupregistget');
+            Route::post('/schedule/group/regist', [ScheduleController::class, 'schedulegroupregistpost'])->name('schedulegroupregistpost');
+            Route::get('/schedule/regular/regist', [ScheduleController::class, 'scheduleregularregistget'])->name('scheduleregularregistget');
+            Route::post('/schedule/regular/regist', [ScheduleController::class, 'scheduleregularregistpost'])->name('scheduleregularregistpost');
+            Route::get('/schedule/term/regist', [ScheduleController::class, 'scheduletermregistget'])->name('scheduletermregistget');
+            Route::post('/schedule/term/regist', [ScheduleController::class, 'scheduletermregistpost'])->name('scheduletermregistpost');
+            Route::get('/schedule/master/regist', [ScheduleController::class, 'schedulemasterregistget'])->name('schedulemasterregistget');
+            Route::post('/schedule/master/regist', [ScheduleController::class, 'schedulemasterregistpost'])->name('schedulemasterregistpost');
+            // Route::get('/schedule/csv', [ScheduleController::class, 'schedulecsvget'])->name('schedulecsvget');
+            // Route::post('/schedule/csv', [ScheduleController::class, 'schedulecsvpost'])->name('schedulecsvpost');
         }
     });
 });

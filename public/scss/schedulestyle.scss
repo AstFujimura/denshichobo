@@ -73,10 +73,12 @@ body {
         display: none;
     }
 }
+
 .errortextbox {
     border: solid 2px red !important;
     background: rgb(247, 229, 232);
 }
+
 .button1name01 {
     display: flex;
     align-items: center;
@@ -145,19 +147,73 @@ body {
     @media screen and (max-width: 1200px) {
         padding: 1rem 0;
     }
-.schedule_controll_container{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+
+    .schedule_controll_container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        @media screen and (max-width: 1200px) {
+            flex-direction: column;
+            align-items: start;
+        }
+    }
+
+    .schedule_base_container {
+        display: flex;
+        justify-content: center;
+        .schedule_base_element {
+            font-size: 1.5rem;
+            font-weight: 500;
+            @media screen and (max-width: 1200px) {
+                font-size: 1rem;
+            }
+        }
+    }
+
     .schedule_group_container {
         display: flex;
+        @media screen and (max-width: 1200px) {
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+        }
+
 
         .schedule_group_select {
             width: 10rem;
             height: 2rem;
             border-radius: 0.2rem;
             border: solid 1px #adadad;
+            @media screen and (max-width: 1200px) {
+                width: 8rem;
+                height: 1.5rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        .schedule_group_regist_button,
+        .schedule_group_edit_button {
+            width: 10rem;
+            height: 2rem;
+            border-radius: 0.2rem;
+            border: solid 1px #adadad;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: transparent;
+            color: rgb(47, 104, 209);
+            border: solid 1px rgb(47, 104, 209);
+            margin-left: 1rem;
+
+            &:hover {
+                background: rgb(47, 104, 209);
+                color: white;
+            }
+            @media screen and (max-width: 1200px) {
+                width: 8rem;
+                height: 1.5rem;
+                font-size: 0.8rem;
+            }
         }
 
     }
@@ -166,6 +222,10 @@ body {
         display: flex;
         gap: 1rem;
         margin-left: 1rem;
+        @media screen and (max-width: 1200px) {
+            margin-top: 0.5rem;
+        }
+
 
         .date_change_button {
             width: 5rem;
@@ -178,25 +238,35 @@ body {
             cursor: pointer;
             background: white;
             color: #4c4c4c;
+
             &:hover {
                 background: rgb(207, 207, 207);
             }
+            @media screen and (max-width: 1200px) {
+                width: 3.5rem;
+                font-size: 0.8rem;
+            }
 
         }
-        .search_date{
+
+        .search_date {
             display: none;
-            
+
         }
     }
 
     .schedule_container {
-        margin-top: 1rem;
+        margin-top: 0.5rem;
+        margin-inline: 0.5rem;
 
         .schedule_header {
             display: flex;
             position: sticky;
             top: 48px;
             z-index: 1;
+            @media screen and (max-width: 700px) {
+                top: 0;
+            }
 
             .schedule_header_cell {
                 width: 12.5%;
@@ -205,16 +275,21 @@ body {
                 align-items: center;
                 justify-content: center;
                 border: solid 1px #adadad;
+                @media screen and (max-width: 1200px) {
+                    font-size: 0.8rem;
+                }
+
+
                 &[data-day-num="0"] {
                     background: rgb(255, 222, 212);
                 }
+
                 &[data-day-num="6"] {
                     background: rgb(203, 236, 255);
                 }
             }
-            .schedule_date {
 
-            }
+            .schedule_date {}
         }
 
         .schedule_row {
@@ -222,13 +297,18 @@ body {
 
             .schedule_cell {
                 width: 12.5%;
-                min-height: 5rem;
+                min-height: 3rem;
                 background: white;
                 border: solid 1px #adadad;
                 position: relative;
+                padding-bottom: 2rem;
+                @media screen and (max-width: 1000px) {
+                    font-size: 0.7rem;
+                }
+
 
                 .schedule_user {
-                    width: 100%;    
+                    width: 100%;
                     height: 100%;
                     display: flex;
                     align-items: center;
@@ -244,15 +324,47 @@ body {
                         flex-direction: column;
                         align-items: start;
                         justify-content: center;
+                        margin-bottom: 0.3rem;
 
                         .event_time {
                             display: flex;
                             align-items: center;
                             justify-content: center;
+                            @media screen and (max-width: 800px) {
+                                flex-direction: column;
+                                .event_time_dash{
+                                    display: none;
+                                }
+                            }
                         }
 
                         .event_name {
                             margin-left: 0.5rem;
+                            display: flex;
+                            @media screen and (max-width: 800px) {
+                                flex-direction: column;
+                            }
+
+                            .event_name_text {
+                                text-decoration: underline;
+                                color: rgb(47, 104, 209);
+
+                                &:hover {
+                                    color: rgb(30, 68, 138);
+                                }
+                            }
+
+                            .plan {
+                                padding-inline: 0.4rem;
+                                border-radius: 0.2rem;
+                                color: white;
+                                // font-size: 0.8rem;
+                                border-radius: 0.2rem;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin-right: 0.5rem;
+                            }
                         }
                     }
                 }
@@ -271,8 +383,8 @@ body {
                     }
 
                     .regist_icon {
-                        width: 2rem;
-                        height: 2rem;
+                        width: 1.5rem;
+                        height: 1.5rem;
                         display: flex;
                         align-items: center;
                         justify-content: center;
@@ -281,9 +393,167 @@ body {
                 }
             }
         }
+
+        .schedule_term_container {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            background: #e2f7ed;
+            @media screen and (max-width: 1000px) {
+                font-size: 0.7rem;
+            }
+
+
+            .schedule_term_element {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 2rem;
+                background: rgb(104 163 27);
+                margin-block: 0.1rem;
+                border-radius: 0.5rem;
+                @media screen and (max-width: 1000px) {
+                    height: 1.8rem;
+                }
+
+
+                .plan {
+                    padding-inline: 0.4rem;
+                    border-radius: 0.2rem;
+                    color: white;
+                    // font-size: 0.8rem;
+                    border-radius: 0.2rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 0.5rem;
+                }
+
+                .schedule_term_element_title {
+                    color: white;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+    .page_reload_container {
+        display: flex;
+        align-items: center;
+        width: 70rem;
+        max-width: 90%;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 500;
+        background: white;
+        padding: 1rem 2rem;
+        border-radius: 0.5rem;
+        @media screen and (max-width: 1200px) {
+            width: 85%;
+            font-size: 1rem;
+            padding: 1rem 1rem;
+            margin-left: 0.5rem;
+        }
+
+
+        .page_back_button {
+            width: 12rem;
+            height: 3rem;
+            border-radius: 0.2rem;
+            background: #e7b954;
+            color: rgb(95 88 77);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover {
+                background: #9c7d38;
+                color: white;
+            }
+        }
+
+        .page_cancel_button {
+            width: 12rem;
+            height: 3rem;
+            border-radius: 0.2rem;
+            background: #686867;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover {
+                background: #4b4b4a;
+            }
+        }
+        @media screen and (max-width: 1200px) {
+            .page_back_button,
+            .page_cancel_button {
+                width: 10rem;
+                height: 2.5rem;
+                font-size: 1rem;
+            }
+        }
+        
+    }
+
+    .menu_container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-top: 3rem;
+        @media screen and (max-width: 1200px) {
+            margin-top: 1rem;
+        }
+
+
+        .menu_element {
+            width: 10rem;
+            height: 4rem;
+            background: rgb(224 232 255);
+            display: flex;
+            @media screen and (max-width: 1200px) {
+                width: 8rem;
+                height: 3rem;
+                font-size: 0.8rem;
+            }
+
+
+            a {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #4c4c4c;
+                border-radius: 0.6rem;
+                border: solid 1px #adadad;
+                box-shadow: 3px 4px 0px 0 rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+
+
+                &:hover {
+                    transform: translateY(3px);
+                    background: rgb(183, 190, 209);
+                    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+                    color: white;
+                    transition: all 0.3s ease;
+                }
+            }
+        }
     }
 
     .schedule_regist_container {
+        @media screen and (max-width: 1200px) {
+            width: 85%;
+            font-size: 1rem;
+            padding: 1rem 1rem;
+            margin-left: 0.5rem;
+        }
         .schedule_switch_container {
             display: flex;
             gap: 2rem;
@@ -314,9 +584,18 @@ body {
             align-items: center;
             margin-bottom: 0.5rem;
             gap: 1rem;
-
+            @media screen and (max-width: 800px) {
+                flex-direction: column;
+                align-items: start;
+                gap: 0.5rem;
+            }
+            .schedule_regist_element_container {
+                display: flex;
+                align-items: center;
+                justify-content: start;
+            }
             .schedule_regist_content_title {
-                width: 5rem;
+                width: 7rem;
             }
 
             .schedule_regist_element {
@@ -324,7 +603,9 @@ body {
                 align-items: center;
                 justify-content: center;
                 margin-right: 0.5rem;
-
+                @media screen and (max-width: 800px) {
+                    align-items: start;
+                }
                 .schedule_input_date {
                     width: 10rem;
                     height: 2rem;
@@ -356,31 +637,79 @@ body {
                     border: solid 1px #adadad;
                 }
 
+                .schedule_regular_select {
+                    width: 5rem;
+                    height: 2rem;
+                    border-radius: 0.2rem;
+                    border: solid 1px #adadad;
+                }
+
+                .schedule_regular_select_detail {
+                    width: 5rem;
+                    height: 2rem;
+                    border-radius: 0.2rem;
+                    border: solid 1px #adadad;
+                    margin-left: 0.5rem;
+                }
+
+                .display_none {
+                    display: none;
+                }
+
                 .join_member_container {
                     width: 10rem;
-                    min-height: 10rem;
+                    height: 10rem;
+                    overflow-y: auto;
                     border-radius: 0.2rem;
                     border: solid 1px #adadad;
                     background: white;
+
+                    .join_member_element {
+                        display: flex;
+                        align-items: center;
+                        height: 2rem;
+                        margin-left: 0.5rem;
+
+                        .join_member_name {
+                            width: 7rem;
+                        }
+
+                        .join_member_delete_button {
+                            color: white;
+                            background: #e58686;
+                            border-radius: 0.2rem;
+                            cursor: pointer;
+                            aspect-ratio: 1 / 1;
+                            width: 1.2rem;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin-left: 0.5rem;
+
+                            &:hover {
+                                background: #b80000;
+                            }
+                        }
+                    }
                 }
 
                 .candidate_member_container {
                     width: 10rem;
                     min-height: 10rem;
                     border-radius: 0.2rem;
-                    display: flex;
-                    flex-direction: column;
                     // align-items: center;
                     justify-content: center;
                     margin-left: 0.5rem;
+
                     .group_candidate_container {
-                        .group_candidate_select{
+                        .group_candidate_select {
                             width: 8rem;
                             height: 2rem;
                             border-radius: 0.2rem;
                             border: solid 1px #adadad;
                         }
                     }
+
                     .candidate_list_container {
                         width: 100%;
                         height: 7.5rem;
@@ -390,11 +719,198 @@ body {
                         display: flex;
                         margin-top: 0.5rem;
                         flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
                         overflow-y: auto;
+
+                        .candidate_list_element {
+                            display: flex;
+                            align-items: center;
+                            height: 1.5rem;
+                            margin-left: 0.5rem;
+
+                            .candidate_name {}
+
+
+                        }
                     }
-                    
+
+                }
+
+                .schedule_memo_textarea {
+                    width: 26rem;
+                    height: 9rem;
+                    border-radius: 0.2rem;
+                    border: solid 1px #adadad;
+                }
+            }
+
+            .regist_button {
+                width: 10rem;
+                height: 2rem;
+                border-radius: 0.2rem;
+                background: #1571ff;
+                padding: 0.5rem;
+                color: #ffffff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 1rem;
+                margin-top: 1rem;
+
+                &:hover {
+                    background: #1556b8;
+                }
+            }
+
+            .delete_button {
+                width: 10rem;
+                height: 2rem;
+                border-radius: 0.2rem;
+                background: #b91b1b;
+                padding: 0.5rem;
+                color: #ffffff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 1rem;
+                margin-top: 1rem;
+
+                &:hover {
+                    background: #b80000;
+                }
+            }
+        }
+    }
+
+    .schedule_group_regist_form {
+        display: flex;
+        flex-direction: column;
+        width: fit-content;
+
+        .schedule_regist_content {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+            @media screen and (max-width: 800px) {
+                flex-direction: column;
+                align-items: start;
+                gap: 0.5rem;
+            }
+            .schedule_regist_element_container {
+                display: flex;
+                align-items: center;
+                justify-content: start;
+            }
+
+            .schedule_regist_content_title {
+                width: 7rem;
+            }
+
+            .schedule_regist_element {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 0.5rem;
+                @media screen and (max-width: 800px) {
+                    align-items: start;
+                }
+
+                .schedule_input_text {
+                    width: 20rem;
+                    height: 2rem;
+                    border-radius: 0.2rem;
+                    border: solid 1px #adadad;
+                }
+
+                .schedule_input_date {
+                    width: 10rem;
+                    height: 2rem;
+                    border-radius: 0.2rem;
+                    border: solid 1px #adadad;
+                }
+
+
+
+                .join_member_container {
+                    width: 10rem;
+                    height: 10rem;
+                    overflow-y: auto;
+                    border-radius: 0.2rem;
+                    border: solid 1px #adadad;
+                    background: white;
+
+                    .join_member_element {
+                        display: flex;
+                        align-items: center;
+                        height: 2rem;
+                        margin-left: 0.5rem;
+
+                        .join_member_name {
+                            width: 7rem;
+                        }
+
+                        .join_member_delete_button {
+                            color: white;
+                            background: #e58686;
+                            border-radius: 0.2rem;
+                            cursor: pointer;
+                            aspect-ratio: 1 / 1;
+                            width: 1.2rem;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin-left: 0.5rem;
+
+                            &:hover {
+                                background: #b80000;
+                            }
+                        }
+                    }
+                }
+
+                .candidate_member_container {
+                    width: 10rem;
+                    min-height: 10rem;
+                    border-radius: 0.2rem;
+                    // align-items: center;
+                    justify-content: center;
+                    margin-left: 0.5rem;
+
+                    .group_candidate_container {
+                        .group_candidate_select {
+                            width: 8rem;
+                            height: 2rem;
+                            border-radius: 0.2rem;
+                            border: solid 1px #adadad;
+                        }
+                    }
+
+                    .candidate_list_container {
+                        width: 100%;
+                        height: 7.5rem;
+                        border-radius: 0.2rem;
+                        border: solid 1px #adadad;
+                        background: white;
+                        display: flex;
+                        margin-top: 0.5rem;
+                        flex-direction: column;
+                        overflow-y: auto;
+
+                        .candidate_list_element {
+                            display: flex;
+                            align-items: center;
+                            height: 1.5rem;
+                            margin-left: 0.5rem;
+
+                            .candidate_name {}
+
+
+                        }
+                    }
+
                 }
 
 
@@ -413,15 +929,17 @@ body {
                 cursor: pointer;
                 font-size: 1rem;
                 margin-top: 1rem;
+
                 &:hover {
                     background: #1556b8;
                 }
             }
+
             .delete_button {
                 width: 10rem;
                 height: 2rem;
                 border-radius: 0.2rem;
-                background: #ff0000;
+                background: #b91b1b;
                 padding: 0.5rem;
                 color: #ffffff;
                 display: flex;
@@ -430,8 +948,170 @@ body {
                 cursor: pointer;
                 font-size: 1rem;
                 margin-top: 1rem;
-                &:hover {   
+
+                &:hover {
                     background: #b80000;
+                }
+            }
+        }
+    }
+
+    .schedulemaster_regist_form {
+        .schedule_add_button {
+            width: 10rem;
+            height: 2.5rem;
+            border-radius: 0.2rem;
+            background: #21c272;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+
+            &:hover {
+                background: #18864f;
+            }
+            @media screen and (max-width: 1200px) {
+                width: 8rem;
+                height: 2rem;
+                font-size: 1rem;
+                margin-left: 0.5rem;
+            }
+
+
+        }
+
+        .schedule_master_table {
+            border-collapse: collapse;
+            width: 40rem;
+            max-width: 90%;
+            @media screen and (max-width: 1200px) {
+                margin-left: 0.5rem;
+            }
+            @media screen and (max-width: 600px) {
+                font-size: 1rem;
+                width: 90%;
+                margin-left: 0.5rem;
+            }
+
+            tr {
+                border-bottom: solid 1px #adadad;
+                background: white;
+            }
+
+            th {
+                background: rgb(245 245 245);
+                color: #514545;
+
+                &:nth-child(1) {
+                    width: 12rem;
+                }
+
+                &:nth-child(2) {
+                    width: 4rem;
+                }
+
+                &:nth-child(3) {
+                    width: 8rem;
+                }
+
+                &:nth-child(4) {
+                    width: 4rem;
+                }
+            }
+
+            td {
+                padding: 0.5rem;
+
+                .schedule_master_preview {
+                    color: rgb(255, 255, 255);
+                    width: fit-content;
+                    padding-inline: 1rem;
+                    border-radius: 0.2rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-inline: auto;
+                }
+
+                input {
+                    width: 100%;
+                    height: 2rem;
+                    border-radius: 0.2rem;
+                    border: solid 1px #adadad;
+                    @media screen and (max-width: 1200px) {
+                        font-size: 0.8rem;
+                    }
+                }
+
+                &:nth-child(1) {
+                    width: 12rem;
+                }
+
+                &:nth-child(2) {
+                    width: 4rem;
+                }
+
+                &:nth-child(3) {
+                    width: 8rem;
+                }
+
+                &:nth-child(4) {
+                    width: 4rem;
+                }
+            }
+
+            .delete_button {
+                color: white;
+                background: #e58686;
+                border-radius: 0.2rem;
+                cursor: pointer;
+                aspect-ratio: 1 / 1;
+                width: 2rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-inline: auto;
+
+                &:hover {
+                    background: #b80000;
+                }
+
+            }
+
+        }
+
+        .schedule_regist_content {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+
+            .regist_button {
+                width: 10rem;
+                height: 2rem;
+                border-radius: 0.2rem;
+                background: #1571ff;
+                padding: 0.5rem;
+                color: #ffffff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 1rem;
+                margin-top: 1rem;
+
+                &:hover {
+                    background: #1556b8;
+                }
+                @media screen and (max-width: 1200px) {
+                    width: 8rem;
+                    height: 1.5rem;
+                    font-size: 1rem;
+                    margin-left: 0.5rem;
                 }
             }
         }

@@ -9,7 +9,7 @@
 
 @section('main')
 <div class="MainElement">
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">スケジュール</h2>
+    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/calendar.svg') }}" alt="" class="title_icon">スケジュール</h2>
     <input type="hidden" id="selected_group_id" value="{{ $selected_group_id }}">
     <div class="schedule_controll_container">
         <div class="schedule_group_container">
@@ -18,6 +18,14 @@
                 <option value="{{ $group->id }}" {{ $selected_group_id == $group->id ? 'selected' : '' }}>{{ $group->グループ名 }}</option>
                 @endforeach
             </select>
+            @if($selected_group_id < 100000)
+                <a href="{{ route('schedulegroupregistget', ['selected_group_id' => $selected_group_id])     }}" class="schedule_group_edit_button">
+                個人グループ編集
+                </a>
+                @endif
+                <a href="{{ route('schedulegroupregistget') }}" class="schedule_group_regist_button">
+                    個人グループ作成
+                </a>
         </div>
         <div class="date_change_container">
             <a href="{{ route('scheduleget', ['selected_group_id' => $selected_group_id, 'base_date' => Carbon\Carbon::parse($base_date)->subWeek()->format('Y-m-d')]) }}" class="date_change_button" data-when="last_week">
@@ -36,6 +44,13 @@
                 翌週
             </a>
             <input type="text" class="search_date" value="">
+        </div>
+    </div>
+    <div class="schedule_base_container">
+        <div class="schedule_base_element">
+            <div class="schedule_base_element_content">
+                {{ Carbon\Carbon::parse($base_date)->format('Y年m月d日') }}
+            </div>
         </div>
     </div>
     <div class="schedule_container">
@@ -84,10 +99,12 @@
                         </div>
 
                         <div class="event_name">
-                            <span class="plan">
-                                {{ $event->予定ID }}
+                            @if ($event->予定ID)
+                            <span class="plan" style="background-color: {{ $event->装飾 }};">
+                                {{ $event->予定 }}
                             </span>
-                            <a href="{{ route('scheduleregistget', ['event_id' => $event->event_id]) }}">{{ $event->予定詳細 }}</a>
+                            @endif
+                            <a class="event_name_text" href="{{ route('scheduleregistget', ['event_id' => $event->event_id]) }}">{{ $event->予定詳細 }}</a>
                         </div>
                     </div>
                     @endforeach
@@ -99,7 +116,29 @@
         </div>
         @endfor
     </div>
+    <div class="schedule_term_container">
+        @foreach ($user->long_events as $long_event)
+        <div class="schedule_term_element" style="grid-row: {{ $long_event->start_row }} / {{ $long_event->end_row }}; grid-column: {{ $long_event->start_col }} / {{ $long_event->end_col }};">
+            @if ($long_event->予定ID)
+            <span class="plan" style="background-color: {{ $long_event->装飾 }};">
+                {{ $long_event->予定 }}
+            </span>
+            @endif
+            <a href="{{ route('scheduleregistget', ['event_id' => $long_event->event_id]) }}" class="schedule_term_element_title">
+                {{ $long_event->予定詳細 }}
+            </a>
+        </div>
+        @endforeach
+    </div>
     @endforeach
+
+    <div class="menu_container">
+        <div class="menu_element">
+            <a href="{{ route('schedulemasterregistget') }}">
+                予定マスタ登録
+            </a>
+        </div>
+    </div>
 </div>
 
 </div>

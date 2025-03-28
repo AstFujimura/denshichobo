@@ -28,7 +28,9 @@
 
 <header class="header001">
     <div class="logo01">
-        <a href="{{route('workflow')}}" class="logoelement01">
+        <a href="{{route('scheduleget')}}" class="logoelement01">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/skett_logo_only.svg') }}" alt="Skett" class="skett_logo">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/skett.svg') }}" alt="Skett" class="skett_char">
         </a>
         @if (App\Models\Version::where('tameru', true)->first())
         <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
@@ -47,9 +49,14 @@
 <div class="menu001">
 
     <a class="headerIcon001" href="{{route('scheduleget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01" title="Top">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/calendar_title.svg') }}" class="menuicon01" title="Top">
     </a>
-
+    <a class="headerIcon001" href="{{route('scheduleregistget')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/regist_title.svg') }}" class="menuicon01" title="Top">
+    </a>
+    <a class="headerIcon001" href="{{route('schedulemasterregistget')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/master_title.svg') }}" class="menuicon01" title="Top">
+    </a>
     @if (Auth::user()->管理 == '管理')
 
     @endif

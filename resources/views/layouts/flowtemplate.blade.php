@@ -35,9 +35,16 @@
         @if (App\Models\Version::where('tameru', true)->first())
         <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
         @endif
+        @if (App\Models\Version::where('スケジュール', true)->first())
+        <a href="{{route('scheduleget')}}" class="tameru_banner">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/skett_logo_only.svg') }}" alt="TAMERU">
+        </a>
+        @endif
         @if (App\Models\Version::where('名刺', true)->first())
         <a href="{{route('cardviewget')}}" class="tameru_banner">名</a>
         @endif
+        
+
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>

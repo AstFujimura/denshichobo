@@ -9,42 +9,42 @@
 
 @section('main')
 <div class="MainElement">
-    <h2 id="schedule_regist" class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/regist.svg') }}" alt="" class="title_icon">スケジュール登録</h2>
-    <div class="page_reload_container">
-        <a class="page_back_button" href="{{ route('scheduleget')}}">
-            トップへもどる
-        </a>
-        <a class="page_cancel_button" href="{{ route('scheduleregistget', ['user_id' => $user_id, 'event_id' => $event_id]) }}">
-            キャンセル
-        </a>
-    </div>
-    <form id="schedule_regist_form" action="{{ route('scheduleregistpost') }}" method="post">
+    <h2 id="schedule_term_regist" class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/regist.svg') }}" alt="" class="title_icon">スケジュール登録</h2>
+    <form id="schedule_term_regist_form" action="{{ route('scheduletermregistpost') }}" method="post">
         @csrf
         <input type="hidden" name="event_id" value="{{ $event_id }}">
         <input type="hidden" name="delete_flag" value="false" id="delete_flag">
         <div class="schedule_regist_container">
-            <div class="schedule_switch_container">
-                <a href="{{ route('scheduletermregistget', ['user_id' => $user_id, 'event_id' => $event_id]) }}" class="switch_button term_button">
-                    期間入力
+            <div class="page_reload_container">
+                <a class="page_back_button" href="{{ route('scheduleget')}}">
+                    トップへもどる
                 </a>
-                @if (!$event_id)
-                <a href="{{ route('scheduleregularregistget', ['user_id' => $user_id, 'event_id' => $event_id]) }}" class="switch_button multiple_button">
+                <a class="page_cancel_button" href="{{ route('scheduletermregistget', ['user_id' => $user_id, 'event_id' => $event_id]) }}">
+                    キャンセル
+                </a>
+            </div>
+            @if (!$event_id)
+            <div class="schedule_switch_container">
+                <a href="{{ route('scheduleregistget', ['user_id' => $user_id]) }}" class="switch_button term_button">
+                    通常入力
+                </a>
+                <a href="{{ route('scheduleregularregistget', ['user_id' => $user_id]) }}" class="switch_button multiple_button">
                     繰り返し登録
                 </a>
-                @endif
             </div>
+            @endif
             <div class="schedule_regist_content">
                 <div class="schedule_regist_content_title">
-                    日付
+                    開始日付
                 </div>
                 <div class="schedule_regist_element">
-                    <input class="schedule_input_date" type="text" name="date" id="date" data-required="true" value="{{ Carbon\Carbon::parse($date)->format('Y/m/d') }}">
+                    <input class="schedule_input_date" type="text" name="start_date" id="start_date" data-required="true" value="{{ Carbon\Carbon::parse($start_date)->format('Y/m/d') }}">
                 </div>
 
             </div>
             <div class="schedule_regist_content">
                 <div class="schedule_regist_content_title">
-                    時刻
+                    開始時刻
                 </div>
                 <div class="schedule_regist_element_container">
                     <div class="schedule_regist_element">
@@ -63,9 +63,23 @@
                                 @endfor
                         </select>
                     </div>
-                    <div class="schedule_regist_element">
-                        ～
-                    </div>
+                </div>
+            </div>
+
+            <div class="schedule_regist_content">
+                <div class="schedule_regist_content_title">
+                    終了日付
+                </div>
+                <div class="schedule_regist_element">
+                    <input class="schedule_input_date" type="text" name="end_date" id="end_date" data-required="true" value="{{ Carbon\Carbon::parse($end_date)->format('Y/m/d') }}">
+                </div>
+
+            </div>
+            <div class="schedule_regist_content">
+                <div class="schedule_regist_content_title">
+                    終了時刻
+                </div>
+                <div class="schedule_regist_element_container">
                     <div class="schedule_regist_element">
                         <select class="schedule_time_select" name="end_time_hour" id="end_time_hour">
                             <option value="-">--</option>
@@ -150,7 +164,7 @@
                     登録
                 </div>
                 @if ($event_id)
-                <div class="delete_button">
+                <div class="delete_button" id="delete_button">
                     削除
                 </div>
                 @endif
