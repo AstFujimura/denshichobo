@@ -201,7 +201,7 @@ Rapid ~電子承認システム
                                 {{$t_flow_reapplication->name}}
                             </div>
                             <div class="flow_view_td flow_view_date">
-                                {{date('Y-m-d', $t_flow_reapplication->created_at)}}
+                                <!-- date('Y-m-d', $t_flow_reapplication->created_at) -->
                             </div>
                         </a>
                         @endforeach
