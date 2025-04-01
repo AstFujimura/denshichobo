@@ -173,14 +173,16 @@ body #usersetting {
     font-size: 0.8rem;
   }
 }
-.Mainelement .schedule_group_container .schedule_group_select {
+.Mainelement .schedule_group_container .schedule_group_select,
+.Mainelement .schedule_group_container .month_user_select {
   width: 10rem;
   height: 2rem;
   border-radius: 0.2rem;
   border: solid 1px #adadad;
 }
 @media screen and (max-width: 1200px) {
-  .Mainelement .schedule_group_container .schedule_group_select {
+  .Mainelement .schedule_group_container .schedule_group_select,
+  .Mainelement .schedule_group_container .month_user_select {
     width: 8rem;
     height: 1.5rem;
     font-size: 0.8rem;
@@ -271,6 +273,9 @@ body #usersetting {
   justify-content: center;
   border: solid 1px #adadad;
 }
+.Mainelement .schedule_container .schedule_header .schedule_header_cell.month_schedule_header_cell {
+  width: 14.28%;
+}
 @media screen and (max-width: 1200px) {
   .Mainelement .schedule_container .schedule_header .schedule_header_cell {
     font-size: 0.8rem;
@@ -292,6 +297,30 @@ body #usersetting {
   border: solid 1px #adadad;
   position: relative;
   padding-bottom: 2rem;
+}
+.Mainelement .schedule_container .schedule_row .schedule_cell.month_schedule_cell {
+  width: 14.28%;
+}
+.Mainelement .schedule_container .schedule_row .schedule_cell.schedule_cell_header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.Mainelement .schedule_container .schedule_row .schedule_cell.schedule_cell_header .schedule_cell_header_month {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2b2b2b;
+}
+.Mainelement .schedule_container .schedule_row .schedule_cell.schedule_cell_header .schedule_cell_header_month:hover {
+  color: #177094;
+}
+.Mainelement .schedule_container .schedule_row .schedule_cell.schedule_cell_header .schedule_cell_header_month img {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 @media screen and (max-width: 1000px) {
   .Mainelement .schedule_container .schedule_row .schedule_cell {
@@ -378,6 +407,9 @@ body #usersetting {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   background: #e2f7ed;
+}
+.Mainelement .schedule_container .schedule_term_container.month_schedule_term_container {
+  grid-template-columns: repeat(7, 1fr);
 }
 @media screen and (max-width: 1000px) {
   .Mainelement .schedule_container .schedule_term_container {
@@ -566,6 +598,11 @@ body #usersetting {
 .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_content_title {
   width: 7rem;
 }
+@media screen and (max-width: 800px) {
+  .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_content_title {
+    width: fit-content;
+  }
+}
 .Mainelement .schedule_regist_container .schedule_regist_content .schedule_regist_element {
   display: flex;
   align-items: center;
@@ -726,6 +763,7 @@ body #usersetting {
   display: flex;
   flex-direction: column;
   width: fit-content;
+  margin-left: 2rem;
 }
 .Mainelement .schedule_group_regist_form .schedule_regist_content {
   display: flex;
@@ -748,6 +786,11 @@ body #usersetting {
 }
 .Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_content_title {
   width: 7rem;
+}
+@media screen and (max-width: 800px) {
+  .Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_content_title {
+    width: fit-content;
+  }
 }
 .Mainelement .schedule_group_regist_form .schedule_regist_content .schedule_regist_element {
   display: flex;

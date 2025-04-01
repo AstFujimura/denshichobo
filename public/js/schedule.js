@@ -37,6 +37,12 @@ $(document).ready(function () {
     window.location.href = prefix + '/schedule?selected_group_id=' + selected_group_id + '&base_date=' + search_date
   })
 
+  // -----------------------------月スケジュール----------------
+  $('.month_user_select').on('change', function () {
+    var selected_user_id = $(this).val()
+    window.location.href = prefix + '/schedule/month?user_id=' + selected_user_id
+  })
+
 
   // -------------スケジュール登録----------------
   if ($('#schedule_regist').length != 0) {

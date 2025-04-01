@@ -1,7 +1,7 @@
 @extends('layouts.scheduletemplate')
 
 @section('title')
-スケジュール
+Skett ~スケジュールアプリ
 @endsection
 
 
@@ -60,6 +60,14 @@
                             </label> -->
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="schedule_regist_content">
+            <div class="schedule_regist_content_title">
+                デフォルトに設定する
+            </div>
+            <div class="schedule_regist_element">
+                <input class="checkbox_input" type="checkbox" name="default_checkbox" id="default_checkbox" data-required="true" {{ $default_checkbox ? 'checked' : '' }}>
             </div>
         </div>
         <div class="inputs" id="inputs">

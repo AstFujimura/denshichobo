@@ -1,7 +1,7 @@
 @extends('layouts.scheduletemplate')
 
 @section('title')
-スケジュール
+Skett ~スケジュールアプリ
 @endsection
 
 
@@ -68,10 +68,14 @@
         </div>
         @foreach ($users as $user)
         <div class="schedule_row">
-            <div class="schedule_cell">
+            <div class="schedule_cell schedule_cell_header">
                 <div class="schedule_user">
                     {{ $user->name }}
                 </div>
+                <a class="schedule_cell_header_month" href="{{ route('schedulemonthget', ['user_id' => $user->id, 'month' => Carbon\Carbon::parse($base_date)->format('Y-m')]) }}">
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/schedule/calendar_month.svg') }}" alt="" class="schedule_cell_header_month_icon">
+                    月予定
+                </a>
             </div>
             @for ($i = 0; $i < 7; $i++)
                 <div class="schedule_cell">
@@ -134,9 +138,11 @@
 
     <div class="menu_container">
         <div class="menu_element">
+            @if(Auth::user()->管理 == '管理')
             <a href="{{ route('schedulemasterregistget') }}">
                 予定マスタ登録
             </a>
+            @endif
         </div>
     </div>
 </div>

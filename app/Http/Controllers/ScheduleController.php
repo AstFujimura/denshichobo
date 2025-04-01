@@ -60,7 +60,10 @@ class ScheduleController extends Controller
             ->select('schedule_groups.*', 'schedule_group_user.ユーザーID')
             ->where('schedule_groups.登録ユーザーID', Auth::user()->id)
             ->get()
-            ->unique('id');
+            ->unique('id')
+            ->sortByDesc(function ($schedule_group) {
+                return $schedule_group->デフォルト ? 1 : 0;
+            })->values(); // ソート後のインデックスを振り直す;
         foreach ($schedule_groups as $schedule_group) {
             $schedule_group->グループ名 = $schedule_group->グループ名 . " (個人グループ)";
         }
@@ -114,31 +117,30 @@ class ScheduleController extends Controller
                     ->get();
             }
             $user->long_events = DB::table('events')
-            ->leftJoin('event_user', 'events.id', '=', 'event_user.イベントID')
-            ->leftJoin('plans', 'events.予定ID', '=', 'plans.id')
-            ->select('events.*', 'events.id as event_id', 'event_user.ユーザーID', 'plans.予定', 'plans.装飾')
-            ->where('event_user.ユーザーID', $user->id)
-            ->where(function ($query) use ($cells) {
-                $startOfWeek = Carbon::parse($cells->{0}->ymd);
-                $endOfWeek = Carbon::parse($cells->{6}->ymd)->addDays(1)->format('Y-m-d'); // 週の終わり+1日
-                $query->where('開始', '<', $endOfWeek)  // 週の最後の日より前に始まる
-                      ->where('終了', '>=', $startOfWeek); // 週の最初の日以降に終わる
-            })
-            ->whereRaw('DATE(開始) != DATE(終了)') // 2日以上続くイベントのみ
-            ->orderBy('開始', 'asc')
-            ->get();
+                ->leftJoin('event_user', 'events.id', '=', 'event_user.イベントID')
+                ->leftJoin('plans', 'events.予定ID', '=', 'plans.id')
+                ->select('events.*', 'events.id as event_id', 'event_user.ユーザーID', 'plans.予定', 'plans.装飾')
+                ->where('event_user.ユーザーID', $user->id)
+                ->where(function ($query) use ($cells) {
+                    $startOfWeek = Carbon::parse($cells->{0}->ymd);
+                    $endOfWeek = Carbon::parse($cells->{6}->ymd)->addDays(1)->format('Y-m-d'); // 週の終わり+1日
+                    $query->where('開始', '<', $endOfWeek)  // 週の最後の日より前に始まる
+                        ->where('終了', '>=', $startOfWeek); // 週の最初の日以降に終わる
+                })
+                ->whereRaw('DATE(開始) != DATE(終了)') // 2日以上続くイベントのみ
+                ->orderBy('開始', 'asc')
+                ->get();
 
             $long_events_array = ['1' => -1];
             foreach ($user->long_events as $long_event) {
                 if (Carbon::parse($long_event->開始) < Carbon::parse($base_date)) {
                     $start_day_num = 0;
-                }
-                else {
+                } else {
                     $start_day_num = Carbon::parse($long_event->開始)->diffInDays(Carbon::parse($base_date));
                 }
                 $end_day_num = Carbon::parse($long_event->終了)->diffInDays(Carbon::parse($base_date));
                 $assigned = false;
-            
+
                 foreach ($long_events_array as $key => $value) {
                     if ($value < $start_day_num) { // 既存のキーのバリューが start_day_num にかぶらなければ更新
                         $long_events_array[$key] = $end_day_num;
@@ -153,7 +155,7 @@ class ScheduleController extends Controller
                         break;
                     }
                 }
-            
+
                 if (!$assigned) { // すべてのキーがかぶっていた場合、新しいキーを追加
                     $new_key = max(array_keys($long_events_array)) + 1;
                     $long_events_array[$new_key] = $end_day_num;
@@ -183,7 +185,114 @@ class ScheduleController extends Controller
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
         }
-        return view('schedule.schedulemonth', compact("prefix"));
+        $server = config('prefix.server');
+        
+
+        $user = DB::table('users')
+            ->find($request->user_id ?? Auth::user()->id);
+        if (Auth::user()->管理 == '管理') {
+            $selected_users = User::where('id', '>', 1)
+            ->get()
+            ->sortByDesc(function ($user) {
+                return $user->id === Auth::user()->id ? 1 : 0;
+            })->values(); // ソート後のインデックスを振り直す
+        } else {
+            $selected_users = DB::table('users')
+                ->leftJoin('group_user', 'users.id', '=', 'group_user.ユーザーID')
+                ->select('users.*', 'group_user.グループID')
+                ->where('group_user.グループID', Auth::user()->id)
+                ->get()
+                ->sortByDesc(function ($user) {
+                    return $user->id === Auth::user()->id ? 1 : 0;
+                })->values(); // ソート後のインデックスを振り直す
+        }
+
+        $month = $request->month ?? Carbon::now()->format('Y-m');
+        $first_day = Carbon::parse($month)->startOfMonth()->format('w');
+        $base_date = Carbon::parse($month)->startOfMonth()->subDays($first_day)->format('Y-m-d');
+        // $base_day = Carbon::parse($base_date)->format('w');
+        $week_array = ['日', '月', '火', '水', '木', '金', '土'];
+        $cells = new \stdClass();
+        for ($w = 0; $w < 5; $w++) {
+            $cells->{$w} = new \stdClass();
+            for ($i = 0; $i < 7; $i++) {
+                $add_days = $w * 7 + $i;
+                $cells->{$w}->{$i} = new \stdClass();
+                $cells->{$w}->{$i}->day = $week_array[$i];
+                $cells->{$w}->{$i}->date = Carbon::parse($base_date)->addDays($add_days)->format('d');
+                $cells->{$w}->{$i}->day_num = Carbon::parse($base_date)->addDays($add_days)->format('w');
+                $cells->{$w}->{$i}->ymd = Carbon::parse($base_date)->addDays($add_days)->format('Y-m-d');
+            }
+        }
+        for ($w = 0; $w < 5; $w++) {
+            $user->{$w} = new \stdClass();
+            for ($i = 0; $i < 7; $i++) {
+                $user->{$w}->{'index' . $i} = DB::table('events')
+                    ->leftJoin('event_user', 'events.id', '=', 'event_user.イベントID')
+                    ->leftJoin('plans', 'events.予定ID', '=', 'plans.id')
+                    ->select('events.*', 'events.id as event_id', 'event_user.ユーザーID', 'plans.予定', 'plans.装飾')
+                    ->where('開始', '>=', $cells->{$w}->{$i}->ymd)
+                    ->where('開始', '<', Carbon::parse($cells->{$w}->{$i}->ymd)->addDays(1)->format('Y-m-d'))
+                    ->where('終了', '>=', $cells->{$w}->{$i}->ymd)
+                    ->where('終了', '<', Carbon::parse($cells->{$w}->{$i}->ymd)->addDays(1)->format('Y-m-d'))
+                    ->where('event_user.ユーザーID', $user->id)
+                    ->orderBy('開始', 'asc')
+                    ->get();
+            }
+            $user->{$w}->{'long_events'} = DB::table('events')
+                ->leftJoin('event_user', 'events.id', '=', 'event_user.イベントID')
+                ->leftJoin('plans', 'events.予定ID', '=', 'plans.id')
+                ->select('events.*', 'events.id as event_id', 'event_user.ユーザーID', 'plans.予定', 'plans.装飾')
+                ->where('event_user.ユーザーID', $user->id)
+                ->where(function ($query) use ($cells, $w) {
+                    $startOfWeek = Carbon::parse($cells->{$w}->{0}->ymd);
+                    $endOfWeek = Carbon::parse($cells->{$w}->{6}->ymd)->addDays(1)->format('Y-m-d'); // 週の終わり+1日
+                    $query->where('開始', '<', $endOfWeek)  // 週の最後の日より前に始まる
+                        ->where('終了', '>=', $startOfWeek); // 週の最初の日以降に終わる
+                })
+                ->whereRaw('DATE(開始) != DATE(終了)') // 2日以上続くイベントのみ
+                ->orderBy('開始', 'asc')
+                ->get();
+
+            $long_events_array = ['1' => -1];
+            foreach ($user->{$w}->{'long_events'} as $long_event) {
+                if (Carbon::parse($long_event->開始) < Carbon::parse($cells->{$w}->{0}->ymd)) {
+                    $start_day_num = 0;
+                } else {
+                    $start_day_num = Carbon::parse($long_event->開始)->diffInDays(Carbon::parse($cells->{$w}->{0}->ymd));
+                }
+                $end_day_num = Carbon::parse($long_event->終了)->diffInDays(Carbon::parse($cells->{$w}->{0}->ymd));
+                $assigned = false;
+
+                foreach ($long_events_array as $key => $value) {
+                    if ($value < $start_day_num) { // 既存のキーのバリューが start_day_num にかぶらなければ更新
+                        $long_events_array[$key] = $end_day_num;
+                        $assigned = true;
+                        $long_event->start_row = $key;
+                        $long_event->end_row = $key + 1;
+                        $long_event->start_col = $start_day_num + 1;
+                        $long_event->end_col = $end_day_num + 2;
+                        if ($long_event->end_col > 8) {
+                            $long_event->end_col = 8;
+                        }
+                        break;
+                    }
+                }
+
+                if (!$assigned) { // すべてのキーがかぶっていた場合、新しいキーを追加
+                    $new_key = max(array_keys($long_events_array)) + 1;
+                    $long_events_array[$new_key] = $end_day_num;
+                    $long_event->start_row = $new_key;
+                    $long_event->end_row = $new_key + 1;
+                    $long_event->start_col = $start_day_num + 1;
+                    $long_event->end_col = $end_day_num + 2;
+                    if ($long_event->end_col > 8) {
+                        $long_event->end_col = 8;
+                    }
+                }
+            }
+        }
+        return view('schedule.schedulemonth', compact("prefix", "server","month", "selected_users", "base_date",  "week_array", "cells", "user"));
     }
     public function scheduleregistget(Request $request)
     {
@@ -257,11 +366,9 @@ class ScheduleController extends Controller
         }
         if ($regular_event == "true") {
             return redirect()->route('scheduleregularregistget', ['user_id' => $user_id, 'regular_event_id' => $regular_event_id]);
-        } 
-        else if ($long_event == "true") {
+        } else if ($long_event == "true") {
             return redirect()->route('scheduletermregistget', ['user_id' => $user_id, 'event_id' => $event_id]);
-        }
-        else {
+        } else {
             return view('schedule.scheduleregist', compact("prefix", "server", "user_id", "date", "start_time_hour", "start_time_minute", "end_time_hour", "end_time_minute", "event_name", "event_users", "event_id", "groups", "plans", "plan_id", "memo"));
         }
     }
@@ -298,8 +405,7 @@ class ScheduleController extends Controller
         }
         if ($request->schedule_type == "-") {
             $event->予定ID = null;
-        }
-        else {
+        } else {
             $event->予定ID = $request->schedule_type;
         }
         $event->予定詳細 = $request->event_name ?? "--";
@@ -370,8 +476,10 @@ class ScheduleController extends Controller
         $selected_group_id = $request->selected_group_id ?? null;
         if ($selected_group_id) {
             $schedule_group = Schedule_group::find($selected_group_id);
+            $default_checkbox = $schedule_group->デフォルト ?? false;
         } else {
             $schedule_group = null;
+            $default_checkbox = false;
         }
         $schedule_group_users = DB::table('schedule_group_user')
             ->leftJoin('users', 'schedule_group_user.ユーザーID', '=', 'users.id')
@@ -390,10 +498,11 @@ class ScheduleController extends Controller
                 ->where('groups.id', '>', 100000)
                 ->get();
         }
-        return view('schedule.schedulegroupregist', compact("prefix", "server", "groups", "schedule_group_users", "schedule_group"));
+        return view('schedule.schedulegroupregist', compact("prefix", "server", "groups", "schedule_group_users", "schedule_group", "default_checkbox"));
     }
     public function schedulegroupregistpost(Request $request)
     {
+
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
@@ -407,10 +516,16 @@ class ScheduleController extends Controller
         // 変更の場合
         if ($request->schedule_group_id) {
             $schedule_group = Schedule_group::find($request->schedule_group_id);
-        } 
+        }
         // 新規の場合
         else {
             $schedule_group = new Schedule_group();
+        }
+        if ($request->default_checkbox) {
+            $schedule_group->デフォルト = true;
+            Schedule_group::where('登録ユーザーID', Auth::user()->id)->update(['デフォルト' => false]);
+        } else {
+            $schedule_group->デフォルト = false;
         }
         $schedule_group->グループ名 = $request->group_name;
         $schedule_group->登録ユーザーID = Auth::user()->id;
@@ -538,8 +653,7 @@ class ScheduleController extends Controller
         }
         if ($request->schedule_type == "-") {
             $regular_event->予定ID = null;
-        }
-        else {
+        } else {
             $regular_event->予定ID = $request->schedule_type;
         }
 
@@ -687,8 +801,7 @@ class ScheduleController extends Controller
         }
         if ($request->schedule_type == "-") {
             $event->予定ID = null;
-        }
-        else {
+        } else {
             $event->予定ID = $request->schedule_type;
         }
         $event->予定詳細 = $request->event_name ?? "--";
@@ -719,7 +832,7 @@ class ScheduleController extends Controller
         return view('schedule.schedulemaster', compact("prefix", "server", "plans"));
     }
 
-    public function schedulemasterregistpost(Request $request) 
+    public function schedulemasterregistpost(Request $request)
     {
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
@@ -745,13 +858,12 @@ class ScheduleController extends Controller
             }
         }
         return redirect()->route('scheduleget');
-
     }
     public function schedulecsvget(Request $request)
     {
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
-            $prefix = "/" . $prefix;    
+            $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
         return view('schedule.schedulecsv', compact("prefix", "server"));
@@ -764,7 +876,7 @@ class ScheduleController extends Controller
         }
         $file = $request->file('csv_file');
         $csv_data = array_map('str_getcsv', file($file));
-    }   
+    }
 
 
     /**

@@ -1,7 +1,7 @@
 @extends('layouts.flowtemplate')
 
 @section('title')
-管理者ページ
+Rapid ~電子承認システム
 @endsection
 <div class="flow_application_gray">
 

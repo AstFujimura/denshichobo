@@ -1,7 +1,7 @@
 @extends('layouts.scheduletemplate')
 
 @section('title')
-スケジュール
+Skett ~スケジュールアプリ
 @endsection
 
 
