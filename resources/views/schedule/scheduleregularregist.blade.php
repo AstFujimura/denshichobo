@@ -42,13 +42,13 @@ Skett ~スケジュールアプリ
                         <option value="2" {{ $regular_frequency == 2 ? 'selected' : '' }}>毎月</option>
                     </select>
                     <select class="schedule_regular_select_detail display_none" name="regular_frequency_day_detail" id="regular_frequency_day_detail">
+                        <option value="0" {{ $regular_frequency_day_detail == 0 ? 'selected' : '' }}>日曜日</option>
                         <option value="1" {{ $regular_frequency_day_detail == 1 ? 'selected' : '' }}>月曜日</option>
                         <option value="2" {{ $regular_frequency_day_detail == 2 ? 'selected' : '' }}>火曜日</option>
                         <option value="3" {{ $regular_frequency_day_detail == 3 ? 'selected' : '' }}>水曜日</option>
                         <option value="4" {{ $regular_frequency_day_detail == 4 ? 'selected' : '' }}>木曜日</option>
                         <option value="5" {{ $regular_frequency_day_detail == 5 ? 'selected' : '' }}>金曜日</option>
                         <option value="6" {{ $regular_frequency_day_detail == 6 ? 'selected' : '' }}>土曜日</option>
-                        <option value="7" {{ $regular_frequency_day_detail == 7 ? 'selected' : '' }}>日曜日</option>
                     </select>
                     <select class="schedule_regular_select_detail display_none" name="regular_frequency_date_detail" id="regular_frequency_date_detail">
                         @for ($i = 1; $i <= 31; $i++)

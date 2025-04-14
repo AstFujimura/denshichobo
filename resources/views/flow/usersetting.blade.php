@@ -1,8 +1,8 @@
 @extends('layouts.flowtemplate')
 
 @section('title')
-TAMERU ~電子帳簿保存
-@endsection 
+Rapid ~電子承認システム
+@endsection
 
 @section('menuebar')
 
