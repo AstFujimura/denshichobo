@@ -121,10 +121,18 @@
                     </div>
                     <div class="company_info_content">
                         <div class="company_info_content_title">
-                            会社所在地
+                            拠点名
+                        </div>
+                        <div class="company_info_content_text" id="branch_name">
+                            {{ $now_card->拠点名 }}
+                        </div>
+                    </div>
+                    <div class="company_info_content">
+                        <div class="company_info_content_title">
+                            所在地
                         </div>
                         <div class="company_info_content_text" id="company_address">
-                            {{ $now_card->会社所在地 }}
+                            {{ $now_card->拠点所在地 }}
                         </div>
                     </div>
                     <div class="company_info_content">

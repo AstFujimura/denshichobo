@@ -157,11 +157,18 @@ $(document).ready(function () {
         // 会社候補検索ボタンが押されたとき
         $('.company_search_button').on('click', function () {
             $('.company_candidate_container').addClass('company_candidate_container_open');
+            $('.company_candidate_container_background').addClass('company_candidate_container_background_open');
             getCompanyCandidate($('.company_search_button').closest('tr').find('input[name="company_name"]').val());
+        });
+        // 会社候補背景をクリックしたとき
+        $('.company_candidate_container_background').on('click', function () {
+            $('.company_candidate_container').removeClass('company_candidate_container_open');
+            $('.company_candidate_container_background').removeClass('company_candidate_container_background_open');
         });
         // 会社候補が選択されたとき
         $(document).on('change', '.company_candidate_container input[type="radio"]', function () {
             $('.company_candidate_container').removeClass('company_candidate_container_open');
+            $('.company_candidate_container_background').removeClass('company_candidate_container_background_open');
             if ($(this).val() == 'new') {
                 $('#company_id').val(0);
                 new_company();
@@ -180,6 +187,25 @@ $(document).ready(function () {
         $('#company_name').on('change', function () {
             $('#company_id').val(0);
             new_company();
+        });
+
+        // 拠点追加ボタンが押されたとき
+        $(document).on('click', '.add_branch_button', function () {
+            $('#branch_name_container').html(
+                `<input type="text" name="branch_name" id="branch_name" autocomplete="off">`
+            );
+            $('#branch_name').focus();
+            $('#branch_address').attr('disabled', false);
+            $('#branch_phone_number').attr('disabled', false);
+            $('#branch_fax_number').attr('disabled', false);
+        });
+
+        // 拠点を選択した時
+        $(document).on('change', '.branch_name_select', function () {
+            var branch_data = $(this).find('option:selected').data();
+            $('#branch_address').val(branch_data.address);
+            $('#branch_phone_number').val(branch_data.phone_number);
+            $('#branch_fax_number').val(branch_data.fax_number);
         });
 
 
@@ -290,9 +316,10 @@ $(document).ready(function () {
                         </label>
                         `);
                         response.forEach(function (company) {
+                            console.log(company);
                             $('.company_candidate_container').append(`
-                        <input type="radio" name="company_candidate" value="${company.card.id}" id="company_candidate_${company.card.id}">
-                        <label class="company_candidate_content" for="company_candidate_${company.card.id}">
+                        <input type="radio" name="company_candidate" value="${company.id}" id="company_candidate_${company.id}">
+                        <label class="company_candidate_content" for="company_candidate_${company.id}">
                             <div class="compapany_card_img_container">
                                 <img data-card_id="${company.card.id}" alt="">
                             </div>
@@ -314,17 +341,30 @@ $(document).ready(function () {
                 url: prefix + '/card/company/info/' + id,
                 type: 'GET',
                 success: function (response) {
-                    $('#company_name').val(response.会社名);
+                    $('#company_name').val(response.company.会社名);
                     $('#company_name').attr('readonly', true);
                     $('#company_name').addClass('company_choiced');
-                    $('#company_name_kana').val(response.会社名カナ);
+                    $('#company_name_kana').val(response.company.会社名カナ);
                     $('#company_name_kana').attr('disabled', true);
-                    $('#company_address').val(response.住所);
-                    $('#company_address').attr('disabled', true);
-                    $('#company_phone_number').val(response.電話番号);
-                    $('#company_phone_number').attr('disabled', true);
-                    $('#company_fax_number').val(response.FAX番号);
-                    $('#company_fax_number').attr('disabled', true);
+
+                    // 拠点指定がある場合は拠点のセレクトボックスを置く
+                    if (response.designate_branch) {
+                        $('#branch_name_container').html(`
+                        <select class="branch_name_select" name="branch_id" id="branch_id">
+                            ${response.branches.map(branch => `<option value="${branch.id}" data-address="${branch.拠点所在地}" data-phone_number="${branch.電話番号}" data-fax_number="${branch.FAX番号}">${branch.拠点名}</option>`).join('')}
+                          </select>
+                          <span class="add_branch_button">
+                            拠点追加
+                          </span>
+                        `);
+
+                    }
+                    $('#branch_address').val(response.branches[0].拠点所在地);
+                    $('#branch_address').attr('disabled', true);
+                    $('#branch_phone_number').val(response.branches[0].電話番号);
+                    $('#branch_phone_number').attr('disabled', true);
+                    $('#branch_fax_number').val(response.branches[0].FAX番号);
+                    $('#branch_fax_number').attr('disabled', true);
                     $('.company_td').find('.new_company_tag').remove();
                 }
             });
@@ -334,9 +374,12 @@ $(document).ready(function () {
             $('.company_choiced').removeClass('company_choiced');
             $('#company_name').attr('readonly', false);
             $('#company_name_kana').attr('disabled', false);
-            $('#company_address').attr('disabled', false);
-            $('#company_phone_number').attr('disabled', false);
-            $('#company_fax_number').attr('disabled', false);
+            $('#branch_name_container').html(
+                `<input type="text" name="branch_name" id="branch_name" autocomplete="off">`
+            );
+            $('#branch_address').attr('disabled', false);
+            $('#branch_phone_number').attr('disabled', false);
+            $('#branch_fax_number').attr('disabled', false);
             if ($('.company_td').find('.new_company_tag').length == 0) {
                 $('.company_td').append(`
                 <div class="new_company_tag">

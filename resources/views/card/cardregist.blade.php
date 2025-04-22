@@ -17,6 +17,10 @@
             AI解析中です
         </div>
     </div>
+    <div class="company_candidate_container_background"></div>
+    <div class="company_candidate_container">
+
+    </div>
     <div class="crop_controller_container">
         <div class="crop_controller_content">
             <img src="" class="croppable_image">
@@ -77,18 +81,22 @@
                     <tr>
                         <td>名前</td>
                         <td><input type="text" name="name" id="name" autocomplete="off" value="{{$card->名前 ?? ''}}"></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>名前カナ</td>
                         <td><input type="text" name="name_kana" id="name_kana" autocomplete="off" value="{{$card->名前カナ ?? ''}}"></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>携帯電話</td>
                         <td><input type="text" name="phone_number" id="phone_number" autocomplete="off" value="{{$card->携帯電話番号 ?? ''}}"></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>メールアドレス</td>
                         <td><input type="text" name="email" id="email" autocomplete="off" value="{{$card->メールアドレス ?? ''}}"></td>
+                        <td></td>
                     </tr>
                 </table>
             </div>
@@ -101,9 +109,6 @@
                                 @if($card)
                                 readonly class="company_choiced" value="{{$card->会社名 ?? ''}}"
                                 @endif>
-                            <div class="company_candidate_container">
-
-                            </div>
                         </td>
                         <td>
                             <img class="company_search_button" src="{{ asset(config('prefix.prefix').'/'.'img/card/search.svg') }}" alt="">
@@ -117,33 +122,57 @@
                                 disabled value="{{$card->会社名カナ ?? ''}}"
                                 @endif>
                         </td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td>会社所在地</td>
-                        <td>
-                            <input type="text" name="company_address" id="company_address" autocomplete="off"
+                        <td>拠点名</td>
+                        <td id="branch_name_container">
+                            @if($designate_branch)
+                            <select class="branch_name_select" name="branch_id" id="branch_id">
+                                @foreach($branches as $branch)
+                                <option value="{{$branch->id}}" data-address="{{$branch->拠点所在地}}" data-phone_number="{{$branch->電話番号}}" data-fax_number="{{$branch->FAX番号}}" @if($branch->id == $card->拠点ID) selected @endif>{{$branch->拠点名}}</option>
+                                @endforeach
+                            </select>
+                            <div class="add_branch_button">拠点追加</div>
+  
+                            @else
+                            <input type="text" name="branch_name" id="branch_name" autocomplete="off"
                                 @if($card)
-                                disabled value="{{$card->会社所在地 ?? ''}}"
+                                disabled value="{{$card->拠点名 ?? ''}}"
+                                @endif>
+                            @endif
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>所在地</td>
+                        <td>
+                            <input type="text" name="branch_address" id="branch_address" autocomplete="off"
+                                @if($card)
+                                disabled value="{{$card->拠点所在地 ?? ''}}"
                                 @endif>
                         </td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>電話番号</td>
                         <td>
-                            <input type="text" name="company_phone_number" id="company_phone_number" autocomplete="off"
+                            <input type="text" name="branch_phone_number" id="branch_phone_number" autocomplete="off"
                                 @if($card)
                                 disabled value="{{$card->電話番号 ?? ''}}"
                                 @endif>
                         </td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>FAX番号</td>
                         <td>
-                            <input type="text" name="company_fax_number" id="company_fax_number" autocomplete="off"
+                            <input type="text" name="branch_fax_number" id="branch_fax_number" autocomplete="off"
                                 @if($card)
                                 disabled value="{{$card->FAX番号 ?? ''}}"
                                 @endif>
                         </td>
+                        <td></td>
                     </tr>
                 </table>
             </div>
@@ -153,6 +182,7 @@
                     <tr>
                         <td>役職</td>
                         <td><input type="text" name="position" id="position" autocomplete="off" value="{{$card->役職 ?? ''}}"></td>
+                        <td></td>
                     </tr>
                     @if(!$card)
                     <tr>
@@ -160,6 +190,7 @@
                         <td>
                             <input type="text" name="department1" class="department" id="department1" data-department_number="1" autocomplete="off">
                         </td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="2"><button type="button" class="add_department_button" id="add_department" data-now_department_number="1">部署追加</button></td>

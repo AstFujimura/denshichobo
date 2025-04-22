@@ -32,6 +32,7 @@ use App\Models\Card_Company;
 use App\Models\Carduser;
 use App\Models\Department;
 use App\Models\Card_Department;
+use App\Models\Branch;
 use Illuminate\Support\Facades\File as Filesystem;
 
 
@@ -86,8 +87,9 @@ class CardController extends Controller
             return redirect()->route('cardviewget')->with('error', '名刺が見つかりませんでした。');
         }
         $cards = DB::table('cards')
-            ->select('cards.id as card_id', 'cards.*',  'companies.*')
+            ->select('cards.id as card_id', 'cards.*',  'companies.*', 'branches.*')
             ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
+            ->leftJoin('branches', 'cards.拠点ID', '=', 'branches.id')
             ->where('cards.名刺ユーザーID', $carduser->id)
             ->get();
         foreach ($cards as $card) {
@@ -98,6 +100,9 @@ class CardController extends Controller
                 ->orderBy('cards.id', 'desc')
                 ->get();
             $card->departments = $departments;
+            if ($card->拠点指定 == 0) {
+                $card->拠点名 = "";
+            }
             if ($card->最新フラグ == 1) {
                 $now_card = $card;
             }
@@ -130,7 +135,8 @@ class CardController extends Controller
         $card_id = 0;
         $carduser_id = 0;
         $card = 0;
-        return view('card.cardregist', compact("prefix", "server", "edit", "card_id", "carduser_id", "card"));
+        $designate_branch = false;
+        return view('card.cardregist', compact("prefix", "server", "edit", "card_id", "carduser_id", "card", "designate_branch"));
     }
     public function cardeditget(Request $request, $id)
     {
@@ -141,9 +147,10 @@ class CardController extends Controller
         $server = config('prefix.server');
         $edit = 'edit';
         $card = DB::table('cards')
-            ->select('cards.id as card_id', 'cards.*', 'cardusers.*', 'companies.*')
+            ->select('cards.id as card_id', 'cards.*', 'cardusers.*', 'companies.*', 'branches.*')
             ->leftJoin('cardusers', 'cards.名刺ユーザーID', '=', 'cardusers.id')
             ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
+            ->leftJoin('branches', 'cards.拠点ID', '=', 'branches.id')
             ->where('cards.id', $id)
             ->first();
         $card_id = $id;
@@ -155,7 +162,9 @@ class CardController extends Controller
             ->orderBy('card_department.id', 'asc')
             ->get();
         $card->departments = $departments;
-        return view('card.cardregist', compact("prefix", "server", "edit", "carduser", "card_id", "card", "carduser_id"));
+        $designate_branch = $card->拠点指定 == 1 ? true : false;
+        $branches = Branch::where('会社ID', $card->会社ID)->get();
+        return view('card.cardregist', compact("prefix", "server", "edit", "carduser", "card_id", "card", "carduser_id", "designate_branch", "branches"));
     }
 
     public function cardaddget(Request $request, $id)
@@ -222,10 +231,28 @@ class CardController extends Controller
             $company = new Company();
             $company->会社名 = $request->company_name;
             $company->会社名カナ = $request->company_name_kana;
-            $company->会社所在地 = $request->company_address;
-            $company->電話番号 = $request->company_phone_number;
-            $company->FAX番号 = $request->company_fax_number;
             $company->save();
+        }
+        // 拠点IDが入力されている場合は拠点を取得する
+        $branch_id = $request->branch_id;
+        // 拠点名が入力されている場合は拠点を取得する
+        $branch_name = $request->branch_name;
+        if ($branch_name != '') {
+            $branch = Branch::where('拠点名', $branch_name)
+                ->where('会社ID', $company->id)
+                ->first();
+            if (!$branch) {
+                $branch = new Branch();
+                $branch->拠点名 = $branch_name;
+                $branch->会社ID = $company->id;
+                $branch->拠点所在地 = $request->branch_address;
+                $branch->電話番号 = $request->branch_phone_number;
+                $branch->FAX番号 = $request->branch_fax_number;
+                $branch->拠点指定 = true;
+                $branch->save();
+            }
+        } else if ($branch_id != '') {
+            $branch = Branch::find($branch_id);
         }
         // その名刺の変更
         if ($edit == 'edit') {
@@ -237,7 +264,6 @@ class CardController extends Controller
             $carduser = Carduser::where('id', $request->carduser)->first();
             $card = new Card();
             $card->名刺ユーザーID = $carduser->id;
-            $card->会社ID = $company->id;
             $card->最新フラグ = 1;
             $past_card = Card::where('名刺ユーザーID', $carduser->id)->update(['最新フラグ' => 0]);
         } else {
@@ -248,7 +274,6 @@ class CardController extends Controller
 
             $card = new Card();
             $card->名刺ユーザーID = $carduser->id;
-            $card->会社ID = $company->id;
             $card->最新フラグ = 1;
         }
 
@@ -257,7 +282,8 @@ class CardController extends Controller
         $card->携帯電話番号 = $request->phone_number;
         $card->メールアドレス = $request->email;
         $card->役職 = $request->position;
-
+        $card->拠点ID = $branch->id;
+        $card->会社ID = $company->id;
 
 
         // 切り取ったblob画像の場合
@@ -381,30 +407,62 @@ class CardController extends Controller
                     $imageFile = $request->file('image');
                 }
 
-                // 一時的にパブリックストレージに保存
-                $path = $imageFile->store('public/temp_business_cards');
-                $imageUrl = asset(config('prefix.prefix') . '/' . str_replace('public/', 'storage/', $path));
 
                 if ($server == 'onpre') {
-                    // Google Cloud Vision APIを使用
-                    $imageAnnotator = new ImageAnnotatorClient();
-                    $imageData = file_get_contents(storage_path('app/' . $path));
-                    $response = $imageAnnotator->documentTextDetection($imageData);
-                    $annotation = $response->getFullTextAnnotation();
-                    $rawText = $annotation ? $annotation->getText() : '';
-                    $imageAnnotator->close();
+                    $filename = 'temp/' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
+                    $path = Storage::disk('wasabi')->putFileAs('', $imageFile, $filename, 'public');
+                    $imageUrl = Storage::disk('wasabi')->url($path);
 
-                    // OpenAI に JSON 変換を依頼
+
+
+                    // // Google Cloud Vision APIを使用
+                    // $imageAnnotator = new ImageAnnotatorClient();
+                    // $imageData = file_get_contents(storage_path('app/' . $path));
+                    // $response = $imageAnnotator->documentTextDetection($imageData);
+                    // $annotation = $response->getFullTextAnnotation();
+                    // $rawText = $annotation ? $annotation->getText() : '';
+                    // $imageAnnotator->close();
+
+                    // // OpenAI に JSON 変換を依頼
+                    // $aiResponse = OpenAI::chat()->create([
+                    //     'model' => 'gpt-3.5-turbo',
+                    //     'messages' => [
+                    //         ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
+                    //         ['role' => 'user', 'content' => $this->getJsonPrompt($rawText)],
+                    //     ],
+                    // ]);
+
+                    // $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
+
                     $aiResponse = OpenAI::chat()->create([
-                        'model' => 'gpt-3.5-turbo',
+                        'model' => 'gpt-4o-mini',
                         'messages' => [
                             ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
-                            ['role' => 'user', 'content' => $this->getJsonPrompt($rawText)],
-                        ],
+                            [
+                                'role' => 'user',
+                                'content' => [
+                                    [
+                                        "type" => "text",
+                                        "text" => $this->getJsonPrompt() // プロンプトの内容
+                                    ],
+                                    [
+                                        "type" => "image_url",
+                                        "image_url" => [
+                                            "url" => $imageUrl,
+                                        ]
+                                    ]
+                                ]
+                            ],
+                        ]
                     ]);
-
-                    $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
+                    $jsonString = trim(preg_replace('/.*?(\{.*\}).*/s', '$1', $aiResponse->choices[0]->message->content));
+                    $structuredData = json_decode($jsonString, true);
                 } else if ($server == 'cloud') {
+
+                    // 一時的にパブリックストレージに保存
+                    $path = $imageFile->store('public/temp_business_cards');
+                    $imageUrl = asset(config('prefix.prefix') . '/' . str_replace('public/', 'storage/', $path));
+
                     // Cloud 環境: OpenAI に画像URLを直接送信し、一発で JSON を返す
                     $aiResponse = OpenAI::chat()->create([
                         'model' => 'gpt-4o-mini',
@@ -650,7 +708,13 @@ class CardController extends Controller
     public function companyinfoget($id)
     {
         $company = Company::where('id', $id)->first();
-        return response()->json($company);
+        $branches = Branch::where('会社ID', $id)->get();
+        $designate_branch = Branch::where('会社ID', $id)->where('拠点指定', 1)->first() ? true : false;
+        return response()->json([
+            'company' => $company,
+            'branches' => $branches,
+            'designate_branch' => $designate_branch
+        ]);
     }
 
     public function cardtestget()
