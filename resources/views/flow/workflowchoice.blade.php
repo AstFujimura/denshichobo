@@ -19,7 +19,7 @@ Rapid ~電子承認システム
     <form action="{{route('workflowchoicepost')}}" method="post" id="flow_application_choice_form" class="flow_application_choice_form" enctype="multipart/form-data">
         @csrf
         <div class="flow_choice_button_container">
-            <a href="{{route('workflowapplicationget')}}" class="back_button flow_choice_back_button" id="flow_next_button">
+            <a href="{{route('workflowapplicationget',['t_flow_id' => $id])}}" class="back_button flow_choice_back_button" id="flow_next_button">
                 <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
                 もどる
             </a>

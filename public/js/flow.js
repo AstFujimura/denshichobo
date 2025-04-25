@@ -686,6 +686,18 @@ $(document).ready(function () {
 
   // -------------ワークフロー申請----------------
 
+  function optional_value_input() {
+
+    if ($('#t_flow_id').val() != "") {
+      $('.optional_input').each(function () {
+        var optional_id = $(this).data('id')
+        var optional_value = $(this).data('value')
+        $('.application_form_text[name="item' + optional_id + '"]').val(optional_value)
+      })
+    }
+  }
+
+
   $('.category_input').on('change', function () {
     $.ajax({
       url: prefix + '/workflow/category/info/' + $(this).val(),
@@ -741,14 +753,17 @@ $(document).ready(function () {
             }, 500);
           }
         }
-
-
+        optional_value_input()
       },
       error: function () {
       }
 
     })
   })
+  if ($('#flow_application').length != 0 && $('#t_flow_id').val() != "") {
+    var category_id = $('#t_flow_id').data('category_id')
+    $('.category_input[value="' + category_id + '"]').next('.category_element').click()
+  }
   //ファイルが登録されたときにその項目のIDをkeyにイメージを含んだ要素をimgobjectに格納する
   var imgobject = {};
 

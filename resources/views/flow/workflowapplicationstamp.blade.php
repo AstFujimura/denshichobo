@@ -38,7 +38,7 @@ Rapid ~電子承認システム
                 <div class="preview_control_items">
                     <div class="application_stamp_button_container">
                         <div class="application_stamp_button_content">
-                            <a href="{{route('workflow')}}" class="back_button application_stamp_back_button" id="flow_next_button">
+                            <a href="{{route('workflowchoiceget',['id' => $t_flow->id])}}" class="back_button application_stamp_back_button" id="flow_next_button">
                                 <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
                                 もどる
                             </a>

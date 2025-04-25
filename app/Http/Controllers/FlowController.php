@@ -1568,9 +1568,22 @@ class FlowController extends Controller
         $server = config('prefix.server');
         $m_categories = M_category::all();
         $m_pointers = M_pointer::all();
+        $t_flow_id = $request->input('t_flow_id');
+        $t_flow = T_flow::where('id', $t_flow_id)->where('ステータス', 0)->first();
+        $optionals = T_optional::where('フローテーブルID', $t_flow_id)->get();
+        foreach ($optionals as $optional) {
+            if ($optional->文字列) {
+                $optional->値 = $optional->文字列;
+            }
+            if ($optional->数値) {
+                $optional->値 = $optional->数値;
+            }
+            if ($optional->日付) {
+                $optional->値 = $optional->日付;
+            }
+        }
 
-
-        return view('flow.workflowapplication', compact("prefix", "server", "m_categories", "m_pointers"));
+        return view('flow.workflowapplication', compact("prefix", "server", "m_categories", "m_pointers", "t_flow_id", "t_flow", "optionals"));
     }
     // ワークフロー申請ポスト
     public function workflowapplicationpost(Request $request)
@@ -1584,11 +1597,13 @@ class FlowController extends Controller
 
 
 
-
-
-
         // フローテーブルを作成 (ステータスはデフォルトで0→下書き状態)
-        $new_t_flow = new T_flow();
+
+        if ($request->input("t_flow_id")) {
+            $new_t_flow = T_flow::where('id', $request->input("t_flow_id"))->first();
+        } else {
+            $new_t_flow = new T_flow();
+        }
         $new_t_flow->申請者ID = Auth::id();
         $new_t_flow->カテゴリマスタID = $request->input("category");
         $pastID = $this->generateRandomCode();
@@ -1657,7 +1672,11 @@ class FlowController extends Controller
 
         foreach ($parts as $part) {
             $m_optional = M_optional::find($part);
-            $t_optional = new T_optional();
+            if ($request->input("t_flow_id") && $m_optional->型 != 4) {
+                $t_optional = T_optional::where('フローテーブルID', $request->input("t_flow_id"))->where('任意項目マスタID', $m_optional->id)->first();
+            } else {
+                $t_optional = new T_optional();
+            }
             $t_optional->フローテーブルID = $new_t_flow->id;
             $t_optional->任意項目マスタID = $m_optional->id;
             $t_optional->金額条件 = $m_optional->金額条件;
