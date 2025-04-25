@@ -247,6 +247,7 @@ $(document).ready(function () {
                         try {
                             autoFillForm(response.data);
                             getCompanyCandidate(response.data.会社名, true);
+                            console.log(response.data);
                         }
                         catch (e) {
                             console.log(e);
@@ -272,6 +273,10 @@ $(document).ready(function () {
             $('#position').val(data.役職);
             $('#phone_number').val(data.携帯電話番号);
             $('#email').val(data.メールアドレス);
+            $('#branch_name').val(data.拠点名);
+            $('#branch_address').val(data.住所);
+            $('#branch_phone_number').val(data.電話番号);
+            $('#branch_fax_number').val(data.FAX番号);
             department_reset();
             var i = 1;
             while (data['部署' + i]) {
@@ -284,10 +289,6 @@ $(document).ready(function () {
 
             $('#company_name').val(data.会社名);
             $('#company_name_kana').val(data.会社名カナ);
-            $('#company_phone_number').val(data.電話番号);
-            $('#company_fax_number').val(data.FAX番号);
-            $('#company_address').val(data.住所);
-            $('#company_postal_code').val(data.郵便番号);
         }
         // 会社候補を取得して表示
         // AI読み取りで候補がない場合は候補を表示せずに「新規」表示だけをおこなう
@@ -304,6 +305,7 @@ $(document).ready(function () {
                     }
                     else {
                         $('.company_candidate_container').addClass('company_candidate_container_open');
+                        $('.company_candidate_container_background').addClass('company_candidate_container_background_open');
                         $('.company_candidate_container').append(`
                         <input type="radio" name="company_candidate" value="new" id="company_candidate_new">
                         <label class="company_candidate_content company_candidate_new" for="company_candidate_new">
@@ -337,10 +339,13 @@ $(document).ready(function () {
         // 会社情報を取得して表示
         function company_info_get(id) {
             var prefix = $('#prefix').val();
+            var candidate_branch = $('#branch_name').val();
             $.ajax({
                 url: prefix + '/card/company/info/' + id,
                 type: 'GET',
+                data: { candidate_branch: candidate_branch },
                 success: function (response) {
+                    console.log(response);
                     $('#company_name').val(response.company.会社名);
                     $('#company_name').attr('readonly', true);
                     $('#company_name').addClass('company_choiced');
@@ -359,12 +364,25 @@ $(document).ready(function () {
                         `);
 
                     }
-                    $('#branch_address').val(response.branches[0].拠点所在地);
-                    $('#branch_address').attr('disabled', true);
-                    $('#branch_phone_number').val(response.branches[0].電話番号);
-                    $('#branch_phone_number').attr('disabled', true);
-                    $('#branch_fax_number').val(response.branches[0].FAX番号);
-                    $('#branch_fax_number').attr('disabled', true);
+                    if (response.candidate_branch) {
+                        $('#branch_address').val(response.candidate_branch.拠点所在地);
+                        $('#branch_address').attr('disabled', true);
+                        $('#branch_phone_number').val(response.candidate_branch.電話番号);
+                        $('#branch_phone_number').attr('disabled', true);
+                        $('#branch_fax_number').val(response.candidate_branch.FAX番号);
+                        $('#branch_fax_number').attr('disabled', true);
+                        $('#branch_id option[value="' + response.candidate_branch.id + '"]').prop('selected', true);
+
+                    }
+                    else {
+                        $('#branch_address').val(response.branches[0].拠点所在地);
+                        $('#branch_address').attr('disabled', true);
+                        $('#branch_phone_number').val(response.branches[0].電話番号);
+                        $('#branch_phone_number').attr('disabled', true);
+                        $('#branch_fax_number').val(response.branches[0].FAX番号);
+                        $('#branch_fax_number').attr('disabled', true);
+                    }
+
                     $('.company_td').find('.new_company_tag').remove();
                 }
             });
@@ -374,9 +392,11 @@ $(document).ready(function () {
             $('.company_choiced').removeClass('company_choiced');
             $('#company_name').attr('readonly', false);
             $('#company_name_kana').attr('disabled', false);
-            $('#branch_name_container').html(
-                `<input type="text" name="branch_name" id="branch_name" autocomplete="off">`
-            );
+            if ($('#branch_id').length > 0) {
+                $('#branch_name_container').html(
+                    `<input type="text" name="branch_name" id="branch_name" autocomplete="off">`
+                );
+            }
             $('#branch_address').attr('disabled', false);
             $('#branch_phone_number').attr('disabled', false);
             $('#branch_fax_number').attr('disabled', false);
@@ -409,6 +429,7 @@ $(document).ready(function () {
         // 部署をリセット
         function department_reset() {
             $('.department:not([name="department1"])').closest('tr').remove();
+            $('.department').val('');
             $('#add_department').data('now_department_number', 1);
         }
 
@@ -695,5 +716,147 @@ $(document).ready(function () {
         });
     }
 
+    $('#folder_upload').on('change', function () {
+        const files = this.files;
+        if (files.length > 0) {
+            // 最初のファイルのフォルダ名を取得
+            const folderName = files[0].webkitRelativePath.split('/')[0];
+            $('.folder_upload_label_text').text('選択中:フォルダ名「 ' + folderName + '」');
+            $('.upload_button').addClass('enabled');
+        } else {
+            $('.folder_upload_label_text').text('タップしてフォルダを選択');
+            $('.upload_button').removeClass('enabled');
+        }
+    });
+    // uuid生成
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    // 名刺一括アップロード
+    let selectedFiles = [];
+
+    $('#folder_upload').on('change', function (event) {
+        selectedFiles = Array.from(event.target.files);
+    });
+    $('.upload_button').on('click', function (event) {
+        if (confirm('名刺を一括アップロードしますか？')) {
+            $('.progress_container_wrapper').addClass('progress_container_wrapper_open');
+            $('.progress_bar').css('width', '0%');
+            $('.progress_message').text('アップロード中');
+            $('#multiple_upload_form').submit();
+        }               
+    })
+    $('#multiple_upload_form').on('submit', function (event) {
+        event.preventDefault(); // 通常のフォーム送信は止める
+        let uploadId = generateUUID(); // ここで一度作成！
+        var prefix = $('#prefix').val();
+        const allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+        let validFiles = selectedFiles.filter(function (file) {
+            const extension = file.name.split('.').pop().toLowerCase();
+            return allowedExtensions.includes(extension);
+        });
+
+        if (validFiles.length === 0) {
+            alert('アップロードできる画像ファイルがありません。');
+            return;
+        }
+
+        let totalFiles = validFiles.length;
+        let uploadedFiles = 0;
+
+        validFiles.forEach(function (file) {
+            const formData = new FormData();
+            formData.append('cards', file);
+            formData.append('upload_id', uploadId);
+            $.ajax({
+                url: prefix + '/card/multiple/upload',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    uploadedFiles++;
+
+                    var progress = parseInt(uploadedFiles / totalFiles * 20) + '%';
+                    $('.progress_bar').css('width', progress);
+                    $('.progress_message').text('アップロード中 :' + progress);
+                    if (uploadedFiles === totalFiles) { 
+                        processing_check(uploadId);
+                        $.ajax({
+                            url: prefix + '/card/openai/process', // OpenAI呼び出し用のエンドポイント
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+                            },
+                            data: {
+                                upload_id: uploadId  // さっき生成したアップロードIDを送る！
+                            },
+                            success: function(response) {
+                                $('#upload_complete_flag').val('true');
+                                $('.progress_message').text('AI解析中 : 99%');
+                                $('.progress_bar').css('width', '99.8%');
+                                $('#folder_upload').val('');
+                                $('.upload_button').removeClass('enabled');
+                                setTimeout(function() {
+                                    alert('完了しました');
+                                    $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+                                }, 500);
+                            },
+                            error: function(xhr, status, error) {
+                                alert('OpenAI処理に失敗しました。');
+                                console.error(error);
+                                $('#folder_upload').val('');
+                                $('.upload_button').removeClass('enabled');
+                                $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+                            }
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('アップロードに失敗しました。');
+                    console.error(error);
+                    $('#folder_upload').val('');
+                    $('.upload_button').removeClass('enabled');
+                    $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+                }
+            });
+        });
+    });
+
+    function processing_check(uploadId) {
+        var prefix = $('#prefix').val();
+        var intervalId = setInterval(function () {
+            // hidden inputの値がtrueかチェック
+            var isUploadComplete = $('#upload_complete_flag').val(); // ← hidden inputのIDを想定
+    
+            if (isUploadComplete === "true") {
+                clearInterval(intervalId); // 通信を止める
+                $('.progress_message').text('ai処理完了');
+                return;
+            }
+    
+            $.ajax({
+                url: prefix + '/card/multiple/progress',
+                method: 'GET',
+                data: {
+                    upload_id: uploadId
+                },
+                success: function (response) {
+                    var progress = parseInt(parseInt(response.done) / parseInt(response.total) * 80 + 20) + '%';
+                    $('.progress_message').text('AI解析中 :' + progress);
+                    $('.progress_bar').css('width', progress);
+                }
+            });
+        }, 300);
+    }
 });
 

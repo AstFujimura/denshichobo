@@ -1017,3 +1017,113 @@ body .usersettingtitle {
   align-items: center;
   justify-content: center;
 }
+
+.multiple_upload_container {
+  width: 100rem;
+  max-width: 97%;
+  margin-inline: auto;
+}
+.multiple_upload_container .multiple_upload_form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.multiple_upload_container .multiple_upload_form .folder_upload {
+  display: none;
+}
+.multiple_upload_container .multiple_upload_form .folder_upload_label {
+  border: solid 0.4rem #abdef5;
+  border-radius: 0.5rem;
+  background: #f0f8ff;
+  padding: 0.5rem;
+  cursor: pointer;
+  width: 50rem;
+  height: 10rem;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.multiple_upload_container .multiple_upload_form .folder_upload_label .folder_upload_label_text {
+  font-size: 1.5rem;
+  color: #92b8cf;
+}
+.multiple_upload_container .multiple_upload_form .upload_button {
+  background: #636363;
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 2rem;
+  border: 0;
+  width: 10rem;
+  height: 3rem;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+.multiple_upload_container .multiple_upload_form .upload_button.enabled {
+  cursor: pointer;
+  background: #2980ed;
+}
+.multiple_upload_container .multiple_upload_form .upload_button.enabled:hover {
+  background: #2470ce;
+}
+.multiple_upload_container .progress_container_wrapper {
+  display: none;
+}
+.multiple_upload_container .progress_container_wrapper.progress_container_wrapper_open {
+  position: fixed;
+  top: 109px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: block;
+  background: rgba(0, 0, 0, 0.3215686275);
+}
+.multiple_upload_container .progress_container_wrapper.progress_container_wrapper_open .progress_container {
+  width: 50rem;
+  max-width: 97%;
+  height: 20rem;
+  margin-inline: auto;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  position: relative;
+  top: 40%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.multiple_upload_container .progress_container_wrapper.progress_container_wrapper_open .progress_container .progress_bar_wrapper {
+  width: 30rem;
+  height: 2rem;
+  background: transparent;
+  border: solid 0.1rem #7bbef7;
+  box-shadow: 0 0 10px 0 #7bbef7;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  margin-top: 1rem;
+}
+.multiple_upload_container .progress_container_wrapper.progress_container_wrapper_open .progress_container .progress_bar_wrapper .progress_bar {
+  height: 1.8rem;
+  background: #3aaff3;
+  border-radius: 1rem;
+  width: 0%;
+  margin-left: 0.5%;
+}
+.multiple_upload_container .progress_container_wrapper.progress_container_wrapper_open .progress_container .progress_annotation {
+  font-size: 1.2rem;
+  color: #3aaff3;
+  margin-inline: auto;
+}
+.multiple_upload_container .progress_container_wrapper.progress_container_wrapper_open .progress_container .progress_message {
+  font-size: 1.2rem;
+  color: #3aaff3;
+  margin-inline: auto;
+  margin-top: 1rem;
+}

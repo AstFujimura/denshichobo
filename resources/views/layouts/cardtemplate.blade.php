@@ -53,7 +53,9 @@
     <a class="headerIcon001" href="{{route('cardregistget')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="menuicon01" title="名刺登録">
     </a>
-
+    <a class="headerIcon001" href="{{route('cardmultipleuploadget')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/multiple_regist_gray.svg') }}" class="menuicon01" title="名刺一括登録">
+    </a>
 
 
     <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet', ['system_type' => 'card'])}}';">

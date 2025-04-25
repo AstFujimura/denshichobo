@@ -289,6 +289,7 @@ body #usersetting {
 }
 .Mainelement .schedule_container .schedule_row {
   display: flex;
+  font-size: 0.8rem;
 }
 .Mainelement .schedule_container .schedule_row .schedule_cell {
   width: 12.5%;

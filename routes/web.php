@@ -362,6 +362,19 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/company/info/{id}', [CardController::class, 'companyinfoget'])->name('companyinfoget');
             // 名刺テスト
             Route::get('/card/test', [CardController::class, 'cardtestget'])->name('cardtestget');
+        
+            // 名刺複数アップロード
+            Route::get('/card/multiple/upload', [CardController::class, 'cardmultipleuploadget'])->name('cardmultipleuploadget');
+            // 名刺複数アップロードポスト
+            Route::post('/card/multiple/upload', [CardController::class, 'cardmultipleuploadpost'])->name('cardmultipleuploadpost');
+            //    OpenAI呼び出し
+            Route::post('/card/openai/process', [CardController::class, 'cardopenai'])->name('cardopenai');
+           
+            // 複数アップロード進捗
+            Route::get('/card/multiple/progress', [CardController::class, 'cardmultipleprogressget'])->name('cardmultipleprogressget');
+
+
+            Route::get('/card/multiple/test', [CardController::class, 'cardmultipletestget'])->name('cardmultipletestget');
         }
 
         // -----------------------------スケジュール--------------------------------
