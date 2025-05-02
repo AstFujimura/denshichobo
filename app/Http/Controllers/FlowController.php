@@ -3258,13 +3258,13 @@ class FlowController extends Controller
             ->get();
 
         $status = $request->input('status');
-        if ($status == null) {
-            if ($t_flows_reapplication->count() == 0) {
-                $status = "ongoing_tab";
-            } else {
-                $status = "reapplication_tab";
-            }
-        }
+        // if ($status == null) {
+        //     if ($t_flows_reapplication->count() == 0) {
+        //         $status = "ongoing_tab";
+        //     } else {
+        //         $status = "reapplication_tab";
+        //     }
+        // }
 
         return view('flow.workflowcheckview', compact("prefix", "server", "m_categories", "users", "title", "category", "user", "start_day", "end_day", "status", "t_flows_ongoing", "t_flows_reject", "t_flows_approved", "t_flows_reapplication"));
     }
