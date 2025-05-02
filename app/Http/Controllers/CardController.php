@@ -546,7 +546,7 @@ class CardController extends Controller
                     ]);
                     $jsonString = trim(preg_replace('/.*?(\{.*\}).*/s', '$1', $aiResponse->choices[0]->message->content));
                     $structuredData = json_decode($jsonString, true);
-                    $token = $aiResponse->usage;
+
 
                     // 画像ファイルを削除
                     if ($request->hasFile('image') || $request->hasFile('blob-image')) {
@@ -591,7 +591,7 @@ class CardController extends Controller
                 } else {
                     return response()->json(['status' => 'error', 'message' => 'サーバー種別が不明です。']);
                 }
-
+                $token = $aiResponse->usage;
                 // 保存やレスポンスとして返す処理
                 return response()->json([
                     'status' => 'success',
