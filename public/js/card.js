@@ -4,11 +4,11 @@ $(document).ready(function () {
 
         var prefix = $('#prefix').val();
         if ($('#edit').val() == 'edit') {
-            const $img = $('<img>', {
-                class: 'croppable_image',
-            });
-            $('.card_file_front_label').html($img);
-            $('.croppable_image').each(function () {
+            const $front_img = $('<img>')
+                .addClass('croppable_image')
+                .attr('data-card_type', 'front');
+            $('#card_file_front_label .cropped_image_container').html($front_img);
+            $('.croppable_image[data-card_type="front"]').each(function () {
                 var img = $(this);
                 if ($('#server').val() == "cloud") {
                     $.ajax({
@@ -47,21 +47,89 @@ $(document).ready(function () {
 
                 }
             });
+            if ($('#back_image').val() != '') {
+                const $back_img = $('<img>')
+                    .addClass('croppable_image')
+                    .attr('data-card_type', 'back');
+                $('#card_file_back_label .cropped_image_container').html($back_img);
+                $('.croppable_image[data-card_type="back"]').each(function () {
+                    var img = $(this);
+                    if ($('#server').val() == "cloud") {
+                        $.ajax({
+                            url: prefix + '/card/img/' + $('#card_id').val() + '/back', // データを取得するURLを指定
+                            method: 'GET',
+                            dataType: "json",
+                            success: function (response) {
+                                if (response.Type === 'application/pdf') {
+                                }
+                                else if (response.Type.startsWith('image/')) {
+                                    var Url = URL.createObjectURL(response);
+                                    img.attr('src', Url);
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        $.ajax({
+                            url: prefix + '/card/img/' + $('#card_id').val() + '/back', // データを取得するURLを指定
+                            method: 'GET',
+                            xhrFields: {
+                                responseType: 'blob' // ファイルをBlobとして受け取る
+                            },
+                            success: function (response) {
+                                var Url = URL.createObjectURL(response);
+                                if (response.type.startsWith('image/')) {
+                                    img.attr('src', Url);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
 
             $('.button_container').addClass('button_container_open');
         }
+
+        // 裏表切り替えボタンが押されたとき
+        $('#card_switch_button').on('click', function () {
+            const card_status = $('#card_status').data('card_type');
+            $('.card_switch_button').removeClass('card_switch_button_active');
+            $(this).addClass('card_switch_button_active');
+            if (card_status == 'front') {
+                $('#card_status').data('card_type', 'back');
+                $('#card_status').attr('data-card_type', 'back');
+                $('#card_status').text('裏面');
+                $('#card_file_front_label').addClass('display_none');
+                $('#card_file_back_label').removeClass('display_none');
+            }
+            else {
+                $('#card_status').data('card_type', 'front');
+                $('#card_status').attr('data-card_type', 'front');
+                $('#card_status').text('表面');
+                $('#card_file_front_label').removeClass('display_none');
+                $('#card_file_back_label').addClass('display_none');
+            }
+            button_container_open()
+        });
 
         // const canvas = $('#canvas')[0];
         // const ctx = canvas.getContext('2d');
         var cropper;
         var lastCropData
-        let croppedBlob;  // トリミング済み画像のBlobを保持
+        let front_croppedBlob;  // トリミング済み画像のBlobを保持
+        let back_croppedBlob;  // トリミング済み画像のBlobを保持
 
         // 画像が変更されたときにCanvasに描画
-        $('#card_file_front').on('change', function () {
+        $('.card_file_input').on('change', function () {
+            const card_status = $(this).data('card_type');
             // 前回のトリミング範囲をリセット
             lastCropData = null;
-            croppedBlob = null; // Blobをリセット
+            if (card_status == 'front') {
+                front_croppedBlob = null; // Blobをリセット
+            }
+            else {
+                back_croppedBlob = null; // Blobをリセット
+            }
             const file = this.files[0]; // 変更されたファイルを取得
             if (file) {
                 const reader = new FileReader();
@@ -71,12 +139,14 @@ $(document).ready(function () {
                     if (cropper) {
                         cropper.destroy();
                     }
-                    const $img = $('<img>', {
-                        class: 'croppable_image',
-                    });
-                    $('.card_file_front_label').html($img);
-                    $('.croppable_image').attr('src', e.target.result);
-                    $('.button_container').addClass('button_container_open');
+                    const $img = $('<img>')
+                        .addClass('croppable_image')
+                        .attr('data-card_type', card_status);
+
+                    $('#card_file_' + card_status + '_label .cropped_image_container').html($img);
+                    $('.croppable_image[data-card_type="' + card_status + '"]').attr('src', e.target.result);
+
+                    button_container_open(card_status);
                     // 画像がロードされたときの処理
                     $('.croppable_image').on('load', function () {
 
@@ -88,13 +158,34 @@ $(document).ready(function () {
                 reader.readAsDataURL(file);
             }
         });
+        // ボタンコンテナを開くか否かの関数
+        function button_container_open() {
+            const card_status = $("#card_status").data('card_type');
+            $('.button_container').addClass('button_container_open');
+            if (card_status == 'front') {
+                $('#send_button').removeClass('display_none');
+                $('#remove_button').addClass('display_none');
+            }
+            else {
+                if ($('#card_file_back').val() != '') {
+                    $('#send_button').addClass('display_none');
+                    $('#remove_button').removeClass('display_none');
+                }
+                else {
+                    $('.button_container').removeClass('button_container_open');
+                }
+            }
+        }
 
 
         //切り取りボタンが押されたとき
         $('.crop_button').on('click', function () {
-            $('.crop_controller_container').addClass('controller_open');
+            const card_status = $("#card_status").data('card_type');
+            $('.crop_controller_container').removeClass('display_none');
+            $('.crop_controller_content').addClass('display_none');
+            $('.crop_controller_content[data-card_type="' + card_status + '"]').removeClass('display_none');
             // Cropper.js の初期化
-            cropper = new Cropper($('.crop_controller_content .croppable_image')[0], {
+            cropper = new Cropper($('.crop_controller_content .croppable_image[data-card_type="' + card_status + '"]')[0], {
                 aspectRatio: NaN, // 縦横比を固定しない
                 viewMode: 1, // クロップ領域が画像内に収まるよう制限
                 autoCropArea: 0.9, // 初期表示時のトリミング範囲
@@ -112,6 +203,20 @@ $(document).ready(function () {
                 cropBoxMovable: true // トリミングボックスの移動を許可
             });
 
+        });
+        // 解除ボタンが押されたとき
+        $('#remove_button').on('click', function () {
+            $('#card_file_back_label').html(
+                `<div class="cropped_image_container">
+                    <div class="cropped_image_container_text">
+                        裏 タップして名刺を読みこんでください
+                    </div>
+                </div>
+                `
+            );
+            $('#card_file_back').val('');
+            $('.croppable_image[data-card_type="back"]').attr('src', '');
+            button_container_open();
         });
 
         //回転ボタンが押されたとき
@@ -132,15 +237,21 @@ $(document).ready(function () {
 
         //切り取り完了
         $('.crop_complete_button').on('click', function () {
-            $('.crop_controller_container').removeClass('controller_open');
+            const card_status = $("#card_status").data('card_type');
+            $('.crop_controller_container').addClass('display_none');
 
             // 現在のトリミング範囲を保存
             lastCropData = cropper.getData();
             // トリミングされた画像をBlob形式で取得
             cropper.getCroppedCanvas().toBlob(function (blob) {
-                croppedBlob = blob; // Blobを保存
+                if (card_status == 'front') {
+                    front_croppedBlob = blob; // Blobを保存
+                }
+                else {
+                    back_croppedBlob = blob; // Blobを保存
+                }
                 const croppedImageURL = URL.createObjectURL(blob); // BlobをURLに変換してプレビュー表示用に利用
-                $('.card_file_front_label .croppable_image').attr('src', croppedImageURL);
+                $('#card_file_' + card_status + '_label .croppable_image').attr('src', croppedImageURL);
             });
             cropper.destroy();
 
@@ -150,7 +261,7 @@ $(document).ready(function () {
 
         //切り取りキャンセル
         $('.crop_cancel_button').on('click', function () {
-            $('.crop_controller_container').removeClass('controller_open');
+            $('.crop_controller_container').addClass('display_none');
             cropper.destroy();
         });
 
@@ -226,8 +337,8 @@ $(document).ready(function () {
         function sendImageToServer(file) {
             var prefix = $('#prefix').val();
             const formData = new FormData();
-            if (croppedBlob) {
-                formData.append('blob-image', croppedBlob, 'cropped-image.png'); // Blobをフォームデータに追加
+            if (front_croppedBlob) {
+                formData.append('blob-image', front_croppedBlob, 'cropped-image.png'); // Blobをフォームデータに追加
             }
             else {
                 formData.append('image', file);
@@ -248,6 +359,7 @@ $(document).ready(function () {
                             autoFillForm(response.data);
                             getCompanyCandidate(response.data.会社名, true);
                             console.log(response.data);
+                            console.log(response.token);
                         }
                         catch (e) {
                             console.log(e);
@@ -459,20 +571,20 @@ $(document).ready(function () {
             // 既存のBlob用のinputがあれば削除（重複防止のため）
             form.find('input[name="blob-image"]').remove();
 
-            if (croppedBlob) {
+            if (front_croppedBlob) {
                 // 新しいinput要素を作成してBlobデータを設定
                 const blobInput = $('<input>', {
                     type: 'file',
-                    name: 'blob-image',
+                    name: 'front_blob-image',
                     css: {
                         display: 'none'
                     }
                 });
 
                 // BlobデータをFileオブジェクトに変換
-                const mimeType = croppedBlob.type;
+                const mimeType = front_croppedBlob.type;
                 const extension = mimeType.split('/')[1];
-                const file = new File([croppedBlob], 'cropped-image.' + extension, { type: mimeType });
+                const file = new File([front_croppedBlob], 'front_cropped-image.' + extension, { type: mimeType });
 
                 // input要素にFileオブジェクトを設定
                 const dataTransfer = new DataTransfer();
@@ -483,6 +595,30 @@ $(document).ready(function () {
                 form.append(blobInput);
 
             }
+            if (back_croppedBlob) {
+                // 新しいinput要素を作成してBlobデータを設定
+                const blobInput = $('<input>', {
+                    type: 'file',
+                    name: 'back_blob-image',
+                    css: {
+                        display: 'none'
+                    }
+                });
+
+                // BlobデータをFileオブジェクトに変換
+                const mimeType = back_croppedBlob.type;
+                const extension = mimeType.split('/')[1];
+                const file = new File([back_croppedBlob], 'back_cropped-image.' + extension, { type: mimeType });
+
+                // input要素にFileオブジェクトを設定
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                blobInput[0].files = dataTransfer.files;
+
+                // フォームにinput要素を追加
+                form.append(blobInput);
+            }
+
 
             // フォームを送信
             form.submit();
@@ -749,7 +885,7 @@ $(document).ready(function () {
             $('.progress_bar').css('width', '0%');
             $('.progress_message').text('アップロード中');
             $('#multiple_upload_form').submit();
-        }               
+        }
     })
     $('#multiple_upload_form').on('submit', function (event) {
         event.preventDefault(); // 通常のフォーム送信は止める
@@ -768,95 +904,101 @@ $(document).ready(function () {
         }
 
         let totalFiles = validFiles.length;
+        $('#total_files_count').val(totalFiles);
         let uploadedFiles = 0;
+        $('#uploadedfiles_count').val(uploadedFiles);
+        processing_check(uploadId)
+        validFiles.forEach(function (file, index) {
+            setTimeout(function () {
+                const formData = new FormData();
+                formData.append('cards', file);
+                formData.append('upload_id', uploadId);
+                $.ajax({
+                    url: prefix + '/card/multiple/upload',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            $.ajax({
+                                url: prefix + '/card/openai/process',
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+                                },
+                                data: {
+                                    uploaded_card_id: response.uploaded_card_id
+                                },
+                                success: function (response) {
+                                    console.log('OpenAI process' + uploadedFiles);
 
-        validFiles.forEach(function (file) {
-            const formData = new FormData();
-            formData.append('cards', file);
-            formData.append('upload_id', uploadId);
-            $.ajax({
-                url: prefix + '/card/multiple/upload',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-                },
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    uploadedFiles++;
+                                    uploadedFiles++;
+                                    $('#uploadedfiles_count').val(uploadedFiles);
+                                },
+                                error: function (response) {
+                                    console.error('OpenAI process failed.' + uploadedFiles);
 
-                    var progress = parseInt(uploadedFiles / totalFiles * 20) + '%';
-                    $('.progress_bar').css('width', progress);
-                    $('.progress_message').text('アップロード中 :' + progress);
-                    if (uploadedFiles === totalFiles) { 
-                        processing_check(uploadId);
-                        $.ajax({
-                            url: prefix + '/card/openai/process', // OpenAI呼び出し用のエンドポイント
-                            type: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-                            },
-                            data: {
-                                upload_id: uploadId  // さっき生成したアップロードIDを送る！
-                            },
-                            success: function(response) {
-                                $('#upload_complete_flag').val('true');
-                                $('.progress_message').text('AI解析中 : 99%');
-                                $('.progress_bar').css('width', '99.8%');
-                                $('#folder_upload').val('');
-                                $('.upload_button').removeClass('enabled');
-                                setTimeout(function() {
-                                    alert('完了しました');
-                                    $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
-                                }, 500);
-                            },
-                            error: function(xhr, status, error) {
-                                alert('OpenAI処理に失敗しました。');
-                                console.error(error);
-                                $('#folder_upload').val('');
-                                $('.upload_button').removeClass('enabled');
-                                $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
-                            }
-                        });
+                                    uploadedFiles++;
+                                    $('#uploadedfiles_count').val(uploadedFiles);
+                                }
+                            });
+                        }
+                        else if (response.status === 'skip') {
+                            uploadedFiles++;
+                            $('#uploadedfiles_count').val(uploadedFiles);
+                        }
+                    },
+                    error: function (xhr, status, error) {
                     }
-                },
-                error: function (xhr, status, error) {
-                    alert('アップロードに失敗しました。');
-                    console.error(error);
-                    $('#folder_upload').val('');
-                    $('.upload_button').removeClass('enabled');
-                    $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
-                }
-            });
+                });
+            }, index * 5000); // 5秒ごとにずらす（5000ms）
         });
     });
 
     function processing_check(uploadId) {
         var prefix = $('#prefix').val();
         var intervalId = setInterval(function () {
-            // hidden inputの値がtrueかチェック
-            var isUploadComplete = $('#upload_complete_flag').val(); // ← hidden inputのIDを想定
-    
-            if (isUploadComplete === "true") {
+            var progress = parseInt(parseInt($('#uploadedfiles_count').val()) / parseInt($('#total_files_count').val()) * 100) + '%';
+            $('.progress_message').text('AI解析中 :' + progress);
+            $('.progress_bar').css('width', progress);
+            if ($('#uploadedfiles_count').val() === $('#total_files_count').val()) {
+                $('#upload_complete_flag').val('true');
                 clearInterval(intervalId); // 通信を止める
                 $('.progress_message').text('ai処理完了');
+                $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
                 return;
             }
-    
-            $.ajax({
-                url: prefix + '/card/multiple/progress',
-                method: 'GET',
-                data: {
-                    upload_id: uploadId
-                },
-                success: function (response) {
-                    var progress = parseInt(parseInt(response.done) / parseInt(response.total) * 80 + 20) + '%';
-                    $('.progress_message').text('AI解析中 :' + progress);
-                    $('.progress_bar').css('width', progress);
-                }
-            });
+
         }, 300);
     }
+
+    // function processing_check(uploadId) {
+    //     var prefix = $('#prefix').val();
+    //     var intervalId = setInterval(function () {
+    //         $.ajax({
+    //             url: prefix + '/card/multiple/progress',
+    //             method: 'GET',
+    //             data: {
+    //                 upload_id: uploadId
+    //             },
+    //             success: function (response) {
+    //                 var progress = parseInt(parseInt(response.done) / parseInt(response.total) * 80 + 20) + '%';
+    //                 $('.progress_message').text('AI解析中 :' + progress);
+    //                 $('.progress_bar').css('width', progress);
+    //                 if (response.notdone === 0) {
+    //                     $('#upload_complete_flag').val('true');
+    //                     clearInterval(intervalId); // 通信を止める
+    //                     $('.progress_message').text('ai処理完了');
+    //                     $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+    //                     return;
+    //                 }
+    //             }
+    //         });
+    //     }, 300);
+    // }
 });
 

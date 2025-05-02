@@ -43,6 +43,8 @@
 
             </div>
             <input type="hidden" id="upload_complete_flag" value="false">
+            <input type="hidden" id="uploadedfiles_count" value="0">
+            <input type="hidden" id="total_files_count" value="0">
         </div>
     </div>
 </div>

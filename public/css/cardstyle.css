@@ -14,6 +14,10 @@ body .usersettingtitle {
   margin-left: 30px;
 }
 
+.display_none {
+  display: none !important;
+}
+
 .header001 {
   background: rgb(25, 18, 65) !important;
   z-index: 13;
@@ -469,7 +473,8 @@ body .usersettingtitle {
   }
 }
 .card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card img {
-  height: 10rem;
+  max-height: 14rem;
+  max-width: 30rem;
   background: white;
   object-fit: contain;
   box-shadow: 4px 7px 11px 1px rgba(0, 0, 0, 0.59);
@@ -548,10 +553,6 @@ body .usersettingtitle {
   height: 100%;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.801);
-  display: none;
-}
-.crop_controller_container.controller_open {
-  display: block;
 }
 .crop_controller_container .crop_controller_content {
   width: 400px;
@@ -738,6 +739,46 @@ body .usersettingtitle {
     margin-inline: auto;
   }
 }
+.card_regist_container .card_switch_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-inline: 5%;
+}
+.card_regist_container .card_switch_container .card_status {
+  width: 8rem;
+  height: 3rem;
+  border-radius: 1rem 1rem 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+}
+.card_regist_container .card_switch_container .card_status[data-card_type=front] {
+  background: #af0c57;
+  color: white;
+}
+.card_regist_container .card_switch_container .card_status[data-card_type=back] {
+  background: #1e975a;
+  color: white;
+}
+.card_regist_container .card_switch_container .card_switch_button {
+  width: 8rem;
+  height: 3rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #f9f9f9;
+  color: #5c5c5c;
+  margin-right: 1rem;
+  bottom: 0.5rem;
+  position: relative;
+}
+.card_regist_container .card_switch_container .card_switch_button:hover {
+  background: #c1c1c1;
+}
 .card_regist_container .card_regist_form {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -836,13 +877,32 @@ body .usersettingtitle {
 .card_regist_container .card_regist_form .card_regist_content .button_container .crop_button img {
   width: 1rem;
 }
+.card_regist_container .card_regist_form .card_regist_content .button_container .remove_button {
+  background: #e66464;
+  color: white;
+  border-radius: 1rem;
+  width: 7rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+.card_regist_container .card_regist_form .card_regist_content .button_container .remove_button:hover {
+  background: #a84a4a;
+}
+.card_regist_container .card_regist_form .card_regist_content .button_container .remove_button img {
+  width: 1.2rem;
+  margin-right: 0.3rem;
+}
 .card_regist_container .card_regist_form .card_regist_content .cropped_image_container {
   height: calc(100% - 0.4rem);
   display: block;
-  border: solid 0.2rem #adadad;
   background: #f9f9f9;
   border-radius: 1rem;
   position: relative;
+  overflow: hidden;
 }
 .card_regist_container .card_regist_form .card_regist_content .cropped_image_container .cropped_image_container_text {
   position: absolute;
@@ -851,21 +911,36 @@ body .usersettingtitle {
   transform: translate(-50%, -50%);
   color: #868686;
 }
+.card_regist_container .card_regist_form .card_regist_content #card_file_front_label .cropped_image_container {
+  border: solid 0.2rem #af0c57;
+}
+.card_regist_container .card_regist_form .card_regist_content #card_file_back_label .cropped_image_container {
+  border: solid 0.2rem #1e975a;
+}
 .card_regist_container .card_regist_form .card_regist_content .croppable_image {
   width: 100%;
   display: block;
 }
-.card_regist_container .card_regist_form .card_regist_content .card_file_front {
+.card_regist_container .card_regist_form .card_regist_content .card_file_input {
   display: none;
 }
-.card_regist_container .card_regist_form .card_regist_content .card_file_front_label {
-  max-width: 90%;
+.card_regist_container .card_regist_form .card_regist_content .card_file_label {
+  width: 90%;
   aspect-ratio: 1.65/1;
   display: block;
   overflow: hidden;
   margin-inline: auto;
 }
-.card_regist_container .card_regist_form .card_regist_content .card_file_front_label img {
+@media screen and (max-width: 750px) {
+  .card_regist_container .card_regist_form .card_regist_content .card_file_label {
+    height: 54.5454545455vw;
+  }
+}
+.card_regist_container .card_regist_form .card_regist_content .card_file_label .cropped_image_container {
+  max-width: 99%;
+  max-height: 99%;
+}
+.card_regist_container .card_regist_form .card_regist_content .card_file_label img {
   width: 100%;
   display: block;
   object-fit: contain;

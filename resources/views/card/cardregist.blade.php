@@ -21,17 +21,26 @@
     <div class="company_candidate_container">
 
     </div>
-    <div class="crop_controller_container">
-        <div class="crop_controller_content">
-            <img src="" class="croppable_image">
+    <div class="crop_controller_container display_none">
+        <div class="crop_controller_content display_none" data-card_type="front">
+            <img src="" class="croppable_image" data-card_type="front">
             <div class="crop_complete_button">
                 <img src="{{ asset(config('prefix.prefix').'/'.'img/card/complete.svg') }}" alt="">
             </div>
             <div class="crop_cancel_button">
                 <img src="{{ asset(config('prefix.prefix').'/'.'img/card/cancel.svg') }}" alt="">
             </div>
-            <div class="crop_rotate_button">
+            <!-- <div class="crop_rotate_button">
                 <img src="{{ asset(config('prefix.prefix').'/'.'img/card/rotate.svg')}}" alt="">
+            </div> -->
+        </div>
+        <div class="crop_controller_content display_none" data-card_type="back">
+            <img src="" class="croppable_image" data-card_type="back">
+            <div class="crop_complete_button">
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/complete.svg') }}" alt="">
+            </div>
+            <div class="crop_cancel_button">
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/cancel.svg') }}" alt="">
             </div>
         </div>
     </div>
@@ -54,13 +63,33 @@
             <input type="hidden" name="edit" id="edit" value="{{$edit}}">
             <input type="hidden" name="card_id" id="card_id" value="{{$card_id}}">
             <input type="hidden" name="carduser" id="carduser" value="{{$carduser_id}}">
+            <input type="hidden" id="back_image" value="{{$card->名刺ファイル裏 ?? ''}}">
 
             <div class="card_regist_content">
-                <input type="file" name="card_file_front" id="card_file_front" class="card_file_front">
-                <label for="card_file_front" class="card_file_front_label">
+                <div class="card_switch_container">
+                    <div id="card_status" class="card_status" data-card_type="front">
+                        表面
+                    </div>
+                    <div id="card_switch_button" class="card_switch_button">
+                        <span>
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/change.svg') }}" alt="">
+                        </span>
+                        切り替え
+                    </div>
+                </div>
+                <input type="file" name="card_file_front" id="card_file_front" class="card_file_input" data-card_type="front">
+                <input type="file" name="card_file_back" id="card_file_back" class="card_file_input" data-card_type="back">
+                <label for="card_file_front" id="card_file_front_label" class="card_file_label">
                     <div class="cropped_image_container">
                         <div class="cropped_image_container_text">
-                            タップして名刺を読みこんでください
+                            表 タップして名刺を読みこんでください
+                        </div>
+                    </div>
+                </label>
+                <label for="card_file_back" id="card_file_back_label" class="card_file_label display_none">
+                    <div class="cropped_image_container">
+                        <div class="cropped_image_container_text">
+                            裏 タップして名刺を読みこんでください
                         </div>
                     </div>
                 </label>
@@ -72,6 +101,10 @@
                     <div class="crop_button">
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/card/crop.svg') }}" alt="">
                         切り取り
+                    </div>
+                    <div class="remove_button display_none" id="remove_button">
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/remove.svg') }}" alt="">
+                        解除
                     </div>
                 </div>
             </div>
@@ -136,10 +169,7 @@
                             <div class="add_branch_button">拠点追加</div>
   
                             @else
-                            <input type="text" name="branch_name" id="branch_name" autocomplete="off"
-                                @if($card)
-                                disabled value="{{$card->拠点名 ?? ''}}"
-                                @endif>
+                            <input type="text" name="branch_name" id="branch_name" autocomplete="off">
                             @endif
                         </td>
                         <td></td>
