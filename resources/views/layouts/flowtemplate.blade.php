@@ -67,7 +67,7 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_application_view.svg') }}" class="menuicon01" title="申請一覧">
 
     </a>
-    <a class="headerIcon001" href="{{route('workflowmaster')}}">
+    <a class="headerIcon001" href="{{route('workflowcheckviewget')}}">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/header/header_checkview.svg') }}" class="menuicon01" title="閲覧一覧">
     </a>
     <a class="headerIcon001" href="{{route('workflowstampget')}}">

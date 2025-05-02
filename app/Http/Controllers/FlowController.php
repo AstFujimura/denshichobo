@@ -3604,9 +3604,17 @@ class FlowController extends Controller
             $lists = M_category::all();
             return view('flow.workflowfile', compact("prefix", "server", "lists", "hierarchy"));
         } else if ($hierarchy == 't_flow') {
+            $viewable_m_flows = DB::table('m_flow_view_groups')
+            ->leftJoin('group_user', 'm_flow_view_groups.グループID', '=', 'group_user.グループID')
+            ->where('group_user.ユーザーID', Auth::id())
+            ->pluck('m_flow_view_groups.フローマスタID')
+            ->unique();
+
+
             $category_id = $request->input('category_id') ?? '';
             $lists = T_flow::where('カテゴリマスタID', $category_id)
                 ->where('ステータス', 3)
+                ->whereIn('フローマスタID', $viewable_m_flows)
                 ->get();
             $category = M_category::find($category_id);
             return view('flow.workflowfile', compact("prefix", "server", "lists", "hierarchy", "category"));
