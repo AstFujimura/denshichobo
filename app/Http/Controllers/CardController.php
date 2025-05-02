@@ -266,7 +266,7 @@ class CardController extends Controller
                 $branch->拠点指定 = true;
                 $branch->save();
             }
-        } 
+        }
         // 拠点IDが入力されている場合は拠点を取得する
         else if ($branch_id != '') {
             $branch = Branch::find($branch_id);
@@ -835,6 +835,63 @@ class CardController extends Controller
         $server = config('prefix.server');
         return view('card.test', compact('prefix', 'server'));
     }
+    public function cardmultiplepastget(Request $request)
+    {
+        $prefix = config('prefix.prefix');
+        if ($prefix !== "") {
+            $prefix = "/" . $prefix;
+        }
+        $filename = $request->filename;
+        // 拡張子を除いたファイル名
+        $basename = pathinfo($filename, PATHINFO_FILENAME);
+
+        // フラグの初期化
+        $hasTrailingNumber = false;
+
+
+
+        // _数字が末尾にあるかをチェックして削除
+        if (preg_match('/_\d+$/', $basename)) {
+            $hasTrailingNumber = true;
+            $cleanedName = preg_replace('/_\d+$/', '', $basename);
+        } else {
+            $cleanedName = $basename;
+        }
+        $file = UploadedCard::where('ファイル名', $cleanedName)->first();
+        // ファイルが存在する場合
+        if ($file) {
+            // フラグがtrueの場合(裏面候補)
+            if ($hasTrailingNumber) {
+                // 裏面が未登録の場合
+                if ($file->back_url == null) {
+                    return response()->json([
+                        'status' => 'back',
+                        'uploaded_card_id' => $file->id,
+                        'filename' => $cleanedName
+                    ]);
+                }
+                // 裏面が登録済みの場合
+                else {
+                    return response()->json([
+                        'status' => 'skip',
+                    ]);
+                }
+            }
+            // フラグがfalseの場合(表面)
+            else {
+                return response()->json([
+                    'status' => 'skip',
+                ]);
+            }
+        }
+        // ファイルが存在しない場合
+        else {
+            return response()->json([
+                'status' => 'new',
+                'filename' => $filename
+            ]);
+        }
+    }
     public function cardmultipleuploadget()
     {
         $prefix = config('prefix.prefix');
@@ -846,27 +903,15 @@ class CardController extends Controller
     }
     public function cardmultipleuploadpost(Request $request)
     {
+        $server = config('prefix.server');
         if (!$request->hasFile('cards')) {
             return response()->json(['status' => 'error', 'message' => 'No file uploaded.'], 400);
         }
 
         $file = $request->file('cards');
-        $originalName = $file->getClientOriginalName();
-        $mimeType = $file->getMimeType();
         $extension = $file->getClientOriginalExtension();
-
-        $filename = $this->generateRandomCode() . '.' . $extension;
+        $filename = $request->filename . '.' . $extension;
         $key = 'cards/' . now()->format('Y_m_d') . '/' . uniqid() . '_' . $filename;
-
-        // _001 がついているかチェック
-        $isBack = str_ends_with($originalName, '_001.' . $extension);
-
-        if ($isBack) {
-            // 裏面だったら、今は何もしない or 保存してもDB登録はしない
-            return response()->json([
-                'status' => 'skip',
-            ]);
-        }
         // Wasabiにファイルを保存
         $path = Storage::disk('wasabi')->putFileAs('', $file, $key, 'public');
 
@@ -876,22 +921,57 @@ class CardController extends Controller
             now()->addMinutes(5)
         );
 
+        if ($request->status == 'new') {
+            // DB登録
+            $uploaded_card = UploadedCard::create([
+                'front_url' => $url,
+                'back_url' => null, // 裏面は無し
+                'status' => 'pending',
+                'openai_response' => null,
+                'upload_id' => $request->upload_id,
+                'ファイル名' => $request->filename
+            ]);
+            return response()->json([
+                'status' => 'front_success',
+                'uploaded_card_id' => $uploaded_card->id
+            ]);
+        } else if ($request->status == 'back') {
+            $uploaded_card = UploadedCard::find($request->uploaded_card_id);
+            $uploaded_card->back_url = $url;
+            $uploaded_card->save();
 
 
-        // DB登録
-        $uploaded_card = UploadedCard::create([
-            'front_url' => $url,
-            'back_url' => null, // 裏面は無し
-            'status' => 'pending',
-            'openai_response' => null,
-            'upload_id' => $request->upload_id,
-        ]);
+            if ($server == 'onpre') {
+                $wasabiUrl = $uploaded_card->back_url;
 
-        return response()->json([
-            'status' => 'success',
-            'url' => $url, // もしクライアントに返したいなら  
-            'uploaded_card_id' => $uploaded_card->id
-        ]);
+                $filename = $this->generateRandomCode() . "." . $extension;
+
+                $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
+                if (!is_dir($filepath)) {
+                    mkdir($filepath, 0755, true); // フォルダがなければ作る
+                }
+                // 画像をダウンロード
+                $imageData = file_get_contents($wasabiUrl);
+                if ($imageData === false) {
+                    throw new \Exception('ファイルのダウンロードに失敗しました。');
+                }
+
+                // フルパス組み立て
+                $fullPath = rtrim($filepath, '/') . '/' . $filename;
+
+                // ファイルを保存
+                file_put_contents($fullPath, $imageData);
+                $card = Card::find($uploaded_card->名刺ID);
+                $card->名刺ファイル裏 = $filename;
+                $card->save();
+            }
+            // クラウド
+
+            return response()->json([
+                'status' => 'back_success',
+                'uploaded_card_id' => $uploaded_card->id
+            ]);
+        }
     }
     public function cardopenai(Request $request)
     {
@@ -992,6 +1072,10 @@ class CardController extends Controller
             // ファイルを保存
             file_put_contents($fullPath, $imageData);
         }
+        // クラウド
+
+
+
         $carduser = CardUser::where('表示名', $structuredData['名前'])->first();
         if (!$carduser) {
             $carduser = new CardUser();

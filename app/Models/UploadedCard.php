@@ -16,5 +16,6 @@ class UploadedCard extends Model
         'status',
         'openai_response',
         'upload_id',
+        'ファイル名'
     ];
 }

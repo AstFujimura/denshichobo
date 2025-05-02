@@ -119,7 +119,7 @@ Rapid ~電子承認システム
                                 {{$t_flow_ongoing->name}}
                             </div>
                             <div class="flow_view_td flow_view_date">
-                                {{$t_flow_ongoing->created_at}}
+                                {{Carbon\Carbon::parse($t_flow_ongoing->申請日)->format('Y-m-d')}}
                             </div>
                         </a>
                         @endforeach
@@ -144,7 +144,7 @@ Rapid ~電子承認システム
                                 {{$t_flow_approved->name}}
                             </div>
                             <div class="flow_view_td flow_view_date">
-                                {{$t_flow_approved->created_at}}
+                                {{Carbon\Carbon::parse($t_flow_approved->申請日)->format('Y-m-d')}}
                             </div>
                         </a>
                         @endforeach
@@ -169,7 +169,7 @@ Rapid ~電子承認システム
                                 {{$t_flow_reject->name}}
                             </div>
                             <div class="flow_view_td flow_view_date">
-                                {{$t_flow_reject->created_at}}
+                                {{Carbon\Carbon::parse($t_flow_reject->申請日)->format('Y-m-d')}}
                             </div>
                         </a>
                         @endforeach
@@ -194,7 +194,7 @@ Rapid ~電子承認システム
                                 {{$t_flow_reapplication->name}}
                             </div>
                             <div class="flow_view_td flow_view_date">
-                                {{$t_flow_reapplication->created_at}}
+                                {{Carbon\Carbon::parse($t_flow_reapplication->申請日)->format('Y-m-d')}}
                             </div>
                         </a>
                         @endforeach

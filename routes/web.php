@@ -363,6 +363,8 @@ Route::prefix($prefix)->group(function () {
             // 名刺テスト
             Route::get('/card/test', [CardController::class, 'cardtestget'])->name('cardtestget');
 
+            // 名刺過去データ参照
+            Route::get('/card/multiple/past', [CardController::class, 'cardmultiplepastget'])->name('cardmultiplepastget');
             // 名刺複数アップロード
             Route::get('/card/multiple/upload', [CardController::class, 'cardmultipleuploadget'])->name('cardmultipleuploadget');
             // 名刺複数アップロードポスト
@@ -402,7 +404,5 @@ Route::prefix($prefix)->group(function () {
             // Route::get('/schedule/csv', [ScheduleController::class, 'schedulecsvget'])->name('schedulecsvget');
             // Route::post('/schedule/csv', [ScheduleController::class, 'schedulecsvpost'])->name('schedulecsvpost');
         }
-    });
-    Route::post('/card/openai/eachprocess', [CardController::class, 'cardopenaieachprocess'])->name('cardopenaieachprocess');
-      
+    }); 
 });

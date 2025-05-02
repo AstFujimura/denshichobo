@@ -3332,7 +3332,7 @@ class FlowController extends Controller
 
 
         $t_flows_ongoing = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名','t_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
@@ -3355,7 +3355,7 @@ class FlowController extends Controller
 
 
         $t_flows_reject = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名','t_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
@@ -3370,7 +3370,7 @@ class FlowController extends Controller
 
         // 決裁済かつTAMERUに保存、未保存どちらのレコードも取得
         $t_flows_approved = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名','t_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
@@ -3387,7 +3387,7 @@ class FlowController extends Controller
             ->get();
 
         $t_flows_reapplication = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名')
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名','t_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
