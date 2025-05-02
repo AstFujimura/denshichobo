@@ -3188,12 +3188,12 @@ class FlowController extends Controller
             ->pluck('m_flow_view_groups.フローマスタID')
             ->unique();
 
-
         $t_flows_ongoing = DB::table("t_flows")
             ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名', 't_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->whereIn('m_flows.id', $viewable_m_flows)
             ->where("申請者ID", Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
             ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
@@ -3217,6 +3217,7 @@ class FlowController extends Controller
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->whereIn('m_flows.id', $viewable_m_flows)
             ->where("申請者ID", Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
             ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
@@ -3232,6 +3233,7 @@ class FlowController extends Controller
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->whereIn('m_flows.id', $viewable_m_flows)
             ->where("申請者ID", Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
             ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
@@ -3249,6 +3251,7 @@ class FlowController extends Controller
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->whereIn('m_flows.id', $viewable_m_flows)
             ->where("申請者ID", Auth::id())
             ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
             ->where('m_flows.カテゴリマスタID', 'like', $category ? $category : "%%")
