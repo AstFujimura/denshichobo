@@ -192,6 +192,7 @@ class ScheduleController extends Controller
             ->find($request->user_id ?? Auth::user()->id);
         if (Auth::user()->管理 == '管理') {
             $selected_users = User::where('id', '>', 1)
+            ->where('削除','')
             ->get()
             ->sortByDesc(function ($user) {
                 return $user->id === Auth::user()->id ? 1 : 0;
@@ -201,6 +202,7 @@ class ScheduleController extends Controller
                 ->leftJoin('group_user', 'users.id', '=', 'group_user.ユーザーID')
                 ->select('users.*', 'group_user.グループID')
                 ->where('group_user.グループID', Auth::user()->id)
+                ->where('削除','')
                 ->get()
                 ->sortByDesc(function ($user) {
                     return $user->id === Auth::user()->id ? 1 : 0;
