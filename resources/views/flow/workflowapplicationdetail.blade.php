@@ -108,6 +108,9 @@ Rapid ~電子承認システム
                                 <a href="{{route('workflowreapplyget', ['id' => $t_flow->id])}}" class="application_reapply_button">
                                     再申請を行う
                                 </a>
+                                <a href="{{route('workflowapplicationcancelget', ['id' => $t_flow->id])}}" class="application_cancel_button" id="application_cancel_button">
+                                    申請取り消し
+                                </a>
                             </div>
                             @endif
                         </div>

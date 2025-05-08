@@ -3454,6 +3454,7 @@ class FlowController extends Controller
         $t_flow = T_flow::where('申請者ID', Auth::id())
             ->where('id', $id)
             ->where('ステータス', 1)
+            ->orWhere('ステータス', 5)
             ->first();
         if ($t_flow) {
             $t_flow->delete();

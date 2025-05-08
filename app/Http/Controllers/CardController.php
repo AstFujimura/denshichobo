@@ -34,6 +34,7 @@ use App\Models\Department;
 use App\Models\Card_Department;
 use App\Models\Branch;
 use App\Models\UploadedCard;
+use App\Models\OpenaiQueue;
 use Illuminate\Support\Facades\File as Filesystem;
 use App\Jobs\ProcessUploadedCard;
 use GuzzleHttp\Client;
@@ -66,11 +67,12 @@ class CardController extends Controller
                 'latest_cards.*',
                 'companies.*'
             )
-            ->leftJoinSub($sub, 'latest_cards', function ($join) {
+            ->joinSub($sub, 'latest_cards', function ($join) {
                 $join->on('cardusers.id', '=', 'latest_cards.名刺ユーザーID')
                     ->where('latest_cards.row_num', '=', 1);
             })
             ->leftJoin('companies', 'latest_cards.会社ID', '=', 'companies.id')
+            ->orderBy('cardusers.表示名カナ', 'asc')
             ->get();
         foreach ($cardusers as $carduser) {
             $departments = DB::table('card_department')
@@ -858,12 +860,62 @@ class CardController extends Controller
             $cleanedName = $basename;
         }
         $file = UploadedCard::where('ファイル名', $cleanedName)->first();
-        // ファイルが存在する場合
-        if ($file) {
-            // フラグがtrueの場合(裏面候補)
-            if ($hasTrailingNumber) {
-                // 裏面が未登録の場合
-                if ($file->back_url == null) {
+
+        // フラグがfalseの場合(表面候補)
+        if (!$hasTrailingNumber) {
+            if (!$file) {
+                // ファイルが存在しない場合
+                // DB登録
+                $uploaded_card = UploadedCard::create([
+                    'front_url' => 'not_uploaded',
+                    'back_url' => 'not_uploaded', // 裏面は無し
+                    'status' => 'pending',
+                    'openai_response' => null,
+                    'upload_id' => $request->upload_id,
+                    'ファイル名' => $cleanedName
+                ]);
+                return response()->json([
+                    'status' => 'new',
+                    'uploaded_card_id' => $uploaded_card->id,
+                    'filename' => $cleanedName
+                ]);
+            } else {
+                // 表面が未登録の場合(裏面のみが登録されているとき)
+                if ($file->front_url == 'not_uploaded') {
+                    return response()->json([
+                        'status' => 'add_front',
+                        'uploaded_card_id' => $file->id,
+                        'filename' => $cleanedName
+                    ]);
+                }
+                // 表面が登録済みの場合
+                else {
+                    return response()->json([
+                        'status' => 'skip',
+                    ]);
+                }
+            }
+        }
+        // フラグがtrueの場合(裏面候補)
+        else {
+            if (!$file) {
+                // DB登録
+                $uploaded_card = UploadedCard::create([
+                    'front_url' => 'not_uploaded',
+                    'back_url' => 'not_uploaded',
+                    'status' => 'pending',
+                    'openai_response' => null,
+                    'upload_id' => $request->upload_id,
+                    'ファイル名' => $cleanedName
+                ]);
+                return response()->json([
+                    'status' => 'new_back',
+                    'uploaded_card_id' => $uploaded_card->id,
+                    'filename' => $cleanedName
+                ]);
+            } else {
+                // 裏面が未登録の場合(表面のみが登録されているとき)
+                if ($file->back_url == 'not_uploaded') {
                     return response()->json([
                         'status' => 'back',
                         'uploaded_card_id' => $file->id,
@@ -877,19 +929,6 @@ class CardController extends Controller
                     ]);
                 }
             }
-            // フラグがfalseの場合(表面)
-            else {
-                return response()->json([
-                    'status' => 'skip',
-                ]);
-            }
-        }
-        // ファイルが存在しない場合
-        else {
-            return response()->json([
-                'status' => 'new',
-                'filename' => $filename
-            ]);
         }
     }
     public function cardmultipleuploadget()
@@ -921,26 +960,21 @@ class CardController extends Controller
             now()->addMinutes(5)
         );
 
-        if ($request->status == 'new') {
-            // DB登録
-            $uploaded_card = UploadedCard::create([
-                'front_url' => $url,
-                'back_url' => null, // 裏面は無し
-                'status' => 'pending',
-                'openai_response' => null,
-                'upload_id' => $request->upload_id,
-                'ファイル名' => $request->filename
-            ]);
+        if ($request->status == 'new' || $request->status == 'add_front') {
+            $uploaded_card = UploadedCard::find($request->uploaded_card_id);
+            $uploaded_card->front_url = $url;
+            $uploaded_card->status = 'pending';
+            $uploaded_card->save();
             return response()->json([
                 'status' => 'front_success',
                 'uploaded_card_id' => $uploaded_card->id
             ]);
-        } else if ($request->status == 'back') {
+        }
+        // 裏面の新規登録の場合
+        else if ($request->status == 'new_back' || $request->status == 'back') {
             $uploaded_card = UploadedCard::find($request->uploaded_card_id);
             $uploaded_card->back_url = $url;
             $uploaded_card->save();
-
-
             if ($server == 'onpre') {
                 $wasabiUrl = $uploaded_card->back_url;
 
@@ -961,17 +995,54 @@ class CardController extends Controller
 
                 // ファイルを保存
                 file_put_contents($fullPath, $imageData);
-                $card = Card::find($uploaded_card->名刺ID);
-                $card->名刺ファイル裏 = $filename;
-                $card->save();
+                if ($request->status == 'back') {
+                    $card = Card::find($uploaded_card->名刺ID);
+                    if ($card) {
+                        $card->名刺ファイル裏 = $filename;
+                        $card->save();
+                    }
+                }
             }
-            // クラウド
 
             return response()->json([
                 'status' => 'back_success',
                 'uploaded_card_id' => $uploaded_card->id
             ]);
         }
+        // // 表面のみが登録されている場合
+        // else if ($request->status == 'back') {
+        //     $uploaded_card = UploadedCard::find($request->uploaded_card_id);
+        //     $uploaded_card->back_url = $url;
+        //     $uploaded_card->save();
+
+        //     if ($server == 'onpre') {
+        //         $wasabiUrl = $uploaded_card->back_url;
+
+        //         $filename = $this->generateRandomCode() . "." . $extension;
+
+        //         $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
+        //         if (!is_dir($filepath)) {
+        //             mkdir($filepath, 0755, true); // フォルダがなければ作る
+        //         }
+        //         // 画像をダウンロード
+        //         $imageData = file_get_contents($wasabiUrl);
+        //         if ($imageData === false) {
+        //             throw new \Exception('ファイルのダウンロードに失敗しました。');
+        //         }
+
+        //         // フルパス組み立て
+        //         $fullPath = rtrim($filepath, '/') . '/' . $filename;
+
+        //         // ファイルを保存
+        //         file_put_contents($fullPath, $imageData);
+
+        //     }
+
+        //     return response()->json([
+        //         'status' => 'back_success',
+        //         'uploaded_card_id' => $uploaded_card->id
+        //     ]);
+        // }
     }
     public function cardopenai(Request $request)
     {
@@ -998,6 +1069,9 @@ class CardController extends Controller
         $structuredData = null;
 
         while ($retryCount < $maxRetries) {
+            $queue = $this->getStartTimeBasedOnTokenLimit();
+            $queue_id = $queue[1];
+            sleep($queue[0]);
             try {
                 $aiResponse = OpenAI::chat()->create([
                     'model' => 'gpt-4o-mini',
@@ -1029,6 +1103,9 @@ class CardController extends Controller
                     break; // 成功時はループを抜ける
                 }
             } catch (\Exception $e) {
+                $queue = OpenaiQueue::find($queue_id);
+                $queue->トークン = 2000;
+                $queue->save();
                 // ログ出力する場合：
                 \Log::warning("OpenAI retry {$retryCount}: updated_card_id: " . $card->id . " " . $e->getMessage());
             }
@@ -1047,30 +1124,57 @@ class CardController extends Controller
 
 
         if ($server == 'onpre') {
-            $wasabiUrl = $card->front_url;
+            $wasabiFrontUrl = $card->front_url;
             // クエリ部分（?以降）を除外
-            $parsedUrl = parse_url($wasabiUrl);
+            $parsedUrl = parse_url($wasabiFrontUrl);
             $path = $parsedUrl['path'] ?? '';
 
             // pathinfoで拡張子を取得
             $extension = pathinfo($path, PATHINFO_EXTENSION);
-            $filename = $this->generateRandomCode() . "." . $extension;
+            $frontFilename = $this->generateRandomCode() . "." . $extension;
 
             $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
             if (!is_dir($filepath)) {
                 mkdir($filepath, 0755, true); // フォルダがなければ作る
             }
             // 画像をダウンロード
-            $imageData = file_get_contents($wasabiUrl);
+            $imageData = file_get_contents($wasabiFrontUrl);
             if ($imageData === false) {
                 throw new \Exception('ファイルのダウンロードに失敗しました。');
             }
 
             // フルパス組み立て
-            $fullPath = rtrim($filepath, '/') . '/' . $filename;
+            $fullPath = rtrim($filepath, '/') . '/' . $frontFilename;
 
             // ファイルを保存
             file_put_contents($fullPath, $imageData);
+
+
+            $backFilename = null;
+            if ($card->back_url != 'not_uploaded') {
+                $wasabiBackUrl = $card->back_url;
+                $parsedUrl = parse_url($wasabiBackUrl);
+                $path = $parsedUrl['path'] ?? '';
+
+                // pathinfoで拡張子を取得
+                $extension = pathinfo($path, PATHINFO_EXTENSION);
+                $backFilename = $this->generateRandomCode() . "." . $extension;
+
+                $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
+                if (!is_dir($filepath)) {
+                    mkdir($filepath, 0755, true); // フォルダがなければ作る
+                }
+                // 画像をダウンロード
+                $imageData = file_get_contents($wasabiBackUrl);
+                if ($imageData === false) {
+                    throw new \Exception('ファイルのダウンロードに失敗しました。');
+                }
+
+                $fullPath = rtrim($filepath, '/') . '/' . $backFilename;
+
+                // ファイルを保存
+                file_put_contents($fullPath, $imageData);
+            }
         }
         // クラウド
 
@@ -1140,7 +1244,8 @@ class CardController extends Controller
         $newcard->名前 = $structuredData['名前'] ?? '';
         $newcard->名前カナ = $structuredData['名前カナ'] ?? '';
         $newcard->役職 = $structuredData['役職'] ?? '';
-        $newcard->名刺ファイル表 = $filename;
+        $newcard->名刺ファイル表 = $frontFilename;
+        $newcard->名刺ファイル裏 = $backFilename;
         $newcard->携帯電話番号 = $structuredData['携帯電話番号'] ?? '';
         $newcard->メールアドレス = $structuredData['メールアドレス'] ?? '';
         $newcard->save();
@@ -1190,6 +1295,7 @@ class CardController extends Controller
 
 
         $card->status = 'done';
+        $card->名刺ID = $newcard->id;
         $card->save();
         return response()->json([
             'status' => 'success',
@@ -1378,124 +1484,124 @@ class CardController extends Controller
         $card->save();
     }
 
-    public function cardmultipletestget(Request $request)
-    {
-        $uploadId = $request->input('upload_id');
-        $server = config('prefix.server');
+    // public function cardmultipletestget(Request $request)
+    // {
+    //     $uploadId = $request->input('upload_id');
+    //     $server = config('prefix.server');
 
-        // このupload_idに紐づくUploadedCardを取ってくる
-        $cards = UploadedCard::where('upload_id', $uploadId)
-            ->where('status', 'pending') // まだ未処理のものだけ
-            ->get();
+    //     // このupload_idに紐づくUploadedCardを取ってくる
+    //     $cards = UploadedCard::where('upload_id', $uploadId)
+    //         ->where('status', 'pending') // まだ未処理のものだけ
+    //         ->get();
 
-        foreach ($cards as $card) {
-            $imageUrl = $card->front_url;
-            $aiResponse = OpenAI::chat()->create([
-                'model' => 'gpt-4o-mini',
-                'messages' => [
-                    ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
-                    [
-                        'role' => 'user',
-                        'content' => [
-                            [
-                                "type" => "text",
-                                "text" => $this->getJsonPrompt() // プロンプトの内容
-                            ],
-                            [
-                                "type" => "image_url",
-                                "image_url" => [
-                                    "url" => $imageUrl,
-                                ]
-                            ]
-                        ]
-                    ],
-                ]
-            ]);
-            $jsonString = trim(preg_replace('/.*?(\{.*\}).*/s', '$1', $aiResponse->choices[0]->message->content));
-            $structuredData = json_decode($jsonString, true);
+    //     foreach ($cards as $card) {
+    //         $imageUrl = $card->front_url;
+    //         $aiResponse = OpenAI::chat()->create([
+    //             'model' => 'gpt-4o-mini',
+    //             'messages' => [
+    //                 ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
+    //                 [
+    //                     'role' => 'user',
+    //                     'content' => [
+    //                         [
+    //                             "type" => "text",
+    //                             "text" => $this->getJsonPrompt() // プロンプトの内容
+    //                         ],
+    //                         [
+    //                             "type" => "image_url",
+    //                             "image_url" => [
+    //                                 "url" => $imageUrl,
+    //                             ]
+    //                         ]
+    //                     ]
+    //                 ],
+    //             ]
+    //         ]);
+    //         $jsonString = trim(preg_replace('/.*?(\{.*\}).*/s', '$1', $aiResponse->choices[0]->message->content));
+    //         $structuredData = json_decode($jsonString, true);
 
-            if ($server == 'onpre') {
-                $wasabiUrl = $card->front_url;
-                // クエリ部分（?以降）を除外
-                $parsedUrl = parse_url($wasabiUrl);
-                $path = $parsedUrl['path'] ?? '';
+    //         if ($server == 'onpre') {
+    //             $wasabiUrl = $card->front_url;
+    //             // クエリ部分（?以降）を除外
+    //             $parsedUrl = parse_url($wasabiUrl);
+    //             $path = $parsedUrl['path'] ?? '';
 
-                // pathinfoで拡張子を取得
-                $extension = pathinfo($path, PATHINFO_EXTENSION);
-                $filename = $this->generateRandomCode() . "." . $extension;
+    //             // pathinfoで拡張子を取得
+    //             $extension = pathinfo($path, PATHINFO_EXTENSION);
+    //             $filename = $this->generateRandomCode() . "." . $extension;
 
-                $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
-                if (!is_dir($filepath)) {
-                    mkdir($filepath, 0755, true); // フォルダがなければ作る
-                }
-                // 画像をダウンロード
-                $imageData = file_get_contents($wasabiUrl);
-                if ($imageData === false) {
-                    throw new \Exception('ファイルのダウンロードに失敗しました。');
-                }
+    //             $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
+    //             if (!is_dir($filepath)) {
+    //                 mkdir($filepath, 0755, true); // フォルダがなければ作る
+    //             }
+    //             // 画像をダウンロード
+    //             $imageData = file_get_contents($wasabiUrl);
+    //             if ($imageData === false) {
+    //                 throw new \Exception('ファイルのダウンロードに失敗しました。');
+    //             }
 
-                // フルパス組み立て
-                $fullPath = rtrim($filepath, '/') . '/' . $filename;
+    //             // フルパス組み立て
+    //             $fullPath = rtrim($filepath, '/') . '/' . $filename;
 
-                // ファイルを保存
-                file_put_contents($fullPath, $imageData);
-            }
-            $carduser = CardUser::where('表示名', $structuredData['名前'])->first();
-            if (!$carduser) {
-                $carduser = new CardUser();
-                $carduser->表示名 = $structuredData['名前'] ?? '';
-                $carduser->表示名カナ = $structuredData['名前カナ'] ?? '';
-                $carduser->save();
-            }
-            $company = Company::where('会社名', $structuredData['会社名'])->first();
-            if (!$company) {
-                $company = new Company();
-                $company->会社名 = $structuredData['会社名'] ?? '';
-                $company->会社名カナ = $structuredData['会社名カナ'] ?? '';
-                $company->save();
+    //             // ファイルを保存
+    //             file_put_contents($fullPath, $imageData);
+    //         }
+    //         $carduser = CardUser::where('表示名', $structuredData['名前'])->first();
+    //         if (!$carduser) {
+    //             $carduser = new CardUser();
+    //             $carduser->表示名 = $structuredData['名前'] ?? '';
+    //             $carduser->表示名カナ = $structuredData['名前カナ'] ?? '';
+    //             $carduser->save();
+    //         }
+    //         $company = Company::where('会社名', $structuredData['会社名'])->first();
+    //         if (!$company) {
+    //             $company = new Company();
+    //             $company->会社名 = $structuredData['会社名'] ?? '';
+    //             $company->会社名カナ = $structuredData['会社名カナ'] ?? '';
+    //             $company->save();
 
 
-                $branch = new Branch();
-                $branch->会社ID = $company->id;
-                if ($structuredData['拠点名']) {
-                    $branch->拠点名 = $structuredData['拠点名'];
-                    $branch->拠点指定 = true;
-                } else {
-                    $branch->拠点名 = $structuredData['会社名'] ?? '';
-                    $branch->拠点指定 = false;
-                }
-                $branch->save();
-            } else {
-                $branch = Branch::where('会社ID', $company->id)
-                    ->where('拠点名', $structuredData['拠点名'])
-                    ->first();
-                if (!$branch) {
-                    $branch = new Branch();
-                    $branch->会社ID = $company->id;
-                    if ($structuredData['拠点名']) {
-                        $branch->拠点名 = $structuredData['拠点名'];
-                        $branch->拠点指定 = true;
-                    } else {
-                        $branch->拠点名 = $structuredData['会社名'];
-                        $branch->拠点指定 = false;
-                    }
-                    $branch->拠点所在地 = $structuredData['住所'] ?? '';
-                    $branch->電話番号 = $structuredData['電話番号'] ?? '';
-                    $branch->FAX番号 = $structuredData['FAX番号'] ?? '';
-                    $branch->save();
-                }
-            }
-            $newcard = new Card();
-            $newcard->名刺ユーザーID = $carduser->id;
-            $newcard->会社ID = $company->id;
-            $newcard->拠点ID = $branch->id;
-            $newcard->名前 = $structuredData['名前'] ?? '';
-            $newcard->名前カナ = $structuredData['名前カナ'] ?? '';
-            $newcard->役職 = $structuredData['役職'] ?? '';
-            $newcard->名刺ファイル表 = $filename;
-            $newcard->save();
-        }
-    }
+    //             $branch = new Branch();
+    //             $branch->会社ID = $company->id;
+    //             if ($structuredData['拠点名']) {
+    //                 $branch->拠点名 = $structuredData['拠点名'];
+    //                 $branch->拠点指定 = true;
+    //             } else {
+    //                 $branch->拠点名 = $structuredData['会社名'] ?? '';
+    //                 $branch->拠点指定 = false;
+    //             }
+    //             $branch->save();
+    //         } else {
+    //             $branch = Branch::where('会社ID', $company->id)
+    //                 ->where('拠点名', $structuredData['拠点名'])
+    //                 ->first();
+    //             if (!$branch) {
+    //                 $branch = new Branch();
+    //                 $branch->会社ID = $company->id;
+    //                 if ($structuredData['拠点名']) {
+    //                     $branch->拠点名 = $structuredData['拠点名'];
+    //                     $branch->拠点指定 = true;
+    //                 } else {
+    //                     $branch->拠点名 = $structuredData['会社名'];
+    //                     $branch->拠点指定 = false;
+    //                 }
+    //                 $branch->拠点所在地 = $structuredData['住所'] ?? '';
+    //                 $branch->電話番号 = $structuredData['電話番号'] ?? '';
+    //                 $branch->FAX番号 = $structuredData['FAX番号'] ?? '';
+    //                 $branch->save();
+    //             }
+    //         }
+    //         $newcard = new Card();
+    //         $newcard->名刺ユーザーID = $carduser->id;
+    //         $newcard->会社ID = $company->id;
+    //         $newcard->拠点ID = $branch->id;
+    //         $newcard->名前 = $structuredData['名前'] ?? '';
+    //         $newcard->名前カナ = $structuredData['名前カナ'] ?? '';
+    //         $newcard->役職 = $structuredData['役職'] ?? '';
+    //         $newcard->名刺ファイル表 = $filename;
+    //         $newcard->save();
+    //     }
+    // }
 
     public function cardmultipleprogressget(Request $request)
     {
@@ -1512,5 +1618,54 @@ class CardController extends Controller
             'done' => $doneCount,
             'total' => $cards->count(),
         ]);
+    }
+
+    public function getStartTimeBasedOnTokenLimit()
+    {
+        $limitPerMinute = 200000;
+        $uploadtoken = 40000;
+
+        $now = Carbon::now();
+        $oneMinuteAgo = $now->copy()->subMinute();
+
+        // 直近1分間のトークン合計
+        $usedTokens = OpenaiQueue::where('開始時刻', '>=', $oneMinuteAgo)
+            ->sum('トークン');
+
+        // 上限未満なら今すぐOK
+        if ($usedTokens + $uploadtoken < $limitPerMinute) {
+            $start = $now->copy()->addSeconds(5);
+
+            $openaiqueue = new OpenaiQueue();
+            $openaiqueue->トークン = $uploadtoken;
+            $openaiqueue->開始時刻 = $start;
+            $openaiqueue->save();
+    
+            return [1, $openaiqueue->id];
+        }
+
+        // 上限超え → 使用済みの各記録を取得して、最短で処理できる時刻を算出
+        $queue = OpenaiQueue::where('開始時刻', '>=', $oneMinuteAgo)
+            ->orderBy('開始時刻', 'asc')
+            ->get();
+
+        $total = 0;
+        foreach ($queue as $record) {
+            $total += $record->トークン;
+    
+            // この時点で超えるなら、このレコードの開始時刻 + 65秒が空きタイミング
+            if ($total + $uploadtoken >= $limitPerMinute) {
+                $start = Carbon::parse($record->開始時刻)->addSeconds(65);
+    
+                $openaiqueue = new OpenaiQueue();
+                $openaiqueue->トークン = $uploadtoken;
+                $openaiqueue->開始時刻 = $start;
+                $openaiqueue->save();
+    
+                return [$start->diffInSeconds($now), $openaiqueue->id];
+            }
+        }
+        // 通常はここに来ないが念のため
+        return $now->addSeconds(5);
     }
 }

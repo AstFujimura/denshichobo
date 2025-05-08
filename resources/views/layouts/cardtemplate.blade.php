@@ -38,7 +38,9 @@
         <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
         @endif
         @if (App\Models\Version::where('フロー', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/snapflow_logo_only.svg') }}" alt="SnapFlow"></a>
+        <a href="{{route('workflow')}}" class="tameru_banner">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapid_logo_only.svg') }}" alt="TAMERU">
+        </a>
         @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
@@ -54,7 +56,7 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="menuicon01" title="名刺登録">
     </a>
     <a class="headerIcon001" href="{{route('cardmultipleuploadget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/multiple_regist_gray.svg') }}" class="menuicon01" title="名刺一括登録">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/folder_gray.svg') }}" class="menuicon01" title="名刺一括登録">
     </a>
 
 

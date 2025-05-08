@@ -120,8 +120,75 @@ body .usersettingtitle {
   }
 }
 
+.card_view_header {
+  position: sticky;
+  top: 48px;
+  z-index: 100;
+  padding: 1rem;
+  border-bottom: solid 0.1rem gainsboro;
+  background: #b3b3b3;
+}
+
+.search_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+.search_container .search_input {
+  width: 30rem;
+  height: 3rem;
+  border: solid 0.1rem gainsboro;
+  border-radius: 1.5rem;
+  padding-left: 1rem;
+  font-size: 1rem;
+  color: #000000;
+}
+.search_container .search_button {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1.5rem;
+  background: #14b77b;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+.search_container .search_button:hover {
+  background: #0e7c54;
+}
+.search_container .search_button img {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.tab_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 1rem;
+}
+
+.tab_item {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #999999;
+  width: 20rem;
+  text-align: center;
+}
+
+.tab_item_active {
+  background: #007bff;
+  color: white;
+}
+
 .card_view_container {
   margin-left: 2rem;
+  width: fit-content;
+  margin-inline: auto;
 }
 @media screen and (max-width: 1200px) {
   .card_view_container {

@@ -2802,8 +2802,7 @@ body #usersetting {
   display: flex;
   justify-content: center;
 }
-
-.application_cancel_button {
+.application_cancel_container .application_cancel_button {
   width: 13rem;
   background: red;
   padding: 0.6rem;
@@ -2823,12 +2822,48 @@ body #usersetting {
 .application_status_container {
   width: 50rem;
   height: 5rem;
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 @media screen and (max-width: 800px) {
   .application_status_container {
     width: 100%;
     height: 3rem;
   }
+}
+.application_status_container .application_reapply_button {
+  display: flex;
+  background: #4cd363;
+  border-radius: 3px;
+  width: 10rem;
+  font-weight: 500;
+  padding: 0.5rem 2rem;
+  font-size: 1.2rem;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  justify-content: center;
+}
+.application_status_container .application_reapply_button:hover {
+  background: #3a7a48;
+}
+.application_status_container .application_cancel_button {
+  display: flex;
+  width: 10rem;
+  padding: 0.5rem 2rem;
+  background: red;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  border-radius: 0.3rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+.application_status_container .application_cancel_button:hover {
+  background: rgb(151, 10, 10);
 }
 
 .application_status_ongoing {
@@ -2860,23 +2895,6 @@ body #usersetting {
   font-weight: bold;
   color: #740707;
   margin-left: 20px;
-}
-
-.application_reapply_button {
-  display: flex;
-  background: #4cd363;
-  border-radius: 3px;
-  width: fit-content;
-  padding: 5px 20px;
-  font-size: 20px;
-  color: white;
-  text-align: center;
-  cursor: pointer;
-  margin-left: 30px;
-  margin-top: 15px;
-}
-.application_reapply_button:hover {
-  background: #3a7a48;
 }
 
 .tameru_button {

@@ -1512,7 +1512,6 @@ $(document).ready(function () {
   }
 
 
-
   // ---------メール設定--------------------
   // エンターを押して次のフォームのフォーカスに移る
   $('.mail_setting_form_text').keydown(function (event) {
