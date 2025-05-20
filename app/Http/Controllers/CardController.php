@@ -40,7 +40,12 @@ use Illuminate\Support\Facades\File as Filesystem;
 use App\Jobs\ProcessUploadedCard;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
+use Illuminate\Support\Facades\Http;
 
+use Gemini\Data\Blob;
+use Gemini\Enums\MimeType;
+use Gemini\Laravel\Facades\Gemini;
+use Gemini\Client as GeminiClient;
 
 use Illuminate\Support\Facades\Mail;
 
@@ -182,8 +187,7 @@ class CardController extends Controller
             if ($type == 'favorite_check') {
                 $carduser_user->お気に入りユーザー = true;
             }
-        } 
-        else if ($check == "false") {
+        } else if ($check == "false") {
             if ($type == 'my_card_check') {
                 $carduser_user->マイ名刺ユーザー = false;
             }
@@ -592,7 +596,66 @@ class CardController extends Controller
                     );
 
 
+                    // Gemini APIを使用
+                    $imageBase64 = base64_encode(file_get_contents($imageFile->getRealPath()));
+                    $mimeType = $imageFile->getMimeType(); // e.g., image/jpeg
+                    $apiKey = config('gemini.api_key');
+                    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
 
+                    $prompt = <<<PROMPT
+                                以下の画像（またはテキスト）をOCR解析し、名刺情報を出力フォーマットに従ってJSON形式で返してください。
+
+                                        - 住所に郵便番号が含まれている場合、その郵便番号を取り除いて、専用の「郵便番号」フィールドに入れてください。
+                                        - 郵便番号、電話番号、FAX番号、携帯電話番号は数字のみを抽出してください。
+                                        - 部署が複数ある場合は、各部署を「部署1」「部署2」といった形式で記入し、3つ以上の部署がある場合は「部署3」「部署4」のように追加してください。
+                                        - 「名前カナ」や「会社名カナ」には推測して必ずカタカナで入力してください。
+                                        - 「名前」や「名前カナ」は苗字と名前のスペースを区切らないで入力してください。
+                                        - 「名前カナ」には名前の漢字、読み仮名やメールアドレスのスペルなどから推測してください。
+                                        - 本社、支社、本店、支店、工場など住所が紐づく拠点などがある場合は「拠点名」に入力してください。
+
+                                        出力フォーマット:
+                                        {
+                                            \"名前\": \"\",
+                                            \"名前カナ\": \"\",
+                                            \"会社名\": \"\",
+                                            \"会社名カナ\": \"\",
+                                            \"役職\": \"\",
+                                            \"部署1\": \"\",
+                                            \"部署2\": \"\",
+                                            \"メールアドレス\": \"\",
+                                            \"携帯電話番号\": \"\",
+                                            \"電話番号\": \"\",
+                                            \"FAX番号\": \"\",
+                                            \"住所\": \"\",
+                                            \"郵便番号\": \"\",
+                                            \"拠点名\": \"\"
+                                        }
+                                PROMPT;
+
+                    $response = Http::post($url, [
+                        'contents' => [
+                            [
+                                'parts' => [
+                                    ['text' => $prompt],
+                                    [
+                                        'inlineData' => [
+                                            'mimeType' => $mimeType,
+                                            'data' => $imageBase64,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ]);
+
+                    if (!$response->ok()) {
+                        return response()->json(['error' => 'Gemini API request failed'], 500);
+                    }
+                    $geminiReply = $response->json()['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                    return response()->json([
+                        'status' => 'success',
+                        'data' => $geminiReply,
+                    ]);
                     // // Google Cloud Vision APIを使用
                     // $imageAnnotator = new ImageAnnotatorClient();
                     // $imageData = file_get_contents(storage_path('app/' . $path));
@@ -612,29 +675,29 @@ class CardController extends Controller
 
                     // $structuredData = json_decode($aiResponse->choices[0]->message->content, true);
 
-                    $aiResponse = OpenAI::chat()->create([
-                        'model' => 'gpt-4o-mini',
-                        'messages' => [
-                            ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
-                            [
-                                'role' => 'user',
-                                'content' => [
-                                    [
-                                        "type" => "text",
-                                        "text" => $this->getJsonPrompt() // プロンプトの内容
-                                    ],
-                                    [
-                                        "type" => "image_url",
-                                        "image_url" => [
-                                            "url" => $imageUrl,
-                                        ]
-                                    ]
-                                ]
-                            ],
-                        ]
-                    ]);
-                    $jsonString = trim(preg_replace('/.*?(\{.*\}).*/s', '$1', $aiResponse->choices[0]->message->content));
-                    $structuredData = json_decode($jsonString, true);
+                    // $aiResponse = OpenAI::chat()->create([
+                    //     'model' => 'gpt-4o-mini',
+                    //     'messages' => [
+                    //         ['role' => 'system', 'content' => '名刺データを整理するアシスタントです。'],
+                    //         [
+                    //             'role' => 'user',
+                    //             'content' => [
+                    //                 [
+                    //                     "type" => "text",
+                    //                     "text" => $this->getJsonPrompt() // プロンプトの内容
+                    //                 ],
+                    //                 [
+                    //                     "type" => "image_url",
+                    //                     "image_url" => [
+                    //                         "url" => $imageUrl,
+                    //                     ]
+                    //                 ]
+                    //             ]
+                    //         ],
+                    //     ]
+                    // ]);
+                    // $jsonString = trim(preg_replace('/.*?(\{.*\}).*/s', '$1', $aiResponse->choices[0]->message->content));
+                    // $structuredData = json_decode($jsonString, true);
 
 
                     // 画像ファイルを削除
