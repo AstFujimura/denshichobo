@@ -355,6 +355,7 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.status === 'success') {
+                        console.log(response);
                         try {
                             autoFillForm(response.data);
                             getCompanyCandidate(response.data.会社名, true);
