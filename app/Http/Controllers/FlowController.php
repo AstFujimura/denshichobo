@@ -2832,8 +2832,10 @@ class FlowController extends Controller
                 $t_approval->save();
                 $t_flow_point->save();
 
-                if (isset($t_approval->承認ファイルパス))
+                if (isset($t_approval->承認ファイルパス)) {
                     $t_flow->変更前承認ファイルパス = $t_approval->承認ファイルパス;
+                    $t_flow->save();
+                }
 
 
                 // そのフロー地点での承認が完了していた場合
@@ -2852,6 +2854,7 @@ class FlowController extends Controller
                     $last_flow_point = DB::table('t_flow_points')
                         ->select('t_flow_points.*')
                         ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
+                        ->where('t_flow_points.id', $t_flow_point->id)
                         ->where('決裁地点', true)
                         ->first();
 
@@ -2941,25 +2944,29 @@ class FlowController extends Controller
                         ->where('m_flow_points.フロントエンド表示ポイント', $next_flow_point->次フロントエンド表示ポイント)
                         ->where('フローテーブルID', $t_flow_point->フローテーブルID)
                         ->first();
-                    // 保存
-                    // DB::table('t_flow_points')
-                    //     ->where('id', $t_flow_point->t_flow_point_id)
-                    //     ->increment('承認移行ステータス', 1);
-
-                    $t_flow_point->承認移行ステータス += 1;
 
 
-                    // もし承認移行ステータスが0、つまり承認に必要なポイントがたまったら
-                    // 次の承認テーブルのステータスを承認可能状態に変更する
-                    if ($t_flow_point->承認移行ステータス == 0) {
-                        $t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->t_flow_point_id)
-                            ->get();
-                        foreach ($t_approvals as $t_approval) {
-                            $t_approval->ステータス = 2;
-                            $t_approval->save();
-                            $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
+                        if ($t_flow_point) {
+                            $new_status = $t_flow_point->承認移行ステータス + 1;
+                        
+                            // 更新実行
+                            DB::table('t_flow_points')
+                                ->where('id', $t_flow_point->t_flow_point_id)
+                                ->update(['承認移行ステータス' => $new_status]);
+                        
+                            // 承認可能状態に移行するかチェック
+                            if ($new_status == 0) {
+                                $t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->t_flow_point_id)->get();
+                        
+                                foreach ($t_approvals as $t_approval) {
+                                    $t_approval->ステータス = 2;
+                                    $t_approval->save();
+                        
+                                    // 通知送信
+                                    $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
+                                }
+                            }
                         }
-                    }
                 }
             }
             // 差し戻しの場合
@@ -3143,6 +3150,7 @@ class FlowController extends Controller
 
 
         // $t_flow->ステータス = 0;
+        $t_flow->変更後承認ファイルパス = $new_pdf_name;
         $t_flow->save();
         $t_approval->承認ファイルパス = $new_pdf_name;
         $t_approval->save();
@@ -3817,5 +3825,26 @@ class FlowController extends Controller
         $t_flow = T_flow::where('過去データID', $code)->exists();
         $tameru = File::where('過去データID', $code)->exists();
         return $t_flow || $tameru;
+    }
+
+
+
+
+    public function workflowmodifyget()
+    {
+        $t_flow_points = DB::table('t_flow_points')
+            ->select('t_flow_points.*','t_flows.id as t_flow_id')
+            ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
+            ->leftJoin('t_flows', 't_flow_points.フローテーブルID', '=', 't_flows.id')
+            ->where('m_flow_points.決裁地点', true)
+            ->where('t_flow_points.承認ステータス', '<', 0)
+            ->where('t_flows.ステータス', 3)
+            ->pluck('t_flow_id');
+
+        $t_flows = T_flow::whereIn('id', $t_flow_points)->get();
+        foreach ($t_flows as $t_flow) {
+            $t_flow->ステータス = 1;
+            $t_flow->save();
+        }
     }
 }

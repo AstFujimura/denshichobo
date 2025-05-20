@@ -329,6 +329,9 @@ Route::prefix($prefix)->group(function () {
 
             //    ワークフローエラーコード
             Route::get('/workflowerror/{code}', [ErrorController::class, 'workflowerrorGet'])->name('workflowerrorGet');
+
+
+            Route::get('/workflow/modify', [FlowController::class, 'workflowmodifyget'])->name('workflowmodifyget');
         }
 
 
@@ -342,9 +345,9 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/detail/{id}', [CardController::class, 'carddetailget'])->name('carddetailget');
 
             // 名刺最新API
-            Route::post('/card/latest', [CardController::class, 'cardlatestpost'])->name('cardlatestpost'); 
+            Route::post('/card/latest', [CardController::class, 'cardlatestpost'])->name('cardlatestpost');
             // マイ名刺・お気に入りAPI
-            Route::post('/card/favorite', [CardController::class, 'cardfavoritepost'])->name('cardfavoritepost'); 
+            Route::post('/card/favorite', [CardController::class, 'cardfavoritepost'])->name('cardfavoritepost');
 
             // 名刺情報API
             Route::get('/card/history/{id}', [CardController::class, 'cardinfoget'])->name('cardinfoget');
@@ -383,9 +386,7 @@ Route::prefix($prefix)->group(function () {
 
 
             Route::get('/card/multiple/test', [CardController::class, 'cardmultipletestget'])->name('cardmultipletestget');
-
-
-       }
+        }
 
         // -----------------------------スケジュール--------------------------------
         if (Version::where('スケジュール', true)->first()) {
@@ -410,5 +411,5 @@ Route::prefix($prefix)->group(function () {
             // Route::get('/schedule/csv', [ScheduleController::class, 'schedulecsvget'])->name('schedulecsvget');
             // Route::post('/schedule/csv', [ScheduleController::class, 'schedulecsvpost'])->name('schedulecsvpost');
         }
-    }); 
+    });
 });
