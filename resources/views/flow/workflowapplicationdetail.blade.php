@@ -115,6 +115,20 @@ Rapid ~電子承認システム
                             @endif
                         </div>
                         <div class="approve_application_info_container">
+                        @if ($m_category->発行)
+                            <div class="approval_sub_title">
+                                承認用紙
+                            </div>
+                            <div class="approve_content">
+                                <div class="approve_content_title">
+                                    承認用紙
+                                </div>
+                                <div class="approve_content_element">
+                                    <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_before">プレビュー</div>
+                                    <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_flow->id}}?type=t_flow_before&timestamp={{time()}}">
+                                </div>
+                            </div>
+                            @endif
                             <div class="approval_sub_title">
                                 申請情報
                             </div>
@@ -137,20 +151,7 @@ Rapid ~電子承認システム
                                 </div>
                             </div>
                             @endforeach
-                            @if ($m_category->発行)
-                            <div class="approval_sub_title">
-                                承認用紙
-                            </div>
-                            <div class="approve_content">
-                                <div class="approve_content_title">
-                                    承認用紙
-                                </div>
-                                <div class="approve_content_element">
-                                    <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_before">プレビュー</div>
-                                    <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_flow->id}}?type=t_flow_before&timestamp={{time()}}">
-                                </div>
-                            </div>
-                            @endif
+
                         </div>
 
 
