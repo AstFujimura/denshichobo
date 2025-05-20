@@ -9,27 +9,44 @@
 
 @section('main')
 <div class="MainElement">
+
+    <input type="hidden" id="card_detail_title">
     <div class="card_detail_container">
         <div class="gray_area">
             <div class="popup_content">
-                <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" class="card_edit_button" data-card_id="{{ $now_card->card_id }}">
+                <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" class="popup_button card_edit_button" data-card_id="{{ $now_card->card_id }}">
                     この名刺を編集する
                 </a>
-                <a class="card_delete_button" data-card_id="{{ $now_card->card_id }}">
+                <div class="popup_button card_latest_button display_none" data-card_id="{{ $now_card->card_id }}">
+                    この名刺を最新にする
+                </div>
+                <a class="popup_button card_delete_button" data-card_id="{{ $now_card->card_id }}">
                     @csrf
                     この名刺を削除する
                 </a>
             </div>
         </div>
         <div class="card_history_container">
+            <div class="toggle_container">
+                <div class="toggle_button">
+                    <input class="favorite_check" type="checkbox" id="my_card_check" data-card_user_id="{{ $carduser->id }}" @if ($carduser_user->マイ名刺ユーザー ?? false) checked @endif>
+                    <label for="my_card_check">
+                        マイ名刺
+                    </label>
+                </div>
+                <div class="toggle_button">
+                    <input class="favorite_check" type="checkbox" id="favorite_check" data-card_user_id="{{ $carduser->id }}" @if ($carduser_user->お気に入りユーザー ?? false) checked @endif>
+                    <label for="favorite_check">
+                        お気に入り登録
+                    </label>
+                </div>
+            </div>
             @foreach ($cards as $card)
             <div class="card_history_content">
                 <input type="radio" name="card_history" id="card_history_{{ $card->card_id }}" value="{{ $card->card_id }}" @if ($card->最新フラグ == 1) checked @endif>
                 <label for="card_history_{{ $card->card_id }}" class="card_history_label">
                     <div class="history_card">
-                        @if ($card->最新フラグ == 1)
-                        <img class="new_card_check" src="{{asset(config('prefix.prefix').'/'.'img/card/new_card_check.svg')}}" alt="">
-                        @endif
+                        <img data-card_id="{{ $card->card_id }}" class="new_card_check @if ($card->最新フラグ != 1) display_none @endif" src="{{asset(config('prefix.prefix').'/'.'img/card/new_card_check.svg')}}" alt="">
                         <img class="lazyload" data-card_id="{{ $card->card_id }}" data-front="true" alt="">
                     </div>
                     <div class="history_card_text">
@@ -56,7 +73,6 @@
             </a>
         </div>
         <div class="card_info_container">
-            <h2 class="pagetitle" id="card_detail_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">{{ $carduser->表示名 }} さん</h2>
             <div class="card_detail_content">
                 <div class="card_info_content">
                     <div class="setting_container">
@@ -179,6 +195,9 @@
                 <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" id="card_edit_button" class="card_edit_button" data-card_id="{{ $now_card->id }}">
                     この名刺を編集する
                 </a>
+                <div class="card_latest_button display_none" data-card_id="{{ $now_card->card_id }}">
+                    この名刺を最新にする
+                </div>
                 <a class="card_delete_button" data-card_id="{{ $now_card->card_id }}">
                     @csrf
                     この名刺を削除する

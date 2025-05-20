@@ -8,12 +8,9 @@ use App\Models\File;
 use App\Models\User;
 
 
-class Card extends Model
+class Carduser_User extends Model
 {
     use HasFactory;
 
-    protected $table = 'cards';
-    protected $fillable = [
-        '最新フラグ',
-    ];
+    protected $table = 'carduser_user';
 }

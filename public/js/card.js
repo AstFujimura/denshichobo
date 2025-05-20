@@ -633,21 +633,163 @@ $(document).ready(function () {
         var prefix = $('#prefix').val();
         lazyload('imgset');
 
+        // 検索のフォーカス時にエンターを押したとき
+        $('.search_input').on('keydown', function (e) {
+            if (e.key === 'Enter') {
+                $('.search_button').click();
+            }
+        });
+
+
+        // 検索を押した時
+        $(document).on('click', '.search_button', function () {
+
+            var search_text = $('.search_input').val();
+            $('.search_card').removeClass('search_card');
+            $('.none_search_card').removeClass('none_search_card');
+            $('.card_view_card').each(function () {
+                if ($(this).text().includes(search_text)) {
+                    $(this).addClass('search_card');
+                }
+                // else if ($(this).find('.card_view_card_company').text().includes(search_text)) {
+                //     $(this).addClass('search_card');
+                // }
+                else {
+                    $(this).addClass('none_search_card');
+                }
+            });
+        });
+
+        // 名刺の種類のタブを切り替えた時
+        $(document).on('click', '.tab_item:not(.tab_item_active)', function () {
+            $('.tab_item').removeClass('tab_item_active');
+            $(this).addClass('tab_item_active');
+            if ($(this).data('tab') == 'my_card_user') {
+                $('.card_view_card').each(function () {
+                    if ($(this).attr('data-my_card_user') == "true") {
+                        $(this).data('show', "true");
+                        $(this).attr('data-show', "true");
+                    }
+                    else {
+                        $(this).data('show', "false");
+                        $(this).attr('data-show', "false");
+                    }
+                });
+            }
+            else if ($(this).data('tab') == 'favorite_user') {
+                $('.card_view_card').each(function () {
+                    if ($(this).attr('data-favorite_user') == "true") {
+                        $(this).data('show', "true");
+                        $(this).attr('data-show', "true");
+                    }
+                    else {
+                        $(this).data('show', "false");
+                        $(this).attr('data-show', "false");
+                    }
+                });
+            }
+            else {
+                $('.card_view_card').data('show', "true");
+                $('.card_view_card').attr('data-show', "true");
+
+            }
+            lazyload('imgset');
+        });
+
+
     }
 
     // 名刺詳細画面
     if ($('#card_detail_title').length > 0) {
         var prefix = $('#prefix').val();
         lazyload('imgset');
+
+        // マイ名刺・お気に入りチェックを押した時
+        $('.favorite_check').on('change', function () {
+            var checkbox = $(this); // ← ここで this を保存
+            var card_user_id = $(this).data('card_user_id');
+            var check = $(this).is(':checked');
+            var type = $(this).attr('id');
+            $.ajax({
+                url: prefix + '/card/favorite',
+                method: 'POST',
+                data: {
+                    card_user_id: card_user_id,
+                    check: check,
+                    type: type
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                },
+                success: function (response) {
+                    if (!response.success) {
+                        alert("エラーが発生しました。");
+                        checkbox.prop('checked', !check);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error); // エラー処理
+                    alert("エラーが発生しました。");
+                    checkbox.prop('checked', !check);
+                }
+            });
+        });
+
+        $('.card_latest_button').on('click', function () {
+            var card_id = $(this).data('card_id');
+            
+            $.ajax({
+                url: prefix + '/card/latest',
+                method: 'POST',
+                data: {
+                    card_id: card_id
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                },
+                success: function (response) {
+                    if (!response.success) {
+                        alert("エラーが発生しました。");
+                    }
+                    else {
+                        alert("名刺を最新にしました。");
+                        $('.new_card_check').addClass('display_none');
+                        $('.new_card_check[data-card_id="' + card_id + '"]').removeClass('display_none');
+                        $('.card_latest_button').addClass('display_none');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error); // エラー処理
+                    alert("エラーが発生しました。");
+                }
+            });
+        });
+
+
+
         // 歴代の名刺の選択が変わった時
         $(document).on('change', 'input[name="card_history"]', function () {
             var card_edit_button = $('.card_edit_button');
             var card_delete_button = $('.card_delete_button');
+            var card_latest_button = $('.card_latest_button');
             card_edit_button.attr('href', prefix + '/card/edit/' + $(this).val());
             card_edit_button.data('card_id', $(this).val());
             card_edit_button.attr('data-card_id', $(this).val());
             card_delete_button.data('card_id', $(this).val());
             card_delete_button.attr('data-card_id', $(this).val());
+            card_latest_button.data('card_id', $(this).val());
+            card_latest_button.attr('data-card_id', $(this).val());
+
+
+            // 最新フラグが経っている場合は「この名刺を最新にするボタンを非表示」
+            if ($(this).closest('.card_history_content').find('.new_card_check:not(.display_none)').length != 0) {
+                $('.card_latest_button').addClass('display_none');
+            }
+            else {
+                $('.card_latest_button').removeClass('display_none');
+            }
+
+
             $('.imgset').data('card_id', $(this).val())
             $('.card_history_container').toggleClass('card_history_container_open');
             $.ajax({
@@ -742,52 +884,59 @@ $(document).ready(function () {
     // addclassにはその要素に対してクラスを追加
     function lazyload(addclass) {
         var prefix = $('#prefix').val();
-        $('img.lazyload').each(function () {
-            var img = $(this);
-            if ($('#server').val() == "cloud") {
-                $.ajax({
-                    url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
-                    method: 'GET',
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.Type === 'application/pdf') {
-                            // var embed = $('<embed>');
-                            // embed.attr('src', response.path);
-                            // embed.attr('width', '100%');
-                            // embed.attr('height', '600px');
-                            // embed.attr('type', 'application/pdf');
-                            // embed.addClass('imgset');
-
-                            // $('.pastpreview').html(embed);
-                        }
-                        else if (response.Type.startsWith('image/')) {
-                            img.attr('src', response.path);
-                            img.addClass(addclass);
-                        }
-                    }
-                });
+        // 名刺一覧画面の画像読み込み(addclassがあれば読み込まない)
+        $('img.lazyload:not(.' + addclass + ')').each(function () {
+            // 親要素のdata-showがfalseなら読み込まない
+            if ($(this).closest('.card_view_card').attr('data-show') == "false") {
+                return
             }
             else {
-                $.ajax({
-                    url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
-                    method: 'GET',
-                    xhrFields: {
-                        responseType: 'blob' // ファイルをBlobとして受け取る
-                    },
-                    success: function (response) {
-                        var Url = URL.createObjectURL(response);
-                        if (response.type.startsWith('image/')) {
-                            img.attr('src', Url);
-                            img.addClass(addclass);
+                var img = $(this);
+                if ($('#server').val() == "cloud") {
+                    $.ajax({
+                        url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
+                        method: 'GET',
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.Type === 'application/pdf') {
+                                // var embed = $('<embed>');
+                                // embed.attr('src', response.path);
+                                // embed.attr('width', '100%');
+                                // embed.attr('height', '600px');
+                                // embed.attr('type', 'application/pdf');
+                                // embed.addClass('imgset');
+
+                                // $('.pastpreview').html(embed);
+                            }
+                            else if (response.Type.startsWith('image/')) {
+                                img.attr('src', response.path);
+                                img.addClass(addclass);
+                            }
                         }
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
+                        method: 'GET',
+                        xhrFields: {
+                            responseType: 'blob' // ファイルをBlobとして受け取る
+                        },
+                        success: function (response) {
+                            var Url = URL.createObjectURL(response);
+                            if (response.type.startsWith('image/')) {
+                                img.attr('src', Url);
+                                img.addClass(addclass);
+                            }
 
 
-                    },
-                    error: function (xhr, status, error) {
-                        console.error(error); // エラー処理
-                    }
-                });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(error); // エラー処理
+                        }
+                    });
 
+                }
             }
         });
     }
@@ -903,7 +1052,7 @@ $(document).ready(function () {
             return;
         }
 
-        let totalFiles = validFiles.length;
+        var totalFiles = validFiles.length;
         $('#total_files_count').val(totalFiles);
         let uploadedFiles = 0;
         $('#uploadedfiles_count').val(uploadedFiles);
@@ -961,12 +1110,12 @@ $(document).ready(function () {
                                                 error: function (response) {
                                                     console.error('OpenAI process failed.' + uploadedFiles);
 
-                                                    uploadedFiles++;
-                                                    $('#uploadedfiles_count').val(uploadedFiles);
+                                                    totalFiles--;
+                                                    $('#total_files_count').val(totalFiles);
                                                 }
                                             });
 
-                                        }, send_index * 12000); // 12秒ごとにずらす（12000ms）    
+                                        }, send_index * 3000); // 3秒ごとにずらす（3000ms）    
 
                                         send_index++;
                                     }
@@ -975,8 +1124,8 @@ $(document).ready(function () {
                                         $('#uploadedfiles_count').val(uploadedFiles);
                                     }
                                     else {
-                                        uploadedFiles++;
-                                        $('#uploadedfiles_count').val(uploadedFiles);
+                                        totalFiles--;
+                                        $('#total_files_count').val(totalFiles);
                                     }
                                 },
                                 error: function (xhr, status, error) {
@@ -985,8 +1134,8 @@ $(document).ready(function () {
                         }
                         else if (response.status === 'skip') {
                             // スキップ
-                            uploadedFiles++;
-                            $('#uploadedfiles_count').val(uploadedFiles);
+                            totalFiles--;
+                            $('#total_files_count').val(totalFiles);
                         }
                     }
                 })

@@ -340,6 +340,12 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/companyview', [CardController::class, 'cardcompanyviewget'])->name('cardcompanyviewget');
             // 名刺詳細(idはcardusersのid)
             Route::get('/card/detail/{id}', [CardController::class, 'carddetailget'])->name('carddetailget');
+
+            // 名刺最新API
+            Route::post('/card/latest', [CardController::class, 'cardlatestpost'])->name('cardlatestpost'); 
+            // マイ名刺・お気に入りAPI
+            Route::post('/card/favorite', [CardController::class, 'cardfavoritepost'])->name('cardfavoritepost'); 
+
             // 名刺情報API
             Route::get('/card/history/{id}', [CardController::class, 'cardinfoget'])->name('cardinfoget');
             // 名刺登録

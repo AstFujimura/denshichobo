@@ -20,20 +20,20 @@
         </div>
         <div class="tab_container">
             <div class="tab_item tab_item_active" data-tab="my_card_user">
-                マイ名刺ユーザー
+                マイ名刺
             </div>
             <div class="tab_item" data-tab="all_user">
-                すべてのユーザー
+                すべて
             </div>
             <div class="tab_item" data-tab="favorite_user">
-                お気に入りユーザー
+                お気に入り
             </div>
         </div>
     </div>
 
     <div class="card_view_container">
         @foreach ($cardusers as $carduser)
-        <a href="{{ route('carddetailget', ['id' => $carduser->carduser_id]) }}" class="card_view_card">
+        <a href="{{ route('carddetailget', ['id' => $carduser->carduser_id]) }}" class="card_view_card" data-show="{{ $carduser->マイ名刺ユーザー ?? false }}" data-my_card_user="{{ $carduser->マイ名刺ユーザー ?? false }}" data-favorite_user="{{ $carduser->お気に入りユーザー ?? false }}">
             <div class="text_container">
                 <div class="card_view_card_name">
                     {{ $carduser->表示名 }}

@@ -30,6 +30,7 @@ use App\Models\Company;
 use App\Models\Card;
 use App\Models\Card_Company;
 use App\Models\Carduser;
+use App\Models\Carduser_User;
 use App\Models\Department;
 use App\Models\Card_Department;
 use App\Models\Branch;
@@ -82,6 +83,13 @@ class CardController extends Controller
                 ->orderBy('cards.id', 'desc')
                 ->get();
             $carduser->departments = $departments;
+
+
+            $carduser_user = Carduser_User::where('名刺ユーザーID', $carduser->carduser_id)
+                ->where('ユーザーID', Auth::user()->id)
+                ->first();
+            $carduser->マイ名刺ユーザー = $carduser_user->マイ名刺ユーザー ?? null == 1 ? "true" : "false";
+            $carduser->お気に入りユーザー = $carduser_user->お気に入りユーザー ?? null == 1 ? "true" : "false";
         }
         return view('card.cardview', compact("prefix", "server", "cardusers"));
     }
@@ -101,12 +109,16 @@ class CardController extends Controller
         if (!$carduser) {
             return redirect()->route('cardviewget')->with('error', '名刺が見つかりませんでした。');
         }
+        $carduser_user = Carduser_User::where('名刺ユーザーID', $carduser->id)
+            ->where('ユーザーID', Auth::user()->id)
+            ->first();
         $cards = DB::table('cards')
             ->select('cards.id as card_id', 'cards.*',  'companies.*', 'branches.*')
             ->leftJoin('companies', 'cards.会社ID', '=', 'companies.id')
             ->leftJoin('branches', 'cards.拠点ID', '=', 'branches.id')
             ->where('cards.名刺ユーザーID', $carduser->id)
             ->get();
+        $now_card = null;
         foreach ($cards as $card) {
             $departments = DB::table('card_department')
                 ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
@@ -122,7 +134,65 @@ class CardController extends Controller
                 $now_card = $card;
             }
         }
-        return view('card.carddetail', compact("prefix", "server", "carduser", "cards", "now_card"));
+        if (!$now_card) {
+            return redirect()->route('cardviewget')->with('error', '名刺が見つかりませんでした。');
+        }
+        return view('card.carddetail', compact("prefix", "server", "carduser", "cards", "now_card", "carduser_user"));
+    }
+    // 名刺最新API
+    public function cardlatestpost(Request $request)
+    {
+        $card_id = $request->card_id;
+        $latest_card = Card::find($card_id);
+
+        // 名刺ユーザーIDが同じ名刺の中で最新フラグが1のものを0にする
+        Card::where('名刺ユーザーID', $latest_card->名刺ユーザーID)
+            ->where('id', '!=', $card_id)
+            ->update(['最新フラグ' => 0]);
+
+        $latest_card->最新フラグ = 1;
+        $latest_card->save();
+
+        $carduser = Carduser::find($latest_card->名刺ユーザーID);
+        $carduser->表示名 = $latest_card->名前;
+        $carduser->表示名カナ = $latest_card->名前カナ;
+        $carduser->save();
+
+        return response()->json(['success' => 'true']);
+    }
+    // 名刺お気に入りAPI
+    public function cardfavoritepost(Request $request)
+    {
+        $card_user_id = $request->card_user_id;
+        $check = $request->check;
+        $type = $request->type;
+        $carduser_user = Carduser_User::where('名刺ユーザーID', $card_user_id)
+            ->where('ユーザーID', Auth::user()->id)
+            ->first();
+        if (!$carduser_user) {
+            $carduser_user = new Carduser_User();
+            $carduser_user->名刺ユーザーID = $card_user_id;
+            $carduser_user->ユーザーID = Auth::user()->id;
+        }
+
+        if ($check == "true") {
+            if ($type == 'my_card_check') {
+                $carduser_user->マイ名刺ユーザー = true;
+            }
+            if ($type == 'favorite_check') {
+                $carduser_user->お気に入りユーザー = true;
+            }
+        } 
+        else if ($check == "false") {
+            if ($type == 'my_card_check') {
+                $carduser_user->マイ名刺ユーザー = false;
+            }
+            if ($type == 'favorite_check') {
+                $carduser_user->お気に入りユーザー = false;
+            }
+        }
+        $carduser_user->save();
+        return response()->json(['success' => 'true']);
     }
     public function cardinfoget(Request $request, $id)
     {
@@ -194,8 +264,9 @@ class CardController extends Controller
         $carduser_id = $carduser->id;
         $card_id = 0;
         $card = 0;
+        $designate_branch = false;
 
-        return view('card.cardregist', compact("prefix", "server", "edit", "carduser", "card_id", "card", "carduser_id"));
+        return view('card.cardregist', compact("prefix", "server", "edit", "carduser", "card_id", "card", "carduser_id", "designate_branch"));
     }
     public function carddeletepost(Request $request)
     {
@@ -216,15 +287,23 @@ class CardController extends Controller
 
         // 名刺のユーザーが他に名刺を登録しているかを取得する
         $user_count = Card::where('名刺ユーザーID', $card->名刺ユーザーID);
+        $carduser = Carduser::find($card->名刺ユーザーID);
 
         // 登録している名刺が該当の一つのみである場合は名刺ユーザーごと消去する
         if ($user_count->count() == 1) {
-            $carduser = Carduser::find($card->名刺ユーザーID);
             $carduser->delete();
         }
         // 他に名刺を登録している場合は名刺のみを消去する
         else {
             $card->delete();
+            // 名刺ユーザーIDが同じ名刺の中で最新フラグが0のものを0にする
+            $user_count->where('id', '!=', $card_id)
+                ->orderBy('id', 'desc')
+                ->first()
+                ->update(['最新フラグ' => 1]);
+            $carduser->表示名 = $user_count->first()->名前;
+            $carduser->表示名カナ = $user_count->first()->名前カナ;
+            $carduser->save();
         }
 
         return redirect()->route('cardviewget')->with('success', '名刺を削除しました。');
@@ -290,6 +369,11 @@ class CardController extends Controller
         if ($edit == 'edit') {
             $carduser = Carduser::find($request->carduser);
             $card = Card::find($request->card_id);
+            if ($card->最新フラグ == 1) {
+                $carduser->表示名 = $request->name;
+                $carduser->表示名カナ = $request->name_kana;
+                $carduser->save();
+            }
         }
         // 名刺の追加
         else if ($edit == 'add') {
@@ -298,6 +382,9 @@ class CardController extends Controller
             $card->名刺ユーザーID = $carduser->id;
             $card->最新フラグ = 1;
             $past_card = Card::where('名刺ユーザーID', $carduser->id)->update(['最新フラグ' => 0]);
+            $carduser->表示名 = $request->name;
+            $carduser->表示名カナ = $request->name_kana;
+            $carduser->save();
         } else {
             $carduser = new Carduser();
             $carduser->表示名 = $request->name;
@@ -1640,7 +1727,7 @@ class CardController extends Controller
             $openaiqueue->トークン = $uploadtoken;
             $openaiqueue->開始時刻 = $start;
             $openaiqueue->save();
-    
+
             return [1, $openaiqueue->id];
         }
 
@@ -1652,16 +1739,16 @@ class CardController extends Controller
         $total = 0;
         foreach ($queue as $record) {
             $total += $record->トークン;
-    
+
             // この時点で超えるなら、このレコードの開始時刻 + 65秒が空きタイミング
             if ($total + $uploadtoken >= $limitPerMinute) {
                 $start = Carbon::parse($record->開始時刻)->addSeconds(65);
-    
+
                 $openaiqueue = new OpenaiQueue();
                 $openaiqueue->トークン = $uploadtoken;
                 $openaiqueue->開始時刻 = $start;
                 $openaiqueue->save();
-    
+
                 return [$start->diffInSeconds($now), $openaiqueue->id];
             }
         }

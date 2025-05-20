@@ -122,11 +122,17 @@ body .usersettingtitle {
 
 .card_view_header {
   position: sticky;
-  top: 48px;
   z-index: 100;
   padding: 1rem;
   border-bottom: solid 0.1rem gainsboro;
-  background: #b3b3b3;
+  background: #ededed;
+  top: 48px;
+}
+@media screen and (max-width: 600px) {
+  .card_view_header {
+    top: 0;
+    padding: 0.5rem;
+  }
 }
 
 .search_container {
@@ -138,6 +144,7 @@ body .usersettingtitle {
 }
 .search_container .search_input {
   width: 30rem;
+  max-width: calc(100vw - 6rem);
   height: 3rem;
   border: solid 0.1rem gainsboro;
   border-radius: 1.5rem;
@@ -169,15 +176,27 @@ body .usersettingtitle {
   margin-bottom: 10px;
   gap: 1rem;
 }
+@media screen and (max-width: 600px) {
+  .tab_container {
+    gap: 0.5rem;
+  }
+}
 
 .tab_item {
   cursor: pointer;
   padding: 10px;
   border-radius: 5px;
   background: #ffffff;
+  border: solid 1px gainsboro;
   color: #999999;
   width: 20rem;
+  max-width: 23%;
   text-align: center;
+}
+@media screen and (max-width: 600px) {
+  .tab_item {
+    font-size: 0.8rem;
+  }
 }
 
 .tab_item_active {
@@ -201,11 +220,19 @@ body .usersettingtitle {
   border-radius: 10px;
   padding: 10px;
   margin: 10px;
-  display: flex;
   width: 50rem;
   cursor: pointer;
   text-decoration: none;
   color: #454545;
+}
+.card_view_container .card_view_card[data-show=true] {
+  display: flex;
+}
+.card_view_container .card_view_card.none_search_card {
+  display: none;
+}
+.card_view_container .card_view_card[data-show=false] {
+  display: none;
 }
 @media screen and (max-width: 1200px) {
   .card_view_container .card_view_card {
@@ -304,7 +331,7 @@ body .usersettingtitle {
   flex-direction: column;
   justify-content: center;
 }
-.card_detail_container .gray_area .popup_content a:not(:last-child) {
+.card_detail_container .gray_area .popup_content .popup_button:not(:last-child) {
   border-bottom: solid 0.1rem #bfbfbf;
 }
 .card_detail_container .gray_area .popup_content .card_edit_button {
@@ -327,12 +354,41 @@ body .usersettingtitle {
   background: #ffffff;
   margin-inline: auto;
 }
+.card_detail_container .gray_area .popup_content .card_latest_button {
+  color: #03626d;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  height: 4rem;
+  background: #ffffff;
+  margin-inline: auto;
+}
 .card_detail_container .card_history_container {
   width: 26rem;
   background: #0B294C;
   height: 100%;
   height: calc(100vh - 112px);
   overflow: hidden;
+}
+.card_detail_container .card_history_container .toggle_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: fit-content;
+  height: 4rem;
+  margin-left: 1rem;
+}
+.card_detail_container .card_history_container .toggle_container .toggle_button {
+  color: white;
+  cursor: pointer;
+}
+.card_detail_container .card_history_container .toggle_container .toggle_button input {
+  cursor: pointer;
+}
+.card_detail_container .card_history_container .toggle_container .toggle_button label {
+  cursor: pointer;
 }
 @media screen and (min-width: 801px) {
   .card_detail_container .card_history_container .card_history_close_button {
@@ -435,8 +491,9 @@ body .usersettingtitle {
 }
 .card_detail_container .card_info_container {
   flex: 1;
-  margin-inline: 2rem;
-  height: calc(100vh - 112px);
+  padding-inline: 2rem;
+  height: calc(100vh - 122px);
+  margin-top: 10px;
 }
 .card_detail_container .card_info_container .card_detail_content {
   display: grid;
@@ -610,6 +667,21 @@ body .usersettingtitle {
 }
 .card_detail_container .card_info_container .card_edit_delete_container .card_edit_button:hover {
   background: #12437c;
+}
+.card_detail_container .card_info_container .card_edit_delete_container .card_latest_button {
+  background: #ffffff;
+  border: solid 0.1rem #0B294C;
+  color: #0B294C;
+  border-radius: 1rem;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  width: fit-content;
+  margin-top: 3rem;
+  display: block;
+}
+.card_detail_container .card_info_container .card_edit_delete_container .card_latest_button:hover {
+  background: #12437c;
+  color: white;
 }
 
 .crop_controller_container {
@@ -796,7 +868,7 @@ body .usersettingtitle {
 
 .card_regist_container {
   width: 100rem;
-  max-width: 97%;
+  max-width: 93%;
   margin-left: 2rem;
   margin-inline: auto;
   position: sticky;
@@ -1059,12 +1131,12 @@ body .usersettingtitle {
   height: 4rem;
 }
 .card_regist_container .card_regist_form .form_container table tr td:first-child {
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: #868686;
   width: 10rem;
 }
 .card_regist_container .card_regist_form .form_container table tr td:nth-child(2) {
-  width: 23rem;
+  width: 31rem;
   max-width: 64%;
 }
 .card_regist_container .card_regist_form .form_container table tr td:nth-child(3) {

@@ -141,11 +141,16 @@ body {
 // 名刺一覧
 .card_view_header {
     position: sticky;
-    top: 48px;
     z-index: 100;
     padding: 1rem;
     border-bottom: solid 0.1rem gainsboro;
-    background: #b3b3b3;
+    background: #ededed;
+    top: 48px;
+
+    @media screen and (max-width: 600px) {
+        top: 0;
+        padding: 0.5rem;
+    }
 }
 
 .search_container {
@@ -154,8 +159,10 @@ body {
     align-items: center;
     margin-bottom: 1rem;
     gap: 1rem;
-    .search_input{
+
+    .search_input {
         width: 30rem;
+        max-width: calc(100vw - 6rem);
         height: 3rem;
         border: solid 0.1rem gainsboro;
         border-radius: 1.5rem;
@@ -163,7 +170,8 @@ body {
         font-size: 1rem;
         color: #000000;
     }
-    .search_button{
+
+    .search_button {
         width: 3rem;
         height: 3rem;
         border-radius: 1.5rem;
@@ -171,10 +179,12 @@ body {
         color: #ffffff;
         border: none;
         cursor: pointer;
-        &:hover{
+
+        &:hover {
             background: #0e7c54;
         }
-        img{
+
+        img {
             width: 1.5rem;
             height: 1.5rem;
         }
@@ -188,6 +198,10 @@ body {
     align-items: center;
     margin-bottom: 10px;
     gap: 1rem;
+
+    @media screen and (max-width: 600px) {
+        gap: 0.5rem;
+    }
 }
 
 .tab_item {
@@ -195,9 +209,15 @@ body {
     padding: 10px;
     border-radius: 5px;
     background: #ffffff;
+    border: solid 1px gainsboro;
     color: #999999;
     width: 20rem;
+    max-width: 23%;
     text-align: center;
+
+    @media screen and (max-width: 600px) {
+        font-size: 0.8rem;
+    }
 }
 
 .tab_item_active {
@@ -224,11 +244,22 @@ body {
         border-radius: 10px;
         padding: 10px;
         margin: 10px;
-        display: flex;
         width: 50rem;
         cursor: pointer;
         text-decoration: none;
         color: #454545;
+
+        &[data-show=true] {
+            display: flex;
+        }
+
+        &.none_search_card {
+            display: none;
+        }
+
+        &[data-show=false] {
+            display: none;
+        }
 
         @media screen and (max-width: 1200px) {
             width: 90%;
@@ -303,7 +334,6 @@ body {
 // 名刺詳細
 .card_detail_container {
     display: flex;
-
     .gray_area {
         position: fixed;
         background: rgba(53, 53, 53, 0.37);
@@ -331,7 +361,7 @@ body {
             flex-direction: column;
             justify-content: center;
 
-            a:not(:last-child) {
+            .popup_button:not(:last-child) {
                 border-bottom: solid 0.1rem #bfbfbf;
             }
 
@@ -357,6 +387,17 @@ body {
                 background: #ffffff;
                 margin-inline: auto;
             }
+
+            .card_latest_button {
+                color: #03626d;
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                height: 4rem;
+                background: #ffffff;
+                margin-inline: auto;
+            }
         }
     }
 
@@ -366,6 +407,30 @@ body {
         height: 100%;
         height: calc(100vh - 112px);
         overflow: hidden;
+
+
+        .toggle_container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            width: fit-content;
+            height: 4rem;
+            margin-left: 1rem;
+
+            .toggle_button {
+                color: white;
+                cursor: pointer;
+
+                input {
+                    cursor: pointer;
+                }
+
+                label {
+                    cursor: pointer;
+                }
+            }
+        }
 
         @media screen and (min-width: 801px) {
             .card_history_close_button {
@@ -491,8 +556,9 @@ body {
 
     .card_info_container {
         flex: 1;
-        margin-inline: 2rem;
-        height: calc(100vh - 112px);
+        padding-inline: 2rem;
+        height: calc(100vh - 122px);
+        margin-top: 10px;
 
         .card_detail_content {
             display: grid;
@@ -687,13 +753,24 @@ body {
                 &:hover {
                     background: #12437c;
                 }
-
-
-
-
-
             }
 
+            .card_latest_button {
+                background: #ffffff;
+                border: solid 0.1rem #0B294C;
+                color: #0B294C;
+                border-radius: 1rem;
+                padding: 0.7rem 1.2rem;
+                cursor: pointer;
+                width: fit-content;
+                margin-top: 3rem;
+                display: block;
+
+                &:hover {
+                    background: #12437c;
+                    color: white;
+                }
+            }
         }
 
 
@@ -923,7 +1000,7 @@ body {
 
 .card_regist_container {
     width: 100rem;
-    max-width: 97%;
+    max-width: 93%;
     margin-left: 2rem;
     margin-inline: auto;
     position: sticky;
@@ -1233,13 +1310,13 @@ body {
 
                     td {
                         &:first-child {
-                            font-size: 1rem;
+                            font-size: 0.8rem;
                             color: #868686;
                             width: 10rem;
                         }
 
                         &:nth-child(2) {
-                            width: 23rem;
+                            width: 31rem;
                             max-width: 64%;
                         }
 
