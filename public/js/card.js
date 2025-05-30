@@ -738,7 +738,7 @@ $(document).ready(function () {
 
         $('.card_latest_button').on('click', function () {
             var card_id = $(this).data('card_id');
-            
+
             $.ajax({
                 url: prefix + '/card/latest',
                 method: 'POST',
@@ -1025,25 +1025,14 @@ $(document).ready(function () {
 
     // 名刺一括アップロード
     let selectedFiles = [];
+    let validFiles = [];
 
     $('#folder_upload').on('change', function (event) {
         selectedFiles = Array.from(event.target.files);
     });
-    $('.upload_button').on('click', function (event) {
-        if (confirm('名刺を一括アップロードしますか？')) {
-            $('.progress_container_wrapper').addClass('progress_container_wrapper_open');
-            $('.progress_bar').css('width', '0%');
-            $('.progress_message').text('アップロード中');
-            $('#multiple_upload_form').submit();
-        }
-    })
-    $('#multiple_upload_form').on('submit', function (event) {
-        event.preventDefault(); // 通常のフォーム送信は止める
-        let uploadId = generateUUID(); // ここで一度作成！
-        var prefix = $('#prefix').val();
+    $(document).on('click', '.upload_button.enabled', function (event) {
         const allowedExtensions = ['jpg', 'jpeg', 'png'];
-
-        let validFiles = selectedFiles.filter(function (file) {
+        validFiles = selectedFiles.filter(function (file) {
             const extension = file.name.split('.').pop().toLowerCase();
             return allowedExtensions.includes(extension);
         });
@@ -1052,34 +1041,46 @@ $(document).ready(function () {
             alert('アップロードできる画像ファイルがありません。');
             return;
         }
+        else {
+            if (confirm('名刺を一括アップロードしますか？')) {
+                $('.progress_container_wrapper').addClass('progress_container_wrapper_open');
+                $('.progress_bar').css('width', '0%');
+                $('.progress_message').text('アップロード中');
+                $('#multiple_upload_form').submit();
+            }
+        }
+    })
+    $('#multiple_upload_form').on('submit', function (event) {
+        event.preventDefault(); // 通常のフォーム送信は止める
+        let uploadId = generateUUID(); // ここで一度作成！
+        var prefix = $('#prefix').val();
+
+
 
         var totalFiles = validFiles.length;
         $('#total_files_count').val(totalFiles);
-        let uploadedFiles = 0;
+        var uploadedFiles = 0;
         $('#uploadedfiles_count').val(uploadedFiles);
         processing_check(uploadId)
-
-        var upload_index = 0;
-        var send_index = 0;
         validFiles.forEach(function (file) {
-            // 過去データ参照 選択肢として新規登録
-            setTimeout(function () {
-                $.ajax({
-                    url: prefix + '/card/multiple/past',
-                    method: 'GET',
-                    data: {
-                        filename: file.name,
-                        upload_id: uploadId
-                    },
-                    success: function (response) {
-                        if (response.status === 'new' || response.status === 'add_front' || response.status === 'new_back' || response.status === 'back') {
-                            // 新規登録
-                            const formData = new FormData();
-                            formData.append('cards', file);
-                            formData.append('upload_id', uploadId);
-                            formData.append('status', response.status);
-                            formData.append('uploaded_card_id', response.uploaded_card_id);
-                            formData.append('filename', response.filename);
+            $.ajax({
+                url: prefix + '/card/multiple/past',
+                method: 'GET',
+                data: {
+                    filename: file.name,
+                    upload_id: uploadId
+                },
+                success: function (response) {
+                    if (response.status === 'new' || response.status === 'add_front' || response.status === 'new_back' || response.status === 'back') {
+                        // 新規登録
+                        const formData = new FormData();
+                        formData.append('cards', file);
+                        formData.append('upload_id', uploadId);
+                        formData.append('status', response.status);
+                        formData.append('uploaded_card_id', response.uploaded_card_id);
+                        formData.append('filename', response.filename);
+                        // 過去データ参照 選択肢として新規登録
+                        setTimeout(function () {
                             $.ajax({
                                 url: prefix + '/card/multiple/upload',
                                 type: 'POST',
@@ -1090,37 +1091,7 @@ $(document).ready(function () {
                                 processData: false,
                                 contentType: false,
                                 success: function (response) {
-                                    if (response.status === 'front_success') {
-                                        setTimeout(function () {
-                                            $.ajax({
-                                                url: prefix + '/card/openai/process',
-                                                method: 'POST',
-                                                headers: {
-                                                    'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-                                                },
-                                                data: {
-                                                    uploaded_card_id: response.uploaded_card_id,
-                                                    type: response.type
-                                                },
-                                                success: function (response) {
-                                                    console.log('OpenAI process' + uploadedFiles);
-
-                                                    uploadedFiles++;
-                                                    $('#uploadedfiles_count').val(uploadedFiles);
-                                                },
-                                                error: function (response) {
-                                                    console.error('OpenAI process failed.' + uploadedFiles);
-
-                                                    totalFiles--;
-                                                    $('#total_files_count').val(totalFiles);
-                                                }
-                                            });
-
-                                        }, send_index * 3000); // 3秒ごとにずらす（3000ms）    
-
-                                        send_index++;
-                                    }
-                                    else if (response.status === 'back_success') {
+                                    if (response.status === 'success') {
                                         uploadedFiles++;
                                         $('#uploadedfiles_count').val(uploadedFiles);
                                     }
@@ -1130,26 +1101,31 @@ $(document).ready(function () {
                                     }
                                 },
                                 error: function (xhr, status, error) {
+                                    totalFiles--;
+                                    $('#total_files_count').val(totalFiles);
                                 }
                             });
-                        }
-                        else if (response.status === 'skip') {
-                            // スキップ
-                            totalFiles--;
-                            $('#total_files_count').val(totalFiles);
-                        }
-                    }
-                })
-            }, upload_index * 500); // 0.5秒ごとにずらす（500ms）    
 
-            upload_index++;
+                        }, uploadedFiles * 1000); // 1秒ごとにずらす（1000ms）    
+                    }
+                    else if (response.status === 'skip') {
+                        // スキップ
+                        totalFiles--;
+                        $('#total_files_count').val(totalFiles);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    totalFiles--;
+                    $('#total_files_count').val(totalFiles);
+                }
+            })
         });
     });
 
     function processing_check(uploadId) {
         var prefix = $('#prefix').val();
         var intervalId = setInterval(function () {
-            var progress = parseInt(parseInt($('#uploadedfiles_count').val()) / parseInt($('#total_files_count').val()) * 100) + '%';
+            var progress = parseInt((parseInt($('#uploadedfiles_count').val()) + 1) / parseInt($('#total_files_count').val()) * 100) + '%';
             $('.progress_message').text('AI解析中 :' + progress);
             $('.progress_bar').css('width', progress);
             if ($('#uploadedfiles_count').val() === $('#total_files_count').val()) {
