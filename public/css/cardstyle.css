@@ -2,6 +2,207 @@
   font-family: "Noto";
   src: url("https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto.ttf");
 }
+.confirm_box_container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+}
+.confirm_box_container .confirm_box {
+  width: 60rem;
+  background: white;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-shadow: 0px 2px 8px 0 #676767;
+  margin-top: 2%;
+  max-width: 80%;
+}
+.confirm_box_container .confirm_box_title {
+  font-size: 2rem;
+  font-weight: 400;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 0.1rem solid #a3a3a3;
+  width: 100%;
+}
+@media screen and (max-width: 600px) {
+  .confirm_box_container .confirm_box_title {
+    font-size: 1.6rem;
+  }
+}
+.confirm_box_container .confirm_box_message {
+  font-size: 1.6rem;
+  height: 13rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media screen and (max-width: 600px) {
+  .confirm_box_container .confirm_box_message {
+    font-size: 1.2rem;
+  }
+}
+.confirm_box_container .confirm_button_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 5rem;
+  font-size: 1.6rem;
+}
+.confirm_box_container .confirm_button_container .confirm_button {
+  width: 25rem;
+  height: 4rem;
+  background: #2496f7;
+  color: white;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
+  max-width: 45%;
+}
+.confirm_box_container .confirm_button_container .confirm_button:hover {
+  background: #1e74be;
+}
+@media screen and (max-width: 600px) {
+  .confirm_box_container .confirm_button_container .confirm_button {
+    font-size: 1.6rem;
+    height: 3rem;
+  }
+}
+.confirm_box_container .confirm_button_container .cancel_button {
+  width: 25rem;
+  height: 4rem;
+  border: 0.1rem solid #000000;
+  background: white;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
+  max-width: 45%;
+}
+.confirm_box_container .confirm_button_container .cancel_button:hover {
+  box-shadow: 0 0 7px 0 rgb(102, 102, 102);
+  background: #fbfbfb;
+}
+@media screen and (max-width: 600px) {
+  .confirm_box_container .confirm_button_container .cancel_button {
+    font-size: 1.6rem;
+    height: 3rem;
+  }
+}
+
+.required {
+  color: #ff7878;
+}
+
+.required_error {
+  border-bottom: solid 1px #ff7878 !important;
+  background: #fff2f4 !important;
+}
+
+.select_box_container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+}
+.select_box_container .select_box {
+  width: 60rem;
+  background: white;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-shadow: 0px 2px 8px 0 #676767;
+  margin-top: 2%;
+  max-width: 80%;
+}
+.select_box_container .select_box_title {
+  font-size: 2rem;
+  font-weight: 400;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 0.1rem solid #a3a3a3;
+  width: 100%;
+}
+@media screen and (max-width: 600px) {
+  .select_box_container .select_box_title {
+    font-size: 1.6rem;
+  }
+}
+.select_box_container .select_box_message {
+  font-size: 1.6rem;
+  height: 13rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media screen and (max-width: 600px) {
+  .select_box_container .select_box_message {
+    font-size: 1.2rem;
+  }
+}
+.select_box_container .select_box_button_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  font-size: 1.6rem;
+  gap: 0.5rem;
+}
+.select_box_container .select_box_button_container .select_box_button {
+  width: 25rem;
+  height: 4rem;
+  border: solid 1px #2496f7;
+  background: white;
+  color: #2496f7;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 1.4rem;
+}
+.select_box_container .select_box_button_container .select_box_button:hover {
+  background: #1e74be;
+  color: white;
+}
+@media screen and (max-width: 600px) {
+  .select_box_container .select_box_button_container .select_box_button {
+    font-size: 1.6rem;
+    height: 3rem;
+  }
+}
+
 .iconmessage {
   display: none !important;
 }
@@ -139,7 +340,7 @@ body .usersettingtitle {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   gap: 1rem;
 }
 .search_container .search_input {
@@ -167,6 +368,18 @@ body .usersettingtitle {
 .search_container .search_button img {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+.card_view_header_count {
+  margin-inline: auto;
+  width: fit-content;
+  font-size: 1.2rem;
+  color: #999999;
+  margin-bottom: 0.5rem;
+}
+.card_view_header_count .card_view_header_count_text {
+  font-size: 1.5rem;
+  color: #000000;
 }
 
 .tab_container {
@@ -1035,6 +1248,12 @@ body .usersettingtitle {
   width: 1.2rem;
   margin-right: 0.3rem;
 }
+.card_regist_container .card_regist_form .card_regist_content .card_check_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}
 .card_regist_container .card_regist_form .card_regist_content .cropped_image_container {
   height: calc(100% - 0.4rem);
   display: block;
@@ -1252,6 +1471,7 @@ body .usersettingtitle {
   padding: 0.5rem;
   cursor: pointer;
   width: 50rem;
+  max-width: 90%;
   height: 10rem;
   margin-inline: auto;
   display: flex;
@@ -1340,4 +1560,84 @@ body .usersettingtitle {
   color: #3aaff3;
   margin-inline: auto;
   margin-top: 1rem;
+}
+.multiple_upload_container .error_wrapper {
+  display: none;
+  margin-top: 3rem;
+  width: fit-content;
+  margin-inline: auto;
+  padding: 1rem 4rem;
+  background: #c5c5c5;
+}
+.multiple_upload_container .error_wrapper.error_wrapper_open {
+  display: block;
+}
+.multiple_upload_container .error_wrapper .error_title {
+  font-size: 1.2rem;
+  color: #333333;
+  font-weight: 500;
+}
+.multiple_upload_container .error_wrapper .error_content {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  width: 30rem;
+  height: 5rem;
+  margin-inline: auto;
+}
+.multiple_upload_container .error_wrapper .error_content.error_content_clone {
+  display: none;
+}
+.multiple_upload_container .error_wrapper .error_content .error_file {
+  display: none;
+}
+.multiple_upload_container .error_wrapper .error_content .error_image {
+  width: 7rem;
+  height: 5rem;
+  box-shadow: 2px 4px 3px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.multiple_upload_container .error_wrapper .error_content .error_image img {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+.multiple_upload_container .error_wrapper .error_content .error_card_name {
+  font-size: 1.2rem;
+  color: #333333;
+  width: 10rem;
+}
+.multiple_upload_container .error_wrapper .error_content .error_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+.multiple_upload_container .error_wrapper .error_content .error_button .error_button_resend {
+  background: #3aaff3;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.multiple_upload_container .error_wrapper .error_content .error_button .error_button_resend:hover {
+  background: #2470ce;
+}
+.multiple_upload_container .error_wrapper .error_content .error_button .error_button_delete {
+  background: #ff0000;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.multiple_upload_container .error_wrapper .error_content .error_button .error_button_delete:hover {
+  background: #ff8585;
 }

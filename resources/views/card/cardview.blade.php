@@ -18,6 +18,9 @@
                 <img src="{{ asset(config('prefix.prefix').'/'.'img/card/search.svg') }}" alt="">
             </button>
         </div>
+        <div class="card_view_header_count">
+            <span class="card_view_header_count_text"></span>件
+        </div>
         <div class="tab_container">
             <div class="tab_item tab_item_active" data-tab="my_card_user">
                 マイ名刺

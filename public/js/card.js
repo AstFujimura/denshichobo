@@ -1,3 +1,58 @@
+// 確認ボックス
+function confirm_box(title, message, callback) {
+    var confirm_box_container = $('<div class="confirm_box_container"></div>');
+    var confirm_box = $('<div class="confirm_box"></div>');
+    confirm_box.html(`
+            <h2 class="confirm_box_title">`
+        + title +
+        `</h2>
+            <p class="confirm_box_message">`
+        + message +
+        `</p>
+
+              <div class="confirm_button_container">
+              <div class="cancel_button">いいえ</div>
+              <div class="confirm_button">はい</div>
+              </div>`);
+
+
+    confirm_box_container.append(confirm_box);
+    confirm_box_container.appendTo('body');
+    confirm_box_container.on('click', '.confirm_button', function () {
+        confirm_box_container.remove();
+        callback('aaa', 'bbb');
+    });
+    confirm_box_container.on('click', '.cancel_button', function () {
+        confirm_box_container.remove();
+    });
+}
+// 選択肢ボックス
+function select_box(title, message, select_array, callback) {
+    var select_box_container = $('<div class="select_box_container"></div>');
+    var select_box = $('<div class="select_box"></div>');
+    select_box.html(`
+        <h2 class="select_box_title">`
+        + title +
+        `</h2>
+        <p class="select_box_message">`
+        + message +
+        `</p>
+        <div class="select_box_button_container">
+        `
+        + select_array.map(function (item, index) {
+            return `<div class="select_box_button" data-value="${index}">${item}</div>`;
+        }).join('') +
+        `
+        </div>`);
+
+    select_box_container.append(select_box);
+    select_box_container.appendTo('body');
+    select_box_container.on('click', '.select_box_button', function () {
+        select_box_container.remove();
+        callback($(this).data('value'));
+    });
+}
+
 $(document).ready(function () {
     // 名刺登録画面
     if ($('#card_regist_title').length > 0) {
@@ -343,6 +398,12 @@ $(document).ready(function () {
             else {
                 formData.append('image', file);
             }
+            if ($('#edit').val() == 'add' || $('#edit').val() == 'edit') {
+                formData.append('existing_search', 'false');
+            }
+            else {
+                formData.append('existing_search', 'true');
+            }
             $('.loading_container').addClass('loading_container_open');
             $.ajax({
                 url: prefix + '/card/ocr', // Laravelのルートに合わせて変更
@@ -357,10 +418,46 @@ $(document).ready(function () {
                     if (response.status === 'success') {
                         console.log(response);
                         try {
-                            autoFillForm(response.data);
-                            getCompanyCandidate(response.data.会社名, true);
-                            console.log(response.data);
-                            console.log(response.token);
+                            if (response.existing_card) {
+                                select_box('確認', '「' + response.data.名前 + '」さんはすでに登録済みです。次のアクションを選択してください。',
+                                    ['別人物として名刺を登録する',
+                                        '「' + response.data.名前 + '」さんの名刺を追加する',
+                                        '登録済みの名刺を編集する',
+                                        '登録をキャンセルする'
+                                    ], function (result) {
+                                        if (result == 0) {
+                                            // 別人物として名刺を登録する
+                                            autoFillForm(response.data);
+                                            getCompanyCandidate(response.data.会社名, true);
+                                            console.log(response.data);
+                                            console.log(response.existing_card);
+                                        }
+                                        else if (result == 1) {
+                                            // 名刺を追加する
+                                            autoFillForm(response.data);
+                                            getCompanyCandidate(response.data.会社名, true);
+                                            $('#edit').val('add')
+                                            $('#carduser').val(response.existing_card.名刺ユーザーID);
+                                            $('#card_regist_title span').text(response.data.名前 + 'さん 名刺追加');
+
+                                        }
+                                        else if (result == 2) {
+                                            // 登録済みの名刺を編集する
+                                            window.location.href = prefix + '/card/edit/' + response.existing_card.id;
+                                        }
+                                        else if (result == 3) {
+                                            // 登録をキャンセルする
+                                            location.reload();
+                                        }
+                                    });
+                            }
+                            else {
+                                // 別人物として名刺を登録する
+                                autoFillForm(response.data);
+                                getCompanyCandidate(response.data.会社名, true);
+                                console.log(response.data);
+                                console.log(response.token);
+                            }
                         }
                         catch (e) {
                             console.log(e);
@@ -566,8 +663,26 @@ $(document).ready(function () {
             });
         }
 
+        function required_check() {
+            var required_error = false;
+            $('.required_error').removeClass('required_error');
+            $('[data-required="true"]').each(function () {                
+                if ($(this).val() == '') {
+                    $(this).addClass('required_error');
+                    required_error = true;
+                }
+            });
+            if (required_error) {
+                alert('必須項目を入力してください。');
+            }
+            return required_error;
+        }
+
         //登録ボタンが押されたとき
         $('.submit_button').on('click', function () {
+            if (required_check()) {
+                return;
+            }
             const form = $('#card_regist_form');
             // 既存のBlob用のinputがあれば削除（重複防止のため）
             form.find('input[name="blob-image"]').remove();
@@ -660,6 +775,12 @@ $(document).ready(function () {
                 }
             });
         });
+        if ($('.card_view_header_count_text').length > 0) {
+            card_view_header_count_text_update();
+        }
+        function card_view_header_count_text_update() {
+            $('.card_view_header_count_text').text($('.card_view_card[data-show="true"]').length);
+        }
 
         // 名刺の種類のタブを切り替えた時
         $(document).on('click', '.tab_item:not(.tab_item_active)', function () {
@@ -695,6 +816,7 @@ $(document).ready(function () {
 
             }
             lazyload('imgset');
+            card_view_header_count_text_update();
         });
 
 
@@ -1026,6 +1148,8 @@ $(document).ready(function () {
     // 名刺一括アップロード
     let selectedFiles = [];
     let validFiles = [];
+    // 失敗ファイルを保存するリスト
+    let failedUploads = [];
 
     $('#folder_upload').on('change', function (event) {
         selectedFiles = Array.from(event.target.files);
@@ -1047,9 +1171,12 @@ $(document).ready(function () {
                 $('.progress_bar').css('width', '0%');
                 $('.progress_message').text('アップロード中');
                 $('#multiple_upload_form').submit();
+                $('.upload_button').removeClass('enabled');
             }
         }
     })
+
+    var frontFiles = 0;
     $('#multiple_upload_form').on('submit', function (event) {
         event.preventDefault(); // 通常のフォーム送信は止める
         let uploadId = generateUUID(); // ここで一度作成！
@@ -1060,6 +1187,7 @@ $(document).ready(function () {
         var totalFiles = validFiles.length;
         $('#total_files_count').val(totalFiles);
         var uploadedFiles = 0;
+        frontFiles = 0;
         $('#uploadedfiles_count').val(uploadedFiles);
         processing_check(uploadId)
         validFiles.forEach(function (file) {
@@ -1074,11 +1202,15 @@ $(document).ready(function () {
                     if (response.status === 'new' || response.status === 'add_front' || response.status === 'new_back' || response.status === 'back') {
                         // 新規登録
                         const formData = new FormData();
+                        var card_status = response.status;
+                        var uploaded_card_id = response.uploaded_card_id;
+                        var filename = response.filename;
+
                         formData.append('cards', file);
                         formData.append('upload_id', uploadId);
-                        formData.append('status', response.status);
-                        formData.append('uploaded_card_id', response.uploaded_card_id);
-                        formData.append('filename', response.filename);
+                        formData.append('status', card_status);
+                        formData.append('uploaded_card_id', uploaded_card_id);
+                        formData.append('filename', filename);
                         // 過去データ参照 選択肢として新規登録
                         setTimeout(function () {
                             $.ajax({
@@ -1094,6 +1226,10 @@ $(document).ready(function () {
                                     if (response.status === 'success') {
                                         uploadedFiles++;
                                         $('#uploadedfiles_count').val(uploadedFiles);
+                                        if (card_status === 'new' || card_status === 'add_front') {
+                                            frontFiles++;
+                                            $('#frontfiles_count').val(frontFiles);
+                                        }
                                     }
                                     else {
                                         totalFiles--;
@@ -1103,6 +1239,22 @@ $(document).ready(function () {
                                 error: function (xhr, status, error) {
                                     totalFiles--;
                                     $('#total_files_count').val(totalFiles);
+                                    $('.error_wrapper').addClass('error_wrapper_open');
+                                    if (card_status === 'new' || card_status === 'add_front') {
+                                        var error_content = $('.error_content_clone').clone();
+                                        error_content.removeClass('error_content_clone');
+
+                                        failedUploads.push(file);
+                                        error_content.find('.resend_form').attr('data-failed_index', failedUploads.length - 1);
+                                        error_content.find('.error_image img').attr('src', URL.createObjectURL(file));
+                                        error_content.find('input[name="upload_id"]').val(uploadId);
+                                        error_content.find('input[name="status"]').val(card_status);
+                                        error_content.find('input[name="uploaded_card_id"]').val(uploaded_card_id);
+                                        error_content.find('input[name="filename"]').val(filename);
+
+                                        error_content.find('.error_card_name').text(filename);
+                                        $('.error_wrapper').append(error_content);
+                                    }
                                 }
                             });
 
@@ -1129,15 +1281,58 @@ $(document).ready(function () {
             $('.progress_message').text('AI解析中 :' + progress);
             $('.progress_bar').css('width', progress);
             if ($('#uploadedfiles_count').val() === $('#total_files_count').val()) {
+                $('.folder_upload_label_text').text('タップしてフォルダを選択');
                 $('#upload_complete_flag').val('true');
                 clearInterval(intervalId); // 通信を止める
-                $('.progress_message').text('ai処理完了');
                 $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+                alert($('#frontfiles_count').val() + '件の名刺を新規登録しました。');
+                if ($('.error_wrapper').hasClass('error_wrapper_open')) {
+                    alert('名刺一括アップロードに失敗した名刺があります。');
+                }
                 return;
             }
 
         }, 300);
     }
+
+    $(document).on('click', '.error_button_resend', function (event) {
+        var form = $(this).closest('.error_content').find('form');
+        form.submit();
+    })
+    $(document).on('click', '.error_button_delete', function (event) {
+        var error_content = $(this).closest('.error_content');
+        error_content.remove();
+        if ($('.error_content:not(.error_content_clone)').length === 0) {
+            $('.error_wrapper').removeClass('error_wrapper_open');
+        }
+    })
+    $(document).on('submit', '.resend_form', function (event) {
+        event.preventDefault();
+        var form = $(this);
+        var formData = new FormData(form[0]);
+        var prefix = $('#prefix').val();
+        var failedIndex = form.attr('data-failed_index');
+        var data = failedUploads[failedIndex];
+        formData.append('cards', data);
+        $.ajax({
+            url: prefix + '/card/multiple/upload',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.status === 'success') {
+                    form.closest('.error_content').remove();
+                    if ($('.error_content:not(.error_content_clone)').length === 0) {
+                        $('.error_wrapper').removeClass('error_wrapper_open');
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('アップロードに失敗しました');
+            }
+        })
+    })
 
     // function processing_check(uploadId) {
     //     var prefix = $('#prefix').val();

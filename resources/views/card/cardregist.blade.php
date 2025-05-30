@@ -44,14 +44,17 @@
             </div>
         </div>
     </div>
-    <h2 class="pagetitle" id="card_regist_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">
-        @if ($edit == 'add')
-        {{$carduser->表示名}}さん 名刺追加
-        @elseif ($edit == 'edit')
-        {{$card->名前}}さん 名刺編集
-        @else
-        名刺登録
-        @endif
+    <h2 class="pagetitle" id="card_regist_title">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">
+        <span>
+            @if ($edit == 'add')
+            {{$carduser->表示名}}さん 名刺追加
+            @elseif ($edit == 'edit')
+            {{$card->名前}}さん 名刺編集
+            @else
+            名刺登録
+            @endif
+        </span>
     </h2>
 
 
@@ -107,18 +110,28 @@
                         解除
                     </div>
                 </div>
+                <div class="card_check_container">
+                    <input type="checkbox" name="my_card_check" id="my_card_check" {{$my_card_check}}>
+                    <label for="my_card_check">
+                        マイ名刺に追加する
+                    </label>
+                    <input type="checkbox" name="favorite_check" id="favorite_check" {{$favorite_check}}>
+                    <label for="favorite_check">
+                        お気に入りに追加する
+                    </label>
+                </div>
             </div>
 
             <div class="form_container personal_info">
                 <table>
                     <tr>
-                        <td>名前</td>
-                        <td><input type="text" name="name" id="name" autocomplete="off" value="{{$card->名前 ?? ''}}"></td>
+                        <td>名前<span class="required">*</span></td>
+                        <td><input type="text" name="name" id="name" autocomplete="off" value="{{$card->名前 ?? ''}}" data-required="true"></td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>名前カナ</td>
-                        <td><input type="text" name="name_kana" id="name_kana" autocomplete="off" value="{{$card->名前カナ ?? ''}}"></td>
+                        <td>名前カナ<span class="required">*</span></td>
+                        <td><input type="text" name="name_kana" id="name_kana" autocomplete="off" value="{{$card->名前カナ ?? ''}}" data-required="true"></td>
                         <td></td>
                     </tr>
                     <tr>
@@ -136,9 +149,9 @@
             <div class="form_container company_info">
                 <table>
                     <tr>
-                        <td>会社名</td>
+                        <td>会社名<span class="required">*</span></td>
                         <td class="company_td">
-                            <input type="text" name="company_name" id="company_name" autocomplete="off"
+                            <input type="text" name="company_name" id="company_name" autocomplete="off" data-required="true"
                                 @if($card)
                                 readonly class="company_choiced" value="{{$card->会社名 ?? ''}}"
                                 @endif>
@@ -148,9 +161,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>会社名カナ</td>
+                        <td>会社名カナ<span class="required">*</span></td>
                         <td>
-                            <input type="text" name="company_name_kana" id="company_name_kana" autocomplete="off"
+                            <input type="text" name="company_name_kana" id="company_name_kana" autocomplete="off" data-required="true"
                                 @if($card)
                                 disabled value="{{$card->会社名カナ ?? ''}}"
                                 @endif>
@@ -167,7 +180,7 @@
                                 @endforeach
                             </select>
                             <div class="add_branch_button">拠点追加</div>
-  
+
                             @else
                             <input type="text" name="branch_name" id="branch_name" autocomplete="off">
                             @endif
