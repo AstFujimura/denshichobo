@@ -74,8 +74,8 @@ $(document).ready(function () {
                             if (response.Type === 'application/pdf') {
                             }
                             else if (response.Type.startsWith('image/')) {
-                                var Url = URL.createObjectURL(response);
-                                img.attr('src', Url);
+                                // var Url = URL.createObjectURL(response);
+                                img.attr('src', response.path);
                             }
                         }
                     });
@@ -118,8 +118,8 @@ $(document).ready(function () {
                                 if (response.Type === 'application/pdf') {
                                 }
                                 else if (response.Type.startsWith('image/')) {
-                                    var Url = URL.createObjectURL(response);
-                                    img.attr('src', Url);
+                                    // var Url = URL.createObjectURL(response);
+                                    img.attr('src', response.path);
                                 }
                             }
                         });
