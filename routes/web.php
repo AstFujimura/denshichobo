@@ -386,6 +386,9 @@ Route::prefix($prefix)->group(function () {
 
 
             Route::get('/card/multiple/test', [CardController::class, 'cardmultipletestget'])->name('cardmultipletestget');
+
+            // 名刺複数アップロードテスト削除
+            Route::get('/card/multiple/destroy', [CardController::class, 'cardmultipletestdestroy'])->name('cardmultipletestdestroy');
         }
 
         // -----------------------------スケジュール--------------------------------

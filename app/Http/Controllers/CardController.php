@@ -2006,4 +2006,13 @@ class CardController extends Controller
         // 通常はここに来ないが念のため
         return $now->addSeconds(5);
     }
+
+    public function cardmultipletestdestroy(Request $request)
+    {
+        $allcards = Card::all();
+        foreach ($allcards as $card) {
+            $card->delete();
+        }
+        return response()->json(['message' => '名刺複数アップロードテスト削除完了']);
+    }
 }
