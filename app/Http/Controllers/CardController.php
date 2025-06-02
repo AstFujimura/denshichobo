@@ -1299,6 +1299,7 @@ class CardController extends Controller
             if (!$carduser_user) {
                 $carduser_user = new Carduser_User();
                 $carduser_user->名刺ユーザーID = $carduser->id;
+                $carduser_user->ユーザーID = Auth::user()->id;
                 $carduser_user->save();
             }
             $carduser_user->マイ名刺ユーザー = true;
