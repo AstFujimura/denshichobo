@@ -1062,8 +1062,7 @@ class CardController extends Controller
 
         $file = $request->file('cards');
         $extension = $file->getClientOriginalExtension();
-        $filename = $request->filename . '.' . $extension;
-        $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
+        // $filename = $request->filename . '.' . $extension;
 
         if ($request->status == 'new' || $request->status == 'add_front') {
             $uploaded_card = UploadedCard::find($request->uploaded_card_id);
@@ -1083,9 +1082,6 @@ class CardController extends Controller
             $structuredData = null;
 
             while ($retryCount < $maxRetries) {
-                // $queue = $this->getStartTimeBasedOnTokenLimit();
-                // $queue_id = $queue[1];
-                // sleep($queue[0]);
                 try {
                     $response = Http::post($url, [
                         'contents' => [
@@ -1353,9 +1349,9 @@ class CardController extends Controller
                 'status' => 'success',
             ]);
         } else if ($request->status == 'back') {
-            $uploaded_card = UploadedCard::find($request->uploaded_card_id);
             $filename = $this->generateRandomCode() . "." . $extension;
             if ($server == 'onpre') {
+                $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
                 $request->file('cards')->move($filepath, $filename);
             } else if ($server == 'cloud') {
                 // クラウド
@@ -1367,10 +1363,24 @@ class CardController extends Controller
                     'private'
                 );
             }
-            $card = Card::find($uploaded_card->名刺ID);
-            if ($card) {
-                $card->名刺ファイル裏 = $filename;
-                $card->save();
+            $maxRetries = 10;
+            $retryCount = 0;
+            while ($retryCount < $maxRetries) {
+                $uploaded_card = UploadedCard::find($request->uploaded_card_id);
+                $card = Card::find($uploaded_card->名刺ID);
+                if ($card) {
+                    $card->名刺ファイル裏 = $filename;
+                    $card->save();
+                    break;
+                }
+                sleep(1);
+                $retryCount++;
+                if ($retryCount >= $maxRetries) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => '名刺ファイル裏の保存に失敗しました。',
+                    ]);
+                }
             }
             $uploaded_card->back_url = 'uploaded';
             $uploaded_card->save();
@@ -2011,6 +2021,10 @@ class CardController extends Controller
         $allcards = Card::all();
         foreach ($allcards as $card) {
             $card->delete();
+        }
+        $alluploadedcards = UploadedCard::all();
+        foreach ($alluploadedcards as $uploadedcard) {
+            $uploadedcard->delete();
         }
         return response()->json(['message' => '名刺複数アップロードテスト削除完了']);
     }
