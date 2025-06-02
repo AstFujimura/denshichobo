@@ -1239,8 +1239,8 @@ $(document).ready(function () {
                                 error: function (xhr, status, error) {
                                     totalFiles--;
                                     $('#total_files_count').val(totalFiles);
-                                    $('.error_wrapper').addClass('error_wrapper_open');
                                     if (card_status === 'new' || card_status === 'add_front') {
+                                        $('.error_wrapper').addClass('error_wrapper_open');
                                         var error_content = $('.error_content_clone').clone();
                                         error_content.removeClass('error_content_clone');
 

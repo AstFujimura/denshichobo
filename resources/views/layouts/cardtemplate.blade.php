@@ -118,7 +118,20 @@
                     </div>
 
                 </a>
+                @if (Auth::user()->管理 == "管理")
+                <a href="{{route('adminGet')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}">
+                        </div>
+                        <div class="button1name01">
+                            管理画面
+                        </div>
 
+                    </div>
+
+                </a>
+                @endif
 
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
