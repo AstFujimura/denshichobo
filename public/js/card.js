@@ -1277,7 +1277,8 @@ $(document).ready(function () {
     function processing_check(uploadId) {
         var prefix = $('#prefix').val();
         var intervalId = setInterval(function () {
-            var progress = parseInt((parseInt($('#uploadedfiles_count').val()) + 1) / parseInt($('#total_files_count').val()) * 100) + '%';
+            // 小数第一位の位で切り捨てを行います
+            var progress = (Math.floor(((parseInt($('#uploadedfiles_count').val()) + 1) / parseInt($('#total_files_count').val())) * 1000) / 10) + '%';
             $('.progress_message').text('AI解析中 :' + progress);
             $('.progress_bar').css('width', progress);
             if ($('#uploadedfiles_count').val() === $('#total_files_count').val()) {
