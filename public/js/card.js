@@ -1191,7 +1191,6 @@ $(document).ready(function () {
         $('#uploadedfiles_count').val(uploadedFiles);
         processing_check(uploadId)
         validFiles.forEach(function (file) {
-            setTimeout(function () {
             $.ajax({
                 url: prefix + '/card/multiple/past',
                 method: 'GET',
@@ -1272,7 +1271,6 @@ $(document).ready(function () {
                     $('#total_files_count').val(totalFiles);
                     }
                 })
-            }, 1000);
         });
     });
 

@@ -1151,7 +1151,21 @@ class CardController extends Controller
                     'private'
                 );
             }
+            // 表面の新規入力だったが同タイミングでbackも入力された場合
+            if ($request->status == 'new') {
+                $file_name = $uploaded_card->ファイル名;
+                $other_uploaded_card = UploadedCard::where('ファイル名', $file_name)
+                    ->where('id', '!=', $uploaded_card->id)
+                    ->first();
+                if ($other_uploaded_card) {
+                    $uploaded_card->back_url = $other_uploaded_card->back_url;
+                    $uploaded_card->save();
+                    $other_uploaded_card->delete();
+                }
+            }
             $backFilename = null;
+
+
 
             // 裏面がwasabiに登録しただけの状態の場合
             if ($uploaded_card->back_url != 'not_uploaded' && $uploaded_card->back_url != 'uploaded') {
@@ -1162,7 +1176,6 @@ class CardController extends Controller
                     $wasabiBackUrl = $uploaded_card->back_url;
                     $parsedUrl = parse_url($wasabiBackUrl);
                     $path = $parsedUrl['path'] ?? '';
-
                     // pathinfoで拡張子を取得
                     $extension = pathinfo($path, PATHINFO_EXTENSION);
                     $backFilename = $this->generateRandomCode() . "." . $extension;
@@ -1172,7 +1185,7 @@ class CardController extends Controller
                     if ($imageData === false) {
                         $uploaded_card->back_url = 'not_uploaded';
                         $uploaded_card->save();
-                        throw new \Exception('ファイルのダウンロードに失敗しました。');
+                        // throw new \Exception('ファイルのダウンロードに失敗しました。');
                     }
                     if ($server == 'onpre') {
                         $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
@@ -1192,6 +1205,8 @@ class CardController extends Controller
                             'private'
                         );
                     }
+                    $uploaded_card->back_url = 'uploaded';
+                    $uploaded_card->save();
                 }
             }
 
@@ -1330,6 +1345,18 @@ class CardController extends Controller
         // 裏面の新規登録の場合
         // 一旦wasabiに保存してurlをUploadedCardに保存
         else if ($request->status == 'new_back') {
+            $uploaded_card = UploadedCard::find($request->uploaded_card_id);
+            $file_name = $uploaded_card->ファイル名;
+            $other_uploaded_card = UploadedCard::where('ファイル名', $file_name)
+                ->where('id', '!=', $uploaded_card->id)
+                ->first();
+            if ($other_uploaded_card) {
+                $other_uploaded_card->back_url = $uploaded_card->back_url;
+                $other_uploaded_card->save();
+                // $uploaded_card->delete();
+
+                $uploaded_card = $other_uploaded_card;
+            }
 
             $filename = 'temp/' . uniqid() . '.' . $file->getClientOriginalExtension();
             // Wasabiにファイルを保存
