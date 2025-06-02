@@ -1293,6 +1293,18 @@ class CardController extends Controller
             $newcard->メールアドレス = $structuredData['メールアドレス'] ?? '';
             $newcard->save();
 
+            $carduser_user = Carduser_User::where('名刺ユーザーID', $carduser->id)
+                ->where('ユーザーID', Auth::user()->id)
+                ->first();
+            if (!$carduser_user) {
+                $carduser_user = new Carduser_User();
+                $carduser_user->名刺ユーザーID = $carduser->id;
+                $carduser_user->save();
+            }
+            $carduser_user->マイ名刺ユーザー = true;
+            $carduser_user->save();
+
+
             $uploaded_card->名刺ID = $newcard->id;
             $uploaded_card->save();
 
@@ -1346,16 +1358,18 @@ class CardController extends Controller
         // 一旦wasabiに保存してurlをUploadedCardに保存
         else if ($request->status == 'new_back') {
             $uploaded_card = UploadedCard::find($request->uploaded_card_id);
-            $file_name = $uploaded_card->ファイル名;
-            $other_uploaded_card = UploadedCard::where('ファイル名', $file_name)
-                ->where('id', '!=', $uploaded_card->id)
-                ->first();
-            if ($other_uploaded_card) {
-                $other_uploaded_card->back_url = $uploaded_card->back_url;
-                $other_uploaded_card->save();
-                // $uploaded_card->delete();
+            if ($uploaded_card) {
+                $file_name = $uploaded_card->ファイル名;
+                $other_uploaded_card = UploadedCard::where('ファイル名', $file_name)
+                    ->where('id', '!=', $uploaded_card->id)
+                    ->first();
+                if ($other_uploaded_card) {
+                    $other_uploaded_card->back_url = $uploaded_card->back_url;
+                    $other_uploaded_card->save();
+                    // $uploaded_card->delete();
 
-                $uploaded_card = $other_uploaded_card;
+                    $uploaded_card = $other_uploaded_card;
+                }
             }
 
             $filename = 'temp/' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -1394,11 +1408,13 @@ class CardController extends Controller
             $retryCount = 0;
             while ($retryCount < $maxRetries) {
                 $uploaded_card = UploadedCard::find($request->uploaded_card_id);
-                $card = Card::find($uploaded_card->名刺ID);
-                if ($card) {
-                    $card->名刺ファイル裏 = $filename;
-                    $card->save();
-                    break;
+                if ($uploaded_card) {
+                    $card = Card::find($uploaded_card->名刺ID);
+                    if ($card) {
+                        $card->名刺ファイル裏 = $filename;
+                        $card->save();
+                        break;
+                    }
                 }
                 sleep(1);
                 $retryCount++;
