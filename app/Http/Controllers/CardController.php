@@ -1190,10 +1190,9 @@ class CardController extends Controller
                     } else if ($server == 'cloud') {
                         // クラウド
                         // S3にファイルを保存
-                        Storage::disk('s3')->putFileAs(
-                            $prefix,
+                        Storage::disk('s3')->put(
+                            $prefix . '/' . $backFilename,
                             $imageData,
-                            $backFilename,
                             'private'
                         );
                     }
