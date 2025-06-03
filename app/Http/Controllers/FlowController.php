@@ -3313,6 +3313,7 @@ class FlowController extends Controller
             $category_name = $category->カテゴリ名;
         }
         $user_id = $request->input('user');
+        dd($user_id);
         $user = User::find($user_id);
         if (!$user) {
             $user_name = "すべて";
