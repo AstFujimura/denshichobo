@@ -56,19 +56,16 @@
     <a class="headerIcon001" href="{{route('admingroupregistGet')}}" >
         <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01" title="グループ登録・編集">
     </a>
+    @if (App\Models\Version::where('tameru', true)->first())
     <a class="headerIcon001" href="{{route('admindocumentGet')}}" >
         <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01" title="書類管理">
     </a>
     <a class="headerIcon001" href="{{route('question')}}" target="_blank">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01" title="ヘルプ">
     </a>
+    @endif
 
-    <a class="headerIcon001 rightmenue001" href="{{route('usersettingGet')}}" onclick="location.href='{{route('usersettingGet')}}';">
-        <div class="usermenu01">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
-        </div>
-    </a>
-    <div class="headerIcon001 menue001">
+    <div class="headerIcon001 rightmenue001 menue001">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
         <div class="iconmessage">メニュー</div>
         <img src="{{ asset(config('prefix.prefix').'/'.'img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
@@ -94,6 +91,7 @@
                 </div>
 
             </div>
+            @if (App\Models\Version::where('tameru', true)->first())
             <a href="{{route('topGet')}}" class="button1_01">
                 <div class="button1element01">
                     <div class="button1logo01">
@@ -106,6 +104,7 @@
                 </div>
 
             </a>
+            @endif
             <div class="sidebarcontent01">
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
@@ -132,7 +131,7 @@
 
                 </a>
 
-
+                @if (App\Models\Version::where('tameru', true)->first())
                 <a href="{{route('admindocumentGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
@@ -145,7 +144,7 @@
                     </div>
 
                 </a>
-
+                @endif
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
