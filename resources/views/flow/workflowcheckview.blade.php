@@ -45,8 +45,8 @@ Rapid ~電子承認システム
                     </div>
                     <select name="user" id="" class="flow_search_input" data-id="{{$user}}">
                         <option value="">すべて</option>
-                        @foreach ($users as $user)
-                        <option value="{{$user->user_id}}">{{$user->name}}</option>
+                        @foreach ($application_users as $application_user)
+                        <option value="{{$application_user->user_id}}">{{$application_user->name}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -61,7 +61,7 @@ Rapid ~電子承認システム
                 </div>
                 <input type="hidden" id="status" name="status" value="{{$status}}">
                 @if(Auth::user()->管理 == "管理")
-                <a class="excel_download_button" id="excel_download_button" href="{{route('workflowcheckviewexcel', ['title' => $title, 'category' => $category, 'user' => $user->user_id, 'start_day' => $start_day, 'end_day' => $end_day])}}">
+                <a class="excel_download_button" id="excel_download_button" href="{{route('workflowcheckviewexcel', ['title' => $title, 'category' => $category, 'user' => $user, 'start_day' => $start_day, 'end_day' => $end_day])}}">
                     Excelダウンロード
                 </a>
                 @endif

@@ -3175,6 +3175,7 @@ class FlowController extends Controller
     // 閲覧一覧
     public function workflowcheckviewget(Request $request)
     {
+        // dd($request->all());
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
             $prefix = "/" . $prefix;
@@ -3182,7 +3183,7 @@ class FlowController extends Controller
         $server = config('prefix.server');
 
         $m_categories = M_category::all();
-        $users = DB::table('t_flows')
+        $application_users = DB::table('t_flows')
             ->select('users.id as user_id', 'users.name')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
             ->distinct()
@@ -3287,7 +3288,7 @@ class FlowController extends Controller
             $status = "ongoing_tab";
         }
 
-        return view('flow.workflowcheckview', compact("prefix", "server", "m_categories", "users", "title", "category", "user", "start_day", "end_day", "status", "t_flows_ongoing", "t_flows_reject", "t_flows_approved", "t_flows_reapplication"));
+        return view('flow.workflowcheckview', compact("prefix", "server", "m_categories", "application_users", "title", "category", "user", "start_day", "end_day", "status", "t_flows_ongoing", "t_flows_reject", "t_flows_approved", "t_flows_reapplication"));
     }
     public function workflowcheckviewexcel(Request $request)
     {
@@ -3313,7 +3314,6 @@ class FlowController extends Controller
             $category_name = $category->カテゴリ名;
         }
         $user_id = $request->input('user');
-        dd($user_id);
         $user = User::find($user_id);
         if (!$user) {
             $user_name = "すべて";
