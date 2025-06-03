@@ -34,6 +34,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Crypt;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
 use TCPDF;
 use setasign\Fpdi\TcpdfFpdi;
 use \TCPDF_FONTS;
@@ -2631,6 +2633,12 @@ class FlowController extends Controller
         $user = $request->input('user');
         $start_day = $request->input('start_day');
         $end_day = $request->input('end_day');
+        if ($start_day) {
+            $start_day = Carbon::parse($start_day)->format('Y/m/d');
+        }
+        if ($end_day) {
+            $end_day = Carbon::parse($end_day)->format('Y/m/d');
+        }
         $status = $request->input('status') ? $request->input('status') : "approvable_tab";
 
         $server = config('prefix.server');
@@ -2861,7 +2869,7 @@ class FlowController extends Controller
                     // 最終決裁点だった場合の処理
                     if ($last_flow_point) {
                         $t_flow->決裁数 += 1;
-                        if ($t_flow->決裁数 == $t_flow->決裁地点数) {
+                        if ($t_flow->決裁数 >= $t_flow->決裁地点数) {
                             $t_flow->ステータス = 3;
                             $this->workflowmailpost($t_flow->申請者ID, 'completion', $t_flow->id);
                         }
@@ -2946,27 +2954,27 @@ class FlowController extends Controller
                         ->first();
 
 
-                        if ($t_flow_point) {
-                            $new_status = $t_flow_point->承認移行ステータス + 1;
-                        
-                            // 更新実行
-                            DB::table('t_flow_points')
-                                ->where('id', $t_flow_point->t_flow_point_id)
-                                ->update(['承認移行ステータス' => $new_status]);
-                        
-                            // 承認可能状態に移行するかチェック
-                            if ($new_status == 0) {
-                                $t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->t_flow_point_id)->get();
-                        
-                                foreach ($t_approvals as $t_approval) {
-                                    $t_approval->ステータス = 2;
-                                    $t_approval->save();
-                        
-                                    // 通知送信
-                                    $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
-                                }
+                    if ($t_flow_point) {
+                        $new_status = $t_flow_point->承認移行ステータス + 1;
+
+                        // 更新実行
+                        DB::table('t_flow_points')
+                            ->where('id', $t_flow_point->t_flow_point_id)
+                            ->update(['承認移行ステータス' => $new_status]);
+
+                        // 承認可能状態に移行するかチェック
+                        if ($new_status == 0) {
+                            $t_approvals = T_approval::where('フロー地点テーブルID', $t_flow_point->t_flow_point_id)->get();
+
+                            foreach ($t_approvals as $t_approval) {
+                                $t_approval->ステータス = 2;
+                                $t_approval->save();
+
+                                // 通知送信
+                                $this->workflowmailpost($t_approval->ユーザーID, 'approval', $t_approval->id);
                             }
                         }
+                    }
                 }
             }
             // 差し戻しの場合
@@ -3187,8 +3195,13 @@ class FlowController extends Controller
         $user = $request->input('user');
         $start_day = $request->input('start_day');
         $end_day = $request->input('end_day');
+        if ($start_day) {
+            $start_day = Carbon::parse($start_day)->format('Y/m/d');
+        }
+        if ($end_day) {
+            $end_day = Carbon::parse($end_day)->format('Y/m/d');
+        }
         $status = $request->input('status') ? $request->input('status') : "approvable_tab";
-
 
         $viewable_m_flows = DB::table('m_flow_view_groups')
             ->leftJoin('group_user', 'm_flow_view_groups.グループID', '=', 'group_user.グループID')
@@ -3209,7 +3222,6 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where("ステータス", 1)
             ->get();
-
         foreach ($t_flows_ongoing as $t_flow_ongoing) {
             $t_flow_points_ongoing = T_flow_point::where("フローテーブルID", $t_flow_ongoing->flow_id)->get();
             // フロー地点数をカウント、申請者も含まれるのでマイナス1
@@ -3277,6 +3289,173 @@ class FlowController extends Controller
 
         return view('flow.workflowcheckview', compact("prefix", "server", "m_categories", "users", "title", "category", "user", "start_day", "end_day", "status", "t_flows_ongoing", "t_flows_reject", "t_flows_approved", "t_flows_reapplication"));
     }
+    public function workflowcheckviewexcel(Request $request)
+    {
+        // エクセルテンプレートを読み込む
+        $templatePath = public_path("xlsx/checkviewtemplate.xlsx"); // テンプレートのパスを指定
+        $reader = new XlsxReader();
+        $spreadsheet = $reader->load($templatePath);
+
+        // データベースから取得した値をエクセルに埋め込む
+        $worksheet = $spreadsheet->getActiveSheet();
+
+        $title = $request->input('title');
+        if (!$title) {
+            $title_name = "すべて";
+        } else {
+            $title_name = $title;
+        }
+        $category_id = $request->input('category');
+        $category = M_category::find($category_id);
+        if (!$category) {
+            $category_name = "すべて";
+        } else {
+            $category_name = $category->カテゴリ名;
+        }
+        $user_id = $request->input('user');
+        $user = User::find($user_id);
+        if (!$user) {
+            $user_name = "すべて";
+        } else {
+            $user_name = $user->name;
+        }
+        $start_day = $request->input('start_day');
+        if ($start_day) {
+            $start_day = Carbon::parse($start_day)->format('Y/m/d');
+        }
+
+        $end_day = $request->input('end_day');
+        if ($end_day) {
+            $end_day = Carbon::parse($end_day)->format('Y/m/d');
+        }
+
+        $worksheet->setCellValue('B2', $title_name);
+        $worksheet->setCellValue('F2', $category_name);
+        $worksheet->setCellValue('B3', $start_day);
+        $worksheet->setCellValue('D3', $end_day);
+        $worksheet->setCellValue('H2', $user_name);
+        // セルのスタイルを設定
+        $title_style = [
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => 'AEAAAA'], // 点線の色を設定
+                ],
+            ],
+            'font' => [
+                'size' => 10, // フォントサイズを10ポイントに設定
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'color' => ['rgb' => 'D0CECE'], // 背景色を黄色に設定（例：FFFF00 = 黄色）
+            ],
+        ];
+        // セルのスタイルを設定
+        $style = [
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => 'AEAAAA'], // 点線の色を設定
+                ],
+            ],
+            'font' => [
+                'size' => 10, // フォントサイズを10ポイントに設定
+            ],
+        ];
+
+
+        $status = $request->input('status') ? $request->input('status') : "ongoing_tab";
+
+
+        $viewable_m_flows = DB::table('m_flow_view_groups')
+            ->leftJoin('group_user', 'm_flow_view_groups.グループID', '=', 'group_user.グループID')
+            ->where('group_user.ユーザーID', Auth::id())
+            ->pluck('m_flow_view_groups.フローマスタID')
+            ->unique();
+
+        $status_array = [1 => "進行中", 2 => "却下済", 3 => "決裁済", 5 => "再申請待ち"];
+
+        $t_flows = DB::table("t_flows")
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名', 't_flows.created_at as 申請日')
+            ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
+            ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
+            ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
+            ->whereIn('m_flows.id', $viewable_m_flows)
+            ->where('標題', 'like', $title ? "%" . $title . "%" : "%%")
+            ->where('m_flows.カテゴリマスタID', 'like', $category_id ? $category_id : "%%")
+            ->where('users.id', 'like', $user_id ? $user_id : "%%")
+            ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
+            ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
+            // ->where("ステータス", $status)
+            ->orderBy('m_flows.カテゴリマスタID', 'asc')
+            ->orderBy('申請日', 'asc')
+            ->get();
+
+        $row = 5;
+        $now_category_id = 0;
+        $alphabet = range('A', 'Z');
+
+        $parts = [];
+        foreach ($t_flows as $t_flow) {
+            $category_id = $t_flow->カテゴリマスタID;
+            if ($now_category_id != $category_id) {
+                $now_category_id = $category_id;
+                $m_category = M_category::find($category_id);
+                $optional_order = $m_category->項目順;
+                // アンダースコア（_）をデリミタとして文字列を分割
+                $parts = explode("_", $optional_order);
+
+                $worksheet->setCellValue($alphabet[0] . $row, "カテゴリ名");
+                $worksheet->getStyle($alphabet[0] . $row)->applyFromArray($title_style);
+                $worksheet->setCellValue($alphabet[1] . $row, "申請日");
+                $worksheet->getStyle($alphabet[1] . $row)->applyFromArray($title_style);
+                $worksheet->setCellValue($alphabet[2] . $row, "申請者");
+                $worksheet->getStyle($alphabet[2] . $row)->applyFromArray($title_style);
+                $worksheet->setCellValue($alphabet[3] . $row, "ステータス");
+                $worksheet->getStyle($alphabet[3] . $row)->applyFromArray($title_style);
+                foreach ($parts as $index => $part) {
+                    $optional_name = M_optional::find($part)->項目名;
+                    $worksheet->setCellValue($alphabet[$index + 4] . $row, $optional_name);
+
+                    $worksheet->getStyle($alphabet[$index + 4] . $row)->applyFromArray($title_style);
+                }
+                $row++;
+            }
+            $worksheet->setCellValue($alphabet[0] . $row, $m_category->カテゴリ名);
+            $worksheet->getStyle($alphabet[0] . $row)->applyFromArray($style);
+            $worksheet->setCellValue($alphabet[1] . $row, Carbon::parse($t_flow->申請日)->format('Y/m/d'));
+            $worksheet->getStyle($alphabet[1] . $row)->applyFromArray($style);
+            $worksheet->setCellValue($alphabet[2] . $row, $t_flow->name);
+            $worksheet->getStyle($alphabet[2] . $row)->applyFromArray($style);
+            $worksheet->setCellValue($alphabet[3] . $row, $status_array[$t_flow->ステータス]);
+            $worksheet->getStyle($alphabet[3] . $row)->applyFromArray($style);
+            foreach ($parts as $index => $part) {
+                $m_optional = M_optional::find($part);
+                $t_optional = T_optional::where("フローテーブルID", $t_flow->flow_id)
+                    ->where("任意項目マスタID", $part)
+                    ->first();
+                if ($m_optional->型 == 1) {
+                    $worksheet->setCellValue($alphabet[$index + 4] . $row, $t_optional->文字列 ?? "");
+                } else if ($m_optional->型 == 2) {
+                    $worksheet->setCellValue($alphabet[$index + 4] . $row, $t_optional->数値 ?? "");
+                } else if ($m_optional->型 == 3) {
+                    $worksheet->setCellValue($alphabet[$index + 4] . $row, Carbon::parse($t_optional->日付 ?? "")->format('Y/m/d'));
+                } else if ($m_optional->型 == 4) {
+                    $worksheet->setCellValue($alphabet[$index + 4] . $row, "ファイル");
+                }
+                $worksheet->getStyle($alphabet[$index + 4] . $row)->applyFromArray($style);
+            }
+            $row++;
+        }
+        $fileName = '閲覧一覧.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;');
+        header("Content-Disposition: attachment; filename=\"{$fileName}\"");
+        header('Cache-Control: max-age=0');
+
+        $writer = new XlsxWriter($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
     // 閲覧詳細
     public function workflowcheckdetailget(Request $request, $id)
     {
@@ -3336,11 +3515,17 @@ class FlowController extends Controller
         $user = $request->input('user');
         $start_day = $request->input('start_day');
         $end_day = $request->input('end_day');
+        if ($start_day) {
+            $start_day = Carbon::parse($start_day)->format('Y/m/d');
+        }
+        if ($end_day) {
+            $end_day = Carbon::parse($end_day)->format('Y/m/d');
+        }
 
 
 
         $t_flows_ongoing = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名','t_flows.created_at as 申請日')
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名', 't_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
@@ -3363,7 +3548,7 @@ class FlowController extends Controller
 
 
         $t_flows_reject = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名','t_flows.created_at as 申請日')
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名', 't_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
@@ -3378,7 +3563,7 @@ class FlowController extends Controller
 
         // 決裁済かつTAMERUに保存、未保存どちらのレコードも取得
         $t_flows_approved = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名','t_flows.created_at as 申請日')
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名', 't_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
@@ -3395,7 +3580,7 @@ class FlowController extends Controller
             ->get();
 
         $t_flows_reapplication = DB::table("t_flows")
-            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名','t_flows.created_at as 申請日')
+            ->select("t_flows.*", "t_flows.id as flow_id", "users.*", 'm_categories.カテゴリ名', 't_flows.created_at as 申請日')
             ->leftJoin("users", "t_flows.申請者ID", "=", "users.id")
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
             ->leftJoin('m_categories', 'm_flows.カテゴリマスタID', '=', 'm_categories.id')
@@ -3614,10 +3799,10 @@ class FlowController extends Controller
             return view('flow.workflowfile', compact("prefix", "server", "lists", "hierarchy"));
         } else if ($hierarchy == 't_flow') {
             $viewable_m_flows = DB::table('m_flow_view_groups')
-            ->leftJoin('group_user', 'm_flow_view_groups.グループID', '=', 'group_user.グループID')
-            ->where('group_user.ユーザーID', Auth::id())
-            ->pluck('m_flow_view_groups.フローマスタID')
-            ->unique();
+                ->leftJoin('group_user', 'm_flow_view_groups.グループID', '=', 'group_user.グループID')
+                ->where('group_user.ユーザーID', Auth::id())
+                ->pluck('m_flow_view_groups.フローマスタID')
+                ->unique();
 
 
             $category_id = $request->input('category_id') ?? '';
@@ -3833,7 +4018,7 @@ class FlowController extends Controller
     public function workflowmodifyget()
     {
         $t_flow_points = DB::table('t_flow_points')
-            ->select('t_flow_points.*','t_flows.id as t_flow_id')
+            ->select('t_flow_points.*', 't_flows.id as t_flow_id')
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
             ->leftJoin('t_flows', 't_flow_points.フローテーブルID', '=', 't_flows.id')
             ->where('m_flow_points.決裁地点', true)
@@ -3845,6 +4030,17 @@ class FlowController extends Controller
         foreach ($t_flows as $t_flow) {
             $t_flow->ステータス = 1;
             $t_flow->save();
+        }
+    }
+
+    public function workflowmodify2get(Request $request)
+    {
+        $modify_t_flows = T_flow::where('決裁数', '>=', DB::raw('決裁地点数'))
+            ->where('ステータス', 1)
+            ->get();
+        foreach ($modify_t_flows as $modify_t_flow) {
+            $modify_t_flow->ステータス = 3;
+            $modify_t_flow->save();
         }
     }
 }

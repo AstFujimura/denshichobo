@@ -2100,6 +2100,24 @@ body #usersetting {
   grid-row: 4/5;
 }
 
+.excel_download_button {
+  border: solid 1px #57a157;
+  font-size: 1rem;
+  border-radius: 5px;
+  color: #57a157;
+  height: 2.5rem;
+  width: 10rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-left: auto;
+}
+.excel_download_button:hover {
+  background: #57a157;
+  color: white;
+}
+
 .flow_search_button {
   background: #57a157;
   font-size: 1rem;

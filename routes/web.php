@@ -305,6 +305,8 @@ Route::prefix($prefix)->group(function () {
             // 閲覧詳細
             Route::get('/workflow/checkview/detail/{id}', [FlowController::class, 'workflowcheckdetailget'])->name('workflowcheckdetailget');
 
+            // 承認一覧エクセルダウンロード
+            Route::get('/workflow/checkview/excel', [FlowController::class, 'workflowcheckviewexcel'])->name('workflowcheckviewexcel');
             // ファイル管理画面
             Route::get('/workflow/file', [FlowController::class, 'workflowfileget'])->name('workflowfileget');
             // 一括ダウンロード
@@ -330,8 +332,10 @@ Route::prefix($prefix)->group(function () {
             //    ワークフローエラーコード
             Route::get('/workflowerror/{code}', [ErrorController::class, 'workflowerrorGet'])->name('workflowerrorGet');
 
-
-            Route::get('/workflow/modify', [FlowController::class, 'workflowmodifyget'])->name('workflowmodifyget');
+            // 一度目の修正
+            // Route::get('/workflow/modify', [FlowController::class, 'workflowmodifyget'])->name('workflowmodifyget');
+            // 二度目の修正
+            Route::get('/workflow/modify2', [FlowController::class, 'workflowmodify2get'])->name('workflowmodify2get');
         }
 
 

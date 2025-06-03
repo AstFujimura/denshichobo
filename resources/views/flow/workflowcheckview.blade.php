@@ -10,7 +10,7 @@ Rapid ~電子承認システム
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/checkview.svg') }}" alt="" class="title_icon">閲覧一覧</h2>
+    <h2 class="pagetitle" id="checkview_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/checkview.svg') }}" alt="" class="title_icon">閲覧一覧</h2>
     <div class="flow_view_container">
         <div class="flow_application_button_content">
             <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
@@ -60,6 +60,11 @@ Rapid ~電子承認システム
                     <input type="text" class="flow_search_input search_form_date" name="end_day" value="{{$end_day}}">
                 </div>
                 <input type="hidden" id="status" name="status" value="{{$status}}">
+                @if(Auth::user()->管理 == "管理")
+                <a class="excel_download_button" id="excel_download_button" href="{{route('workflowcheckviewexcel', ['title' => $title, 'category' => $category, 'user' => $user->user_id, 'start_day' => $start_day, 'end_day' => $end_day])}}">
+                    Excelダウンロード
+                </a>
+                @endif
                 <button class="flow_search_button">
                     検索
                 </button>
