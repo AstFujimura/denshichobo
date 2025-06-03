@@ -3399,7 +3399,22 @@ class FlowController extends Controller
 
         $row = 5;
         $now_category_id = 0;
-        $alphabet = range('A', 'Z');
+        $alphabet = [];
+
+        // A〜Zを追加
+        foreach (range('A', 'Z') as $letter) {
+            $alphabet[] = $letter;
+        }
+        
+        // AA〜AZを追加
+        foreach (range('A', 'Z') as $first) {
+            foreach (range('A', 'Z') as $second) {
+                $alphabet[] = $first . $second;
+                if ($first . $second === 'ZZ') {
+                    break 2; // AZまでで終了
+                }
+            }
+        }
 
         $parts = [];
         foreach ($t_flows as $t_flow) {
