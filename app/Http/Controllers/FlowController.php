@@ -3387,10 +3387,10 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where(function ($query) {
-                $query->where('ステータス', 1)
-                    ->orWhere('ステータス', 2)
-                    ->orWhere('ステータス', 3)
-                    ->orWhere('ステータス', 5);
+                $query->where('t_flows.ステータス', 1)
+                    ->orWhere('t_flows.ステータス', 2)
+                    ->orWhere('t_flows.ステータス', 3)
+                    ->orWhere('t_flows.ステータス', 5);
             })
             ->orderBy('m_flows.カテゴリマスタID', 'asc')
             ->orderBy('申請日', 'asc')
