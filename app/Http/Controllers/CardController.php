@@ -858,12 +858,12 @@ class CardController extends Controller
 
         if (config('prefix.server') == "cloud") {
             // S3バケットの情報
-            $bucket = 'astdocs.com';
+            $bucket = config('filesystems.disks.s3.bucket');
             $key = config('prefix.prefix') . '/' . $filepath;
             $expiration = '+1 hour'; // 有効期限
 
             $s3Client = new S3Client([
-                'region' => 'ap-northeast-1',
+                'region' => config('filesystems.disks.s3.region'),
                 'version' => 'latest',
             ]);
 
