@@ -865,6 +865,10 @@ class CardController extends Controller
             $s3Client = new S3Client([
                 'region' => config('filesystems.disks.s3.region'),
                 'version' => 'latest',
+                'credentials' => [
+                    'key'    => config('filesystems.disks.s3.key'),
+                    'secret' => config('filesystems.disks.s3.secret'),
+                ],
             ]);
 
             $command = $s3Client->getCommand('GetObject', [
