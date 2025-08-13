@@ -343,6 +343,10 @@ Route::prefix($prefix)->group(function () {
         if (Version::where('名刺', true)->first()) {
             // 名刺管理画面
             Route::get('/card/cardview', [CardController::class, 'cardviewget'])->name('cardviewget');
+
+            // 他のユーザーの名刺があるかどうかをチェック
+            Route::get('/card/other_user_card_check/{user_id}', [CardController::class, 'otherusercardcheckget'])->name('otherusercardcheckget');
+
             // 会社一覧画面
             Route::get('/card/companyview', [CardController::class, 'cardcompanyviewget'])->name('cardcompanyviewget');
             // 名刺詳細(idはcardusersのid)
@@ -361,6 +365,9 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/edit/{id}', [CardController::class, 'cardeditget'])->name('cardeditget');
             // 名刺追加(cardusersのid)
             Route::get('/card/add/{id}', [CardController::class, 'cardaddget'])->name('cardaddget');
+            // マイ名刺登録 idはcardのid
+            Route::get('/card/mycard/{id}', [CardController::class, 'cardmycardget'])->name('cardmycardget');
+
             // 名刺削除
             Route::post('/card/delete', [CardController::class, 'carddeletepost'])->name('carddeletepost');
             // 名刺登録・編集ポスト

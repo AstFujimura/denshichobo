@@ -14,6 +14,11 @@
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/jquery-ui.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/cropper.css') }}">
+    <!-- Select2.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css"
+        integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="{{ asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
     <script src="{{ asset(config('prefix.prefix').'/'.'jquery/laravelui.js')}}"></script>
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui.js')}}"></script>
@@ -35,7 +40,8 @@
         </a>
 
         @if (App\Models\Version::where('tameru', true)->first())
-        <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
+        <a href="{{route('topGet')}}" class="tameru_banner"><img
+                src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
         @endif
         @if (App\Models\Version::where('フロー', true)->first())
         <a href="{{route('workflow')}}" class="tameru_banner">
@@ -56,20 +62,24 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="menuicon01" title="名刺登録">
     </a>
     <a class="headerIcon001" href="{{route('cardmultipleuploadget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/folder_gray.svg') }}" class="menuicon01" title="名刺一括登録">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/folder_gray.svg') }}" class="menuicon01"
+            title="名刺一括登録">
     </a>
 
 
-    <div class="headerIcon001 rightmenue001" onclick="location.href='{{route('usersettingGet', ['system_type' => 'card'])}}';">
+    <div class="headerIcon001 rightmenue001"
+        onclick="location.href='{{route('usersettingGet', ['system_type' => 'card'])}}';">
         <div class="usermenu01">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span
+                class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
         </div>
         <div class="iconmessage">ユーザー情報</div>
     </div>
     <div class="headerIcon001 menue001">
         <img src="{{ asset(config('prefix.prefix').'/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
         <div class="iconmessage">メニュー</div>
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/close_line.svg') }}"
+            class="menuicon01 hamburger01 hamburger01close">
         <div class="iconmessage">閉じる</div>
     </div>
 
@@ -97,7 +107,8 @@
                 <a href="{{route('cardviewget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}" class="flow_right_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}"
+                                class="flow_right_icon">
                         </div>
                         <div class="button1name01">
                             名刺管理システム
@@ -109,7 +120,8 @@
                 <a href="{{route('cardregistget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="flow_right_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}"
+                                class="flow_right_icon">
                         </div>
                         <div class="button1name01">
                             名刺登録
@@ -136,7 +148,8 @@
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/open_door_line.svg') }}" class="flow_right_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/open_door_line.svg') }}"
+                                class="flow_right_icon">
                         </div>
                         <div class="button1name01">
                             ログアウト
@@ -176,6 +189,10 @@
 <script src="{{ asset(config('prefix.prefix').'/'.'js/style.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/card.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/usersetting.js') }}"></script>
+<!-- flatpickr JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- flatpickr日本語ローカライズ -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
 @if ($server == 'onpre')
 <script src="{{ asset(config('prefix.prefix').'/'.'js/onpre.js') }}"></script>
 @else

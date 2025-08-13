@@ -111,10 +111,6 @@
                     </div>
                 </div>
                 <div class="card_check_container">
-                    <input type="checkbox" name="my_card_check" id="my_card_check" {{$my_card_check}}>
-                    <label for="my_card_check">
-                        マイ名刺に追加する
-                    </label>
                     <input type="checkbox" name="favorite_check" id="favorite_check" {{$favorite_check}}>
                     <label for="favorite_check">
                         お気に入りに追加する

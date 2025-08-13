@@ -419,38 +419,72 @@ $(document).ready(function () {
                         console.log(response);
                         try {
                             if (response.existing_card) {
-                                select_box('確認', '「' + response.data.名前 + '」さんはすでに登録済みです。次のアクションを選択してください。',
-                                    ['別人物として名刺を登録する',
-                                        '「' + response.data.名前 + '」さんの名刺を追加する',
-                                        '登録済みの名刺を編集する',
-                                        '登録をキャンセルする'
-                                    ], function (result) {
-                                        if (result == 0) {
-                                            // 別人物として名刺を登録する
-                                            autoFillForm(response.data);
-                                            getCompanyCandidate(response.data.会社名, true);
-                                            console.log(response.data);
-                                            console.log(response.existing_card);
-                                        }
-                                        else if (result == 1) {
-                                            // 名刺を追加する
-                                            autoFillForm(response.data);
-                                            getCompanyCandidate(response.data.会社名, true);
-                                            $('#edit').val('add')
-                                            $('#carduser').val(response.existing_card.名刺ユーザーID);
-                                            $('#card_regist_title span').text(response.data.名前 + 'さん 名刺追加');
 
-                                        }
-                                        else if (result == 2) {
+                                let select_array = [];
+                                let message = '';
+
+                                // 自分がすでに登録済みである可能性のある場合
+                                if (response.mycard) {
+                                    message = `「${response.data.名前}」さんはすでに登録済みです。次のアクションを選択してください。`;
+                                    select_array = [
+                                        { key: 'register_other', label: '別人物として名刺を登録する' },
+                                        { key: 'add_card', label: `「${response.data.名前}」さんの名刺を追加する` },
+                                        { key: 'edit_card', label: '登録済みの名刺を編集する' },
+                                        { key: 'cancel', label: '登録をキャンセルする' }
+                                    ];
+                                }
+                                // 他のユーザーがすでに登録済みである可能性のある場合
+                                else if (response.otheruser) {
+                                    message = `「${response.data.名前}」さんはすでに${response.otheruser}さんが登録済みです。次のアクションを選択してください。`;
+                                    select_array = [
+                                        { key: 'register_other', label: '別人物として名刺を登録する' },
+                                        { key: 'mycard', label: 'マイ名刺登録する' },
+                                        { key: 'cancel', label: '登録をキャンセルする' }
+                                    ];
+                                }
+
+                                // select_box用にラベルだけの配列を渡す
+                                select_box('確認', message,
+                                    select_array.map(item => item.label),
+                                    function (result) {
+                                        // 選択キーを取得
+                                        const selectedKey = select_array[result].key;
+
+                                        switch (selectedKey) {
+                                            // 別人物として名刺を登録する
+                                            case 'register_other':
+                                                autoFillForm(response.data);
+                                                getCompanyCandidate(response.data.会社名, true);
+                                                console.log(response.data);
+                                                console.log(response.existing_card);
+                                                break;
+
+                                            // 自分でマイ名刺登録しておりそのユーザーの名刺を追加する時
+                                            case 'add_card':
+                                                autoFillForm(response.data);
+                                                getCompanyCandidate(response.data.会社名, true);
+                                                $('#edit').val('add');
+                                                $('#carduser').val(response.existing_card.名刺ユーザーID);
+                                                $('#card_regist_title span').text(response.data.名前 + 'さん 名刺追加');
+                                                break;
+                                            case 'mycard':
+                                                window.location.href = prefix + '/card/mycard/' + response.existing_card.id;
+                                                break;
+
                                             // 登録済みの名刺を編集する
-                                            window.location.href = prefix + '/card/edit/' + response.existing_card.id;
-                                        }
-                                        else if (result == 3) {
+                                            case 'edit_card':
+                                                window.location.href = prefix + '/card/edit/' + response.existing_card.id;
+                                                break;
+
                                             // 登録をキャンセルする
-                                            location.reload();
+                                            case 'cancel':
+                                                location.reload();
+                                                break;
                                         }
-                                    });
+                                    }
+                                );
                             }
+
                             else {
                                 // 別人物として名刺を登録する
                                 autoFillForm(response.data);
@@ -586,11 +620,11 @@ $(document).ready(function () {
                     }
                     else {
                         $('#branch_address').val(response.branches[0].拠点所在地);
-                        $('#branch_address').attr('disabled', true);
+                        // $('#branch_address').attr('disabled', true);
                         $('#branch_phone_number').val(response.branches[0].電話番号);
-                        $('#branch_phone_number').attr('disabled', true);
+                        // $('#branch_phone_number').attr('disabled', true);
                         $('#branch_fax_number').val(response.branches[0].FAX番号);
-                        $('#branch_fax_number').attr('disabled', true);
+                        // $('#branch_fax_number').attr('disabled', true);
                     }
 
                     $('.company_td').find('.new_company_tag').remove();
@@ -666,7 +700,7 @@ $(document).ready(function () {
         function required_check() {
             var required_error = false;
             $('.required_error').removeClass('required_error');
-            $('[data-required="true"]').each(function () {                
+            $('[data-required="true"]').each(function () {
                 if ($(this).val() == '') {
                     $(this).addClass('required_error');
                     required_error = true;
@@ -749,6 +783,69 @@ $(document).ready(function () {
         var prefix = $('#prefix').val();
         lazyload('imgset');
 
+        var user_id = $('#user_id').val();
+        other_user_card_check(user_id);
+
+        var start_date_input = flatpickr('#start_date', {
+            dateFormat: 'Y/m/d',
+            allowInput: true,
+            locale: 'ja'
+        })
+        var end_date_input = flatpickr('#end_date', {
+            dateFormat: 'Y/m/d',
+            allowInput: true,
+            locale: 'ja'
+        })
+
+        // 並び替えを押したとき
+        $('#sort_select').on('change', function () {
+            const sortType = $(this).val();
+            const $container = $('.card_view_container');
+
+            // aタグの配列を取得
+            let cards = $container.find('.card_view_card').get();
+
+            cards.sort(function (a, b) {
+                let valA, valB;
+                if (sortType === '1') {
+                    valA = $(a).data('name_kana');
+                    valB = $(b).data('name_kana');
+                } else if (sortType === '2') {
+                    valA = $(a).data('company_name');
+                    valB = $(b).data('company_name');
+                } else if (sortType === '3') {
+                    valA = $(a).data('card_created_at');
+                    valB = $(b).data('card_created_at');
+                } else if (sortType === '4') {
+                    valA = $(a).data('card_updated_at');
+                    valB = $(b).data('card_updated_at');
+                } else {
+                    return 0; // 並び替えなし
+                }
+                // localeCompareで日本語にも対応
+                return valA.localeCompare(valB, 'ja');
+            });
+
+            // 並び替えた要素を再配置
+            $container.append(cards);
+            search_card();
+        });
+        // 表示タイプを押したとき
+        $('input[name="view_type"]').on('change', function () {
+            const viewType = $(this).val();
+            $('.card_view_card').removeClass('large_view small_view');
+            $('.card_view_card').addClass(viewType);
+            $('.card_view_card_header').removeClass('large_view small_view');
+            $('.card_view_card_header').addClass(viewType);
+        });
+
+        // 他のユーザーの登録情報を見るボタンを押したときはaタグの遷移を行わない
+        $(document).on('click', '.other_user_card_check', function (e) {
+            e.preventDefault();    // aタグのデフォルト動作（遷移）を止める
+            e.stopPropagation();   // 親要素へのイベント伝播を止める
+        });
+
+
         // 検索のフォーカス時にエンターを押したとき
         $('.search_input').on('keydown', function (e) {
             if (e.key === 'Enter') {
@@ -759,27 +856,57 @@ $(document).ready(function () {
 
         // 検索を押した時
         $(document).on('click', '.search_button', function () {
+            search_card();
+        });
+        // 登録年月日の値が変更した時
+        $('#start_date,#end_date').on('change', function () {
+            search_card();
+        });
 
+        // 検索文字と登録年月日で名刺を絞り込む
+        function search_card() {
             var search_text = $('.search_input').val();
             $('.search_card').removeClass('search_card');
             $('.none_search_card').removeClass('none_search_card');
             $('.card_view_card').each(function () {
                 if ($(this).text().includes(search_text)) {
                     $(this).addClass('search_card');
+
+                    var start_date_str = $('#start_date').val() || '1900/01/01';
+                    var end_date_str = $('#end_date').val() || '2100/12/31';
+                    
+                    // 日付文字列を Date オブジェクトに変換（スラッシュとハイフンの違いを統一）
+                    var start_date = new Date(start_date_str.replace(/\//g, '-'));
+                    var end_date = new Date(end_date_str.replace(/\//g, '-'));
+
+                    var card_created_at_str = $(this).data('card_created_at'); // 例: "2025-08-25 10:25:52"
+                    // 時間部分を切り離して日付だけをDateに変換する場合
+                    var card_date = new Date(card_created_at_str.split(' ')[0]);
+
+                    if (card_date >= start_date && card_date <= end_date) {
+                        $(this).addClass('search_card');
+                        $(this).removeClass('none_search_card');
+                    } else {
+                        $(this).addClass('none_search_card');
+                        $(this).removeClass('search_card');
+                    }
+
                 }
-                // else if ($(this).find('.card_view_card_company').text().includes(search_text)) {
-                //     $(this).addClass('search_card');
-                // }
                 else {
                     $(this).addClass('none_search_card');
                 }
+
+
             });
-        });
+            card_view_header_count_text_update();
+        }
+
+
         if ($('.card_view_header_count_text').length > 0) {
             card_view_header_count_text_update();
         }
         function card_view_header_count_text_update() {
-            $('.card_view_header_count_text').text($('.card_view_card[data-show="true"]').length);
+            $('.card_view_header_count_text').text($('.card_view_card[data-show="true"]:not(.none_search_card)').length);
         }
 
         // 名刺の種類のタブを切り替えた時
@@ -1063,6 +1190,25 @@ $(document).ready(function () {
             }
         });
     }
+    // 一覧画面において他のユーザーの名刺があるかどうかをチェック
+    function other_user_card_check(user_id) {
+        var prefix = $('#prefix').val();
+        $.ajax({
+            url: prefix + '/card/other_user_card_check/' + user_id,
+            method: 'GET',
+            success: function (response) {
+                console.log(response);
+                response.forEach(function (card) {
+                    $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]').removeClass('display_none');
+                    $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"] .other_user_list').append(
+                        `<span class="other_user_list_item">${card.name}</span>`);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error(error); // エラー処理
+            }
+        });
+    }
     // 指定したimgの画像を再読み込み
     function designateload(img) {
         if ($('#server').val() == "cloud") {
@@ -1269,8 +1415,8 @@ $(document).ready(function () {
                 error: function (xhr, status, error) {
                     totalFiles--;
                     $('#total_files_count').val(totalFiles);
-                    }
-                })
+                }
+            })
         });
     });
 

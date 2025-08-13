@@ -1168,13 +1168,14 @@ a {
   height: 0;
   transition: height .5s ease;
   background: rgb(226, 226, 226);
+  &.open {
+    opacity: 1;
+    height: 215px;
+    padding: 20px;
+  }
 }
 
-.open {
-  opacity: 1;
-  height: 215px;
-  padding: 20px;
-}
+
 
 .settingcheckbox {
   display: block;
