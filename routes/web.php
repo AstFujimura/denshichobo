@@ -344,11 +344,16 @@ Route::prefix($prefix)->group(function () {
             // 名刺管理画面
             Route::get('/card/cardview', [CardController::class, 'cardviewget'])->name('cardviewget');
 
+            // 名刺管理画面Excel出力
+            Route::post('/card/cardview/excel', [CardController::class, 'cardviewexcelpost'])->name('cardviewexcelpost');
+
             // 他のユーザーの名刺があるかどうかをチェック
             Route::get('/card/other_user_card_check/{user_id}', [CardController::class, 'otherusercardcheckget'])->name('otherusercardcheckget');
 
-            // 会社一覧画面
-            Route::get('/card/companyview', [CardController::class, 'cardcompanyviewget'])->name('cardcompanyviewget');
+            // 会社編集画面
+            Route::get('/card/company/edit/{company_id}', [CardController::class, 'cardcompanyeditget'])->name('cardcompanyeditget');
+            // 会社編集画面ポスト
+            Route::post('/card/company/edit', [CardController::class, 'cardcompanyeditpost'])->name('cardcompanyeditpost');
             // 名刺詳細(idはcardusersのid)
             Route::get('/card/detail/{id}', [CardController::class, 'carddetailget'])->name('carddetailget');
 
@@ -384,7 +389,7 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/test', [CardController::class, 'cardtestget'])->name('cardtestget');
 
             // 名刺過去データ参照
-            Route::get('/card/multiple/past', [CardController::class, 'cardmultiplepastget'])->name('cardmultiplepastget');
+            Route::post('/card/multiple/past', [CardController::class, 'cardmultiplepastpost'])->name('cardmultiplepastpost');
             // 名刺複数アップロード
             Route::get('/card/multiple/upload', [CardController::class, 'cardmultipleuploadget'])->name('cardmultipleuploadget');
             // 名刺複数アップロードポスト

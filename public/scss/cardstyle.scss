@@ -528,10 +528,38 @@ body {
     font-size: 1.2rem;
     color: #999999;
     margin-bottom: 0.5rem;
+    position: relative;
+    width: 50rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    height: 4rem;
 
-    .card_view_header_count_text {
-        font-size: 1.5rem;
-        color: #000000;
+    .card_view_header_count_text_container {
+        margin-inline: auto;
+
+        .card_view_header_count_text {
+            font-size: 1.5rem;
+            color: #000000;
+
+        }
+    }
+
+
+    .card_view_excel_button {
+        position: absolute;
+        right: 0;
+        top: 0.5rem;
+        background: #03a12b;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+
+        &:hover {
+            background: #037c1b;
+        }
     }
 }
 
@@ -576,6 +604,7 @@ body {
     margin-left: 2rem;
     width: fit-content;
     margin-inline: auto;
+    padding-bottom: 5rem;
 
     .card_view_card_header {
         display: flex;
@@ -606,7 +635,7 @@ body {
                 width: 7rem;
 
                 @media screen and (max-width: 1200px) {
-                    width: 10rem;
+                    width: 13rem;
                 }
             }
 
@@ -622,6 +651,10 @@ body {
 
             &[data-sort="created_at"] {
                 width: 10rem;
+
+                @media screen and (max-width: 1200px) {
+                    width: 14rem;
+                }
             }
 
             &[data-sort="updated_at"] {
@@ -636,7 +669,7 @@ body {
 
     @media screen and (max-width: 1200px) {
         width: 95%;
-        margin: 1rem auto;
+        margin: 0rem auto;
     }
 
     .card_view_card {
@@ -668,6 +701,13 @@ body {
 
                     .card_view_card_company {
                         width: 20rem;
+                        text-decoration: underline;
+                        cursor: pointer;
+                        height: fit-content;
+
+                        &:hover {
+                            color: #0c614c;
+                        }
 
                         @media screen and (max-width: 600px) {
                             font-size: 0.8rem;
@@ -843,9 +883,17 @@ body {
 
                     .card_view_card_company {
                         width: 20rem;
+                        text-decoration: underline;
+                        cursor: pointer;
+                        height: fit-content;
+
+                        &:hover {
+                            color: #0c614c;
+                        }
 
                         @media screen and (max-width: 1200px) {
                             width: 60%;
+                            font-size: 0.8rem;
                         }
 
 
@@ -879,6 +927,7 @@ body {
                 .created_at_info,
                 .updated_at_info {
                     width: 10rem;
+                    font-size: 0.8rem;
                 }
 
                 @media screen and (max-width: 1200px) {
@@ -900,7 +949,7 @@ body {
 
                 @media screen and (max-width: 1200px) {
                     font-size: 1rem;
-                    width: 10rem;
+                    width: 13rem;
                 }
             }
 
@@ -1269,16 +1318,40 @@ body {
                 }
 
                 .card_detail_card {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 1rem;
+                    width: 100%;
+
                     @media screen and (max-width: 1200px) {
                         margin-inline: auto;
                     }
 
-                    img {
+                    img[data-front="front"] {
                         max-height: 14rem;
                         max-width: 30rem;
                         background: white;
                         object-fit: contain;
                         box-shadow: 4px 7px 11px 1px rgb(0 0 0 / 59%);
+
+                        @media screen and (max-width: 1200px) {
+                            max-height: 9rem;
+                            max-width: 48%;
+                        }
+                    }
+
+                    img[data-front="back"] {
+                        max-height: 14rem;
+                        max-width: 30rem;
+                        background: white;
+                        object-fit: contain;
+                        box-shadow: 4px 7px 11px 1px rgb(0 0 0 / 59%);
+
+                        @media screen and (max-width: 1200px) {
+                            max-height: 9rem;
+                            max-width: 48%;
+                        }
                     }
                 }
 
@@ -1291,6 +1364,16 @@ body {
                 background: white;
                 width: 100%;
                 padding-block: 1rem;
+
+                #company_name {
+                    text-decoration: underline;
+                    color: #3d3b3b;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: #0c614c;
+                    }
+                }
 
                 &_content {
                     color: #3d3b3b;
@@ -2125,6 +2208,7 @@ body {
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-top: 5rem;
 
             &:hover {}
 
@@ -2133,39 +2217,329 @@ body {
                 color: #92b8cf;
             }
 
+            &.loading {
+                display: none;
+            }
+
 
         }
 
-        .upload_button {
-            background: #636363;
-            color: white;
-            border-radius: 0.5rem;
-            padding: 0.5rem 2rem;
-            border: 0;
-            width: 10rem;
-            height: 3rem;
-            margin-inline: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .analyzing_text {
+            display: none;
             font-size: 1.2rem;
+            color: #92b8cf;
+            margin-inline: auto;
+            text-align: center;
 
-            &.enabled {
-                cursor: pointer;
-                background: #2980ed;
+            &.loading {
+                display: block;
+            }
+        }
 
-                &:hover {
-                    background: #2470ce;
+
+
+
+
+
+    }
+
+    .upload_list_container {
+        display: none;
+        gap: 1rem;
+        width: fit-content;
+        max-width: 97%;
+        margin-inline: auto;
+        background: #ffffff;
+        border-radius: 0.5rem;
+        padding: 1rem 1rem 11rem 1rem;
+
+        .upload_list_item_container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &.upload_list_container_open {
+            display: flex;
+
+            .checkbox_controller {
+                @media screen and (min-width: 1201px) {
+                    position: sticky;
+                    top: 4rem;
+                    right: 6rem;
+                    background: aliceblue;
+                    z-index: 1000;
+                    width: 30rem;
+                    margin-left: auto;
+                    padding: 2rem;
+                    height: fit-content;
                 }
+
+                @media screen and (max-width: 1200px) {
+                    position: fixed;
+                    bottom: 0rem;
+                    left: 0;
+                    width: 90%;
+                    background: aliceblue;
+                    z-index: 1000;
+                    padding: 2rem;
+                    height: fit-content;
+                }
+
+                .checkbox_description_container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: start;
+                    gap: 1rem;
+
+                    &.close {
+                        display: none;
+                    }
+
+                    .checkbox_description_item {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+
+                        .new_card_icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1rem;
+                            background: #c7ffc7;
+                        }
+
+                        .other_card_icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1rem;
+                            background: #bdfbff;
+                        }
+
+                        .my_card_icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1rem;
+                            background: #d78383;
+                        }
+
+                        .success_card_icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1rem;
+                            background: #fdffc3;
+                            border: solid 0.1rem #c1c1c1;
+                        }
+
+                        .failed_card_icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1rem;
+                            background: #4d4d4d;
+                        }
+                    }
+
+                }
+
+                .checkbox_controller_item_container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: start;
+                    gap: 1rem;
+                    margin-top: 1rem;
+
+                    &.close {
+                        display: none;
+                    }
+
+                    .checkbox_controller_item {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+
+                        input[type="checkbox"] {
+                            width: 1.5rem;
+                            height: 1.5rem;
+                        }
+
+                        label {
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                .upload_button_container {
+                    @media screen and (max-width: 1200px) {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 1rem;
+                        margin-top: 1rem;
+                    }
+
+                    .upload_button {
+                        background: #636363;
+                        color: white;
+                        border-radius: 0.5rem;
+                        padding: 0.5rem 2rem;
+                        border: 0;
+                        width: 10rem;
+                        height: 3rem;
+                        margin-inline: auto;
+                        margin-top: 3rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.2rem;
+
+                        &.enabled {
+                            cursor: pointer;
+                            background: #2980ed;
+
+                            &:hover {
+                                background: #2470ce;
+                            }
+                        }
+
+
+
+                    }
+
+                    .upload_button_cancel {
+                        background: #535353;
+                        color: white;
+                        border-radius: 0.5rem;
+                        padding: 0.5rem 2rem;
+                        border: 0;
+                        width: 10rem;
+                        height: 3rem;
+                        margin-inline: auto;
+                        margin-top: 3rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.2rem;
+                        cursor: pointer;
+
+                        &:hover {
+                            background: #3a3838;
+                        }
+                    }
+
+                    @media screen and (max-width: 1200px) {
+
+                        .upload_button,
+                        .upload_button_cancel {
+                            padding: 0.5rem 1rem;
+                            margin: 0;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        .upload_list_item {
+            display: flex;
+            align-items: end;
+            justify-content: start;
+            gap: 1rem;
+            border-bottom: solid 0.1rem #adadad;
+            padding: 1rem;
+            cursor: pointer;
+
+            &[data-newcard="true"] {
+                background: #f3fff3;
+                order: 3;
+            }
+
+            &[data-othercard="true"] {
+                background: #e6fdff;
+                order: 4;
             }
 
 
 
+            &[data-mycard="true"] {
+                background: #f8e8e8;
+                order: 5;
+
+                input[type="checkbox"] {
+                    display: none;
+                }
+            }
+
+            &[data-success="true"] {
+                background: #fdf7c6;
+                order: 2;
+            }
+
+            &[data-failed="true"] {
+                background: #9f9f9f;
+                order: 1;
+            }
+
+            .upload_list_item_front {
+                width: 13rem;
+
+                @media screen and (max-width: 1200px) {
+                    width: 8rem;
+                }
+            }
+
+            .upload_list_item_back {
+                width: 9rem;
+
+                @media screen and (max-width: 1200px) {
+                    width: 5rem;
+                }
+            }
+
+            .front_img {
+                height: 8rem;
+                object-fit: contain;
+                box-shadow: 2px 3px 7px 0 gray;
+
+                @media screen and (max-width: 1200px) {
+                    height: 5rem;
+                }
+            }
+
+            .back_img {
+                height: 5rem;
+                object-fit: contain;
+                box-shadow: 2px 3px 7px 0 gray;
+
+                @media screen and (max-width: 1200px) {
+                    height: 3rem;
+                }
+            }
+
+            .upload_list_name {
+                font-size: 1.2rem;
+                color: #333333;
+            }
+
+            .checkbox_list_item {
+                margin-block: auto;
+                width: 1.5rem;
+
+                input[type="checkbox"] {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
+            }
         }
-
-
-
-
     }
 
 
@@ -2199,6 +2573,7 @@ body {
 
                 .progress_bar_wrapper {
                     width: 30rem;
+                    max-width: 90%;
                     height: 2rem;
                     background: transparent;
                     border: solid 0.1rem #7bbef7;
@@ -2335,4 +2710,194 @@ body {
             }
         }
     }
+}
+
+.card_company_edit_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: #f9f9f9;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+    width: 50rem;
+    max-width: 97%;
+    margin-inline: auto;
+
+    .card_company_edit_button_container {
+        position: sticky;
+        top: 48px;
+        right: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        background: #f9f9f9;
+        z-index: 100;
+        height: 4rem;
+
+        .card_company_edit_button {
+            background: #0cbd41;
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            width: 13rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background: #0a8a31;
+            }
+        }
+
+        .card_company_edit_button_cancel {
+            background: #6d6d6d;
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            width: 8rem;
+            margin-left: 1rem;
+            margin-right: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background: #4d4d4d;
+                color: white;
+            }
+        }
+    }
+
+    .card_company_edit_content {
+        display: flex;
+        align-items: start;
+        justify-content: start;
+        gap: 1rem;
+        border-bottom: solid 0.1rem #adadad;
+        padding: 1rem;
+
+        input {
+            border: none;
+            background: white;
+            border-bottom: solid 0.1rem #adadad;
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            height: 2.5rem;
+            flex: 1;
+
+            &:focus {
+                outline: none;
+                border-bottom: solid 0.2rem #61b8ff;
+            }
+        }
+    }
+
+    .card_company_edit_content_title {
+        width: 10rem;
+        font-size: 1.2rem;
+        color: #333333;
+    }
+
+    .card_company_edit_content_input {
+        width: 100%;
+        height: 2.5rem;
+        border: #88b3e7 solid 1px;
+    }
+
+    .card_company_edit_department_container,
+    .card_company_edit_branch_container {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 1;
+
+
+        .card_company_edit_department_item {
+            width: 100%;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            gap: 0.5rem;
+
+            .card_company_edit_department_item_delete {
+                width: 2rem;
+                height: 2rem;
+                color: white;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0.5rem;
+
+                &:hover {
+                    background: #dddddd;
+                }
+            }
+        }
+
+        .card_company_edit_branch_item {
+            display: grid;
+            grid-template-columns: 1fr 2rem;
+            width: 100%;
+            align-items: center;
+            justify-content: start;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+
+            .card_company_edit_branch_item_delete {
+                width: 2rem;
+                height: 2rem;
+                color: white;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 0.5rem;
+
+                &:hover {
+                    background: #dddddd;
+                }
+            }
+
+            .card_company_edit_branch_item_detail {
+                height: fit-content;
+                background: #cfcfcf;
+                margin-left: 2rem;
+            }
+        }
+
+        .department_add_button,
+        .branch_add_button {
+            width: 10rem;
+            height: 2.5rem;
+            background: #3aaff3;
+            color: white;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: 2rem;
+
+            &:hover {
+                background: #2470ce;
+            }
+        }
+    }
+
 }

@@ -53,7 +53,7 @@
                         <img data-card_id="{{ $card->card_id }}"
                             class="new_card_check @if ($card->表示最新フラグ != 1) display_none @endif"
                             src="{{asset(config('prefix.prefix').'/'.'img/card/new_card_check.svg')}}" alt="">
-                        <img class="lazyload" data-card_id="{{ $card->card_id }}" data-front="true" alt="">
+                        <img class="lazyload" data-card_id="{{ $card->card_id }}" data-front="front" alt="">
                     </div>
                     <div class="history_card_text">
                         <div class="card_detail_text_name">
@@ -90,7 +90,8 @@
                             src="{{ asset(config('prefix.prefix').'/'.'img/card/setting.svg')}}" alt="">
                     </div>
                     <div class="card_detail_card">
-                        <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="true" alt="">
+                        <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="front" alt="">
+                        <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="back" alt="">
                     </div>
                 </div>
                 <div class="personal_info">
@@ -133,9 +134,9 @@
                         <div class="company_info_content_title">
                             会社名
                         </div>
-                        <div class="company_info_content_text" id="company_name">
+                        <a href="{{ route('cardcompanyeditget', ['company_id' => $now_card->会社ID]) }}" class="company_info_content_text" id="company_name">
                             {{ $now_card->会社名 }}
-                        </div>
+                        </a>
                     </div>
                     <div class="company_info_content">
                         <div class="company_info_content_title">

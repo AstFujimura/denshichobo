@@ -45,7 +45,7 @@
         </div>
     </div>
     <h2 class="pagetitle" id="card_regist_title">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/title/regist_title.svg') }}" alt="" class="title_icon">
         <span>
             @if ($edit == 'add')
             {{$carduser->表示名}}さん 名刺追加

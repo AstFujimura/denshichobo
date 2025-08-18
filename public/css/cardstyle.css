@@ -479,10 +479,33 @@ body .usersettingtitle {
   font-size: 1.2rem;
   color: #999999;
   margin-bottom: 0.5rem;
+  position: relative;
+  width: 50rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  height: 4rem;
 }
-.card_view_header_count .card_view_header_count_text {
+.card_view_header_count .card_view_header_count_text_container {
+  margin-inline: auto;
+}
+.card_view_header_count .card_view_header_count_text_container .card_view_header_count_text {
   font-size: 1.5rem;
   color: #000000;
+}
+.card_view_header_count .card_view_excel_button {
+  position: absolute;
+  right: 0;
+  top: 0.5rem;
+  background: #03a12b;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.card_view_header_count .card_view_excel_button:hover {
+  background: #037c1b;
 }
 
 .tab_container {
@@ -524,6 +547,7 @@ body .usersettingtitle {
   margin-left: 2rem;
   width: fit-content;
   margin-inline: auto;
+  padding-bottom: 5rem;
 }
 .card_view_container .card_view_card_header {
   display: flex;
@@ -554,7 +578,7 @@ body .usersettingtitle {
 }
 @media screen and (max-width: 1200px) {
   .card_view_container .card_view_card_header .card_view_card_header_item[data-sort=name] {
-    width: 10rem;
+    width: 13rem;
   }
 }
 .card_view_container .card_view_card_header .card_view_card_header_item[data-sort=company_name] {
@@ -565,6 +589,11 @@ body .usersettingtitle {
 }
 .card_view_container .card_view_card_header .card_view_card_header_item[data-sort=created_at] {
   width: 10rem;
+}
+@media screen and (max-width: 1200px) {
+  .card_view_container .card_view_card_header .card_view_card_header_item[data-sort=created_at] {
+    width: 14rem;
+  }
 }
 .card_view_container .card_view_card_header .card_view_card_header_item[data-sort=updated_at] {
   width: 10rem;
@@ -577,7 +606,7 @@ body .usersettingtitle {
 @media screen and (max-width: 1200px) {
   .card_view_container {
     width: 95%;
-    margin: 1rem auto;
+    margin: 0rem auto;
   }
 }
 .card_view_container .card_view_card {
@@ -609,6 +638,12 @@ body .usersettingtitle {
 }
 .card_view_container .card_view_card.large_view .text_container .company_info .card_view_card_company {
   width: 20rem;
+  text-decoration: underline;
+  cursor: pointer;
+  height: fit-content;
+}
+.card_view_container .card_view_card.large_view .text_container .company_info .card_view_card_company:hover {
+  color: #0c614c;
 }
 @media screen and (max-width: 600px) {
   .card_view_container .card_view_card.large_view .text_container .company_info .card_view_card_company {
@@ -771,10 +806,17 @@ body .usersettingtitle {
 }
 .card_view_container .card_view_card.small_view .text_container .company_info .card_view_card_company {
   width: 20rem;
+  text-decoration: underline;
+  cursor: pointer;
+  height: fit-content;
+}
+.card_view_container .card_view_card.small_view .text_container .company_info .card_view_card_company:hover {
+  color: #0c614c;
 }
 @media screen and (max-width: 1200px) {
   .card_view_container .card_view_card.small_view .text_container .company_info .card_view_card_company {
     width: 60%;
+    font-size: 0.8rem;
   }
 }
 .card_view_container .card_view_card.small_view .text_container .company_info .card_view_card_department {
@@ -805,6 +847,7 @@ body .usersettingtitle {
 .card_view_container .card_view_card.small_view .text_container .created_at_info,
 .card_view_container .card_view_card.small_view .text_container .updated_at_info {
   width: 10rem;
+  font-size: 0.8rem;
 }
 @media screen and (max-width: 1200px) {
   .card_view_container .card_view_card.small_view .text_container .updated_at_info {
@@ -823,7 +866,7 @@ body .usersettingtitle {
 @media screen and (max-width: 1200px) {
   .card_view_container .card_view_card.small_view .card_view_card_name {
     font-size: 1rem;
-    width: 10rem;
+    width: 13rem;
   }
 }
 .card_view_container .card_view_card[data-show=true] {
@@ -1128,17 +1171,43 @@ body .usersettingtitle {
     display: none;
   }
 }
+.card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
 @media screen and (max-width: 1200px) {
   .card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card {
     margin-inline: auto;
   }
 }
-.card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card img {
+.card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card img[data-front=front] {
   max-height: 14rem;
   max-width: 30rem;
   background: white;
   object-fit: contain;
   box-shadow: 4px 7px 11px 1px rgba(0, 0, 0, 0.59);
+}
+@media screen and (max-width: 1200px) {
+  .card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card img[data-front=front] {
+    max-height: 9rem;
+    max-width: 48%;
+  }
+}
+.card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card img[data-front=back] {
+  max-height: 14rem;
+  max-width: 30rem;
+  background: white;
+  object-fit: contain;
+  box-shadow: 4px 7px 11px 1px rgba(0, 0, 0, 0.59);
+}
+@media screen and (max-width: 1200px) {
+  .card_detail_container .card_info_container .card_detail_content .card_info_content .card_detail_card img[data-front=back] {
+    max-height: 9rem;
+    max-width: 48%;
+  }
 }
 .card_detail_container .card_info_container .card_detail_content .personal_info,
 .card_detail_container .card_info_container .card_detail_content .company_info,
@@ -1146,6 +1215,18 @@ body .usersettingtitle {
   background: white;
   width: 100%;
   padding-block: 1rem;
+}
+.card_detail_container .card_info_container .card_detail_content .personal_info #company_name,
+.card_detail_container .card_info_container .card_detail_content .company_info #company_name,
+.card_detail_container .card_info_container .card_detail_content .position_info #company_name {
+  text-decoration: underline;
+  color: #3d3b3b;
+  cursor: pointer;
+}
+.card_detail_container .card_info_container .card_detail_content .personal_info #company_name:hover,
+.card_detail_container .card_info_container .card_detail_content .company_info #company_name:hover,
+.card_detail_container .card_info_container .card_detail_content .position_info #company_name:hover {
+  color: #0c614c;
 }
 .card_detail_container .card_info_container .card_detail_content .personal_info_content,
 .card_detail_container .card_info_container .card_detail_content .company_info_content,
@@ -1848,12 +1929,156 @@ body .usersettingtitle {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 5rem;
 }
 .multiple_upload_container .multiple_upload_form .folder_upload_label .folder_upload_label_text {
   font-size: 1.5rem;
   color: #92b8cf;
 }
-.multiple_upload_container .multiple_upload_form .upload_button {
+.multiple_upload_container .multiple_upload_form .folder_upload_label.loading {
+  display: none;
+}
+.multiple_upload_container .multiple_upload_form .analyzing_text {
+  display: none;
+  font-size: 1.2rem;
+  color: #92b8cf;
+  margin-inline: auto;
+  text-align: center;
+}
+.multiple_upload_container .multiple_upload_form .analyzing_text.loading {
+  display: block;
+}
+.multiple_upload_container .upload_list_container {
+  display: none;
+  gap: 1rem;
+  width: fit-content;
+  max-width: 97%;
+  margin-inline: auto;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  padding: 1rem 1rem 11rem 1rem;
+}
+.multiple_upload_container .upload_list_container .upload_list_item_container {
+  display: flex;
+  flex-direction: column;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open {
+  display: flex;
+}
+@media screen and (min-width: 1201px) {
+  .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller {
+    position: sticky;
+    top: 4rem;
+    right: 6rem;
+    background: aliceblue;
+    z-index: 1000;
+    width: 30rem;
+    margin-left: auto;
+    padding: 2rem;
+    height: fit-content;
+  }
+}
+@media screen and (max-width: 1200px) {
+  .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller {
+    position: fixed;
+    bottom: 0rem;
+    left: 0;
+    width: 90%;
+    background: aliceblue;
+    z-index: 1000;
+    padding: 2rem;
+    height: fit-content;
+  }
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container.close {
+  display: none;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container .checkbox_description_item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container .checkbox_description_item .new_card_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1rem;
+  background: #c7ffc7;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container .checkbox_description_item .other_card_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1rem;
+  background: #bdfbff;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container .checkbox_description_item .my_card_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1rem;
+  background: #d78383;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container .checkbox_description_item .success_card_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1rem;
+  background: #fdffc3;
+  border: solid 0.1rem #c1c1c1;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container .checkbox_description_item .failed_card_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1rem;
+  background: #4d4d4d;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_controller_item_container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_controller_item_container.close {
+  display: none;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_controller_item_container .checkbox_controller_item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_controller_item_container .checkbox_controller_item input[type=checkbox] {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_controller_item_container .checkbox_controller_item label {
+  cursor: pointer;
+}
+@media screen and (max-width: 1200px) {
+  .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button {
   background: #636363;
   color: white;
   border-radius: 0.5rem;
@@ -1862,17 +2087,124 @@ body .usersettingtitle {
   width: 10rem;
   height: 3rem;
   margin-inline: auto;
+  margin-top: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
 }
-.multiple_upload_container .multiple_upload_form .upload_button.enabled {
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button.enabled {
   cursor: pointer;
   background: #2980ed;
 }
-.multiple_upload_container .multiple_upload_form .upload_button.enabled:hover {
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button.enabled:hover {
   background: #2470ce;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button_cancel {
+  background: #535353;
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 2rem;
+  border: 0;
+  width: 10rem;
+  height: 3rem;
+  margin-inline: auto;
+  margin-top: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button_cancel:hover {
+  background: #3a3838;
+}
+@media screen and (max-width: 1200px) {
+  .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button,
+  .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button_cancel {
+    padding: 0.5rem 1rem;
+    margin: 0;
+  }
+}
+.multiple_upload_container .upload_list_container .upload_list_item {
+  display: flex;
+  align-items: end;
+  justify-content: start;
+  gap: 1rem;
+  border-bottom: solid 0.1rem #adadad;
+  padding: 1rem;
+  cursor: pointer;
+}
+.multiple_upload_container .upload_list_container .upload_list_item[data-newcard=true] {
+  background: #f3fff3;
+  order: 3;
+}
+.multiple_upload_container .upload_list_container .upload_list_item[data-othercard=true] {
+  background: #e6fdff;
+  order: 4;
+}
+.multiple_upload_container .upload_list_container .upload_list_item[data-mycard=true] {
+  background: #f8e8e8;
+  order: 5;
+}
+.multiple_upload_container .upload_list_container .upload_list_item[data-mycard=true] input[type=checkbox] {
+  display: none;
+}
+.multiple_upload_container .upload_list_container .upload_list_item[data-success=true] {
+  background: #fdf7c6;
+  order: 2;
+}
+.multiple_upload_container .upload_list_container .upload_list_item[data-failed=true] {
+  background: #9f9f9f;
+  order: 1;
+}
+.multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_front {
+  width: 13rem;
+}
+@media screen and (max-width: 1200px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_front {
+    width: 8rem;
+  }
+}
+.multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_back {
+  width: 9rem;
+}
+@media screen and (max-width: 1200px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_back {
+    width: 5rem;
+  }
+}
+.multiple_upload_container .upload_list_container .upload_list_item .front_img {
+  height: 8rem;
+  object-fit: contain;
+  box-shadow: 2px 3px 7px 0 gray;
+}
+@media screen and (max-width: 1200px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .front_img {
+    height: 5rem;
+  }
+}
+.multiple_upload_container .upload_list_container .upload_list_item .back_img {
+  height: 5rem;
+  object-fit: contain;
+  box-shadow: 2px 3px 7px 0 gray;
+}
+@media screen and (max-width: 1200px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .back_img {
+    height: 3rem;
+  }
+}
+.multiple_upload_container .upload_list_container .upload_list_item .upload_list_name {
+  font-size: 1.2rem;
+  color: #333333;
+}
+.multiple_upload_container .upload_list_container .upload_list_item .checkbox_list_item {
+  margin-block: auto;
+  width: 1.5rem;
+}
+.multiple_upload_container .upload_list_container .upload_list_item .checkbox_list_item input[type=checkbox] {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 .multiple_upload_container .progress_container_wrapper {
   display: none;
@@ -1904,6 +2236,7 @@ body .usersettingtitle {
 }
 .multiple_upload_container .progress_container_wrapper.progress_container_wrapper_open .progress_container .progress_bar_wrapper {
   width: 30rem;
+  max-width: 90%;
   height: 2rem;
   background: transparent;
   border: solid 0.1rem #7bbef7;
@@ -2011,4 +2344,184 @@ body .usersettingtitle {
 }
 .multiple_upload_container .error_wrapper .error_content .error_button .error_button_delete:hover {
   background: #ff8585;
+}
+
+.card_company_edit_container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #f9f9f9;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  width: 50rem;
+  max-width: 97%;
+  margin-inline: auto;
+}
+.card_company_edit_container .card_company_edit_button_container {
+  position: sticky;
+  top: 48px;
+  right: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  background: #f9f9f9;
+  z-index: 100;
+  height: 4rem;
+}
+.card_company_edit_container .card_company_edit_button_container .card_company_edit_button {
+  background: #0cbd41;
+  color: white;
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  width: 13rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card_company_edit_container .card_company_edit_button_container .card_company_edit_button:hover {
+  background: #0a8a31;
+}
+.card_company_edit_container .card_company_edit_button_container .card_company_edit_button_cancel {
+  background: #6d6d6d;
+  color: white;
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  width: 8rem;
+  margin-left: 1rem;
+  margin-right: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card_company_edit_container .card_company_edit_button_container .card_company_edit_button_cancel:hover {
+  background: #4d4d4d;
+  color: white;
+}
+.card_company_edit_container .card_company_edit_content {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  gap: 1rem;
+  border-bottom: solid 0.1rem #adadad;
+  padding: 1rem;
+}
+.card_company_edit_container .card_company_edit_content input {
+  border: none;
+  background: white;
+  border-bottom: solid 0.1rem #adadad;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  height: 2.5rem;
+  flex: 1;
+}
+.card_company_edit_container .card_company_edit_content input:focus {
+  outline: none;
+  border-bottom: solid 0.2rem #61b8ff;
+}
+.card_company_edit_container .card_company_edit_content_title {
+  width: 10rem;
+  font-size: 1.2rem;
+  color: #333333;
+}
+.card_company_edit_container .card_company_edit_content_input {
+  width: 100%;
+  height: 2.5rem;
+  border: #88b3e7 solid 1px;
+}
+.card_company_edit_container .card_company_edit_department_container,
+.card_company_edit_container .card_company_edit_branch_container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+.card_company_edit_container .card_company_edit_department_container .card_company_edit_department_item,
+.card_company_edit_container .card_company_edit_branch_container .card_company_edit_department_item {
+  width: 100%;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0.5rem;
+}
+.card_company_edit_container .card_company_edit_department_container .card_company_edit_department_item .card_company_edit_department_item_delete,
+.card_company_edit_container .card_company_edit_branch_container .card_company_edit_department_item .card_company_edit_department_item_delete {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+}
+.card_company_edit_container .card_company_edit_department_container .card_company_edit_department_item .card_company_edit_department_item_delete:hover,
+.card_company_edit_container .card_company_edit_branch_container .card_company_edit_department_item .card_company_edit_department_item_delete:hover {
+  background: #dddddd;
+}
+.card_company_edit_container .card_company_edit_department_container .card_company_edit_branch_item,
+.card_company_edit_container .card_company_edit_branch_container .card_company_edit_branch_item {
+  display: grid;
+  grid-template-columns: 1fr 2rem;
+  width: 100%;
+  align-items: center;
+  justify-content: start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.card_company_edit_container .card_company_edit_department_container .card_company_edit_branch_item .card_company_edit_branch_item_delete,
+.card_company_edit_container .card_company_edit_branch_container .card_company_edit_branch_item .card_company_edit_branch_item_delete {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+}
+.card_company_edit_container .card_company_edit_department_container .card_company_edit_branch_item .card_company_edit_branch_item_delete:hover,
+.card_company_edit_container .card_company_edit_branch_container .card_company_edit_branch_item .card_company_edit_branch_item_delete:hover {
+  background: #dddddd;
+}
+.card_company_edit_container .card_company_edit_department_container .card_company_edit_branch_item .card_company_edit_branch_item_detail,
+.card_company_edit_container .card_company_edit_branch_container .card_company_edit_branch_item .card_company_edit_branch_item_detail {
+  height: fit-content;
+  background: #cfcfcf;
+  margin-left: 2rem;
+}
+.card_company_edit_container .card_company_edit_department_container .department_add_button,
+.card_company_edit_container .card_company_edit_department_container .branch_add_button,
+.card_company_edit_container .card_company_edit_branch_container .department_add_button,
+.card_company_edit_container .card_company_edit_branch_container .branch_add_button {
+  width: 10rem;
+  height: 2.5rem;
+  background: #3aaff3;
+  color: white;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: 2rem;
+}
+.card_company_edit_container .card_company_edit_department_container .department_add_button:hover,
+.card_company_edit_container .card_company_edit_department_container .branch_add_button:hover,
+.card_company_edit_container .card_company_edit_branch_container .department_add_button:hover,
+.card_company_edit_container .card_company_edit_branch_container .branch_add_button:hover {
+  background: #2470ce;
 }

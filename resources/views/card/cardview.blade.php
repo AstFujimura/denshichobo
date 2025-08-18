@@ -60,7 +60,17 @@
 
         </div>
         <div class="card_view_header_count">
-            <span class="card_view_header_count_text"></span>件
+            <div class="card_view_header_count_text_container">
+                <span class="card_view_header_count_text"></span>件
+            </div>
+
+            <div class="card_view_excel_button">
+                Excel出力
+            </div>
+            <form id="card_view_excel_form" action="{{ route('cardviewexcelpost') }}" method="post">
+                @csrf
+                <input type="hidden" name="card_view_card_array" id="card_view_card_array">
+            </form>
         </div>
         <div class="tab_container">
             <div class="tab_item tab_item_active" data-tab="my_card_user">
@@ -107,7 +117,7 @@
                     {{ $carduser->表示名 }}
                 </div>
                 <div class="company_info">
-                    <div class="card_view_card_company">
+                    <div class="card_view_card_company" data-company_id="{{ $carduser->会社ID }}">
                         {{ $carduser->会社名 }}
                     </div>
                     <div class="card_view_card_department">
@@ -123,7 +133,7 @@
                     <div class="updated_at_info_value">{{ date('Y.m.d', strtotime($carduser->更新年月日)) }}</div>
                 </div>
             </div>
-            <img class="lazyload" data-card_id="{{ $carduser->card_id }}" data-front="true" alt="">
+            <img class="lazyload" data-card_id="{{ $carduser->card_id }}" data-front="front" alt="">
             <div class="other_user_card_check display_none" data-carduser_id="{{ $carduser->carduser_id }}">
                 <img class="other_user_card_check_icon"
                     src="{{ asset(config('prefix.prefix').'/'.'img/card/other_users.svg') }}" alt="">
