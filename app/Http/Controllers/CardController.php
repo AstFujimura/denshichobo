@@ -1102,7 +1102,7 @@ class CardController extends Controller
                 'Key' => $key
             ]);
             // 署名付きURLを生成
-            $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
+            // $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
         } else {
             $path = Config::get('custom.file_upload_path') . "\\" . $filepath;
         }
