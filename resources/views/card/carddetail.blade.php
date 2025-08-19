@@ -14,6 +14,7 @@
     <div class="card_detail_container">
         <div class="gray_area">
             <div class="popup_content">
+                @if ($now_card->ユーザーID == Auth::user()->id)
                 <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" class="popup_button card_edit_button"
                     data-card_id="{{ $now_card->card_id }}">
                     この名刺を編集する
@@ -25,6 +26,11 @@
                     @csrf
                     この名刺を削除する
                 </a>
+                @else
+                <a href="{{ route('cardmycardget', ['id' => $now_card->card_id]) }}" class="popup_button card_history_add_button">
+                    マイ名刺登録する
+                </a>
+                @endif
             </div>
         </div>
         <div class="card_history_container">
@@ -126,6 +132,14 @@
                         </div>
                         <div class="personal_info_content_text" id="email">
                             {{ $now_card->メールアドレス }}
+                        </div>
+                    </div>
+                    <div class="personal_info_content">
+                        <div class="personal_info_content_title">
+                            備考
+                        </div>
+                        <div class="personal_info_content_text" id="note">
+                            {{ $now_card->備考 }}
                         </div>
                     </div>
                 </div>

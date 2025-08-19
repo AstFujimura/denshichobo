@@ -638,11 +638,13 @@ body .usersettingtitle {
 }
 .card_view_container .card_view_card.large_view .text_container .company_info .card_view_card_company {
   width: 20rem;
-  text-decoration: underline;
-  cursor: pointer;
   height: fit-content;
 }
-.card_view_container .card_view_card.large_view .text_container .company_info .card_view_card_company:hover {
+.card_view_container .card_view_card.large_view .text_container .company_info .card_view_card_company .card_view_card_company_text {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.card_view_container .card_view_card.large_view .text_container .company_info .card_view_card_company .card_view_card_company_text:hover {
   color: #0c614c;
 }
 @media screen and (max-width: 600px) {
@@ -806,11 +808,13 @@ body .usersettingtitle {
 }
 .card_view_container .card_view_card.small_view .text_container .company_info .card_view_card_company {
   width: 20rem;
-  text-decoration: underline;
-  cursor: pointer;
   height: fit-content;
 }
-.card_view_container .card_view_card.small_view .text_container .company_info .card_view_card_company:hover {
+.card_view_container .card_view_card.small_view .text_container .company_info .card_view_card_company .card_view_card_company_text {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.card_view_container .card_view_card.small_view .text_container .company_info .card_view_card_company .card_view_card_company_text:hover {
   color: #0c614c;
 }
 @media screen and (max-width: 1200px) {
@@ -935,6 +939,16 @@ body .usersettingtitle {
   margin-inline: auto;
 }
 .card_detail_container .gray_area .popup_content .card_latest_button {
+  color: #03626d;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  height: 4rem;
+  background: #ffffff;
+  margin-inline: auto;
+}
+.card_detail_container .gray_area .popup_content .card_history_add_button {
   color: #03626d;
   display: flex;
   width: 100%;
@@ -1234,7 +1248,7 @@ body .usersettingtitle {
   color: #3d3b3b;
   display: flex;
   border-bottom: solid 1px #b6b6b6;
-  height: 3rem;
+  min-height: 3rem;
   align-items: center;
   margin-inline: 1rem;
 }
@@ -1247,7 +1261,7 @@ body .usersettingtitle {
 .card_detail_container .card_info_container .card_detail_content .personal_info_content_text,
 .card_detail_container .card_info_container .card_detail_content .company_info_content_text,
 .card_detail_container .card_info_container .card_detail_content .position_info_content_text {
-  width: 15rem;
+  width: fit-content;
   font-size: 1rem;
 }
 .card_detail_container .card_info_container .card_edit_delete_container {
@@ -1762,6 +1776,22 @@ body .usersettingtitle {
   border-radius: 0.5rem;
   padding: 1rem;
 }
+.card_regist_container .card_regist_form .form_container .company_edit_button {
+  margin-left: auto;
+  color: #03626d;
+  display: flex;
+  width: fit-content;
+  margin-left: auto;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.card_regist_container .card_regist_form .form_container .company_edit_button img {
+  width: 1rem;
+  margin-left: 0.5rem;
+}
 @media screen and (min-width: 750px) {
   .card_regist_container .card_regist_form .form_container.personal_info {
     grid-column: 2/3;
@@ -1940,13 +1970,16 @@ body .usersettingtitle {
 }
 .multiple_upload_container .multiple_upload_form .analyzing_text {
   display: none;
-  font-size: 1.2rem;
-  color: #92b8cf;
+  font-size: 1.6rem;
+  color: #956e6e;
   margin-inline: auto;
+  margin-top: 3rem;
   text-align: center;
+  font-weight: 500;
+  flex-direction: column;
 }
 .multiple_upload_container .multiple_upload_form .analyzing_text.loading {
-  display: block;
+  display: flex;
 }
 .multiple_upload_container .upload_list_container {
   display: none;

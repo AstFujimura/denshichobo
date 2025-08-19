@@ -517,6 +517,7 @@ $(document).ready(function () {
             $('#position').val(data.役職);
             $('#phone_number').val(data.携帯電話番号);
             $('#email').val(data.メールアドレス);
+            $('#note').val(data.備考);
             $('#branch_name').val(data.拠点名);
             $('#branch_address').val(data.住所);
             $('#branch_phone_number').val(data.電話番号);
@@ -595,6 +596,8 @@ $(document).ready(function () {
                     $('#company_name').addClass('company_choiced');
                     $('#company_name_kana').val(response.company.会社名カナ);
                     $('#company_name_kana').attr('disabled', true);
+                    $('.company_edit_button').removeClass('display_none');
+                    $('.company_edit_button').attr('href', prefix + '/card/company/edit/' + id);
 
                     // 拠点指定がある場合は拠点のセレクトボックスを置く
                     if (response.designate_branch) {
@@ -865,10 +868,10 @@ $(document).ready(function () {
         });
 
         // 会社名を押したとき
-        $(document).on('click', '.card_view_card_company', function (e) {
+        $(document).on('click', '.card_view_card_company_text', function (e) {
             e.preventDefault();    // aタグのデフォルト動作（遷移）を止める
             e.stopPropagation();   // 親要素へのイベント伝播を止める
-            var company_id = $(this).data('company_id');
+            var company_id = $(this).closest('.card_view_card_company').data('company_id');
             window.location.href = prefix + '/card/company/edit/' + company_id;
         });
 
@@ -1184,7 +1187,7 @@ $(document).ready(function () {
         $('.card_company_edit_button').on('click', function () {
             if (company_valid_check()) {
                 if (confirm('会社情報を更新しますか？')) {
-                $('#card_company_edit_form').submit();
+                    $('#card_company_edit_form').submit();
                 }
             }
         });
@@ -1426,11 +1429,12 @@ $(document).ready(function () {
 
     // 名刺一括アップロード
     let selectedFiles = [];
+    let uploadId = '';
 
     $('#folder_upload').on('change', function (event) {
         $('.analyzing_text').addClass('loading');
         $('.folder_upload_label').addClass('loading');
-        let uploadId = generateUUID(); // ここで一度作成！
+        uploadId = generateUUID(); // ここで一度作成！
         const allowedExtensions = ['jpg', 'jpeg', 'png'];
         const files = Array.from(event.target.files);
 
@@ -1596,8 +1600,19 @@ $(document).ready(function () {
                         }
                     }
                 });
-                $('.upload_button').addClass('enabled');
                 $('.analyzing_text').removeClass('loading');
+                $('.checkbox_description_container[data-status="new"]').removeClass('close');
+                $('.checkbox_description_container[data-status="again"]').addClass('close');
+                $('.checkbox_controller_item_container').removeClass('close');
+                if ($('.upload_list_item:not([data-mycard="true"])').length == 0) {
+                    $('.upload_button').removeClass('enabled');
+                }
+                else {
+                    $('.upload_button').addClass('enabled');
+                }
+                $('.upload_button').text('アップロード開始');
+
+
             },
 
 
@@ -1671,18 +1686,51 @@ $(document).ready(function () {
         $('.upload_button').removeClass('enabled');
         $('.analyzing_text').removeClass('loading');
         $('.folder_upload_label').removeClass('loading');
-
+        $.ajax({
+            url: prefix + '/card/multiple/delete',
+            method: 'GET',
+            success: function (response) {
+                uploadId = '';
+            }
+        });
         selectedFiles = [];
         $('#folder_upload').val('');
     })
 
     $(document).on('click', '.upload_button.enabled', function (event) {
+        if ($('.checkbox_list_item_checkbox:checked').length == 0) {
+            alert('1つ以上名刺を選択してください');
+            return;
+        }
         if (confirm('名刺を一括アップロードしますか？')) {
             checkbox_reload();
             $('#multiple_upload_form').submit();
         }
     })
 
+    // 進行状況の確認フラグ
+    var check_progress_flag = false;
+    // 進行状況が完全にストップしているかを確認
+    function check_progress() {
+        // 20秒ごとにuploadedfiles_countとtotal_files_countを比較
+        // もしどちらも値が変わらなければ、強制終了する
+        var uploadedfiles_count = 0;
+        var total_files_count = 0;
+        setInterval(function () {
+            if (!check_progress_flag) {
+                return;
+            }
+            if (parseInt($('#uploadedfiles_count').val()) == uploadedfiles_count && parseInt($('#total_files_count').val()) == total_files_count) {
+                $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+                $('.upload_list_item:not([data-success="true"])').attr('data-failed', 'true');
+                count_reload()
+                check_progress_flag = false;
+                return;
+            }
+            uploadedfiles_count = parseInt($('#uploadedfiles_count').val());
+            total_files_count = parseInt($('#total_files_count').val());
+        }, 10000);
+    }
     $('#multiple_upload_form').on('submit', function (event) {
         event.preventDefault();
         const filesToSend = selectedFiles.filter(f => f.check);
@@ -1707,6 +1755,10 @@ $(document).ready(function () {
         $('.checkbox_description_container[data-status="again"]').removeClass('close');
         $('.checkbox_controller_item_container').addClass('close');
         $('.upload_button').text('再送開始');
+
+        // 進行状況が完全にストップしているかを確認
+        check_progress_flag = true;
+        check_progress();
 
         const sendNext = () => {
             if (index >= filesToSend.length) {
@@ -1741,7 +1793,7 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.status === 'success') {
                         console.log('送信成功', fileObj.uploaded_card_id, response);
-                        if (response.front_back === 'front') {
+                        if (response.front_back == 'front') {
                             $('.upload_list_item[data-uploaded_card_id="' + fileObj.uploaded_card_id + '"]').attr('data-success', 'true');
                             $('.upload_list_item[data-uploaded_card_id="' + fileObj.uploaded_card_id + '"]').attr('data-failed', 'false');
                             $('.upload_list_item[data-uploaded_card_id="' + fileObj.uploaded_card_id + '"]').find('.checkbox_list_item_checkbox').remove();
@@ -1755,11 +1807,16 @@ $(document).ready(function () {
                             $('.progress_message').text('AI解析完了');
                             $('.progress_bar').css('width', '100%');
                             $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+                            check_progress_flag = false;
+                            if ($('.upload_list_item[data-failed="true"]').length == 0) {
+                                $('.upload_button').removeClass('enabled');
+                            }
                         }
                     }
                     else if (response.status === 'error') {
                         console.error('送信失敗', fileObj.uploaded_card_id);
-                        if (response.front_back === 'front') {
+                        if (response.front_back == 'front') {
+
                             $('.upload_list_item[data-uploaded_card_id="' + fileObj.uploaded_card_id + '"]').attr('data-failed', 'true');
                         }
                         $('#total_files_count').val(parseInt($('#total_files_count').val()) - 1);
@@ -1770,6 +1827,10 @@ $(document).ready(function () {
                             $('.progress_message').text('AI解析完了');
                             $('.progress_bar').css('width', '100%');
                             $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+                            check_progress_flag = false;
+                            if ($('.upload_list_item[data-failed="true"]').length == 0) {
+                                $('.upload_button').removeClass('enabled');
+                            }
                         }
                     }
                     // 取込件数の再読み込み
@@ -1788,6 +1849,10 @@ $(document).ready(function () {
                         $('.progress_message').text('AI解析完了');
                         $('.progress_bar').css('width', '100%');
                         $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');
+                        check_progress_flag = false;
+                        if ($('.upload_list_item[data-failed="true"]').length == 0) {
+                            $('.upload_button').removeClass('enabled');
+                        }
                     }
                 }
             });

@@ -394,6 +394,10 @@ Route::prefix($prefix)->group(function () {
             Route::get('/card/multiple/upload', [CardController::class, 'cardmultipleuploadget'])->name('cardmultipleuploadget');
             // 名刺複数アップロードポスト
             Route::post('/card/multiple/upload', [CardController::class, 'cardmultipleuploadpost'])->name('cardmultipleuploadpost');
+           
+            // uploaded_cardsの未登録データを削除
+            Route::get('/card/multiple/delete', [CardController::class, 'cardmultipleuploaddelete'])->name('cardmultipleuploaddelete');
+           
             //    OpenAI呼び出し
             Route::post('/card/openai/process', [CardController::class, 'cardopenai'])->name('cardopenai');
 

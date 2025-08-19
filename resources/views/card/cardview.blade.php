@@ -118,7 +118,7 @@
                 </div>
                 <div class="company_info">
                     <div class="card_view_card_company" data-company_id="{{ $carduser->会社ID }}">
-                        {{ $carduser->会社名 }}
+                        <span class="card_view_card_company_text">{{ $carduser->会社名 }}</span>
                     </div>
                     <div class="card_view_card_department">
                         @foreach ($carduser->departments as $department)

@@ -24,7 +24,8 @@
                 </div>
             </label>
             <div class="analyzing_text">
-                分析中
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/analyzing.gif') }}" alt="" class="loading_icon">
+                解析中
             </div>
 
         </form>
@@ -92,7 +93,7 @@
                         アップロード開始
                     </div>
                     <div class="upload_button_cancel">
-                        一括取込をやめる
+                        終了する
                     </div>
                 </div>
 

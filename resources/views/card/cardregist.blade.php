@@ -140,9 +140,18 @@
                         <td><input type="text" name="email" id="email" autocomplete="off" value="{{$card->メールアドレス ?? ''}}"></td>
                         <td></td>
                     </tr>
+                    <tr>
+                        <td>備考</td>
+                        <td><input type="text" name="note" id="note" autocomplete="off" value="{{$card->備考 ?? ''}}"></td>
+                        <td></td>
+                    </tr>
                 </table>
             </div>
             <div class="form_container company_info">
+                <a href="" class="company_edit_button display_none" target="_blank">
+                    会社情報変更
+                    <img src="{{ asset(config('prefix.prefix').'/'.'img/card/external_link.svg') }}" alt="">
+                </a>
                 <table>
                     <tr>
                         <td>会社名<span class="required">*</span></td>

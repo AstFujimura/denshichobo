@@ -699,15 +699,22 @@ body {
                     display: flex;
                     color: #868686;
 
+
                     .card_view_card_company {
                         width: 20rem;
-                        text-decoration: underline;
-                        cursor: pointer;
+
                         height: fit-content;
 
-                        &:hover {
-                            color: #0c614c;
+                        .card_view_card_company_text {
+                            text-decoration: underline;
+                            cursor: pointer;
+
+                            &:hover {
+                                color: #0c614c;
+                            }
                         }
+
+
 
                         @media screen and (max-width: 600px) {
                             font-size: 0.8rem;
@@ -883,13 +890,18 @@ body {
 
                     .card_view_card_company {
                         width: 20rem;
-                        text-decoration: underline;
-                        cursor: pointer;
                         height: fit-content;
 
-                        &:hover {
-                            color: #0c614c;
+                        .card_view_card_company_text {
+                            text-decoration: underline;
+                            cursor: pointer;
+
+                            &:hover {
+                                color: #0c614c;
+                            }
                         }
+
+
 
                         @media screen and (max-width: 1200px) {
                             width: 60%;
@@ -1036,6 +1048,17 @@ body {
             }
 
             .card_latest_button {
+                color: #03626d;
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                height: 4rem;
+                background: #ffffff;
+                margin-inline: auto;
+            }
+
+            .card_history_add_button {
                 color: #03626d;
                 display: flex;
                 width: 100%;
@@ -1379,7 +1402,7 @@ body {
                     color: #3d3b3b;
                     display: flex;
                     border-bottom: solid 1px #b6b6b6;
-                    height: 3rem;
+                    min-height: 3rem;
                     align-items: center;
                     margin-inline: 1rem;
 
@@ -1389,7 +1412,7 @@ body {
                     }
 
                     &_text {
-                        width: 15rem;
+                        width: fit-content;
                         font-size: 1rem;
                     }
                 }
@@ -2006,6 +2029,23 @@ body {
             padding: 1rem;
 
 
+            .company_edit_button {
+                margin-left: auto;
+                color: #03626d;
+                display: flex;
+                width: fit-content;
+                margin-left: auto;
+                justify-content: center;
+                align-items: center;
+                background: #ffffff;
+                cursor: pointer;
+                text-decoration: underline;
+
+                img {
+                    width: 1rem;
+                    margin-left: 0.5rem;
+                }
+            }
 
             @media screen and (min-width: 750px) {
 
@@ -2226,13 +2266,16 @@ body {
 
         .analyzing_text {
             display: none;
-            font-size: 1.2rem;
-            color: #92b8cf;
+            font-size: 1.6rem;
+            color: #956e6e;
             margin-inline: auto;
+            margin-top: 3rem;
             text-align: center;
+            font-weight: 500;
+            flex-direction: column;
 
             &.loading {
-                display: block;
+                display: flex;
             }
         }
 
