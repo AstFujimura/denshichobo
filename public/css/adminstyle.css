@@ -44,7 +44,7 @@ a {
     font-size: 1rem;
   }
   .name {
-    width: 10rem;
+    width: 6rem;
   }
   .email {
     width: 13rem;
@@ -68,7 +68,7 @@ a {
     display: flex;
   }
   .name {
-    width: 6rem;
+    width: 10rem;
   }
   .email {
     width: 13rem;
