@@ -286,10 +286,10 @@ class CardController extends Controller
         $now_card = null;
         foreach ($cards as $key => $card) {
             $departments = DB::table('card_department')
-            ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
-            ->where('card_department.名刺ID', $card->card_id)
-            ->orderBy('card_department.id', 'asc')
-            ->get();
+                ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
+                ->where('card_department.名刺ID', $card->card_id)
+                ->orderBy('card_department.id', 'asc')
+                ->get();
             $card->departments = $departments;
             if ($card->拠点指定 == 0) {
                 $card->拠点名 = "";
@@ -1195,8 +1195,8 @@ class CardController extends Controller
 
             // ユーザー一致の最新データ取得
             if ($front_back === 'front') {
-            $uploaded_file = UploadedCard::where('ファイル名', $filename)
-                ->where('ユーザーID', Auth::id())
+                $uploaded_file = UploadedCard::where('ファイル名', $filename)
+                    ->where('ユーザーID', Auth::id())
                     ->where('名刺ID', '!=', null)
                     ->orderByDesc('updated_at')
                     ->first();
@@ -1222,8 +1222,10 @@ class CardController extends Controller
             if ($uploaded_file) {
                 if ($uploaded_file->ユーザーID == Auth::id()) {
                     $status = 'mycard';
+                    if ($front_back === 'back' && $uploaded_file->upload_id == $request->upload_id) {
+                        $status = 'newcard';
+                    }
                     $card_id = $uploaded_file->名刺ID;
-
                     $new_uploaded_card = $uploaded_file;
                 } else {
                     $status = 'othercard';
@@ -1363,6 +1365,7 @@ class CardController extends Controller
                         'status' => 'error',
                         'front_back' => 'front',
                         'message' => 'Geminiの処理に失敗しました。',
+                        'route' => '1'
                     ]);
                 }
                 $frontFilename = $this->generateRandomCode() . "." . $extension;
@@ -1451,8 +1454,11 @@ class CardController extends Controller
 
                 $uploaded_card->名刺ID = $newcard->id;
                 $uploaded_card->表 = 2;
+                $uploaded_card->save();
                 // もし先に裏面が入力されていた場合
                 // wasabiからダウンロード
+                // 裏面をもう一度確認
+                $uploaded_card = UploadedCard::find($request->uploaded_card_id);
                 if ($uploaded_card->裏 == 2) {
                     $wasabiBackUrl = $uploaded_card->back_url;
                     $parsedUrl = parse_url($wasabiBackUrl);
@@ -1487,6 +1493,8 @@ class CardController extends Controller
                             'private'
                         );
                     }
+                    $newcard->名刺ファイル裏 = $backFilename;
+                    $newcard->save();
 
 
                     $uploaded_card->ステータス = 2;
@@ -1578,15 +1586,18 @@ class CardController extends Controller
                         }
                         $card->名刺ファイル裏 = $filename;
                         $card->save();
+                        $uploaded_card->裏 = 2;
+                        $uploaded_card->ステータス = 2;
+                        $uploaded_card->save();
                     }
                 }
-
             }
 
 
             return response()->json([
                 'status' => 'success',
                 'front_back' => $front_back,
+                'route' => '2'
             ]);
         } else if ($request->status == 'mycard' || $request->status == 'othercard') {
             if ($front_back == 'front') {
@@ -1613,6 +1624,7 @@ class CardController extends Controller
         return response()->json([
             'status' => 'success',
             'front_back' => $front_back,
+            'route' => '3'
         ]);
     }
 
@@ -2312,8 +2324,7 @@ class CardController extends Controller
             $branch = Branch::where('id', $card->拠点ID)->first();
             if ($card->拠点指定 == 0) {
                 $branch_name = "";
-            }
-            else{
+            } else {
                 $branch_name = $branch->拠点名;
             }
             $worksheet->setCellValue("A{$row}", $card->名前);
