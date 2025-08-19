@@ -273,7 +273,7 @@
   .sidebar01 {
     background: rgb(255, 255, 255);
     box-shadow: -2px 1px 6px 0px #ddd;
-    z-index: 101;
+    z-index: 1000;
     position: fixed;
     top: 112px;
     right: -100%;
@@ -318,7 +318,7 @@
   .sidebar01 {
     background: rgb(255, 255, 255);
     box-shadow: 4px 3px 6px 0px #ddd;
-    z-index: 101;
+    z-index: 1000;
     position: absolute;
     left: -100%;
     width: 100%;
