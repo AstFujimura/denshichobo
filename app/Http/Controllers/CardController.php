@@ -2319,7 +2319,6 @@ class CardController extends Controller
 
         // データベースから取得した値をエクセルに埋め込む
         $worksheet = $spreadsheet->getActiveSheet();
-        $worksheet->setCellValue('A1', '名刺一覧');
 
         $row = 3;
         $cards = Card::whereIn('id', $cardIds)->get();
@@ -2330,7 +2329,7 @@ class CardController extends Controller
             $company_name = $company->会社名;
             $company_name_kana = $company->会社名カナ;
             $branch = Branch::where('id', $card->拠点ID)->first();
-            if ($card->拠点指定 == 0) {
+            if ($branch->拠点指定 == 0) {
                 $branch_name = "";
             } else {
                 $branch_name = $branch->拠点名;
