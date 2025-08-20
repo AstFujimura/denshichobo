@@ -1677,8 +1677,12 @@ $(document).ready(function () {
                 if (front_originalFile) {
                     front_originalFile.check = false;
                 }
+                if (back_originalFile) {
+                    back_originalFile.check = false;
+                }
             }
         });
+        console.log(selectedFiles.filter(f => f.check));
     }
     $(document).on('click', '.upload_button_cancel', function (event) {
         $('.upload_list_container').removeClass('upload_list_container_open');
@@ -1729,7 +1733,7 @@ $(document).ready(function () {
             }
             uploadedfiles_count = parseInt($('#uploadedfiles_count').val());
             total_files_count = parseInt($('#total_files_count').val());
-        }, 10000);
+        }, 5000);
     }
     $('#multiple_upload_form').on('submit', function (event) {
         event.preventDefault();
