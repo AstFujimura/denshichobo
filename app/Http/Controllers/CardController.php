@@ -1089,18 +1089,26 @@ class CardController extends Controller
             $key = config('prefix.prefix') . '/' . $filepath;
             $expiration = '+1 hour'; // 有効期限
 
-            $s3Client = new S3Client([
-                'region' => config('filesystems.disks.s3.region'),
+            // credentials を条件で分岐
+            $s3Config = [
+                'region'  => config('filesystems.disks.s3.region'),
                 'version' => 'latest',
-                'credentials' => [
+            ];
+
+            if (config('filesystems.disks.s3.key') && config('filesystems.disks.s3.secret')) {
+                // Xserver用 (キーが設定されている場合のみ credentials を渡す)
+                $s3Config['credentials'] = [
                     'key'    => config('filesystems.disks.s3.key'),
                     'secret' => config('filesystems.disks.s3.secret'),
-                ],
-            ]);
+                ];
+            }
+            // AWS環境では credentials を省略 → IAM Role が自動で使われる
+
+            $s3Client = new S3Client($s3Config);
 
             $command = $s3Client->getCommand('GetObject', [
                 'Bucket' => $bucket,
-                'Key' => $key
+                'Key'    => $key
             ]);
             // 署名付きURLを生成
             $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
