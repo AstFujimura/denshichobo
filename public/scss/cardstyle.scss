@@ -132,7 +132,7 @@
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 100;
+    z-index: 1000;
     display: flex;
     align-items: start;
     justify-content: center;
@@ -169,13 +169,28 @@
 
     .select_box_message {
         font-size: 1.6rem;
-        height: 13rem;
+        height: 7rem;
         display: flex;
         align-items: center;
         justify-content: center;
 
         @media screen and (max-width: 600px) {
             font-size: 1.2rem;
+        }
+    }
+
+    .select_box_image {
+        height: 14rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            box-shadow: 0px 2px 8px 0 #676767;
         }
     }
 
@@ -536,6 +551,10 @@ body {
     max-width: 100%;
     height: 4rem;
 
+    @media screen and (max-width: 600px) {
+        height: 2.5rem;
+    }
+
     .card_view_header_count_text_container {
         margin-inline: auto;
 
@@ -549,13 +568,19 @@ body {
 
     .card_view_excel_button {
         position: absolute;
-        right: 0;
-        top: 0.5rem;
+        right: 0.5rem;
+        top: 0.3rem;
         background: #03a12b;
         color: white;
         padding: 0.5rem 1rem;
         border-radius: 0.5rem;
         cursor: pointer;
+        font-size: 1.2rem;
+
+        @media screen and (max-width: 600px) {
+            padding: 0.3rem 1rem;
+            font-size: 1rem;
+        }
 
         &:hover {
             background: #037c1b;
@@ -567,11 +592,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
     gap: 1rem;
 
     @media screen and (max-width: 600px) {
         gap: 0.5rem;
+        margin-bottom: 0;
     }
 }
 
@@ -583,7 +609,7 @@ body {
     border: solid 1px gainsboro;
     color: #999999;
     width: 20rem;
-    max-width: 23%;
+    max-width: 35%;
     text-align: center;
 
     @media screen and (max-width: 600px) {
@@ -993,6 +1019,41 @@ body {
 .card_detail_container {
     display: flex;
 
+    .popup_gray_area {
+        position: fixed;
+        background: rgba(53, 53, 53, 0.37);
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 100;
+        display: none;
+
+        &.popup_gray_area_open {
+            display: block;
+        }
+
+        .popup_img_container {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 55rem;
+            max-width: 90%;
+            height: 55rem;
+            max-height: 60%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            .popup_img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+    }
+
     .gray_area {
         position: fixed;
         background: rgba(53, 53, 53, 0.37);
@@ -1058,7 +1119,7 @@ body {
                 margin-inline: auto;
             }
 
-            .card_history_add_button {
+            .card_mycard_button {
                 color: #03626d;
                 display: flex;
                 width: 100%;
@@ -1183,6 +1244,14 @@ body {
                         left: -1rem;
                     }
 
+                    .new_other_card_check {
+                        width: 4rem;
+                        height: 2.5rem;
+                        position: absolute;
+                        top: -1rem;
+                        left: -1rem;
+                    }
+
                     img.lazyload {
                         max-height: 5rem;
                         max-width: 100%;
@@ -1226,9 +1295,9 @@ body {
 
     .card_info_container {
         flex: 1;
-        padding-inline: 2rem;
+        padding-inline: 1rem;
         height: calc(100vh - 122px);
-        margin-top: 10px;
+        // margin-top: 10px;
 
         .card_detail_content {
             display: grid;
@@ -1309,7 +1378,7 @@ body {
                     .setting_container {
                         display: flex;
                         justify-content: end;
-                        margin-bottom: 1rem;
+                        margin-bottom: 0.5rem;
                         gap: 1rem;
 
                         .card_history_button,
@@ -1414,6 +1483,13 @@ body {
                     &_text {
                         width: fit-content;
                         font-size: 1rem;
+
+
+                    }
+
+                    a {
+                        text-decoration: underline;
+                        color: #0f8115;
                     }
                 }
             }
@@ -1476,7 +1552,7 @@ body {
                 }
             }
 
-            .card_history_add_button {
+            .card_mycard_button {
                 background: #ffffff;
                 border: solid 0.1rem #0B294C;
                 color: #0B294C;

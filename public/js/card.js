@@ -1,3 +1,22 @@
+
+// 会社カード画像の表(その会社に属する名刺の一つ)を取得して表示
+function getCompanyCardImage(img, card_id) {
+    var prefix = $('#prefix').val();
+    $.ajax({
+        url: prefix + '/card/img/' + card_id + '/front',
+        method: 'GET',
+        xhrFields: {
+            responseType: 'blob' // ファイルをBlobとして受け取る
+        },
+        success: function (response) {
+            var Url = URL.createObjectURL(response);
+            if (response.type.startsWith('image/')) {
+                img.attr('src', Url);
+                img.css('height', '100%');
+            }
+        }
+    });
+}
 // 確認ボックス
 function confirm_box(title, message, callback) {
     var confirm_box_container = $('<div class="confirm_box_container"></div>');
@@ -27,26 +46,37 @@ function confirm_box(title, message, callback) {
     });
 }
 // 選択肢ボックス
-function select_box(title, message, select_array, callback) {
+function select_box(title, message, card_id, select_array, callback) {
     var select_box_container = $('<div class="select_box_container"></div>');
     var select_box = $('<div class="select_box"></div>');
-    select_box.html(`
-        <h2 class="select_box_title">`
-        + title +
-        `</h2>
-        <p class="select_box_message">`
-        + message +
-        `</p>
+    // まず基本部分を組み立て
+    var html = `
+        <h2 class="select_box_title">` + title + `</h2>
+        <p class="select_box_message">` + message + `</p>
+    `;
+
+    // もし card_id があれば img を追加
+    if (card_id) {
+        html += `<div class="select_box_image"><img src="" alt=""></div>`;
+    }
+
+    // ボタン部分
+    html += `
         <div class="select_box_button_container">
-        `
-        + select_array.map(function (item, index) {
-            return `<div class="select_box_button" data-value="${index}">${item}</div>`;
-        }).join('') +
-        `
-        </div>`);
+            ` + select_array.map(function (item, index) {
+        return `<div class="select_box_button" data-value="${index}">${item}</div>`;
+    }).join('') + `
+        </div>
+    `;
+
+    select_box.html(html);
 
     select_box_container.append(select_box);
     select_box_container.appendTo('body');
+
+    getCompanyCardImage($('.select_box_image img'), card_id)
+
+    // ボタンクリック時のコールバック
     select_box_container.on('click', '.select_box_button', function () {
         select_box_container.remove();
         callback($(this).data('value'));
@@ -445,6 +475,7 @@ $(document).ready(function () {
 
                                 // select_box用にラベルだけの配列を渡す
                                 select_box('確認', message,
+                                    response.existing_card.id,
                                     select_array.map(item => item.label),
                                     function (result) {
                                         // 選択キーを取得
@@ -623,11 +654,11 @@ $(document).ready(function () {
                     }
                     else {
                         $('#branch_address').val(response.branches[0].拠点所在地);
-                        // $('#branch_address').attr('disabled', true);
+                        $('#branch_address').attr('disabled', true);
                         $('#branch_phone_number').val(response.branches[0].電話番号);
-                        // $('#branch_phone_number').attr('disabled', true);
+                        $('#branch_phone_number').attr('disabled', true);
                         $('#branch_fax_number').val(response.branches[0].FAX番号);
-                        // $('#branch_fax_number').attr('disabled', true);
+                        $('#branch_fax_number').attr('disabled', true);
                     }
 
                     $('.company_td').find('.new_company_tag').remove();
@@ -859,6 +890,13 @@ $(document).ready(function () {
             $('.card_view_card').addClass(viewType);
             $('.card_view_card_header').removeClass('large_view small_view');
             $('.card_view_card_header').addClass(viewType);
+            $.ajax({
+                url: prefix + '/card/cardview/size/' + viewType,
+                method: 'GET',
+                success: function (response) {
+                    console.log(response);
+                }
+            });
         });
 
         // 他のユーザーの登録情報を見るボタンを押したときはaタグの遷移を行わない
@@ -1045,13 +1083,23 @@ $(document).ready(function () {
             });
         });
 
+        $(document).on('click', '.popup_img_content', function () {
+            $('.popup_gray_area').toggleClass('popup_gray_area_open');
+            $('.popup_img').attr('src', $(this).attr('src'));
+        });
 
+        $(document).on('click', '.popup_gray_area', function () {
+            $('.popup_gray_area').removeClass('popup_gray_area_open');
+            $('.popup_img').attr('src', '');
+        });
 
         // 歴代の名刺の選択が変わった時
         $(document).on('change', 'input[name="card_history"]', function () {
             var card_edit_button = $('.card_edit_button');
             var card_delete_button = $('.card_delete_button');
             var card_latest_button = $('.card_latest_button');
+            var card_mycard_button = $('.card_mycard_button');
+            var card_img = $('.card_detail_card img');
             card_edit_button.attr('href', prefix + '/card/edit/' + $(this).val());
             card_edit_button.data('card_id', $(this).val());
             card_edit_button.attr('data-card_id', $(this).val());
@@ -1059,18 +1107,33 @@ $(document).ready(function () {
             card_delete_button.attr('data-card_id', $(this).val());
             card_latest_button.data('card_id', $(this).val());
             card_latest_button.attr('data-card_id', $(this).val());
-
+            card_img.data('card_id', $(this).val());
+            card_img.attr('data-card_id', $(this).val());
 
             // 最新フラグが経っている場合は「この名刺を最新にするボタンを非表示」
             if ($(this).closest('.card_history_content').find('.new_card_check:not(.display_none)').length != 0) {
                 $('.card_latest_button').addClass('display_none');
+                card_edit_button.removeClass('display_none');
+                card_delete_button.removeClass('display_none');
+                card_mycard_button.addClass('display_none');
+            }
+            // 他人の名刺の場合は「この名刺を最新にするボタンを非表示」
+            else if ($(this).closest('.card_history_content').find('.new_other_card_check:not(.display_none)').length != 0) {
+                $('.card_latest_button').addClass('display_none');
+                card_edit_button.addClass('display_none');
+                card_delete_button.addClass('display_none');
+                card_mycard_button.removeClass('display_none');
             }
             else {
                 $('.card_latest_button').removeClass('display_none');
+                card_edit_button.removeClass('display_none');
+                card_delete_button.removeClass('display_none');
+                card_mycard_button.addClass('display_none');
             }
 
 
-            $('.imgset').data('card_id', $(this).val())
+            $('.imgset[data-front="front"]').data('card_id', $(this).val())
+            $('.imgset[data-front="back"]').data('card_id', $(this).val())
             $('.card_history_container').toggleClass('card_history_container_open');
             $.ajax({
                 url: prefix + '/card/history/' + $(this).val(),
@@ -1078,7 +1141,8 @@ $(document).ready(function () {
                 success: function (response) {
                     console.log(response)
                     card_detail_renew(response)
-                    designateload($('.card_detail_card .imgset'))
+                    designateload($('.card_detail_card .imgset[data-front="front"]'))
+                    designateload($('.card_detail_card .imgset[data-front="back"]'))
                 }
             });
 
@@ -1134,6 +1198,7 @@ $(document).ready(function () {
             $('#name_kana').text(response.名前カナ);
             $('#phone_number').text(response.携帯電話番号);
             $('#email').text(response.メールアドレス);
+            $('#note').text(response.備考);
             $('#company_name').text(response.会社名);
             $('#company_name_kana').text(response.会社名カナ);
             $('#company_address').text(response.会社所在地);
@@ -1382,29 +1447,13 @@ $(document).ready(function () {
                 },
                 error: function (xhr, status, error) {
                     console.error(error); // エラー処理
+                    img.attr('src', prefix + '/img/card/default.png');
                 }
             });
 
         }
     }
-    // 会社カード画像の表(その会社に属する名刺の一つ)を取得して表示
-    function getCompanyCardImage(img, card_id) {
-        var prefix = $('#prefix').val();
-        $.ajax({
-            url: prefix + '/card/img/' + card_id + '/front',
-            method: 'GET',
-            xhrFields: {
-                responseType: 'blob' // ファイルをBlobとして受け取る
-            },
-            success: function (response) {
-                var Url = URL.createObjectURL(response);
-                if (response.type.startsWith('image/')) {
-                    img.attr('src', Url);
-                    img.css('height', '100%');
-                }
-            }
-        });
-    }
+
 
     // $('#folder_upload').on('change', function () {
     //     const files = this.files;

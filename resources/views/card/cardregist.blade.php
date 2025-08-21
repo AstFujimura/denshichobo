@@ -110,12 +110,12 @@
                         解除
                     </div>
                 </div>
-                <div class="card_check_container">
+                {{-- <div class="card_check_container">
                     <input type="checkbox" name="favorite_check" id="favorite_check" {{$favorite_check}}>
                     <label for="favorite_check">
                         お気に入りに追加する
                     </label>
-                </div>
+                </div> --}}
             </div>
 
             <div class="form_container personal_info">
@@ -148,7 +148,7 @@
                 </table>
             </div>
             <div class="form_container company_info">
-                <a href="" class="company_edit_button display_none" target="_blank">
+                <a href="" class="company_edit_button @if(!$card) display_none @endif" target="_blank">
                     会社情報変更
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/card/external_link.svg') }}" alt="">
                 </a>
@@ -197,7 +197,10 @@
                         <td>
                             <input type="text" name="branch_address" id="branch_address" autocomplete="off"
                                 @if($card)
-                                disabled value="{{$card->拠点所在地 ?? ''}}"
+                                value="{{$card->拠点所在地 ?? ''}}"
+                                @if($card->拠点指定 == 1)
+                                disabled 
+                                @endif
                                 @endif>
                         </td>
                         <td></td>
@@ -207,7 +210,10 @@
                         <td>
                             <input type="text" name="branch_phone_number" id="branch_phone_number" autocomplete="off"
                                 @if($card)
-                                disabled value="{{$card->電話番号 ?? ''}}"
+                                value="{{$card->電話番号 ?? ''}}"
+                                @if($card->拠点指定 == 1)
+                                disabled
+                                @endif
                                 @endif>
                         </td>
                         <td></td>
@@ -217,7 +223,10 @@
                         <td>
                             <input type="text" name="branch_fax_number" id="branch_fax_number" autocomplete="off"
                                 @if($card)
-                                disabled value="{{$card->FAX番号 ?? ''}}"
+                                value="{{$card->FAX番号 ?? ''}}"
+                                @if($card->拠点指定 == 1)
+                                disabled
+                                @endif
                                 @endif>
                         </td>
                         <td></td>

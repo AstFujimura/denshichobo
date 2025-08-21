@@ -43,13 +43,13 @@
             <div class="sub_search_container_item">
                 <div class="item_view_container">
                     {{-- 表示大 --}}
-                    <input type="radio" name="view_type" id="large_view" value="large_view" checked>
+                    <input type="radio" name="view_type" id="large_view" value="large_view" @if(Auth::user()->名刺表示サイズ) checked @endif>
                     <label for="large_view" class="large_view">
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/card/large_view.svg') }}" alt="">
                         <span>表示大</span>
                     </label>
                     {{-- 表示小 --}}
-                    <input type="radio" name="view_type" id="small_view" value="small_view">
+                    <input type="radio" name="view_type" id="small_view" value="small_view" @if(!Auth::user()->名刺表示サイズ) checked @endif>
                     <label for="small_view" class="small_view">
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/card/small_view.svg') }}" alt="">
                         <span>表示小</span>
@@ -79,14 +79,14 @@
             <div class="tab_item" data-tab="all_user">
                 すべて
             </div>
-            <div class="tab_item" data-tab="favorite_user">
+            {{-- <div class="tab_item" data-tab="favorite_user">
                 お気に入り
-            </div>
+            </div> --}}
         </div>
     </div>
 
     <div class="card_view_container">
-        <div class="card_view_card_header large_view">
+        <div class="card_view_card_header @if(Auth::user()->名刺表示サイズ) large_view @else small_view @endif">
             <div class="card_view_card_header_item" data-sort="name">
                 名前
             </div>
@@ -104,9 +104,9 @@
             </div>
         </div>
         @foreach ($cardusers as $carduser)
-        <a href="{{ route('carddetailget', ['id' => $carduser->carduser_id]) }}" class="card_view_card large_view"
+        <a href="{{ route('carddetailget', ['id' => $carduser->carduser_id]) }}" class="card_view_card @if(Auth::user()->名刺表示サイズ) large_view @else small_view @endif"
             data-show="{{ $carduser->マイ名刺ユーザー ?? false }}" data-my_card_user="{{ $carduser->マイ名刺ユーザー ?? false }}"
-            data-favorite_user="{{ $carduser->お気に入りユーザー ?? false }}"
+            {{-- data-favorite_user="{{ $carduser->お気に入りユーザー ?? false }}" --}}
             data-name_kana="{{ $carduser->名前カナ }}"
             data-company_name="{{ $carduser->会社名カナ }}"
             data-card_created_at="{{ $carduser->登録年月日 }}"

@@ -343,6 +343,8 @@ Route::prefix($prefix)->group(function () {
         if (Version::where('名刺', true)->first()) {
             // 名刺管理画面
             Route::get('/card/cardview', [CardController::class, 'cardviewget'])->name('cardviewget');
+            // 名刺表示サイズ変更
+            Route::get('/card/cardview/size/{size}', [CardController::class, 'cardviewsizeget'])->name('cardviewsizeget');
 
             // 名刺管理画面Excel出力
             Route::post('/card/cardview/excel', [CardController::class, 'cardviewexcelpost'])->name('cardviewexcelpost');

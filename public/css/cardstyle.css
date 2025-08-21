@@ -124,7 +124,7 @@
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   align-items: start;
   justify-content: center;
@@ -159,7 +159,7 @@
 }
 .select_box_container .select_box_message {
   font-size: 1.6rem;
-  height: 13rem;
+  height: 7rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,6 +168,19 @@
   .select_box_container .select_box_message {
     font-size: 1.2rem;
   }
+}
+.select_box_container .select_box_image {
+  height: 14rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.select_box_container .select_box_image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: 0px 2px 8px 0 #676767;
 }
 .select_box_container .select_box_button_container {
   display: flex;
@@ -487,6 +500,11 @@ body .usersettingtitle {
   max-width: 100%;
   height: 4rem;
 }
+@media screen and (max-width: 600px) {
+  .card_view_header_count {
+    height: 2.5rem;
+  }
+}
 .card_view_header_count .card_view_header_count_text_container {
   margin-inline: auto;
 }
@@ -496,13 +514,20 @@ body .usersettingtitle {
 }
 .card_view_header_count .card_view_excel_button {
   position: absolute;
-  right: 0;
-  top: 0.5rem;
+  right: 0.5rem;
+  top: 0.3rem;
   background: #03a12b;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   cursor: pointer;
+  font-size: 1.2rem;
+}
+@media screen and (max-width: 600px) {
+  .card_view_header_count .card_view_excel_button {
+    padding: 0.3rem 1rem;
+    font-size: 1rem;
+  }
 }
 .card_view_header_count .card_view_excel_button:hover {
   background: #037c1b;
@@ -512,12 +537,13 @@ body .usersettingtitle {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 1rem;
   gap: 1rem;
 }
 @media screen and (max-width: 600px) {
   .tab_container {
     gap: 0.5rem;
+    margin-bottom: 0;
   }
 }
 
@@ -529,7 +555,7 @@ body .usersettingtitle {
   border: solid 1px gainsboro;
   color: #999999;
   width: 20rem;
-  max-width: 23%;
+  max-width: 35%;
   text-align: center;
 }
 @media screen and (max-width: 600px) {
@@ -889,6 +915,37 @@ body .usersettingtitle {
 .card_detail_container {
   display: flex;
 }
+.card_detail_container .popup_gray_area {
+  position: fixed;
+  background: rgba(53, 53, 53, 0.37);
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
+  display: none;
+}
+.card_detail_container .popup_gray_area.popup_gray_area_open {
+  display: block;
+}
+.card_detail_container .popup_gray_area .popup_img_container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 55rem;
+  max-width: 90%;
+  height: 55rem;
+  max-height: 60%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.card_detail_container .popup_gray_area .popup_img_container .popup_img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 .card_detail_container .gray_area {
   position: fixed;
   background: rgba(53, 53, 53, 0.37);
@@ -948,7 +1005,7 @@ body .usersettingtitle {
   background: #ffffff;
   margin-inline: auto;
 }
-.card_detail_container .gray_area .popup_content .card_history_add_button {
+.card_detail_container .gray_area .popup_content .card_mycard_button {
   color: #03626d;
   display: flex;
   width: 100%;
@@ -1055,6 +1112,13 @@ body .usersettingtitle {
   top: -1rem;
   left: -1rem;
 }
+.card_detail_container .card_history_container .card_history_content .card_history_label .history_card .new_other_card_check {
+  width: 4rem;
+  height: 2.5rem;
+  position: absolute;
+  top: -1rem;
+  left: -1rem;
+}
 .card_detail_container .card_history_container .card_history_content .card_history_label .history_card img.lazyload {
   max-height: 5rem;
   max-width: 100%;
@@ -1085,9 +1149,8 @@ body .usersettingtitle {
 }
 .card_detail_container .card_info_container {
   flex: 1;
-  padding-inline: 2rem;
+  padding-inline: 1rem;
   height: calc(100vh - 122px);
-  margin-top: 10px;
 }
 .card_detail_container .card_info_container .card_detail_content {
   display: grid;
@@ -1157,7 +1220,7 @@ body .usersettingtitle {
   .card_detail_container .card_info_container .card_detail_content .card_info_content .setting_container {
     display: flex;
     justify-content: end;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     gap: 1rem;
   }
   .card_detail_container .card_info_container .card_detail_content .card_info_content .setting_container .card_history_button,
@@ -1264,6 +1327,12 @@ body .usersettingtitle {
   width: fit-content;
   font-size: 1rem;
 }
+.card_detail_container .card_info_container .card_detail_content .personal_info_content a,
+.card_detail_container .card_info_container .card_detail_content .company_info_content a,
+.card_detail_container .card_info_container .card_detail_content .position_info_content a {
+  text-decoration: underline;
+  color: #0f8115;
+}
 .card_detail_container .card_info_container .card_edit_delete_container {
   display: flex;
   justify-content: center;
@@ -1315,7 +1384,7 @@ body .usersettingtitle {
   background: #12437c;
   color: white;
 }
-.card_detail_container .card_info_container .card_edit_delete_container .card_history_add_button {
+.card_detail_container .card_info_container .card_edit_delete_container .card_mycard_button {
   background: #ffffff;
   border: solid 0.1rem #0B294C;
   color: #0B294C;
@@ -1326,7 +1395,7 @@ body .usersettingtitle {
   margin-top: 3rem;
   display: block;
 }
-.card_detail_container .card_info_container .card_edit_delete_container .card_history_add_button:hover {
+.card_detail_container .card_info_container .card_edit_delete_container .card_mycard_button:hover {
   background: #12437c;
   color: white;
 }

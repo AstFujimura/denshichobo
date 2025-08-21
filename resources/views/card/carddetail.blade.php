@@ -26,22 +26,36 @@
                     @csrf
                     この名刺を削除する
                 </a>
+                <a href="{{ route('cardmycardget', ['id' => $other_card->card_id ?? 0]) }}"
+                    class="popup_button card_mycard_button display_none">
+                    マイ名刺登録する
+                </a>
                 @else
-                <a href="{{ route('cardmycardget', ['id' => $now_card->card_id]) }}" class="popup_button card_history_add_button">
+                <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}"
+                    class="popup_button card_edit_button display_none" data-card_id="{{ $now_card->card_id }}">
+                    この名刺を編集する
+                </a>
+                <div class="popup_button card_latest_button display_none" data-card_id="{{ $now_card->card_id }}">
+                    この名刺を最新にする
+                </div>
+                <a class="popup_button card_delete_button display_none" data-card_id="{{ $now_card->card_id }}">
+                    @csrf
+                    この名刺を削除する
+                </a>
+                <a href="{{ route('cardmycardget', ['id' => $other_card->card_id]) }}"
+                    class="popup_button card_mycard_button ">
                     マイ名刺登録する
                 </a>
                 @endif
             </div>
         </div>
+        <div class="popup_gray_area">
+            <div class="popup_img_container">
+                <img class="popup_img" src="" alt="">
+            </div>
+        </div>
         <div class="card_history_container">
-            <div class="toggle_container">
-                {{-- <div class="toggle_button">
-                    <input class="favorite_check" type="checkbox" id="my_card_check"
-                        data-card_user_id="{{ $carduser->id }}" @if ($carduser_user->マイ名刺ユーザー ?? false) checked @endif>
-                    <label for="my_card_check">
-                        マイ名刺
-                    </label>
-                </div> --}}
+            {{-- <div class="toggle_container">
                 <div class="toggle_button">
                     <input class="favorite_check" type="checkbox" id="favorite_check"
                         data-card_user_id="{{ $carduser->id }}" @if ($carduser_user->お気に入りユーザー ?? false) checked @endif>
@@ -49,7 +63,7 @@
                         お気に入り登録
                     </label>
                 </div>
-            </div>
+            </div> --}}
             @foreach ($cards as $card)
             <div class="card_history_content">
                 <input type="radio" name="card_history" id="card_history_{{ $card->card_id }}"
@@ -59,6 +73,9 @@
                         <img data-card_id="{{ $card->card_id }}"
                             class="new_card_check @if ($card->表示最新フラグ != 1) display_none @endif"
                             src="{{asset(config('prefix.prefix').'/'.'img/card/new_card_check.svg')}}" alt="">
+                        <img data-card_id="{{ $card->card_id }}"
+                            class="new_other_card_check @if ($card->表示最新フラグ != 2) display_none @endif"
+                            src="{{asset(config('prefix.prefix').'/'.'img/card/new_other_card_check.svg')}}" alt="">
                         <img class="lazyload" data-card_id="{{ $card->card_id }}" data-front="front" alt="">
                     </div>
                     <div class="history_card_text">
@@ -96,8 +113,8 @@
                             src="{{ asset(config('prefix.prefix').'/'.'img/card/setting.svg')}}" alt="">
                     </div>
                     <div class="card_detail_card">
-                        <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="front" alt="">
-                        <img class="lazyload" data-card_id="{{ $now_card->card_id }}" data-front="back" alt="">
+                        <img class="lazyload popup_img_content" data-card_id="{{ $now_card->card_id }}" data-front="front" alt="" >
+                        <img class="lazyload popup_img_content" data-card_id="{{ $now_card->card_id }}" data-front="back" alt="" >
                     </div>
                 </div>
                 <div class="personal_info">
@@ -122,9 +139,9 @@
                         <div class="personal_info_content_title">
                             携帯電話
                         </div>
-                        <div class="personal_info_content_text" id="phone_number">
+                        <a href="tel:{{ $now_card->携帯電話番号 }}" class="personal_info_content_text" id="phone_number">
                             {{ $now_card->携帯電話番号 }}
-                        </div>
+                        </a>
                     </div>
                     <div class="personal_info_content">
                         <div class="personal_info_content_title">
@@ -148,7 +165,8 @@
                         <div class="company_info_content_title">
                             会社名
                         </div>
-                        <a href="{{ route('cardcompanyeditget', ['company_id' => $now_card->会社ID]) }}" class="company_info_content_text" id="company_name">
+                        <a href="{{ route('cardcompanyeditget', ['company_id' => $now_card->会社ID]) }}"
+                            class="company_info_content_text" id="company_name">
                             {{ $now_card->会社名 }}
                         </a>
                     </div>
@@ -180,17 +198,17 @@
                         <div class="company_info_content_title">
                             電話番号
                         </div>
-                        <div class="company_info_content_text" id="company_phone_number">
+                        <a href="tel:{{ $now_card->電話番号 }}" class="company_info_content_text" id="company_phone_number">
                             {{ $now_card->電話番号 }}
-                        </div>
+                        </a>
                     </div>
                     <div class="company_info_content">
                         <div class="company_info_content_title">
                             FAX番号
                         </div>
-                        <div class="company_info_content_text" id="company_fax_number">
+                        <a href="tel:{{ $now_card->FAX番号 }}" class="company_info_content_text" id="company_fax_number">
                             {{ $now_card->FAX番号 }}
-                        </div>
+                        </a>
                     </div>
                 </div>
                 <div class="position_info">
@@ -229,8 +247,24 @@
                     @csrf
                     この名刺を削除する
                 </a>
+                <a href="{{ route('cardmycardget', ['id' => $other_card->card_id ?? 0]) }}"
+                    class="card_mycard_button display_none">
+                    マイ名刺登録する
+                </a>
                 @else
-                <a href="{{ route('cardmycardget', ['id' => $now_card->card_id]) }}" class="card_history_add_button">
+                <a href="{{ route('cardeditget', ['id' => $now_card->card_id]) }}" id="card_edit_button"
+                    class="card_edit_button display_none" data-card_id="{{ $now_card->id }}">
+                    この名刺を編集する
+                </a>
+                <div class="card_latest_button display_none" data-card_id="{{ $now_card->card_id }}">
+                    この名刺を最新にする
+                </div>
+                <a class="card_delete_button display_none" data-card_id="{{ $now_card->card_id }}">
+                    @csrf
+                    この名刺を削除する
+                </a> 
+                <a href="{{ route('cardmycardget', ['id' => $now_card->card_id]) }}"
+                    class="card_mycard_button ">
                     マイ名刺登録する
                 </a>
                 @endif
