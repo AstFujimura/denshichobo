@@ -148,7 +148,7 @@
                 </table>
             </div>
             <div class="form_container company_info">
-                <a href="" class="company_edit_button @if(!$card) display_none @endif" target="_blank">
+                <a href="@if($card) {{ route('cardcompanyeditget', ['company_id' => $card->会社ID]) }} @endif" class="company_edit_button @if(!$card) display_none @endif" target="_blank">
                     会社情報変更
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/card/external_link.svg') }}" alt="">
                 </a>
