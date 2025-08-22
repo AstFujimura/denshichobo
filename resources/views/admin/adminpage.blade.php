@@ -28,11 +28,13 @@
                 グループ管理
             </a>
         </div>
+        @if (App\Models\Version::where('tameru', true)->first())
         <div class="admin_console_item">
             <a href="{{route('admindocumentGet')}}">
                 書類管理
             </a>
         </div>
+        @endif
     </div>
 </div>
 
