@@ -46,7 +46,7 @@ Rapid ~電子承認システム
                     <select name="user" id="" class="flow_search_input" data-id="{{$user}}">
                         <option value="">すべて</option>
                         @foreach ($users as $user)
-                        <option value="{{$user->user_id}}">{{$user->name}}</option>
+                        <option value="{{$user->user_id}}">{{$user->表示名}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -113,7 +113,7 @@ Rapid ~電子承認システム
                                 未承認
                             </div>
                             <div class="flow_view_td flow_view_applicant">
-                                {{$approvable->name}}
+                                {{$approvable->表示名}}
                             </div>
                             <div class="flow_view_td flow_view_date">
                                 {{\Carbon\Carbon::parse($approvable->flow_created_at)->toDateString()}}
@@ -137,7 +137,7 @@ Rapid ~電子承認システム
                                 承認済
                             </div>
                             <div class="flow_view_td flow_view_applicant">
-                                {{$approved->name}}
+                                {{$approved->表示名}}
                             </div>
                             <div class="flow_view_td flow_view_date">
                                 {{\Carbon\Carbon::parse($approved->flow_created_at)->toDateString()}}
@@ -162,7 +162,7 @@ Rapid ~電子承認システム
                                 却下済
                             </div>
                             <div class="flow_view_td flow_view_applicant">
-                                {{$rejected->name}}
+                                {{$rejected->表示名}}
                             </div>
                             <div class="flow_view_td flow_view_date">
                                 {{\Carbon\Carbon::parse($rejected->flow_created_at)->toDateString()}}

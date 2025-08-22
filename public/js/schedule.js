@@ -402,7 +402,7 @@ $(document).ready(function () {
             }
             $('.candidate_list_container').append('<label for="user_' + user.id + '" class="candidate_list_element">' +
               '<input type="checkbox" class="candidate_checkbox" name="candidate_checkbox" data-user_id="' + user.id + '" id="user_' + user.id + '" ' + checked + '>' +
-              '<span class="candidate_name">' + user.name + '</span>' +
+              '<span class="candidate_name">' + user.表示名 + '</span>' +
               '</label>'
             )
           })

@@ -99,7 +99,7 @@ Rapid ~電子承認システム
                         </div>
                         @foreach ($basic_users as $basic_user)
                         <div class="preview_test_str" data-pointer_id="{{$basic_user->id}}">
-                            <input type="text" class="preview_test_str_input" value='{{Auth::user()->name}}'>
+                            <input type="text" class="preview_test_str_input" value='{{Auth::user()->表示名}}'>
                             <div class="preview_item_batsu">×</div>
                         </div>
                         @endforeach
@@ -145,7 +145,7 @@ Rapid ~電子承認システム
 
         </div>
         <div id="inputs">
-            <input type="hidden" id="user_name" value="{{Auth::user()->name}}">
+            <input type="hidden" id="user_name" value="{{Auth::user()->表示名}}">
             <input type="hidden" id="date" value="{{Carbon\Carbon::now()->format('Y/m/d')}}">
             <input type="hidden" id="pointer_num" value="100000">
             <input type="hidden" id="category_id" name="category_id" value="{{$id}}">

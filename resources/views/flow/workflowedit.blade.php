@@ -31,7 +31,7 @@ Rapid ~電子承認システム
                 @endforeach
                 @foreach ($flow_approvals as $flow_approval)
                 @if ($flow_approval->newgroup == "person")
-                <input type="hidden" data-id="{{$flow_approval->フロー地点ID}}" class="person" data-person_name="{{$flow_approval->name}}">
+                <input type="hidden" data-id="{{$flow_approval->フロー地点ID}}" class="person" data-person_name="{{$flow_approval->表示名}}">
                 @endif
                 @if ($flow_approval->newgroup == "none")
                 <input type="hidden" data-id="{{$flow_approval->フロー地点ID}}" class="post" data-positionid="{{$flow_approval->役職ID}}">

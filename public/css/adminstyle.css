@@ -12,84 +12,463 @@ a {
     display: none;
   }
 }
-.admin_header_container {
+.bread_crumb_container {
   display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
   margin-bottom: 1rem;
 }
-.admin_header_container .admin_header_container_button {
-  background: #2ac02a;
+.bread_crumb_container .bread_crumb_content {
+  font-size: 1rem;
+  background: #cecece;
+  color: #555555;
+  text-decoration: none;
+  width: 10rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.bread_crumb_container .bread_crumb_content:hover {
+  background: #ffa319;
+  box-shadow: 0 0 0.5rem 0 rgba(255, 114, 114, 0.2);
+  color: #206d09;
+}
+.bread_crumb_container .bread_crumb_content:hover::after {
+  background: #ffa319;
+}
+.bread_crumb_container .bread_crumb_content::after {
+  content: "";
+  position: absolute;
+  top: 0.3rem;
+  right: -0.7rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  background: #cecece;
+  transform: rotate(45deg);
+  border-top: solid 0.1rem #ffffff;
+  border-right: solid 0.1rem #ffffff;
+  transition: all 0.3s ease;
+}
+.bread_crumb_container .bread_crumb_content a {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin_console {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-block: 2rem;
+  max-width: 90%;
+  margin-inline: auto;
+}
+
+.admin_console_item {
+  background: #f9fbfb;
+  border-radius: 0.5rem;
+  border: solid 0.1rem #cacaca;
+  padding: 1rem;
+  width: 30rem;
+  max-width: 90%;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: black;
+  position: relative;
+}
+.admin_console_item:hover {
+  background: #e6f3e6;
+}
+.admin_console_item a {
+  width: 90%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: black;
+}
+
+.admin_header_container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  width: fit-content;
+  background: transparent;
+  padding: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.admin_header_container .add_user_button {
+  background: white;
+  border: 1px solid #0b5f0b;
   padding: 0.5rem 2rem;
   border-radius: 5px;
   cursor: pointer;
+  color: #0b5f0b;
+  font-weight: 500;
+  width: fit-content;
+}
+.admin_header_container .add_user_button:hover {
+  background: #d8ffd8;
+  color: #0b5f0b;
+}
+.admin_header_container .add_user_form {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+}
+.admin_header_container .add_user_form_content {
+  display: flex;
+  flex-direction: column;
+}
+.admin_header_container .add_user_form_content label {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.admin_header_container .add_user_form_content input[type=text],
+.admin_header_container .add_user_form_content input[type=password] {
+  border: 1px solid #0b5f0b;
+  padding: 0.5rem;
+  border-radius: 5px;
+  width: 30rem;
+}
+.admin_header_container .add_user_form_content select {
+  border: 1px solid #0b5f0b;
+  padding: 0.5rem;
+  border-radius: 5px;
+  width: 10rem;
+}
+.admin_header_container .add_user_submit_button {
+  background: #2b78db;
   color: white;
+  padding: 0.5rem 2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  margin-left: auto;
+  grid-column: 2;
+}
+.admin_header_container .add_user_submit_button:hover {
+  background: #225ca8;
+}
+.admin_header_container.add_user_form_open {
+  background: #e6f3e6;
+}
+.admin_header_container.add_user_form_open .add_user_form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.admin_header_container .add_user_form_content_group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.admin_header_container .add_user_form_content_group .add_user_form_content_group_label {
   font-size: 1rem;
-  font-weight: bold;
-  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+.admin_header_container .add_user_form_content_group .add_user_form_content_group_label::before {
+  content: "";
+  width: 0;
+  height: 1px;
+  background: #0b5f0b;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+.admin_header_container .add_user_form_content_group .add_user_form_content_group_label:hover::before {
+  width: 100%;
+}
+
+[data-cell=name] {
+  width: 20rem;
+}
+
+[data-cell=email] {
+  width: 20rem;
+}
+
+[data-cell=status] {
+  width: 5rem;
   text-align: center;
 }
-.admin_header_container .admin_header_container_button:hover {
-  background: #1c881c;
+
+[data-cell=change] {
+  width: 5rem;
 }
 
-@media (max-width: 480px) {
-  .admin_top_table_div div {
-    background: rgb(245, 227, 217);
-    text-align: center;
-    border-right: solid 1px white;
-    padding: 5px;
-    font-size: 1rem;
-  }
-  .admin_top_table_body {
-    display: flex;
-    font-size: 1rem;
-  }
-  .name {
-    width: 6rem;
-  }
-  .email {
-    width: 13rem;
-  }
-  .status {
-    width: 4rem;
-    text-align: center;
-  }
-  .sakujyo {
-    width: 6rem;
-  }
+[data-cell=delete] {
+  width: 5rem;
 }
-@media (min-width: 480px) {
-  .admin_top_table_div div {
-    background: rgb(245, 227, 217);
-    text-align: center;
-    border-right: solid 1px white;
-    padding: 5px;
-  }
-  .admin_top_table_body {
-    display: flex;
-  }
-  .name {
-    width: 10rem;
-  }
-  .email {
-    width: 13rem;
-  }
-  .status {
-    width: 6rem;
-    text-align: center;
-  }
-  .sakujyo {
-    width: 6rem;
-  }
-}
-.admin_top_table_div {
+
+.admin_top_table_header {
   display: flex;
 }
+.admin_top_table_header > div {
+  background: rgb(237, 231, 231);
+  color: #595959;
+  text-align: center;
+  border-right: solid 1px white;
+  padding-block: 0.5rem;
+}
 
+.admin_top_table_body {
+  display: flex;
+  flex-direction: column;
+}
 .admin_top_table_body > div {
   padding: 5px;
   border-right: solid 1px white;
-  border-bottom: solid 1px rgb(127, 127, 207);
-  line-height: 30px;
+  border-bottom: solid 1px rgb(169, 169, 169);
+}
+.admin_top_table_body > div:nth-child(even) {
+  background: #f9fbfb;
+}
+.admin_top_table_body .admin_top_table_element {
+  display: grid;
+  grid-template-columns: 20rem 20rem 5rem 5rem 5rem;
+  grid-template-rows: 2rem 1fr;
+  width: fit-content;
+}
+.admin_top_table_body .admin_top_table_element .cell_content {
+  display: flex;
+  align-items: center;
+}
+.admin_top_table_body .admin_top_table_element .cell_content[data-cell=status] {
+  justify-content: center;
+}
+.admin_top_table_body .admin_top_table_element .icon_cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin_top_table_body .admin_top_table_element .icon_cell img {
+  width: 1rem;
+  height: 1rem;
+}
+.admin_top_table_body .admin_top_table_element .icon_cell .user_edit_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #ca701c;
+  position: relative;
+}
+.admin_top_table_body .admin_top_table_element .icon_cell .user_edit_button::before {
+  content: "";
+  width: 0;
+  height: 2px;
+  background: #ca701c;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+.admin_top_table_body .admin_top_table_element .icon_cell .user_edit_button:hover::before {
+  content: "";
+  width: 100%;
+  bottom: 0;
+  left: 0;
+}
+.admin_top_table_body .admin_top_table_element .icon_cell .user_delete_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #cf2d2d;
+  position: relative;
+}
+.admin_top_table_body .admin_top_table_element .icon_cell .user_delete_button::before {
+  content: "";
+  width: 0;
+  height: 1px;
+  background: #cf2d2d;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+.admin_top_table_body .admin_top_table_element .icon_cell .user_delete_button:hover::before {
+  width: 100%;
+}
+.admin_top_table_body .user_edit_container {
+  grid-column: 1/-1;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content {
+  display: grid;
+  height: 0;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-inline: auto;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content.user_edit_container_open {
+  padding: 0.5rem 1rem;
+  height: 22rem;
+  background: #f9fbfb;
+  border-radius: 0.5rem;
+  border: solid 0.1rem #cacaca;
+  margin-top: 1rem;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content {
+  display: flex;
+  flex-direction: column;
+  border-bottom: solid 0.1rem #cacaca;
+  padding-bottom: 0.5rem;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #333333;
+  width: 12rem;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content input[type=text],
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content input[type=password] {
+  width: 25rem;
+  height: 2.5rem;
+  border: solid 1px #21647f;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content select {
+  width: 25rem;
+  height: 2.5rem;
+  border: solid 1px #21647f;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content input[type=password][disabled] {
+  border: solid 1px #cacaca;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content .user_form_password_change_button {
+  margin-left: auto;
+  color: #2892ff;
+  border: solid 0.1rem #2892ff;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content .user_form_password_change_button:hover {
+  background: #e5faff;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content[data-form_content=group] {
+  grid-column: 1/3;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content .user_form_content_group {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  height: 5rem;
+  overflow-y: auto;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content .user_form_content_group .user_form_content_group_label {
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  height: 1.5rem;
+  position: relative;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content .user_form_content_group .user_form_content_group_label::before {
+  content: "";
+  width: 0;
+  height: 1px;
+  background: #0b5f0b;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_form_content .user_form_content_group .user_form_content_group_label:hover::before {
+  width: 100%;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_setting_password_reset_button {
+  color: #000000;
+  border: solid 0.1rem #000000;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  width: 10rem;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_setting_password_reset_button:hover {
+  background: #e5faff;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_setting_edit_button_container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+  grid-column: 2/3;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_setting_cancel_button {
+  width: 10rem;
+  height: 2.5rem;
+  background: #ffffff;
+  border: solid 0.1rem #2892ff;
+  color: #2892ff;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+  margin-left: auto;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_setting_cancel_button:hover {
+  background: #e5faff;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_setting_edit_button {
+  width: 10rem;
+  height: 2.5rem;
+  background: #2892ff;
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+.admin_top_table_body .user_edit_container .user_setting_edit_content .user_setting_edit_button:hover {
+  background: #1b61a7;
 }
 
 .title::before {
@@ -141,22 +520,6 @@ a {
   background: #ddefff;
   width: 300px;
   padding: 10px;
-}
-
-#admin-myForm .input-container {
-  margin-top: 1rem;
-}
-@media screen and (max-width: 800px) {
-  #admin-myForm {
-    font-size: 0.8rem;
-    margin-inline: auto;
-    width: 30rem;
-    max-width: 75%;
-  }
-  #admin-myForm .input-container {
-    flex-direction: column;
-    margin-top: 1rem;
-  }
 }
 
 .important {
@@ -249,7 +612,7 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   border-right: solid 1px white;
-  border-bottom: solid 1px rgb(127, 127, 207);
+  border-bottom: solid 1px rgb(169, 169, 169);
   height: 30px;
   line-height: 30px;
 }
@@ -257,19 +620,96 @@ a {
   width: 15rem;
   text-align: left !important;
 }
+.grouptable .admin_group .admin_group_text {
+  display: none;
+}
+.grouptable .admin_group .group_open {
+  display: block;
+}
+.grouptable .admin_group .admin_group_value {
+  width: 15rem;
+  height: 2rem;
+  border-radius: 4px;
+  border: solid 1px gray;
+  display: none;
+}
+.grouptable .admin_group .input_open {
+  display: block;
+}
 .grouptable .admin_group_change {
   width: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.grouptable .admin_group_change img {
+  width: 1rem;
+  height: 1rem;
+}
+.grouptable .admin_group_change .gr_change_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #ca701c;
+  position: relative;
+}
+.grouptable .admin_group_change .gr_change_button::before {
+  content: "";
+  width: 0;
+  height: 2px;
+  background: #ca701c;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+.grouptable .admin_group_change .gr_change_button:hover::before {
+  width: 100%;
 }
 .grouptable .admin_group_delete {
   width: 4rem;
 }
 .grouptable .admin_group_detail_change {
-  width: 6rem;
+  width: 8rem;
   display: flex;
   justify-content: center;
+  gap: 0.5rem;
+}
+.grouptable .admin_group_detail_change a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: black;
+  position: relative;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.grouptable .admin_group_detail_change a::before {
+  content: "";
+  width: 0;
+  height: 1px;
+  background: #616263;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+.grouptable .admin_group_detail_change a:hover::before {
+  width: 100%;
+}
+.grouptable .admin_group_detail_change .setting_icon {
+  width: 1rem;
+  height: 1rem;
 }
 .grouptable .grouptable_body {
   display: flex;
+  width: fit-content;
+}
+.grouptable .grouptable_body:nth-child(even) {
+  background: #f9fbfb;
 }
 .grouptable .grouptable_body > div {
   padding: 5px;
@@ -277,53 +717,48 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   border-right: solid 1px white;
-  border-bottom: solid 1px rgb(127, 127, 207);
+  border-bottom: solid 1px rgb(169, 169, 169);
   height: 30px;
   line-height: 30px;
 }
 .grouptable .grouptable_body > div .gr_delete_button {
-  margin: auto;
-  cursor: pointer;
-  background: rgb(189, 54, 77);
-  border: 0;
-  color: white;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 15px;
-  width: 44px;
-  height: 27px;
   display: flex;
-  justify-content: center;
   align-items: center;
-}
-.grouptable .grouptable_body > div .gr_delete_button:hover {
-  background: rgb(133, 39, 55);
-}
-.grouptable .grouptable_body > div .gr_change_button {
-  margin: auto;
+  justify-content: center;
+  gap: 0.5rem;
   cursor: pointer;
-  background: rgb(86, 141, 49);
-  color: white;
-  border: 0;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 15px;
-  width: 44px;
-  height: 27px;
-  font-size: 0.8rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color: #cf2d2d;
+  position: relative;
 }
-.grouptable .grouptable_body > div .gr_change_button:hover {
-  background: rgb(12, 124, 22);
-  color: white;
+.grouptable .grouptable_body > div .gr_delete_button::before {
+  content: "";
+  width: 0;
+  height: 1px;
+  background: #cf2d2d;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+.grouptable .grouptable_body > div .gr_delete_button:hover::before {
+  width: 100%;
+}
+.grouptable .grouptable_body > div .gr_delete_button img {
+  width: 1rem;
+  height: 1rem;
 }
 .grouptable .documenttable_header {
   display: flex;
 }
 .grouptable .grouptable_header {
   display: flex;
+}
+
+.add_group {
+  width: 15rem;
+  height: 2rem;
+  border-radius: 4px;
+  border: solid 1px gray;
 }
 
 .add {
@@ -334,21 +769,419 @@ a {
 .add .grouptable_body {
   display: flex;
 }
-.add .grouptable_body .gr_delete_button {
-  margin-inline: 1rem auto;
-  cursor: pointer;
-  background: rgb(189, 54, 77);
-  border: 0;
-  color: white;
-  border-radius: 5px;
+
+.group_change_button {
+  background: #1671ff;
+  width: 12rem;
   text-align: center;
-  font-size: 15px;
-  width: 44px;
-  height: 27px;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.group_change_button:hover {
+  background: #0f53be;
+}
+
+.groupusertable {
+  width: fit-content;
+}
+
+.groupusertable_header {
+  display: flex;
+}
+.groupusertable_header > div {
+  background: rgb(245, 227, 217);
+  border-right: solid 1px white;
+  text-align: center;
+  height: 2rem;
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
-.add .grouptable_body .gr_delete_button:hover {
-  background: rgb(133, 39, 55);
+
+.groupuser_name {
+  width: 20rem;
+}
+
+.groupuser_select {
+  height: 2rem;
+  border: solid 1px #b8b6b6;
+  border-radius: 0.5rem;
+}
+
+.groupuser_select_user {
+  width: 15rem;
+}
+
+.groupuser_select_position {
+  width: 8rem;
+}
+
+.groupuser_delete {
+  width: 5rem;
+}
+
+.groupusertable_header .errorselect {
+  border: solid 1px red !important;
+  background: rgb(255, 234, 238);
+}
+
+.errorselect option {
+  background: white;
+}
+
+.groupuser_position {
+  width: 10rem;
+}
+
+.groupuser_delete {
+  width: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.groupuser_delete_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #cf2d2d;
+  position: relative;
+  font-size: 0.8rem;
+  font-weight: 500;
+  width: 4rem;
+}
+.groupuser_delete_button .delete_icon {
+  width: 1rem;
+  height: 1rem;
+}
+.groupuser_delete_button::before {
+  content: "";
+  width: 0;
+  height: 1px;
+  background: #cf2d2d;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: all 0.2s ease;
+}
+.groupuser_delete_button:hover::before {
+  width: 100%;
+}
+
+.groupuser_addbutton {
+  margin-block: 2rem 0.8rem;
+  background: #2ac02a;
+  width: 73px;
+  text-align: center;
+  padding: 3px;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.link_container {
+  display: flex;
+  align-items: center;
+  margin-block: 2rem 1rem;
+  gap: 1rem;
+}
+.link_container .link_back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-size: 1rem;
+  background: #5f5f5f;
+  border-radius: 0.5rem;
+  color: white;
+  border: none;
+  cursor: pointer;
+  height: 2.5rem;
+  padding: 0 1rem;
+}
+.link_container .link_back:hover {
+  background: #4f4f4f;
+}
+.link_container .groupuser_change_button {
+  background: #278dd7;
+  width: 15rem;
+  text-align: center;
+  border-radius: 9px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+}
+.link_container .groupuser_change_button:hover {
+  background: #1b6497;
+}
+
+.dummy_table {
+  display: none !important;
+}
+
+.groupusertable_tr {
+  display: flex;
+  height: 42px;
+  justify-content: center;
+  align-items: center;
+  border-bottom: solid 1px rgb(169, 169, 169);
+}
+.groupusertable_tr:nth-child(even) {
+  background: #f9fbfb;
+}
+
+.past:hover > div {
+  background: rgb(192, 192, 192);
+  cursor: pointer;
+  border-right: solid 1px rgb(192, 192, 192);
+}
+
+.savemessage {
+  display: none;
+  color: red;
+}
+
+.positiontable_body.position_past {
+  display: flex;
+  flex-direction: column;
+}
+.positiontable_body.position_past:nth-child(even) {
+  background: #f9fbfb;
+}
+
+.positiontable_body > div {
+  display: flex;
+  height: 2.5rem;
+  border-bottom: solid 1px rgb(169, 169, 169);
+}
+
+.position_edit_button {
+  margin: auto;
+  cursor: pointer;
+  background: rgb(105, 179, 56);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1rem;
+  width: fit-content;
+  padding: 0.3rem 1rem;
+}
+
+.position_edit_button:hover {
+  background: rgb(76, 129, 41);
+}
+
+.admin_position_delete {
+  width: 100px;
+}
+
+.admin_position {
+  width: 25rem;
+  text-align: center;
+}
+
+.position_delete_button {
+  margin: auto;
+  cursor: pointer;
+  background: #b54a3e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1rem;
+  width: fit-content;
+  padding: 0.3rem 1rem;
+}
+
+.position_delete_button:hover {
+  background: #742f27;
+}
+
+.add_position {
+  width: 15rem;
+  height: 2rem;
+  border-radius: 4px;
+  border: solid 1px gray;
+}
+
+.position_addbutton {
+  margin-block: 2rem 1rem;
+  background: #2ac02a;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  border-radius: 0.5rem;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  height: 2rem;
+}
+
+.position_addbutton:hover {
+  background: #1c881c;
+}
+
+.positiontable_body.new {
+  display: flex;
+  margin-top: 1rem;
+  height: 3rem;
+}
+
+.position_change_button {
+  background: #278dd7;
+  width: 15rem;
+  text-align: center;
+  border-radius: 9px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+}
+.position_change_button:hover {
+  background: #1b6497;
+}
+
+.document_change_button {
+  background: #278dd7;
+  width: 15rem;
+  text-align: center;
+  border-radius: 9px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+}
+.document_change_button:hover {
+  background: #1b6497;
+}
+
+.documenttable_header {
+  display: flex;
+}
+.documenttable_header div {
+  background: rgb(245, 227, 217);
+  text-align: center;
+  border-right: solid 1px white;
+  padding: 0.5rem 1rem;
+}
+
+.docu_addbutton {
+  margin-block: 2rem 1rem;
+  background: #2ac02a;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  border-radius: 0.5rem;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  height: 2rem;
+}
+.docu_addbutton:hover {
+  background: #1c881c;
+}
+
+.documenttable_body {
+  display: flex;
+}
+
+.document_open {
+  display: block;
+}
+
+.docu_check {
+  margin: auto;
+}
+
+.docu_change_button {
+  margin: auto;
+  cursor: pointer;
+  background: rgb(105, 179, 56);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1rem;
+  width: fit-content;
+  padding: 0.3rem 1rem;
+}
+
+.docu_change_button:hover {
+  background: rgb(76, 129, 41);
+}
+
+.docu_delete_button {
+  margin: auto;
+  cursor: pointer;
+  background: #b54a3e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1rem;
+  width: fit-content;
+  padding: 0.3rem 1rem;
+}
+
+.docu_delete_button:hover {
+  background: #742f27;
+}
+
+.admin_document {
+  width: 8rem;
+  text-align: center;
+}
+
+.add .admin_document {
+  width: 18rem;
+}
+
+.documenttable_body {
+  display: flex;
+}
+.documenttable_body > div {
+  padding: 0.2rem 1rem;
+  text-align: center;
+  border-bottom: solid 1px rgb(215, 215, 215);
+}
+
+.add_document {
+  width: 15rem;
+  height: 2rem;
+  border-radius: 4px;
+  border: solid 1px gray;
 }

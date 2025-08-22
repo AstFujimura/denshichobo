@@ -46,7 +46,7 @@ Rapid ~電子承認システム
                     <select name="user" id="" class="flow_search_input" data-id="{{$user}}">
                         <option value="">すべて</option>
                         @foreach ($users as $user)
-                        <option value="{{$user->user_id}}">{{$user->name}}</option>
+                        <option value="{{$user->user_id}}">{{$user->表示名}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -116,7 +116,7 @@ Rapid ~電子承認システム
                                 {{$t_flow_ongoing->承認数}} / {{$t_flow_ongoing->母数}} 承認
                             </div>
                             <div class="flow_view_td flow_view_applicant">
-                                {{$t_flow_ongoing->name}}
+                                {{$t_flow_ongoing->表示名}}
                             </div>
                             <div class="flow_view_td flow_view_date">
                                 {{Carbon\Carbon::parse($t_flow_ongoing->申請日)->format('Y-m-d')}}
@@ -141,7 +141,7 @@ Rapid ~電子承認システム
                                 決裁済
                             </div>
                             <div class="flow_view_td flow_view_applicant">
-                                {{$t_flow_approved->name}}
+                                {{$t_flow_approved->表示名}}
                             </div>
                             <div class="flow_view_td flow_view_date">
                                 {{Carbon\Carbon::parse($t_flow_approved->申請日)->format('Y-m-d')}}
@@ -166,7 +166,7 @@ Rapid ~電子承認システム
                                 却下済
                             </div>
                             <div class="flow_view_td flow_view_applicant">
-                                {{$t_flow_reject->name}}
+                                {{$t_flow_reject->表示名}}
                             </div>
                             <div class="flow_view_td flow_view_date">
                                 {{Carbon\Carbon::parse($t_flow_reject->申請日)->format('Y-m-d')}}
@@ -191,7 +191,7 @@ Rapid ~電子承認システム
                                 再申請待ち
                             </div>
                             <div class="flow_view_td flow_view_applicant">
-                                {{$t_flow_reapplication->name}}
+                                {{$t_flow_reapplication->表示名}}
                             </div>
                             <div class="flow_view_td flow_view_date">
                                 {{Carbon\Carbon::parse($t_flow_reapplication->申請日)->format('Y-m-d')}}

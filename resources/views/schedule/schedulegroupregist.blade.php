@@ -38,7 +38,7 @@ Skett ~スケジュールアプリ
                 <div class="join_member_container">
                     @foreach ($schedule_group_users as $schedule_group_user)
                     <div class="join_member_element" data-user_id="{{ $schedule_group_user->id }}">
-                        <span class="join_member_name">{{ $schedule_group_user->name }}</span>
+                        <span class="join_member_name">{{ $schedule_group_user->表示名 }}</span>
                         <span class="join_member_delete_button" data-user_id="{{ $schedule_group_user->id }}">×</span>
                     </div>
                     @endforeach

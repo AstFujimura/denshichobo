@@ -108,7 +108,7 @@ class TopController extends Controller
 
 
             $files = DB::table('files')
-                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', "groups.グループ名")
+                ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', "groups.グループ名")
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
@@ -123,7 +123,7 @@ class TopController extends Controller
             $groups = Group::where('id', ">", 100000)
                 ->get();
             $files = DB::table('files')
-                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', "groups.グループ名")
+                ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', "groups.グループ名")
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
@@ -257,7 +257,7 @@ class TopController extends Controller
                 ->get();
 
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', "groups.グループ名")
+                ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', "groups.グループ名")
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
@@ -273,7 +273,7 @@ class TopController extends Controller
                 ->get();
 
             $allfiles = DB::table('files')
-                ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', "groups.グループ名")
+                ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', "groups.グループ名")
                 ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
                 ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
                 ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
@@ -633,7 +633,7 @@ class TopController extends Controller
         }
         $server = config('prefix.server');
         $file = DB::table('files')
-            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', 'groups.グループ名')
+            ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', 'groups.グループ名')
             ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
             ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
             ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
@@ -652,7 +652,7 @@ class TopController extends Controller
         }
         $server = config('prefix.server');
         $files = DB::table('files')
-            ->select('files.*', 'documents.書類', 'creators.name as 作成者', 'updaters.name as 更新者', 'groups.グループ名')
+            ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', 'groups.グループ名')
             ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
             ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
             ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
@@ -736,7 +736,7 @@ class TopController extends Controller
     public function usersettingPost(Request $request)
     {
         $user = User::find(Auth::user()->id);
-        if (!$request->input('name') || !$request->input('email')) {
+        if (!$request->input('name') || !$request->input('displayname') || !$request->input('email')) {
             return redirect()->back()->with('error', '必須項目を入力してください');
         }
 
@@ -744,6 +744,7 @@ class TopController extends Controller
         if ($request->input('oldpass')) {
             if (Hash::check($request->input('oldpass'), $user->password)) {
                 $user->name = $request->input('name');
+                $user->表示名 = $request->input('displayname');
                 $user->email = $request->input('email');
                 $user->password = Hash::make($request->input('newpass'));
                 $user->save();
@@ -752,6 +753,7 @@ class TopController extends Controller
             }
         } else {
             $user->name = $request->input('name');
+            $user->表示名 = $request->input('displayname');
             $user->email = $request->input('email');
             $user->save();
         }
@@ -767,6 +769,12 @@ class TopController extends Controller
             return redirect()->route('usersettingGet', ['system_type' => 'tameru'])->with('success', 'ユーザー情報を更新しました');
         } else if ($request->input('system_type') == "flow") {
             return redirect()->route('usersettingGet', ['system_type' => 'flow'])->with('success', 'ユーザー情報を更新しました');
+        }
+        else if ($request->input('system_type') == "card") {
+            return redirect()->route('usersettingGet', ['system_type' => 'card'])->with('success', 'ユーザー情報を更新しました');
+        }
+        else if ($request->input('system_type') == "schedule") {
+            return redirect()->route('usersettingGet', ['system_type' => 'schedule'])->with('success', 'ユーザー情報を更新しました');
         }
     }
     public function usercheck(Request $request)
@@ -889,14 +897,14 @@ class TopController extends Controller
             $updater = "指定なし";
         } else {
             $updater = User::where("id", $updater)->first();
-            $updater = $updater->name;
+            $updater = $updater->表示名;
         }
         $creater = $request->input('creater');
         if (!$creater) {
             $creater = "指定なし";
         } else {
             $creater = User::where("id", $creater)->first();
-            $creater = $creater->name;
+            $creater = $creater->表示名;
         }
 
         $worksheet->setCellValue('B2', $starthiduke);

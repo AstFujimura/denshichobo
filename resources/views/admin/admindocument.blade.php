@@ -17,7 +17,21 @@
 
 <form action="{{route('admindocumentPost')}}" method="post" enctype="multipart/form-data" id="admin_document_form">
     @csrf
+    <input type="hidden" id="save" value="save"><span class="savemessage">※更新ボタンを押して変更を反映させてください</span>
+    <div class="link_container">
+
+        <button class="document_change_button">
+            更新
+        </button>
+        <a href="{{route('adminGet')}}" class="link_back">
+            管理画面一覧に戻る
+        </a>
+    </div>
     <div class="documenttable">
+
+        <div class="docu_addbutton" id="docu_addbutton">
+            + 追加
+        </div>
         <div class="documenttable_header">
             <div class="admin_use">有効</div>
             <div class="admin_document">書類</div>
@@ -29,15 +43,17 @@
 
             <div class="documenttable_body docu_past" id="container{{$document->id}}">
                 @if ($document->check == "check")
-                <div class="admin_use"><input type="checkbox" class="docu_check" checked id="check{{$document->id}}"></div>
+                <div class="admin_use"><input type="checkbox" class="docu_check" checked id="check{{$document->id}}">
+                </div>
                 @else
                 <div class="admin_use"><input type="checkbox" class="docu_check" id="check{{$document->id}}"></div>
                 @endif
 
-                
+
                 <div class="admin_document">
                     <div class="admin_document_text document_open" id="text{{$document->id}}">{{$document->書類}}</div>
-                    <input type="text" value="{{$document->書類}}" class="admin_document_value" id="value{{$document->id}}">
+                    <input type="text" value="{{$document->書類}}" class="admin_document_value"
+                        id="value{{$document->id}}">
                 </div>
                 <div class="admin_document_change">
                     <div class="docu_change_button" id="change{{$document->id}}">変更</div>
@@ -47,20 +63,14 @@
                 </div>
             </div>
             @endforeach
+            <div class="add">
+
+            </div>
 
         </div>
 
     </div>
-    <div class="docu_addbutton" id="docu_addbutton">
-        + 追加
-    </div>
-    <div class="add">
 
-    </div>
-    <button class="document_change_button">
-        更新
-    </button>
-    <input type="hidden" id="save" value="save"><span class="savemessage">※更新ボタンを押して変更を反映させてください</span>
 
 </form>
 

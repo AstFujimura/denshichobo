@@ -94,7 +94,7 @@
 
     <a class="headerIcon001 rightmenue001" href="{{route('usersettingGet', ['system_type' => 'flow'])}}">
         <div class="usermenu01">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->name}}</span>
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->表示名}}</span>
         </div>
     </a>
     <a class="headerIcon001 menue001">
@@ -115,7 +115,7 @@
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/user_1_line.svg') }}" class="usericon01">
                     </div>
                     <div class="username01">
-                        {{Auth::user()->name}}
+                        {{Auth::user()->表示名}}
                     </div>
 
                 </div>

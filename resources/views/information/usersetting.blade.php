@@ -1,4 +1,3 @@
-
 @extends('layouts.'.$system_type.'template')
 
 
@@ -6,11 +5,11 @@
 
 @section('title')
 TAMERU ~電子帳簿保存
-@endsection 
+@endsection
 
 @section('menuebar')
 
-@endsection 
+@endsection
 
 @section('menue')
 
@@ -22,8 +21,8 @@ TAMERU ~電子帳簿保存
 <h2 class="usersettingtitle">{{$user->name}}さん情報</h2>
 
 <form action="{{route('usersettingPost')}}" method="post" enctype="multipart/form-data" id="usersetting">
-        @csrf
-        <div class="input-container">
+    @csrf
+    <div class="input-container">
         <label class="label">
             ユーザー名
             <span class="requirered">*</span>
@@ -33,6 +32,17 @@ TAMERU ~電子帳簿保存
             <span class="errorelement" id="required1">必須項目です</span>
             <span class="errorelement" id="userformat">形式が不正です</span>
             <span class="errorelement" id="usercheck">ユーザー名が重複しています</span>
+        </div>
+    </div>
+    <div class="input-container">
+        <label class="label">
+            表示名
+            <span class="requirered">*</span>
+        </label>
+        <div class="dateform">
+            <input type="text" name="displayname" class="input-field" id="displayname" value="{{$user->表示名}}">
+            <span class="errorelement" id="required15">必須項目です</span>
+            <span class="errorelement" id="userformat">形式が不正です</span>
         </div>
     </div>
     <div class="input-container">
@@ -51,7 +61,8 @@ TAMERU ~電子帳簿保存
             メール許可
         </label>
         <div class="dateform">
-            <input type="checkbox" name="mail" class="mailcheck_input" id="mail" value="1" {{$user->メール許可 ? 'checked' : ''}}>
+            <input type="checkbox" name="mail" class="mailcheck_input" id="mail" value="1" {{$user->メール許可 ? 'checked' :
+            ''}}>
         </div>
     </div>
     <div class="important">
@@ -91,13 +102,11 @@ TAMERU ~電子帳簿保存
         </div>
 
     </div>
-<input type="hidden" name="system_type" value="{{$system_type}}">
+    <input type="hidden" name="system_type" value="{{$system_type}}">
     <button class="usersettingbutton">変更</button>
 </form>
 <input type="hidden" id="userID" value="{{$user->id}}">
-@endsection 
-    @section('footer')
+@endsection
+@section('footer')
 
-    @endsection 
-
-
+@endsection

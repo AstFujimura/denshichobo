@@ -147,7 +147,7 @@ class CardController extends Controller
                 'cards.名刺ユーザーID',
                 'cards.ユーザーID',
                 'cards.最新フラグ',
-                'users.name',
+                'users.表示名',
                 DB::raw('ROW_NUMBER() OVER (
                 PARTITION BY 名刺ユーザーID
                 ORDER BY 最新フラグ DESC, cards.id ASC
@@ -991,7 +991,7 @@ class CardController extends Controller
                             'data' => $structuredData,
                             'existing_card' => $othercard,
                             'mycard' => false,
-                            'otheruser' => $otheruser->name,
+                            'otheruser' => $otheruser->表示名,
                         ]);
                     }
                 }

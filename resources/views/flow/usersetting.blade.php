@@ -15,7 +15,7 @@ Rapid ~電子承認システム
 
 
 @section('main')
-<h2>{{$user->name}}さん情報</h2>
+<h2>{{$user->表示名}}さん情報</h2>
 <form action="{{route('usersettingPost')}}" method="post" enctype="multipart/form-data" id="usersetting">
         @csrf
         @method('PUT')

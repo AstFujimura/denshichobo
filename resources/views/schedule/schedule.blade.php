@@ -70,7 +70,7 @@ Skett ~スケジュールアプリ
         <div class="schedule_row">
             <div class="schedule_cell schedule_cell_header">
                 <div class="schedule_user">
-                    {{ $user->name }}
+                    {{ $user->表示名 }}
                 </div>
                 <a class="schedule_cell_header_month" href="{{ route('schedulemonthget', ['user_id' => $user->id, 'month' => Carbon\Carbon::parse($base_date)->format('Y-m')]) }}">
                     <img src="{{ asset(config('prefix.prefix').'/'.'img/schedule/calendar_month.svg') }}" alt="" class="schedule_cell_header_month_icon">

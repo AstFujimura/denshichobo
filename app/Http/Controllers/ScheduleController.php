@@ -350,7 +350,7 @@ class ScheduleController extends Controller
             $event_users = DB::table('event_user')
                 ->leftJoin('users', 'event_user.ユーザーID', '=', 'users.id')
                 ->where('イベントID', $event_id)
-                ->select('users.name', 'users.id')
+                ->select('users.表示名', 'users.id')
                 ->get();
         } else {
             $event_users = User::where('id', $user_id)->get();
@@ -464,7 +464,7 @@ class ScheduleController extends Controller
         $group_id = $request->group_id;
         $users = DB::table('users')
             ->leftJoin('group_user', 'users.id', '=', 'group_user.ユーザーID')
-            ->select('users.name', 'users.id')
+            ->select('users.表示名', 'users.id')
             ->where('group_user.グループID', $group_id)
             ->get();
         return response()->json($users);
@@ -486,7 +486,7 @@ class ScheduleController extends Controller
         $schedule_group_users = DB::table('schedule_group_user')
             ->leftJoin('users', 'schedule_group_user.ユーザーID', '=', 'users.id')
             ->where('個人グループID', $selected_group_id)
-            ->select('users.name', 'users.id')
+            ->select('users.表示名', 'users.id')
             ->get();
 
         $server = config('prefix.server');
@@ -597,7 +597,7 @@ class ScheduleController extends Controller
             $event_users = DB::table('regular_event_user')
                 ->leftJoin('users', 'regular_event_user.ユーザーID', '=', 'users.id')
                 ->where('定期イベントID', $regular_event_id)
-                ->select('users.name', 'users.id')
+                ->select('users.表示名', 'users.id')
                 ->get();
         } else {
             $event_users = User::where('id', $user_id)->get();
@@ -752,7 +752,7 @@ class ScheduleController extends Controller
             $event_users = DB::table('event_user')
                 ->leftJoin('users', 'event_user.ユーザーID', '=', 'users.id')
                 ->where('イベントID', $event_id)
-                ->select('users.name', 'users.id')
+                ->select('users.表示名', 'users.id')
                 ->get();
         } else {
             $event_users = User::where('id', $user_id)->get();

@@ -249,7 +249,7 @@ function ajax_flowuserlist(searchtext, inputtext) {
           // 選択肢の要素が隠れてしまうので一時的にoverflow:visibleにするクラスを付与していた
           $(".person_container").addClass("person_container_status_gray")
           inputtext.parent().find(".flow_user_list").show()
-          inputtext.parent().find(".flow_user_list").append('<div class="userelement">' + user.name + '</div>');
+          inputtext.parent().find(".flow_user_list").append('<div class="userelement">' + user.表示名 + '</div>');
         });
       }
 

@@ -14,7 +14,7 @@ Skett ~スケジュールアプリ
         <div class="schedule_group_container">
             <select class="month_user_select" name="" id="">
                 @foreach ($selected_users as $selected_user)
-                <option value="{{ $selected_user->id }}" {{ $user->id == $selected_user->id ? 'selected' : '' }}>{{ $selected_user->name }}</option>
+                <option value="{{ $selected_user->id }}" {{ $user->id == $selected_user->id ? 'selected' : '' }}>{{ $selected_user->表示名 }}</option>
                 @endforeach
             </select>
         </div>

@@ -57,14 +57,14 @@ class FlowController extends Controller
         $duplicationarray = $request->input("duplicationarray");
 
         if (!$duplicationarray) {
-            $users = User::where('name', 'like', '%' . $searchtext . '%')
+            $users = User::where('表示名', 'like', '%' . $searchtext . '%')
                 ->where('id', '!=', 1)
                 ->where('削除', "")
                 ->get();
         } else {
-            $users = User::where('name', 'like', '%' . $searchtext . '%')
+            $users = User::where('表示名', 'like', '%' . $searchtext . '%')
                 ->where('id', '!=', 1)
-                ->whereNotIn('name', $duplicationarray)
+                ->whereNotIn('表示名', $duplicationarray)
                 ->where('削除', "")
                 ->get();
         }
@@ -182,7 +182,7 @@ class FlowController extends Controller
 
 
         $approvals = DB::table("m_approvals")
-            ->select("m_approvals.*", "m_flow_points.*",  "users.name", "groups.グループ名", "positions.役職",)
+            ->select("m_approvals.*", "m_flow_points.*",  "users.表示名", "groups.グループ名", "positions.役職",)
             ->leftJoin("m_flow_points", "m_approvals.フロー地点ID", "=", "m_flow_points.id")
             ->leftJoin("users", "m_approvals.ユーザーID", "=", "users.id")
             ->leftJoin("groups", "m_approvals.グループID", "=", "groups.id")
@@ -197,7 +197,7 @@ class FlowController extends Controller
                 'column' => $parts[0],
                 'row' => $parts[1],
                 'person_group' => $approval->個人グループ,
-                'user' => $approval->name,
+                'user' => $approval->表示名,
                 'group' => $approval->グループ名,
                 'groupid' => $approval->グループID,
                 'position' => $approval->役職,
@@ -220,7 +220,7 @@ class FlowController extends Controller
         foreach ($groups as $group) {
             $group_object[] = [
                 'id' => $group->グループID,
-                'name' => $group->name,
+                'name' => $group->表示名,
             ];
         }
         return response()->json($group_object);
@@ -619,7 +619,7 @@ class FlowController extends Controller
                 ->get();
 
             $flow_approvals = DB::table('m_approvals')
-                ->select("m_approvals.*", "users.name", "groups.グループ名", "positions.役職")
+                ->select("m_approvals.*", "users.表示名", "groups.グループ名", "positions.役職")
                 ->leftJoin("users", "m_approvals.ユーザーID", "=", "users.id")
                 ->leftJoin("groups", "m_approvals.グループID", "=", "groups.id")
                 ->leftJoin("positions", "m_approvals.役職ID", "=", "positions.id")
@@ -1730,7 +1730,11 @@ class FlowController extends Controller
                     $pdf->SetFont('notomedium', '', $m_pointer->フォントサイズ . "pt");
                     $pdf->SetXY($m_pointer->left, $m_pointer->top);  // (x, y)座標を指定
                     if ($m_pointer->桁区切り) {
-                        $modified_value = number_format(intval($value));
+                        if ($value) {
+                            $modified_value = number_format(intval($value));
+                        } else {
+                            $modified_value = "";
+                        }
                     } else {
                         $modified_value = $value;
                     }
@@ -1748,7 +1752,7 @@ class FlowController extends Controller
                 $pdf->SetFont('notomedium', '', $m_basic_pointer->フォントサイズ . "pt");
                 $pdf->SetXY($m_basic_pointer->left, $m_basic_pointer->top);  // (x, y)座標を指定
                 if ($m_basic_pointer->基本情報 == 1) {
-                    $value = Auth::user()->name;
+                    $value = Auth::user()->表示名;
                 } else if ($m_basic_pointer->基本情報 == 2) {
                     $value = Carbon::now()->format('Y年m月d日');
                 }
@@ -2583,7 +2587,7 @@ class FlowController extends Controller
                     $url = route('workflowapprovalget', ['id' => $content_id]);
                     $subject = '【Rapid】承認依頼';
                     $t_flow = T_flow::find(T_approval::find($content_id)->フローテーブルID);
-                    $applicant_name = User::find($t_flow->申請者ID)->name;
+                    $applicant_name = User::find($t_flow->申請者ID)->表示名;
                     $parameter = compact('url', 'applicant_name');
                 } else if ($content == "reject") {
                     $url = route('workflowapplicationdetailget', ['id' => $content_id]);
@@ -2621,7 +2625,7 @@ class FlowController extends Controller
 
         $m_categories = M_category::all();
         $users = DB::table('t_flows')
-            ->select('users.id as user_id', 'users.name')
+            ->select('users.id as user_id', 'users.表示名')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
             ->distinct()
             ->get();
@@ -2643,7 +2647,7 @@ class FlowController extends Controller
 
         $server = config('prefix.server');
         $approvables =  DB::table('t_approvals')
-            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
+            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.表示名', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
             ->leftJoin('t_flows', 't_approvals.フローテーブルID', '=', 't_flows.id')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
@@ -2656,10 +2660,11 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 2)
             ->where('t_approvals.再承認番号', '=', DB::raw('t_flows.再承認番号'))
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         $approveds =  DB::table('t_approvals')
-            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
+            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.表示名', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
             ->leftJoin('t_flows', 't_approvals.フローテーブルID', '=', 't_flows.id')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
@@ -2672,9 +2677,10 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 4)
             ->where('t_approvals.再承認番号', '=', DB::raw('t_flows.再承認番号'))
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
         $rejecteds =  DB::table('t_approvals')
-            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.name', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
+            ->select('t_flows.標題', 't_flows.created_at as flow_created_at', 'users.表示名', 'm_categories.カテゴリ名', 't_approvals.id as approval_id')
             ->leftJoin('t_flows', 't_approvals.フローテーブルID', '=', 't_flows.id')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
             ->leftJoin('m_flows', 't_flows.フローマスタID', '=', 'm_flows.id')
@@ -2687,6 +2693,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where('t_approvals.ステータス', 5)
             ->where('t_approvals.再承認番号', '=', DB::raw('t_flows.再承認番号'))
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         return view('flow.workflowapprovalview', compact("prefix", "server", "users", "m_categories", "status", "title", "category", "user", "start_day", "end_day", "approvables", "approveds", "rejecteds"));
@@ -2702,7 +2709,7 @@ class FlowController extends Controller
         $server = config('prefix.server');
         // $t_approval = T_approval::find($id);
         $t_approval = DB::table('t_approvals')
-            ->select('t_approvals.*', 'users.name', "m_flow_points.フロントエンド表示ポイント")
+            ->select('t_approvals.*', 'users.表示名', "m_flow_points.フロントエンド表示ポイント")
             ->leftJoin('t_flow_points', 't_approvals.フロー地点テーブルID', '=', 't_flow_points.id')
             ->leftJoin('users', 't_approvals.ユーザーID', '=', 'users.id')
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
@@ -2729,7 +2736,7 @@ class FlowController extends Controller
         $user = User::find($t_flow->申請者ID);
 
         $past_approvals = DB::table('t_approvals')
-            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
+            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.表示名', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
             ->leftJoin('t_flow_points', 't_approvals.フロー地点テーブルID', '=', 't_flow_points.id')
             ->leftJoin('users', 't_approvals.ユーザーID', '=', 'users.id')
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
@@ -3184,7 +3191,7 @@ class FlowController extends Controller
 
         $m_categories = M_category::all();
         $application_users = DB::table('t_flows')
-            ->select('users.id as user_id', 'users.name')
+            ->select('users.id as user_id', 'users.表示名')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
             ->distinct()
             ->get();
@@ -3244,6 +3251,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where("ステータス", 2)
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         // 決裁済かつTAMERUに保存、未保存どちらのレコードも取得
@@ -3262,6 +3270,7 @@ class FlowController extends Controller
                 $query->where("ステータス", 3)
                     ->orwhere("ステータス", 4);
             })
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         $t_flows_reapplication = DB::table("t_flows")
@@ -3276,6 +3285,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where("ステータス", 5)
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         $status = $request->input('status');
@@ -3318,7 +3328,7 @@ class FlowController extends Controller
         if (!$user) {
             $user_name = "すべて";
         } else {
-            $user_name = $user->name;
+            $user_name = $user->表示名;
         }
         $start_day = $request->input('start_day');
         if ($start_day) {
@@ -3394,7 +3404,7 @@ class FlowController extends Controller
                     ->orWhere('t_flows.ステータス', 5);
             })
             ->orderBy('m_flows.カテゴリマスタID', 'asc')
-            ->orderBy('申請日', 'asc')
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         $row = 5;
@@ -3446,7 +3456,7 @@ class FlowController extends Controller
             $worksheet->getStyle($alphabet[0] . $row)->applyFromArray($style);
             $worksheet->setCellValue($alphabet[1] . $row, Carbon::parse($t_flow->申請日)->format('Y/m/d'));
             $worksheet->getStyle($alphabet[1] . $row)->applyFromArray($style);
-            $worksheet->setCellValue($alphabet[2] . $row, $t_flow->name);
+            $worksheet->setCellValue($alphabet[2] . $row, $t_flow->表示名);
             $worksheet->getStyle($alphabet[2] . $row)->applyFromArray($style);
             $worksheet->setCellValue($alphabet[3] . $row, $status_array[$t_flow->ステータス]);
             $worksheet->getStyle($alphabet[3] . $row)->applyFromArray($style);
@@ -3489,7 +3499,7 @@ class FlowController extends Controller
         $user = User::find($t_flow->申請者ID);
 
         $past_approvals = DB::table('t_approvals')
-            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
+            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.表示名', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
             ->leftJoin('t_flow_points', 't_approvals.フロー地点テーブルID', '=', 't_flow_points.id')
             ->leftJoin('users', 't_approvals.ユーザーID', '=', 'users.id')
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')
@@ -3525,7 +3535,7 @@ class FlowController extends Controller
 
         $m_categories = M_category::all();
         $users = DB::table('t_flows')
-            ->select('users.id as user_id', 'users.name')
+            ->select('users.id as user_id', 'users.表示名')
             ->leftJoin('users', 't_flows.申請者ID', '=', 'users.id')
             ->distinct()
             ->get();
@@ -3557,6 +3567,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where("ステータス", 1)
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         foreach ($t_flows_ongoing as $t_flow_ongoing) {
@@ -3580,6 +3591,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where("ステータス", 2)
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         // 決裁済かつTAMERUに保存、未保存どちらのレコードも取得
@@ -3598,6 +3610,7 @@ class FlowController extends Controller
                 $query->where("ステータス", 3)
                     ->orwhere("ステータス", 4);
             })
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         $t_flows_reapplication = DB::table("t_flows")
@@ -3612,6 +3625,7 @@ class FlowController extends Controller
             ->where('t_flows.created_at', '>=', $start_day ? $start_day : "1900/01/01")
             ->where('t_flows.created_at', '<=', $end_day ? $end_day : "2100/01/01")
             ->where("ステータス", 5)
+            ->orderBy('t_flows.created_at', 'desc')
             ->get();
 
         $status = $request->input('status');
@@ -3638,7 +3652,7 @@ class FlowController extends Controller
         $user = User::find($t_flow->申請者ID);
 
         $past_approvals = DB::table('t_approvals')
-            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.name', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
+            ->select('t_approvals.ステータス', 't_approvals.updated_at as 承認日', 'users.表示名', "m_flow_points.フロントエンド表示ポイント", "t_flow_points.承認ステータス", "t_approvals.コメント", "t_approvals.再承認番号")
             ->leftJoin('t_flow_points', 't_approvals.フロー地点テーブルID', '=', 't_flow_points.id')
             ->leftJoin('users', 't_approvals.ユーザーID', '=', 'users.id')
             ->leftJoin('m_flow_points', 't_flow_points.フロー地点ID', '=', 'm_flow_points.id')

@@ -114,9 +114,6 @@ Route::prefix($prefix)->group(function () {
         // 管理者ページトップ（ユーザー一覧）
         Route::get('/admin', [AdminController::class, 'adminGet'])->name('adminGet');
 
-        // ユーザー変更画面
-        Route::get('/admin/edit/{id}', [AdminController::class, 'admineditGet'])->name('admineditGet');
-
         // ユーザー登録画面
         Route::get('/admin/regist', [AdminController::class, 'adminregistGet'])->name('adminregistGet');
 
@@ -124,10 +121,10 @@ Route::prefix($prefix)->group(function () {
         Route::post('/admin/regist', [AdminController::class, 'adminregistPost'])->name('adminregistPost');
 
         // ユーザー変更ページにポストで情報を投げた時
-        Route::put('/admin/edit/{id}', [AdminController::class, 'admineditPut'])->name('admineditPut');
+        Route::post('/admin/edit/{id}', [AdminController::class, 'admineditPost'])->name('admineditPost');
 
         // 変更ページにポストで情報を投げた時
-        Route::delete('/admin/delete/{id}', [AdminController::class, 'adminDelete'])->name('adminDelete');
+        Route::post('/admin/delete/{id}', [AdminController::class, 'adminDelete'])->name('adminDelete');
 
         // パスワードリセットをポストで情報を投げた時
         Route::post('/admin/reset/{id}', [AdminController::class, 'adminresetPost'])->name('adminresetPost');

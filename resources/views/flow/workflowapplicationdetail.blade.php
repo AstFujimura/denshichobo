@@ -133,7 +133,7 @@ Rapid ~電子承認システム
                                 申請情報
                             </div>
                             <div class="applicant_info">
-                                <img class="approve_person_icon" src="{{ asset(config('prefix.prefix').'/'.'img/person.svg') }}">申請者 : {{$user->name}}
+                                <img class="approve_person_icon" src="{{ asset(config('prefix.prefix').'/'.'img/person.svg') }}">申請者 : {{$user->表示名}}
                             </div>
                             @foreach ($t_optionals as $t_optional)
                             <div class="approve_content">
@@ -178,7 +178,7 @@ Rapid ~電子承認システム
                             @foreach ($past_approvals as $past_approval)
                             <div class="approve_condition_tbody_tr @if ($past_approval->ステータス == 6) bold_underline @endif" data-front_point="{{$past_approval->フロントエンド表示ポイント}}" data-point_status="{{$past_approval->承認ステータス}}">
                                 <div class="approve_condition_td approve_condition_name">
-                                    {{$past_approval->name}}
+                                    {{$past_approval->表示名}}
                                 </div>
                                 @if ($past_approval->ステータス == 0)
                                 <div class="approve_condition_td approve_condition_status applicant_status" data-each_status="{{$past_approval->ステータス}}" data-reapproval_number="{{$past_approval->再承認番号}}">

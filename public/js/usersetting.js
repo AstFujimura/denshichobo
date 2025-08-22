@@ -11,12 +11,13 @@ $(document).ready(function() {
     $('#required5').removeClass("errorsentence");
   });
   $('#usersetting').submit(function(event){
-    errorformreset(["name","email"]);
-    errorsentencereset(["required1","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
+    errorformreset(["name","displayname","email"]);
+    errorsentencereset(["required1","required15","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
     event.preventDefault();
     var usersettingform = this;
     const formData = new FormData(usersettingform);
     const name = $('#name').val();
+    const displayname = $('#displayname').val();
     const email = $('#email').val();
     const mail = $('#mail').prop('checked');
     const system_type = $('#system_type').val();
@@ -27,6 +28,14 @@ $(document).ready(function() {
     else{
       $('#name').removeClass("invalid");
       $('#required1').removeClass("errorsentence");
+    }
+    if (!displayname){
+      $('#displayname').addClass("invalid");
+      $('#required15').addClass("errorsentence");
+    }
+    else{
+      $('#displayname').removeClass("invalid");
+      $('#required15').removeClass("errorsentence");
     }
     if (!email){
       $('#email').addClass("invalid");
@@ -104,59 +113,9 @@ $(document).ready(function() {
 
 
     if (!$('.invalid').length){
-
-      var nameval = $('#name').val();
-      var change = "change"
-      var id = $("#userID").val();
-
-      //ユーザー名に重複がないかを非同期で問い合わせる
-      $.ajax({
-        url: prefix + '/usercheck',
-        type: 'get',
-        data: {
-          username: nameval,
-          change: change,
-          id: id
-        },
-        success: function (response) {
-          //ユーザー名が重複している場合
-          if (response == "重複") {
-            $("#usercheck").addClass('errorsentence')
-            $("#name").addClass('invalid')
-          }
-          else {
-            //登録画面におけるフォームの確認
-            if (!$('.errorsentence').length) {
-  
-              if (confirm("情報を変更しますよろしいですか")){
-              //   $.ajax({
-              //     url: prefix+'/usersetting',
-              //     type: 'POST',
-              //     data: formData,
-              //     processData: false,
-              //     contentType: false,
-              //     headers: {
-              //       'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-              //      },
-              //      success: function(response){
-                  
-              //       if(response == "パスワードが違います") {
-              //         $('#oldpass').addClass("invalid");
-              //         $('.differencepass').addClass("errorsentence");
-              //      }
-            
-              //   }
-              // });
-              usersettingform.submit();
-              }
-  
-            }
-          }
-        }
-      });
-
-
-
+      if (confirm("情報を変更しますよろしいですか")){
+        this.submit();
+      }
 
     }
 

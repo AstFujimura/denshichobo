@@ -1402,7 +1402,7 @@ $(document).ready(function () {
                 response.forEach(function (card) {
                     $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]').removeClass('display_none');
                     $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"] .other_user_list').append(
-                        `<span class="other_user_list_item">${card.name}</span>`);
+                        `<span class="other_user_list_item">${card.表示名}</span>`);
                 });
             },
             error: function (xhr, status, error) {

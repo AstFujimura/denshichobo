@@ -14,10 +14,30 @@
 
 @section('main')
 <h2>{{$group->グループ名}}役職設定</h2>
+<div class="bread_crumb_container">
 
+    <div class="bread_crumb_content">
+        <a>役職設定</a>
+    </div>
+    <div class="bread_crumb_content">
+        <a href="{{ route('admingroupregistGet') }}">グループ一覧</a>
+    </div>
+    <div class="bread_crumb_content">
+        <a href="{{ route('adminGet') }}">管理画面一覧</a>
+    </div>
+
+</div>
 <form action="{{route('admingroupregistPost')}}" method="post" enctype="multipart/form-data" id="admin_position_form">
     @csrf
+    <div class="link_container">
+        <button class="position_change_button">
+            更新
+        </button>
+    </div>
     <div class="positiontable">
+        <div class="position_addbutton" id="position_addbutton">
+            + 追加
+        </div>
         <div class="positiontable_header">
             <div class="position_name">
                 役職名
@@ -47,18 +67,14 @@
 
         </div>
         @endforeach
+        <div class="add">
+
+        </div>
 
 
     </div>
-    <div class="position_addbutton" id="position_addbutton">
-        + 追加
-    </div>
-    <div class="add">
 
-    </div>
-    <button class="position_change_button">
-        更新
-    </button>
+
     <input type="hidden" id="save" value="save"><span class="savemessage">※更新ボタンを押して変更を反映させてください</span>
     <input type="hidden" id="groupid" value="{{$group->id}}">
 </form>

@@ -1,6 +1,160 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
 
+  // -------------ユーザー管理画面----------------
+  $('.add_user_button').on('click', function () {
+    $('.admin_header_container').toggleClass('add_user_form_open');
+    $('.user_setting_edit_content').removeClass('user_edit_container_open');
+  });
+
+  var display_name_flag = false;
+  $('.add_user_form_content input[name="user_name"]').on('input', function () {
+    var user_name = $(this).val();
+    if (display_name_flag == false) {
+      $('.add_user_form_content input[name="display_name"]').val(user_name);
+
+    }
+  });
+
+  $('.add_user_form_content input[name="display_name"]').on('input', function () {
+    var display_name = $(this).val();
+    if (display_name != "") {
+      display_name_flag = true;
+    }
+    else {
+      display_name_flag = false;
+    }
+  });
+
+  $(document).on('click', '.user_setting_password_reset_button', function (e) {
+    if (confirm('パスワードをリセットします。よろしいですか')) {
+      var form = $(this).closest('form');
+      form.submit();
+    }
+  });
+
+  $(document).on('click', '.add_user_submit_button', function (e) {
+    var add_user_form = $(this).closest('.add_user_form');
+    if (confirm('ログインアカウントを追加します。よろしいですか')) {
+      var data = new FormData();
+      data.append('user_name', add_user_form.find('[name="user_name"]').val());
+      data.append('display_name', add_user_form.find('[name="display_name"]').val());
+      data.append('email', add_user_form.find('[name="email"]').val());
+      data.append('password', add_user_form.find('[name="password"]').val());
+      data.append('admin', add_user_form.find('[name="admin"]').val());
+      add_user_form.find('input[name="group[]"]:checked').each(function () {
+        data.append('group[]', $(this).val());
+      });
+      var url = $(this).closest('form').attr('action');
+      $.ajax({
+        url: url,
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': $('[name="_token"]').val()
+        },
+        data: data,
+        success: function (response) {
+          console.log(response);
+          if (response.error) {
+            alert(response.error);
+          }
+          else {
+            alert(response.success);
+            window.location.reload();
+          }
+        }
+      });
+    }
+  });
+
+  $(document).on('click', '.user_setting_edit_button', function (e) {
+    var user_setting_edit_content = $(this).closest('.user_setting_edit_content');
+    var user_name = user_setting_edit_content.find('[name="user_name"]').val();
+    var display_name = user_setting_edit_content.find('[name="display_name"]').val();
+    var email = user_setting_edit_content.find('[name="email"]').val();
+    var admin = user_setting_edit_content.find('[name="admin"]').val();
+    var group = user_setting_edit_content.find('[name="group[]"]:checked').map(function () {
+      return $(this).val();
+    }).get();
+
+    if (confirm('ログインアカウントを変更します。よろしいですか')) {
+      var data = new FormData();
+      data.append('user_name', user_name);
+      data.append('display_name', display_name);
+      data.append('email', email);
+      data.append('admin', admin);
+      // グループをループで追加
+      group.forEach(function (g) {
+        data.append('group[]', g);
+      });
+      $.ajax({
+        url: user_setting_edit_content.data('url'),
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': $('[name="_token"]').val()
+        },
+        data: data,
+        success: function (response) {
+          if (response.error) {
+            alert(response.error);
+          }
+          else {
+            alert(response.success);
+            window.location.reload();
+          }
+        }
+      });
+    };
+  });
+
+
+
+
+
+  // ユーザー編集ボタンを押したときに編集するフォームコンテナを表示する
+  $(document).on('click', '.user_edit_button', function (e) {
+    $('.admin_header_container').removeClass('add_user_form_open');
+    $('.user_setting_edit_content').removeClass('user_edit_container_open');
+    $(this).closest('.admin_top_table_element').find('.user_setting_edit_content').addClass('user_edit_container_open');
+  });
+  // キャンセルボタンを押したときに編集フォームを閉じる
+  $(document).on('click', '.user_setting_cancel_button', function (e) {
+    $('.admin_header_container').removeClass('add_user_form_open');
+    $('.user_setting_edit_content').removeClass('user_edit_container_open');
+  });
+  // 削除ボタンを押したときに削除フォームを表示する
+  $(document).on('click', '.user_delete_button', function (e) {
+    if (confirm('本当に削除しますか')) {
+      var delete_url = $(this).closest('.admin_top_table_element').data('delete_url');
+      var url = delete_url;
+      $.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'json',
+        headers: {
+          'X-CSRF-TOKEN': $('[name="_token"]').val()
+        },
+        success: function (response) {
+          if (response.error) {
+            alert(response.error);
+          }
+          else {
+            alert(response.success);
+            window.location.reload();
+          }
+        }
+      });
+    }
+  });
+
+
+
   // -------------書類管理画面----------------
 
   var adddocumentCount = 1000
@@ -224,18 +378,17 @@ $(document).ready(function () {
   });
 
   $('.gr_change_button').on("click", function () {
-    var valueid = 'value' + $(this).attr("id").replace("change", "");
-    var textid = 'text' + $(this).attr("id").replace("change", "");
-    $('#' + valueid).addClass("group_open");
-    $('#' + valueid).focus();
-    $('#' + textid).removeClass("group_open");
+    var grouptable_body = $(this).closest('.grouptable_body');
+    grouptable_body.find('.admin_group_text').removeClass("group_open");
+    grouptable_body.find('.admin_group_value').addClass("input_open");
+    grouptable_body.find('.admin_group_value').focus();
   });
 
   $('.admin_group_value').on("blur", function () {
-    var textid = 'text' + $(this).attr("id").replace("value", "");
-    $('#' + textid).text($(this).val())
-    $(this).removeClass("group_open");
-    $('#' + textid).addClass("group_open");
+    var grouptable_body = $(this).closest('.grouptable_body');
+    grouptable_body.find('.admin_group_text').text($(this).val())
+    grouptable_body.find('.admin_group_value').removeClass("input_open");
+    grouptable_body.find('.admin_group_text').addClass("group_open");
   });
 
   //グループを送信する時
@@ -513,11 +666,11 @@ $(document).ready(function () {
           return $(this).val().trim() === selectedValue;
         }).addClass("errorselect")
 
-        
-      } 
+
+      }
       // 選択された値がオブジェクトに存在しない場合
       // かつ空欄でない場合(空欄の場合はオブジェクトに追加しない)
-      else if(selectedValue != ""){
+      else if (selectedValue != "") {
         // オブジェクトに選択された値を追加
         selectedValues[selectedValue] = true;
       }

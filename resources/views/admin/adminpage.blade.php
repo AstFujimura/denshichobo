@@ -15,29 +15,24 @@
 
 
 @section('main')
-<h2>ユーザー一覧</h2>
+<h2>管理者画面</h2>
 <div>
-    <div class="admin_header_container">
-        <a class="admin_header_container_button" href="{{route('adminregistGet')}}">新規ユーザー登録</a>
-    </div>
-    <div class="admin_top_table_div">
-        <div class="name">ユーザー名</div>
-        <div class="email">email</div>
-        <div class="status">権限</div>
-        <div class="hennkou">変更</div>
-    </div>
-    <div class="admin_top_table_element">
-        @foreach ($users as $user)
-        <div class="admin_top_table_body">
-
-            <div class="name">{{$user->name}}</div>
-            <div class="email">{{$user->email}}</div>
-            <div class="status">{{$user->管理}}</div>
-            <div class="hennkou">
-                <img src="{{ asset($prefix.'/'.'img/transfer_3_fill.svg')}}" class="download" onclick="location.href='{{$prefix}}/admin/edit/{{$user->id}}';">
-            </div>
+    <div class="admin_console">
+        <div class="admin_console_item">
+            <a href="{{route('adminregistGet')}}">
+                ユーザー管理
+            </a>
         </div>
-        @endforeach
+        <div class="admin_console_item">
+            <a href="{{route('admingroupregistGet')}}">
+                グループ管理
+            </a>
+        </div>
+        <div class="admin_console_item">
+            <a href="{{route('admindocumentGet')}}">
+                書類管理
+            </a>
+        </div>
     </div>
 </div>
 

@@ -48,13 +48,13 @@
 <div class="menu001">
 
     <a class="headerIcon001" href="{{route('adminGet')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}" class="menuicon01" title="ユーザ一覧">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}" class="menuicon01" title="管理画面トップ">
     </a>
     <a class="headerIcon001" href="{{route('adminregistGet')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01" title="ユーザー登録">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}" class="menuicon01" title="ユーザー管理">
     </a>
     <a class="headerIcon001" href="{{route('admingroupregistGet')}}" >
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01" title="グループ登録・編集">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01" title="グループ管理">
     </a>
     @if (App\Models\Version::where('tameru', true)->first())
     <a class="headerIcon001" href="{{route('admindocumentGet')}}" >
@@ -85,7 +85,7 @@
                         <img src="{{ asset(config('prefix.prefix').'/'.'img/user_1_line.svg') }}" class="usericon01">
                     </div>
                     <div class="username01">
-                        {{Auth::user()->name}}
+                        {{Auth::user()->表示名}}
                     </div>
 
                 </div>
@@ -112,7 +112,7 @@
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}">
                         </div>
                         <div class="button1name01">
-                            ユーザー一覧
+                            管理画面トップ
                         </div>
 
                     </div>
@@ -124,11 +124,21 @@
                             <img src="{{ asset(config('prefix.prefix').'/'.'img/user_add_2_fill.svg') }}">
                         </div>
                         <div class="button1name01">
-                            ユーザー追加
+                            ユーザー管理
                         </div>
 
                     </div>
 
+                </a>
+                <a href="{{route('admingroupregistGet')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}">
+                        </div>
+                        <div class="button1name01">
+                            グループ管理
+                        </div>
+                    </div>
                 </a>
 
                 @if (App\Models\Version::where('tameru', true)->first())

@@ -15,6 +15,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -34,7 +35,11 @@ class AdminController extends Controller
             $users = User::where('id', '>=', 2)
                 ->where('削除', '')
                 ->get();
-            return view('admin.adminpage', compact('users', 'prefix', 'server'));
+            foreach ($users as $user) {
+                $user->グループ = Group_User::where("ユーザーID", $user->id)->get();
+            }
+            $groups = Group::where("id", ">", 100000)->get();
+            return view('admin.adminpage', compact('users', 'prefix', 'server', 'groups'));
         } else {
             return redirect()->route('topGet');
         }
@@ -53,10 +58,17 @@ class AdminController extends Controller
         }
         $server = config('prefix.server');
 
-        $groups = Group::where("id", ">", 100000)->get();
-
+        //管理者ユーザーとしてログイン状態かどうかを確認して管理者ユーザー出なければトップページにリダイレクト
         if (Auth::user()->管理 == "管理") {
-            return view('admin.adminregist', compact('prefix', 'server', 'groups'));
+            //astecユーザーを表示しないため
+            $users = User::where('id', '>=', 2)
+                ->where('削除', '')
+                ->get();
+            foreach ($users as $user) {
+                $user->グループ = Group_User::where("ユーザーID", $user->id)->get();
+            }
+            $groups = Group::where("id", ">", 100000)->get();
+            return view('admin.adminuser', compact('users', 'prefix', 'server', 'groups'));
         } else {
             return redirect()->route('topGet');
         }
@@ -66,129 +78,107 @@ class AdminController extends Controller
     public function adminregistPost(Request $request)
     {
         if (Auth::user()->管理 == "管理") {
+            // return response()->json($request->all());
 
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255',
-                'password' => 'required|string',
-            ]);
+            $user_name = $request->input('user_name');
+            $exist_user = User::where('name', $user_name)->first();
+            if ($exist_user) {
+                return response()->json(['error' => 'ユーザーがすでに存在します']);
+            } else {
+                $messages = [
+                    'user_name.required' => 'ユーザー名は必須です',
+                    'user_name.max'      => 'ユーザー名は:max文字以内で入力してください',
+                    'display_name.required' => '表示名は必須です',
+                    'display_name.max'      => '表示名は:max文字以内で入力してください',
+                    'email.required' => 'メールアドレスは必須です',
+                    'email.email'    => '有効なメールアドレス形式で入力してください',
+                    'password.required' => 'パスワードは必須です',
+                    'password.min'      => 'パスワードは:min文字以上で入力してください',
+                    'admin.required' => '権限は必須です',
+                ];
+                // バリデーションルール
+                $validator = Validator::make($request->all(), [
+                    'user_name' => 'required|string|max:255',
+                    'display_name' => 'required|string|max:255',
+                    'email' => 'required|string|email|max:255',
+                    'password' => 'required|string|min:8',
+                    'admin' => 'required|string|max:255',
+                ], $messages);
 
-
-
-            $user = new User();
-            $user->name = $validatedData['name'];
-            $user->email = $validatedData['email'];
-            $user->password = Hash::make($validatedData['password']);
-            $user->管理 = $request->input('admin');
-            $user->save();
-
-            $grouparray = $request->input('grouparray', []);
-
-            //固有グループ名を追加する
-            $newgroup = new Group();
-            $newgroup->id = $user->id;
-            $newgroup->グループ名 = $user->name . "(固有グループ名ghdF4ol)";
-            $newgroup->save();
-
-            //中間テーブルにも追加する
-            $newGroupUser = new Group_User();
-            $newGroupUser->グループID = $user->id;
-            $newGroupUser->ユーザーID = $user->id;
-            $newGroupUser->save();
-
-            //送信されたグループをそれぞれ中間テーブルに追加していく
-            foreach ($grouparray as $group) {
-                $newGroupUser = new Group_User();
-                $newGroupUser->グループID = $group;
-                $newGroupUser->ユーザーID = $user->id;
-                $newGroupUser->save();
-            }
-
-
-            return redirect()->route('adminGet');
-        } else {
-            return redirect()->route('topGet');
-        }
-    }
-
-
-    public function admineditGet($id)
-    {
-        $prefix = config('prefix.prefix');
-        if ($prefix !== "") {
-            $prefix = "/" . $prefix;
-        }
-        $server = config('prefix.server');
-
-        if (Auth::user()->管理 == "管理") {
-            $user = User::where('id', '=', $id)->first();
-            if (!$user) {
-                return response()->json(['message' => 'ユーザーが見つかりません'], 404);
-            }
-            $groups = Group::where("id", ">", 100000)->get();
-
-            foreach ($groups as $group) {
-                //中間テーブルからユーザーが属しているグループを検索してくる
-                $includedGroup = Group_User::where("ユーザーID", $id)
-                    ->where('グループID', $group->id)
-                    ->first();
-                if ($includedGroup) {
-                    $group->checked = "checked";
+                // バリデーション失敗時
+                if ($validator->fails()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'error' => $validator->errors()->first()  // フィールドごとのエラーメッセージ
+                    ]);
                 } else {
-                    $group->checked = "";
+                    $user = new User();
+                    $user->name = $request->input('user_name');
+                    $user->表示名 = $request->input('display_name');
+                    $user->email = $request->input('email');
+                    $user->password = Hash::make($request->input('password'));
+                    $user->管理 = $request->input('admin');
+                    $user->save();
+
+                    $grouparray = $request->input('group', []);
+
+                    //固有グループ名を追加する
+                    $newgroup = new Group();
+                    $newgroup->id = $user->id;
+                    $newgroup->グループ名 = $user->name . "(固有グループ名ghdF4ol)";
+                    $newgroup->save();
+
+                    //中間テーブルにも追加する
+                    $newGroupUser = new Group_User();
+                    $newGroupUser->グループID = $user->id;
+                    $newGroupUser->ユーザーID = $user->id;
+                    $newGroupUser->save();
+
+                    //送信されたグループをそれぞれ中間テーブルに追加していく
+                    foreach ($grouparray as $group) {
+                        $newGroupUser = new Group_User();
+                        $newGroupUser->グループID = $group;
+                        $newGroupUser->ユーザーID = $user->id;
+                        $newGroupUser->save();
+                    }
+                    return response()->json(['success' => 'ユーザーを追加しました']);
                 }
             }
-
-
-            $data = [
-                'user' => $user,
-                'admin' => "",
-                'normal' => "",
-                'prefix' => $prefix,
-                'server' => $server,
-                'groups' => $groups,
-            ];
-            if ($user->管理 == "管理") {
-                $data['admin'] = "selected";
-            } else if ($user->管理 == "一般") {
-                $data['normal'] = "selected";
-            }
-
-            return view('admin.adminedit', $data);
         } else {
-            return redirect()->route('topGet');
+            return response()->json(['error' => '管理ユーザーではありません']);
         }
     }
 
-    public function admineditPut(Request $request, $id)
+    public function admineditPost(Request $request, $id)
     {
         if (Auth::user()->管理 == "管理") {
             $user = User::find($id);
             if (!$user) {
-                return response()->json(['message' => 'ユーザーが見つかりません'], 404);
+                return response()->json(['error' => 'ユーザーが見つかりません']);
+            }
+            if ($user->id == Auth::user()->id && $user->管理 == "管理" && $request->input('admin') == "一般") {
+                return response()->json(['error' => '自身の管理権限を一般には変更できません']);
+            }
+            // astecユーザーを除いた管理者ユーザーが1人の場合は管理者ユーザーを一般に変更できない
+            $admin_user_count = User::where("管理", "管理")->where("id", "!=", 1)->get()->count();
+            if ($admin_user_count == 1 && $user->管理 == "管理" && $request->input('admin') == "一般") {
+                return response()->json(['error' => '管理者ユーザーは最低1人必要です']);
             }
 
+            $same_user_count = User::where("name", $request->input('user_name'))->where("id", "!=", $user->id)->get()->count();
+            if ($same_user_count > 0) {
+                return response()->json(['error' => '同じユーザー名のユーザーが存在します']);
+            }
 
             // 取得したユーザー情報を利用する処理
-            $user->name = $request->input('name');
+            $user->name = $request->input('user_name');
+            $user->表示名 = $request->input('display_name');
             $user->email = $request->input('email');
             $user->管理 = $request->input('admin');
 
             $user->save();
 
-            $grouparray = $request->input('grouparray', []);
-
-            // //固有グループ名を追加する
-            // $newgroup = new Group();
-            // $newgroup->id = $user->id;
-            // $newgroup->グループ名 = $user->name . "(固有グループ名ghdF4ol)";
-            // $newgroup->save();
-
-            // //中間テーブルにも追加する
-            // $newGroupUser = new Group_User();
-            // $newGroupUser->グループID = $user->id;
-            // $newGroupUser->ユーザーID = $user->id;
-            // $newGroupUser->save();
+            $grouparray = $request->input('group', []);
 
             //固有グループ名を除くグループIDとユーザーIDの組み合わせのレコードを一旦消去する
             Group_User::where("グループID", ">", 100000)
@@ -204,9 +194,9 @@ class AdminController extends Controller
                 $newGroupUser->save();
             }
 
-            return redirect()->route('adminGet');
+            return response()->json(['success' => 'ユーザーを変更しました']);
         } else {
-            return redirect()->route('topGet');
+            return response()->json(['error' => '管理ユーザーではありません']);
         }
     }
 
@@ -238,11 +228,13 @@ class AdminController extends Controller
     {
         if (Auth::user()->管理 == "管理") {
             $user = User::find($id);
+            $admin_user_count = User::where('管理', '管理')->where('id', '!=', 1)->get()->count();
             if (!$user) {
-                return response()->json(['message' => 'ユーザーが見つかりません'], 404);
-            } else if (User::where('管理', '管理')->get()->count() == 1 && $user->管理 = "管理") {
-                abort(404);
+                return response()->json(['error' => 'ユーザーが見つかりません']);
+            } else if ($admin_user_count == 1 && $user->管理 == "管理") {
+                return response()->json(['error' => '管理者ユーザーは最低1人必要です']);
             }
+
             $user->削除 = "削除";
             $user->name = $user->name . "(削除ユーザー)";
             $user->password = Hash::make($this->generateRandomStr(16));
@@ -254,9 +246,9 @@ class AdminController extends Controller
             if (Auth::user()->id == $id) {
                 Auth::logout();
             }
-            return redirect()->route('adminGet');
+            return response()->json(['success' => 'ユーザーを削除しました']);
         } else {
-            return redirect()->route('topGet');
+            return response()->json(['error' => '管理ユーザーではありません']);
         }
     }
 
@@ -409,7 +401,7 @@ class AdminController extends Controller
     public function admingroupuserPost(Request $request, $id)
     {
         $groupuser_count = $request->input("groupusercount");
-        Group_User::where("グループID",$id)->delete();
+        Group_User::where("グループID", $id)->delete();
         for ($i = 1; $i <= $groupuser_count; $i++) {
             $userid = $request->input("user" . $i);
             $positionid = $request->input("position" . $i);

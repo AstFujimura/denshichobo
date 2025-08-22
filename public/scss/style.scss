@@ -1401,26 +1401,6 @@ a {
   font-weight: bold;
 }
 
-.documenttable {}
-
-.documenttable_header {
-  display: flex;
-  div {
-    background: rgb(245, 227, 217);
-    text-align: center;
-    border-right: solid 1px white;
-    padding: 0.5rem 1rem;
-
-  }
-}
-
-
-
-
-
-.documenttable_body {
-  display: flex;
-}
 
 
 
@@ -1428,29 +1408,14 @@ a {
   width: 3rem;
   text-align: center;
 }
-.documenttable_body{
-  display: flex;
-  &>div {
-    padding: 0.2rem 1rem;
-    text-align: center;
-    border-bottom: solid 1px rgb(215 215 215);
-  }
-}
+
 .documenttable_body .admin_use {
   display: flex;
 }
 
-.admin_document {
-  width: 8rem;
-  text-align: center;
-}
 
 
 
-.admin_position {
-  width: 8rem;
-  text-align: center;
-}
 
 .admin_document_change {
   width: 8rem;
@@ -1471,106 +1436,21 @@ a {
   display: none;
 }
 
-.admin_group_value {
-  width: 100px;
-  height: 30px;
-  border-radius: 4px;
-  border: solid 1px gray;
-  display: none;
-}
 
 .admin_document_text {
   display: none;
 }
 
-.admin_group_text {
-  display: none;
-}
+
 
 .position_open {
   display: flex !important;
 }
 
-.document_open {
-  display: block;
-}
-
-.group_open {
-  display: block;
-}
-
-.docu_check {
-  margin: auto;
-
-}
-
-.docu_change_button {
-  margin: auto;
-  cursor: pointer;
-  background: rgb(105 179 56);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 1rem;
-  width: fit-content;
-  padding: 0.3rem 1rem;
-}
 
 
 
-.docu_change_button:hover {
-  background: rgb(76, 129, 41);
-}
 
-
-
-.docu_delete_button {
-  margin: auto;
-  cursor: pointer;
-  background: #b54a3e;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 1rem;
-  width: fit-content;
-  padding: 0.3rem 1rem;
-}
-
-.docu_delete_button:hover {
-  background: #742f27;
-}
-
-
-.add_document {
-  width: 100px;
-  height: 30px;
-  border-radius: 4px;
-  border: solid 1px gray;
-}
-
-.add_group {
-  width: 100px;
-  height: 30px;
-  border-radius: 4px;
-  border: solid 1px gray;
-}
-
-.docu_addbutton {
-  margin-block: 30px;
-  background: #2ac02a;
-  width: 73px;
-  text-align: center;
-  padding: 3px;
-  border-radius: 3px;
-  color: white;
-  cursor: pointer;
-}
-
-.docu_addbutton:hover {
-  background: #1c881c;
-}
 
 .gr_addbutton {
   margin-block: 30px;
@@ -1587,39 +1467,6 @@ a {
   background: #1c881c;
 }
 
-.document_change_button {
-  margin-block: 2rem;
-  background: #278dd7;
-  width: 10rem;
-  text-align: center;
-  padding: 0.5rem;
-  border-radius: 9px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.4rem;
-}
-
-.document_change_button:hover {
-  background: #18517a;
-}
-
-.group_change_button {
-  margin-block: 2rem;
-  background: #278dd7;
-  width: 10rem;
-  text-align: center;
-  padding: 0.5rem;
-  border-radius: 9px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.4rem;
-}
-
-.group_change_button:hover {
-  background: #18517a;
-}
 
 
 /* グループ_役職設定 */
@@ -1673,226 +1520,8 @@ a {
   align-items: center;
 }
 
-.positiontable_body.position_past {
-  display: flex;
-  flex-direction: column;
-}
-
-.positiontable_body>div {
-  display: flex;
-  justify-content: center;
-  height: 37px;
-  border-bottom: solid 1px rgb(127, 127, 207);
-}
-
-.position_edit_button {
-  margin: auto;
-  cursor: pointer;
-  background: rgb(105 179 56);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 1rem;
-  width: fit-content;
-  padding: 0.3rem 1rem;
-}
-
-.position_edit_button:hover {
-  background: rgb(76, 129, 41);
-}
 
 
-
-.admin_position_delete {
-  width: 100px;
-}
-
-.position_delete_button {
-  margin: auto;
-  cursor: pointer;
-  background: #b54a3e;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 1rem;
-  width: fit-content;
-  padding: 0.3rem 1rem;
-
-}
-
-.position_delete_button:hover {
-  background: #742f27;
-}
-
-.add_position {
-  width: 100px;
-  height: 30px;
-  border-radius: 4px;
-  border: solid 1px gray;
-}
-
-.position_addbutton {
-  margin-block: 30px;
-  background: #2ac02a;
-  width: 73px;
-  text-align: center;
-  padding: 3px;
-  border-radius: 3px;
-  color: white;
-  cursor: pointer;
-}
-
-.position_addbutton:hover {
-  background: #1c881c;
-}
-
-.positiontable_body.new {
-  display: flex;
-  margin-top: 12px;
-  height: 35px;
-  width: 215px;
-}
-
-.position_change_button {
-  margin-block: 2rem;
-  background: #278dd7;
-  width: 10rem;
-  text-align: center;
-  padding: 0.5rem;
-  border-radius: 9px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.4rem;
-}
-
-.position_change_button:hover {
-  background: #18517a;
-}
-
-
-.groupusertable {
-  width: 500px;
-}
-
-.groupusertable_header {
-  display: flex;
-}
-
-.groupusertable_header>div {
-  background: rgb(245, 227, 217);
-  border-right: solid 1px white;
-  text-align: center;
-  height: 35px;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-}
-
-.groupuser_name {
-  width: 33%;
-}
-
-.groupuser_select {
-  width: 90%;
-  height: 26px;
-  border: solid 1px #b8b6b6;
-  border-radius: 3px;
-}
-
-.errorselect {
-  border: solid 1px red !important;
-  background: rgb(255, 234, 238);
-}
-
-.errorselect option {
-  background: white;
-}
-
-.groupuser_position {
-  width: 33%;
-
-}
-
-.groupuser_delete {
-  width: 33%;
-
-}
-
-.groupuser_delete_button {
-  margin: auto;
-  cursor: pointer;
-  background: #b54a3e;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 1rem;
-  width: fit-content;
-  padding: 0.3rem 1rem;
-
-}
-
-.groupuser_delete_button:hover {
-  background: #742f27;
-}
-
-.groupuser_addbutton {
-  margin-block: 30px;
-  background: #2ac02a;
-  width: 73px;
-  text-align: center;
-  padding: 3px;
-  border-radius: 3px;
-  color: white;
-  cursor: pointer;
-  display: inline-block;
-}
-
-.groupuser_change_button {
-  margin-block: 2rem;
-  margin-left: 2rem;
-  background: #278dd7;
-  width: 10rem;
-  text-align: center;
-  padding: 0.5rem;
-  border-radius: 9px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.4rem;
-}
-
-.groupuser_change_button:hover {
-  background: #18517a;
-}
-
-.groupusertable_body {}
-
-.dummy_table {
-  display: none !important;
-}
-
-.groupusertable_tr {
-  display: flex;
-  height: 42px;
-  justify-content: center;
-  align-items: center;
-  border-bottom: solid 1px rgb(127, 127, 207);
-}
-
-.past:hover>div {
-  background: rgb(192, 192, 192);
-  cursor: pointer;
-  border-right: solid 1px rgb(192, 192, 192);
-}
-
-.savemessage {
-  display: none;
-  color: red;
-}
 
 .ui-datepicker-trigger {
   background: #d0d0d0;

@@ -138,7 +138,7 @@ TAMERU ~電子帳簿保存
                 <select name="updater" class="searchinputtext userselectbox">
                     <option></option>
                     @foreach($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    <option value="{{ $user->id }}">{{ $user->表示名 }}</option>
                     @endforeach
                 </select>
             </div>
@@ -147,7 +147,7 @@ TAMERU ~電子帳簿保存
                 <select name="creater" class="searchinputtext userselectbox">
                     <option></option>
                     @foreach($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    <option value="{{ $user->id }}">{{ $user->表示名 }}</option>
                     @endforeach
                 </select>
             </div>
