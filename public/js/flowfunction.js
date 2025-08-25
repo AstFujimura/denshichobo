@@ -2168,13 +2168,7 @@ function pointer_create(pointer_num, pointertext, page) {
     // item_element.attr('width', 100);
     // item_element.attr('height', 30);
 
-    if ($('#preview_test_str_comma' + pointer_num + ':checked').length == 1) {
-      // カンマ区切りの数値を表示
-      item_element.append('<div class="optional_item_text">' + pointertext.toLocaleString() + '</div>')
-    }
-    else {
-      item_element.append('<div class="optional_item_text">' + pointertext + '</div>')
-    }
+    item_element.append('<div class="optional_item_text">' + pointertext + '</div>')
     // fillTextWithWrap(ctx, pointertext, 0, 20, 200, 20); // テキストを改行しながら描画
 
     item_element.css({
