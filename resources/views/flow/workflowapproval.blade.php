@@ -208,16 +208,6 @@ Rapid ~電子承認システム
                                 </div>
                             </div>
                             @endforeach
-                            <!-- <div class="approve_condition_tbody_tr" data-front_point="{{$t_approval->フロントエンド表示ポイント}}">
-                            <div class="approve_condition_td approve_condition_name">
-                                {{$t_approval->name}}
-                            </div>
-                            <div class="approve_condition_td approve_condition_status approve_wait_status">
-                                承認待ち
-                            </div>
-                            <div class="approve_condition_td approve_condition_date">
-                            </div>
-                        </div> -->
                         </div>
                         <div class="approve_flow_status">
                             <div class="view_grid">
