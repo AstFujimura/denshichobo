@@ -115,16 +115,16 @@ Rapid ~電子承認システム
                             <div class="accordion_content accordion_content_open">
                                 <div class="flow_plice_box">
                                     @if ($flow_master->金額下限条件 == 0)
-                                    <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price" value="">円以上
+                                    <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price" value=""> 円 ～
                                     @else
-                                    <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price" value="{{$flow_master->金額下限条件}}">円以上
+                                    <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price" value="{{$flow_master->金額下限条件}}">円 ～
                                     @endif
                                 </div>
                                 <div class="flow_plice_box">
                                     @if ($flow_master->金額上限条件 == 2000000000)
-                                    <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price" value="">円以下
+                                    <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price" value=""> 円
                                     @else
-                                    <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price" value="{{$flow_master->金額上限条件}}">円以下
+                                    <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price" value="{{$flow_master->金額上限条件}}">円
                                     @endif
 
                                 </div>

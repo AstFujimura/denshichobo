@@ -367,7 +367,7 @@ body {
     padding-top: 30px;
     padding-left: 20px;
     z-index: 12;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .left_side_menu_top {
@@ -375,7 +375,10 @@ body {
 }
 
 .left_side_section {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
+    gap: 0.3rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .left_side_content_title {
@@ -404,7 +407,8 @@ body {
 }
 
 .accordion_menu {
-    margin-left: 20px;
+    margin-left: 15px;
+    margin-right: 5px;
 }
 
 .accordion_menu_title {
@@ -452,17 +456,22 @@ body {
 .accordion_content {
     height: 0;
     overflow: hidden;
-    margin-left: 20px;
+    margin-left: 0px;
     transition: all 0.2s;
 }
 
 .accordion_group~.accordion_content_open {
     height: 100px;
     overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #e1e1e1;
 }
 
 .accordion_price~.accordion_content_open {
-    height: 74px;
+    height: 34px;
+    display: flex;
+    justify-content: space-around;
 }
 
 .flow_plice_box {
@@ -474,7 +483,7 @@ body {
     height: 30px;
     border: solid 1px rgb(180, 180, 180);
     border-radius: 3px;
-    width: 126px;
+    width: 75px;
 }
 
 
@@ -496,10 +505,10 @@ body {
     background: #f7f7f7;
     position: fixed;
     right: -300px;
-    padding-top: 50px;
+    padding-top: 30px;
     padding-left: 20px;
     padding-right: 20px;
-    font-size: 12px;
+    font-size: 14px;
     transition: all 0.2s;
     z-index: 12;
     border: solid 6px rgb(161 201 174);
@@ -552,6 +561,9 @@ body {
 .group_container_open {
     padding: 10px;
     height: auto;
+    gap: 0.4rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .group_select {
@@ -580,14 +592,23 @@ body {
     color: white;
 }
 
-.person_content {}
-
+.person_content {
+    gap: 0.2rem;
+    display: flex;
+    flex-direction: column;
+}
 
 
 .person_box {
     display: flex;
     margin-bottom: 2px;
     position: relative;
+    input[type="text"] {
+        border: solid 1px #b1b1b1;
+        border-radius: 3px;
+        padding: 0.2rem;
+    }
+
 }
 
 .person_text {
@@ -629,12 +650,11 @@ body {
 .batsu_button {
     width: 20px;
     text-align: center;
-    background: pink;
-    border: solid 1px red;
+    background: #f99cac;
     margin-left: 4px;
     border-radius: 5px;
     font-weight: bold;
-    color: #530202;
+    color: #6e0000;
     cursor: pointer;
     line-height: 22px;
 }
@@ -911,6 +931,7 @@ body {
     border-radius: 5px;
     color: white;
     font-size: 16px;
+    height: 3rem;
 }
 
 .workflow_submit_button:hover {
@@ -1146,6 +1167,7 @@ body {
         gap: 1rem;
         height: 26rem;
         margin-inline: auto;
+        
 
         .flow_application_title {
             position: sticky;
@@ -1508,14 +1530,15 @@ body {
     text-align: center;
     cursor: pointer;
     margin-inline: 30px;
-    font-weight: bold;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    height: 38px;
-    padding: 0 30px;
+    font-size: 1rem;
+    height: 3rem;
+    padding: 0 4rem;
     position: relative;
+    width: fit-content;
 
     &:hover {
         background: rgb(25, 117, 25);
@@ -2967,6 +2990,7 @@ body {
     gap: 1rem;
     display: flex;
     flex-direction: column;
+
     @media screen and (max-width: 800px) {
         width: 100%;
         height: 3rem;
@@ -2984,7 +3008,7 @@ body {
         text-align: center;
         cursor: pointer;
         justify-content: center;
-    
+
         &:hover {
             background: #3a7a48;
         }
@@ -3003,6 +3027,7 @@ body {
         border-radius: 0.3rem;
         margin-bottom: 1rem;
         justify-content: center;
+
         &:hover {
             background: rgb(151, 10, 10);
         }
@@ -3487,16 +3512,15 @@ body {
 }
 
 .cancel_button {
-    background: rgb(159 159 159);
+    background: rgb(159, 159, 159);
     color: white;
-    width: 88px;
-    font-size: 12px;
-    padding: 7px;
+    font-size: 14px;
+    padding: 0 2rem;
     border-radius: 3px;
     text-align: center;
     cursor: pointer;
     border: none;
-    height: 24px;
+    height: 3rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -3541,6 +3565,12 @@ body {
 
 .approval_setting_button:hover {
     background: rgb(42, 99, 221);
+}
+
+.approval_all_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .approval_setting_container {
@@ -3790,8 +3820,6 @@ body {
 }
 
 .preview_control_items {
-    padding-top: 1rem;
-    max-height: 50%;
     overflow-y: auto;
 
     @media (max-width: 1400px) {
@@ -3853,7 +3881,8 @@ body {
     margin-inline: auto;
     align-items: center;
     height: 40px;
-    .preview_test_str_comma{
+
+    .preview_test_str_comma {
         font-size: 0.8rem;
         display: flex;
         flex-direction: column;
