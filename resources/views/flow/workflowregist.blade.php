@@ -95,10 +95,10 @@ Rapid ~電子承認システム
                             </div>
                             <div class="accordion_content accordion_content_open">
                                 <div class="flow_plice_box">
-                                    <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price">円以上
+                                    <input type="number" class="flow_plice_text" id="start_flow_price" name="start_flow_price">円 ～
                                 </div>
                                 <div class="flow_plice_box">
-                                    <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price">円未満
+                                    <input type="number" class="flow_plice_text" id="end_flow_price" name="end_flow_price">円
                                 </div>
                             </div>
 
