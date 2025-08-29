@@ -206,6 +206,16 @@ class CardController extends Controller
         $notdesignate_branch = Branch::where('会社ID', $company_id)
             ->where('拠点指定', 0)
             ->first();
+        if (!$notdesignate_branch) {
+            $notdesignate_branch = new Branch();
+            $notdesignate_branch->会社ID = $company_id;
+            $notdesignate_branch->拠点名 = $company->会社名;
+            $notdesignate_branch->拠点所在地 = "";
+            $notdesignate_branch->電話番号 = "";
+            $notdesignate_branch->FAX番号 = "";
+            $notdesignate_branch->拠点指定 = 0;
+            $notdesignate_branch->save();
+        }
 
         foreach ($delete_branches as $delete_branch) {
             Card::where('拠点ID', $delete_branch->id)
