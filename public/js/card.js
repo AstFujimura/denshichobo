@@ -1432,7 +1432,6 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.Type.startsWith('image/')) {
                         img.attr('src', response.path);
-                        img.addClass(addclass);
                     }
 
 
