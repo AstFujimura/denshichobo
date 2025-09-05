@@ -427,6 +427,8 @@ class CardController extends Controller
             ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
             ->where('card_department.名刺ID', $id)
             ->get();
+        $branch = Branch::where('id', $card->拠点ID)->first();
+        $card->branch = $branch;
         $card->department = $department;
         return response()->json($card);
     }

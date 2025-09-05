@@ -1141,8 +1141,9 @@ $(document).ready(function () {
                 success: function (response) {
                     console.log(response)
                     card_detail_renew(response)
-                    designateload($('.card_detail_card .imgset[data-front="front"]'))
-                    designateload($('.card_detail_card .imgset[data-front="back"]'))
+                    designateload($('.card_detail_card [data-front="front"]'))
+                    $('.card_detail_card [data-front="back"]').attr('src', '')
+                    designateload($('.card_detail_card [data-front="back"]'))
                 }
             });
 
@@ -1196,14 +1197,25 @@ $(document).ready(function () {
         function card_detail_renew(response) {
             $('#name').text(response.名前);
             $('#name_kana').text(response.名前カナ);
+            $('#phone_number').attr('href', 'tel:' + response.携帯電話番号);
             $('#phone_number').text(response.携帯電話番号);
+            $('#email').attr('href', 'mailto:' + response.メールアドレス);
             $('#email').text(response.メールアドレス);
             $('#note').text(response.備考);
             $('#company_name').text(response.会社名);
+            $('#company_name').attr('href', prefix + '/card/company/edit/' + response.会社ID);
             $('#company_name_kana').text(response.会社名カナ);
-            $('#company_address').text(response.会社所在地);
-            $('#company_phone_number').text(response.電話番号);
-            $('#company_fax_number').text(response.FAX番号);
+            if (response.branch.拠点指定 == 1) {
+                $('#branch_name').text(response.branch.拠点名);
+            }
+            else {
+                $('#branch_name').text('');
+            }
+            $('#company_address').text(response.branch.拠点所在地);
+            $('#company_phone_number').attr('href', 'tel:' + response.branch.電話番号);
+            $('#company_phone_number').text(response.branch.電話番号);
+            $('#company_fax_number').attr('href', 'tel:' + response.branch.FAX番号);
+            $('#company_fax_number').text(response.branch.FAX番号);
             $('#position').text(response.役職);
 
 
@@ -1427,6 +1439,7 @@ $(document).ready(function () {
                 },
                 error: function (xhr, status, error) {
                     console.error(error); // エラー処理
+                    img.attr('src', prefix + '/img/card/default.png');
                 }
             });
         }

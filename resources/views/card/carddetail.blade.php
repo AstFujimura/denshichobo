@@ -147,9 +147,9 @@
                         <div class="personal_info_content_title">
                             メールアドレス
                         </div>
-                        <div class="personal_info_content_text" id="email">
+                        <a href="mailto:{{ $now_card->メールアドレス }}" class="personal_info_content_text" id="email">
                             {{ $now_card->メールアドレス }}
-                        </div>
+                        </a>
                     </div>
                     <div class="personal_info_content">
                         <div class="personal_info_content_title">
