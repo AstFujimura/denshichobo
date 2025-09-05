@@ -1346,63 +1346,77 @@ $(document).ready(function () {
     // data-card_idから画像を読み込んで出力
     // addclassにはその要素に対してクラスを追加
     function lazyload(addclass) {
-        var prefix = $('#prefix').val();
-        // 名刺一覧画面の画像読み込み(addclassがあれば読み込まない)
-        $('img.lazyload:not(.' + addclass + ')').each(function () {
-            // 親要素のdata-showがfalseなら読み込まない
-            if ($(this).closest('.card_view_card').attr('data-show') == "false") {
-                return
-            }
-            else {
-                var img = $(this);
-                if ($('#server').val() == "cloud") {
+        const prefix = $('#prefix').val();
+        const server = $('#server').val();
+    
+        // IntersectionObserver を使って、画面に入ったときだけ処理
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return; // 画面外なら無視
+    
+                const img = $(entry.target);
+    
+                // data-show="false" の場合は読み込まない
+                if (img.closest('.card_view_card').attr('data-show') === "false") {
+                    obs.unobserve(entry.target);
+                    return;
+                }
+    
+                const cardId = img.data('card_id');
+                const front = img.data('front');
+    
+                if (server === "cloud") {
+                    // cloud モード → サーバーから JSON で署名付きURLが返る
                     $.ajax({
-                        url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
+                        url: `${prefix}/card/img/${cardId}/${front}`,
                         method: 'GET',
                         dataType: "json",
                         success: function (response) {
-                            if (response.Type === 'application/pdf') {
-                                // var embed = $('<embed>');
-                                // embed.attr('src', response.path);
-                                // embed.attr('width', '100%');
-                                // embed.attr('height', '600px');
-                                // embed.attr('type', 'application/pdf');
-                                // embed.addClass('imgset');
-
-                                // $('.pastpreview').html(embed);
-                            }
-                            else if (response.Type.startsWith('image/')) {
-                                img.attr('src', response.path);
+                            if (response.Type && response.Type.startsWith('image/')) {
+                                img.attr('src', response.path); // 署名付きURLをそのまま使う
                                 img.addClass(addclass);
+                            } else if (response.Type === 'application/pdf') {
+                                // PDF の場合は別処理（必要なら）
                             }
+                        },
+                        error: function () {
+                            img.attr('src', prefix + '/img/card/default.png'); // エラー時の代替画像
                         }
                     });
-                }
-                else {
+                } else {
+                    // ローカルなど → バイナリが返ってくる
                     $.ajax({
-                        url: prefix + '/card/img/' + img.data('card_id') + '/' + img.data('front'), // データを取得するURLを指定
+                        url: `${prefix}/card/img/${cardId}/${front}`,
                         method: 'GET',
-                        xhrFields: {
-                            responseType: 'blob' // ファイルをBlobとして受け取る
-                        },
+                        xhrFields: { responseType: 'blob' },
                         success: function (response) {
-                            var Url = URL.createObjectURL(response);
                             if (response.type.startsWith('image/')) {
+                                const Url = URL.createObjectURL(response);
                                 img.attr('src', Url);
                                 img.addClass(addclass);
+    
+                                // 読み込み完了後にメモリ解放
+                                img.on('load', () => URL.revokeObjectURL(Url));
                             }
-
-
                         },
-                        error: function (xhr, status, error) {
-                            console.error(error); // エラー処理
+                        error: function () {
+                            img.attr('src', prefix + '/img/card/default.png');
                         }
                     });
-
                 }
-            }
+    
+                obs.unobserve(entry.target); // 一度読み込んだら監視解除
+            });
+        }, {
+            rootMargin: '100px' // 少し余裕をもってロード
+        });
+    
+        // lazyload クラスがついていて、まだ addclass が付いてない要素を監視対象にする
+        $('img.lazyload:not(.' + addclass + ')').each(function () {
+            observer.observe(this);
         });
     }
+    
     // 一覧画面において他のユーザーの名刺があるかどうかをチェック
     function other_user_card_check(user_id) {
         var prefix = $('#prefix').val();
