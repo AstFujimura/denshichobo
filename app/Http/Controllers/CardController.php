@@ -153,6 +153,7 @@ class CardController extends Controller
                 ORDER BY 最新フラグ DESC, cards.id ASC
             ) as row_num')
             )
+            ->where('削除','!=','削除')
             ->where('cards.ユーザーID', '!=', $user_id)
             ->orderBy('名刺ユーザーID', 'asc')
             ->orderBy('最新フラグ', 'desc')
