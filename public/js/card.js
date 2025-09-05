@@ -1430,9 +1430,9 @@ $(document).ready(function () {
                 method: 'GET',
                 dataType: "json",
                 success: function (response) {
-                    var Url = URL.createObjectURL(response);
-                    if (response.type.startsWith('image/')) {
-                        img.attr('src', Url);
+                    if (response.Type.startsWith('image/')) {
+                        img.attr('src', response.path);
+                        img.addClass(addclass);
                     }
 
 
