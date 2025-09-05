@@ -1444,7 +1444,10 @@ $(document).ready(function () {
                 method: 'GET',
                 dataType: "json",
                 success: function (response) {
-                    if (response.Type.startsWith('image/')) {
+                    // if (response.Type.startsWith('image/')) {
+                    //     img.attr('src', response.path);
+                    // }
+                    if (response.Type && typeof response.Type === 'string' && response.Type.startsWith('image/')) {
                         img.attr('src', response.path);
                     }
 
