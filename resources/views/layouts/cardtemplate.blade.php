@@ -36,7 +36,7 @@
 <header class="header001">
     <div class="logo01">
         <a href="{{route('cardviewget')}}" class="logoelement01" id="cardtemplate">
-            名刺管理システム
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge_logo.svg') }}" alt="Rapid" class="readbridge_logo">
         </a>
 
         @if (App\Models\Version::where('tameru', true)->first())

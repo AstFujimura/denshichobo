@@ -36,7 +36,9 @@
         </a>
         @endif
         @if (App\Models\Version::where('名刺', true)->first())
-        <a href="{{route('cardviewget')}}" class="tameru_banner">名</a>
+        <a href="{{route('cardviewget')}}" class="tameru_banner">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge_logo_only.svg') }}" alt="TAMERU">
+        </a>
         @endif
         
         @if (App\Models\Version::where('スケジュール', true)->first())
