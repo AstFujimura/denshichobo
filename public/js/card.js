@@ -875,6 +875,8 @@ $(document).ready(function () {
                     lazyload('imgset');
 
                     tab_change($('.tab_item_active').data('tab'));
+                    var user_id = $('#user_id').val();
+                    other_user_card_check(user_id);
                     page++;
                 },
                 complete: function() {
