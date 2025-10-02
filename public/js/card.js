@@ -819,22 +819,73 @@ $(document).ready(function () {
         $('.card_view_excel_button').on('click', function () {
             var form = $('#card_view_excel_form');
 
-            // card_view_card のdata-showがtrueのものを配列で取得して送信
-            var card_view_card = $('.card_view_card[data-show="true"]');
-            var card_view_card_array = [];
-            console.log(card_view_card);
-            card_view_card.each(function () {
-                card_view_card_array.push($(this).find('img[data-front="front"]').attr('data-card_id'));
-            });
-            console.log(card_view_card_array);
-            form.find('input[name="card_view_card_array"]').val(JSON.stringify(card_view_card_array));
-
+            form.find('input[name="search"]').val($('.search_input').val());
+            form.find('input[name="start_date"]').val($('#start_date').val());
+            form.find('input[name="end_date"]').val($('#end_date').val());
+            form.find('input[name="sort"]').val($('#sort_select').val());
+        
             form.submit();
         });
 
 
         var prefix = $('#prefix').val();
         lazyload('imgset');
+
+        let page = 1;
+        let loading = false;
+        let hasMore = true;
+        let currentSort = 1; // デフォルトはユーザー名順
+        let currentSearch = '';
+        let currentStart = '';
+        let currentEnd = '';
+        
+        $(window).on('scroll', function() {
+            // すでに読み込み中なら二重呼び出ししない
+            if (loading || !hasMore) return;
+
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                loadMoreCards();
+            }
+        });
+
+        function loadMoreCards() {
+            if (loading || !hasMore) return;
+            loading = true;
+        
+            $.ajax({
+                url: prefix + '/card/cardview',
+                method: 'GET',
+                data: {
+                    page: page,
+                    sort: currentSort,
+                    search: currentSearch,
+                    start_date: currentStart,
+                    end_date: currentEnd
+                },
+                success: function(res) {
+                    if ($.trim(res.html) === '') {
+                        hasMore = false;
+                        $('.card_view_header_count_text_my').text(res.myCount); // 件数を更新
+                        $('.card_view_header_count_text_total').text(res.total); // 件数を更新
+                        return;
+                    }
+                    $('#card-list').append(res.html);
+                    $('.card_view_header_count_text_my').text(res.myCount); // 件数を更新
+                    $('.card_view_header_count_text_total').text(res.total); // 件数を更新
+                    lazyload('imgset');
+
+                    tab_change($('.tab_item_active').data('tab'));
+                    page++;
+                },
+                complete: function() {
+                    loading = false;
+                }
+            });
+        }
+
+
+
+
 
         var user_id = $('#user_id').val();
         other_user_card_check(user_id);
@@ -852,36 +903,11 @@ $(document).ready(function () {
 
         // 並び替えを押したとき
         $('#sort_select').on('change', function () {
-            const sortType = $(this).val();
-            const $container = $('.card_view_container');
-
-            // aタグの配列を取得
-            let cards = $container.find('.card_view_card').get();
-
-            cards.sort(function (a, b) {
-                let valA, valB;
-                if (sortType === '1') {
-                    valA = $(a).data('name_kana');
-                    valB = $(b).data('name_kana');
-                } else if (sortType === '2') {
-                    valA = $(a).data('company_name');
-                    valB = $(b).data('company_name');
-                } else if (sortType === '3') {
-                    valA = $(a).data('card_created_at');
-                    valB = $(b).data('card_created_at');
-                } else if (sortType === '4') {
-                    valA = $(a).data('card_updated_at');
-                    valB = $(b).data('card_updated_at');
-                } else {
-                    return 0; // 並び替えなし
-                }
-                // localeCompareで日本語にも対応
-                return valA.localeCompare(valB, 'ja');
-            });
-
-            // 並び替えた要素を再配置
-            $container.append(cards);
-            search_card();
+            currentSort = $(this).val();
+            page = 1;
+            hasMore = true;
+            $('#card-list').empty(); // 一覧クリア
+            loadMoreCards(); // 並び替え条件付きで再取得
         });
         // 表示タイプを押したとき
         $('input[name="view_type"]').on('change', function () {
@@ -933,55 +959,32 @@ $(document).ready(function () {
 
         // 検索文字と登録年月日で名刺を絞り込む
         function search_card() {
-            var search_text = $('.search_input').val();
-            $('.search_card').removeClass('search_card');
-            $('.none_search_card').removeClass('none_search_card');
-            $('.card_view_card').each(function () {
-                if ($(this).text().includes(search_text)) {
-                    $(this).addClass('search_card');
-
-                    var start_date_str = $('#start_date').val() || '1900/01/01';
-                    var end_date_str = $('#end_date').val() || '2100/12/31';
-
-                    // 日付文字列を Date オブジェクトに変換（スラッシュとハイフンの違いを統一）
-                    var start_date = new Date(start_date_str.replace(/\//g, '-'));
-                    var end_date = new Date(end_date_str.replace(/\//g, '-'));
-
-                    var card_created_at_str = $(this).data('card_created_at'); // 例: "2025-08-25 10:25:52"
-                    // 時間部分を切り離して日付だけをDateに変換する場合
-                    var card_date = new Date(card_created_at_str.split(' ')[0]);
-
-                    if (card_date >= start_date && card_date <= end_date) {
-                        $(this).addClass('search_card');
-                        $(this).removeClass('none_search_card');
-                    } else {
-                        $(this).addClass('none_search_card');
-                        $(this).removeClass('search_card');
-                    }
-
-                }
-                else {
-                    $(this).addClass('none_search_card');
-                }
+            currentSearch = $('.search_input').val();
+            currentStart = $('#start_date').val();
+            currentEnd = $('#end_date').val();
+        
+            // リセットして再検索
+            page = 1;
+            hasMore = true;
+            $('#card-list').empty();
+            loadMoreCards();
 
 
-            });
-            card_view_header_count_text_update();
+            // card_view_header_count_text_update();
         }
 
 
         if ($('.card_view_header_count_text').length > 0) {
-            card_view_header_count_text_update();
+            // card_view_header_count_text_update();
         }
-        function card_view_header_count_text_update() {
-            $('.card_view_header_count_text').text($('.card_view_card[data-show="true"]:not(.none_search_card)').length);
-        }
+        // function card_view_header_count_text_update() {
+        //     $('.card_view_header_count_text').text($('.card_view_card[data-show="true"]:not(.none_search_card)').length);
+        // }
 
-        // 名刺の種類のタブを切り替えた時
-        $(document).on('click', '.tab_item:not(.tab_item_active)', function () {
-            $('.tab_item').removeClass('tab_item_active');
-            $(this).addClass('tab_item_active');
-            if ($(this).data('tab') == 'my_card_user') {
+        function tab_change(tab) {
+            if (tab == 'my_card_user') {
+                $('.card_view_header_count_text_my').show();
+                $('.card_view_header_count_text_total').hide();
                 $('.card_view_card').each(function () {
                     if ($(this).attr('data-my_card_user') == "true") {
                         $(this).data('show', "true");
@@ -993,7 +996,7 @@ $(document).ready(function () {
                     }
                 });
             }
-            else if ($(this).data('tab') == 'favorite_user') {
+            else if (tab == 'favorite_user') {
                 $('.card_view_card').each(function () {
                     if ($(this).attr('data-favorite_user') == "true") {
                         $(this).data('show', "true");
@@ -1008,10 +1011,19 @@ $(document).ready(function () {
             else {
                 $('.card_view_card').data('show', "true");
                 $('.card_view_card').attr('data-show', "true");
+                $('.card_view_header_count_text_my').hide();
+                $('.card_view_header_count_text_total').show();
 
             }
+
+        }
+        // 名刺の種類のタブを切り替えた時
+        $(document).on('click', '.tab_item:not(.tab_item_active)', function () {
+            $('.tab_item').removeClass('tab_item_active');
+            $(this).addClass('tab_item_active');
+            tab_change($(this).data('tab'));
             lazyload('imgset');
-            card_view_header_count_text_update();
+            // card_view_header_count_text_update();
         });
 
 

@@ -64,29 +64,31 @@ class CardController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        $userId = Auth::user()->id;
-        // ログインユーザーのカードが存在するかチェック
-        $hasUserCards = DB::table('cards')
-            ->where('ユーザーID', $userId)
-            ->exists();
+        $userId = Auth::id();
 
-        // サブクエリ: 各 carduser についてログインユーザーのカードを優先して最新を取る
+        $perPage = 50;
+        $page = $request->input('page', 1);
+
+        // サブクエリ
         $sub = DB::table('cards')
             ->select(
                 'cards.*',
                 DB::raw("
-            ROW_NUMBER() OVER (
-                PARTITION BY 名刺ユーザーID
-                ORDER BY
-                    CASE WHEN ユーザーID = {$userId} THEN 1 ELSE 0 END DESC,
-                    最新フラグ DESC,
-                    id ASC
-            ) as row_num
-        ")
+                    ROW_NUMBER() OVER (
+                        PARTITION BY 名刺ユーザーID
+                        ORDER BY
+                            CASE WHEN ユーザーID = {$userId} THEN 1 ELSE 0 END DESC,
+                            最新フラグ DESC,
+                            id ASC
+                    ) as row_num
+                ")
             );
+        $sort = $request->input('sort', 1);
+        $search = $request->input('search', '');
+        $start_date = $request->input('start_date') ?: '1900-01-01';
+        $end_date   = $request->input('end_date')   ?: '2100-12-31';
 
-        // メインクエリ
-        $cardusers = DB::table('cardusers')
+        $query = DB::table('cardusers')
             ->select(
                 'cardusers.id as carduser_id',
                 'cardusers.表示名',
@@ -98,33 +100,74 @@ class CardController extends Controller
             )
             ->joinSub($sub, 'latest_cards', function ($join) {
                 $join->on('cardusers.id', '=', 'latest_cards.名刺ユーザーID')
-                    ->where('latest_cards.row_num', '=', 1); // 各名刺ユーザーの優先順位1位だけ
+                    ->where('latest_cards.row_num', '=', 1);
             })
-            ->leftJoin('companies', 'latest_cards.会社ID', '=', 'companies.id')
-            ->orderBy('cardusers.表示名カナ', 'asc')
-            ->get();
-        foreach ($cardusers as $carduser) {
-            $departments = DB::table('card_department')
-                ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
-                ->leftJoin('cards', 'card_department.名刺ID', '=', 'cards.id')
-                ->where('cards.id', $carduser->card_id)
-                ->orderBy('cards.id', 'desc')
-                ->get();
-            $carduser->departments = $departments;
+            ->leftJoin('companies', 'latest_cards.会社ID', '=', 'companies.id');
 
+        // 検索条件
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('cardusers.表示名', 'like', "%{$search}%")
+                    ->orWhere('cardusers.表示名カナ', 'like', "%{$search}%")
+                    ->orWhere('companies.会社名', 'like', "%{$search}%")
+                    ->orWhere('companies.会社名カナ', 'like', "%{$search}%");
+            });
+        }
+
+        $query->whereBetween('latest_cards.created_at', [$start_date, $end_date]);
+
+        // ソート条件
+        if ($sort == 1) {
+            $query->orderBy('cardusers.表示名カナ', 'asc');
+        } elseif ($sort == 2) {
+            $query->orderBy('companies.会社名カナ', 'asc');
+        } elseif ($sort == 3) {
+            $query->orderBy('latest_cards.created_at', 'desc');
+        } elseif ($sort == 4) {
+            $query->orderBy('latest_cards.updated_at', 'desc');
+        }
+        $totalCount = $query->count(); // 検索条件に合致する総件数
+
+        // マイ名刺件数（ユーザーIDが自分のもの）
+        $myCount = (clone $query)->where('latest_cards.ユーザーID', $userId)->count();
+
+        $cardusers = $query
+            ->skip(($page - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+
+        // 部署をまとめて取得（N+1防止）
+        $deptMap = DB::table('card_department')
+            ->leftJoin('departments', 'card_department.部署ID', '=', 'departments.id')
+            ->get()
+            ->groupBy('名刺ID');
+
+        foreach ($cardusers as $carduser) {
+            $carduser->departments = $deptMap->get($carduser->card_id) ?? collect();
 
             $carduser_user = Carduser_User::where('名刺ユーザーID', $carduser->carduser_id)
-                ->where('ユーザーID', Auth::user()->id)
+                ->where('ユーザーID', $userId)
                 ->first();
-            if ($carduser->ユーザーID == Auth::user()->id) {
-                $carduser->マイ名刺ユーザー = "true";
-            } else {
-                $carduser->マイ名刺ユーザー = "false";
-            }
-            $carduser->お気に入りユーザー = $carduser_user->お気に入りユーザー ?? null == 1 ? "true" : "false";
+
+            $carduser->マイ名刺ユーザー = ($carduser->ユーザーID == $userId) ? "true" : "false";
+            $carduser->お気に入りユーザー = ($carduser_user && $carduser_user->お気に入りユーザー == 1) ? "true" : "false";
         }
-        return view('card.cardview', compact("prefix", "server", "cardusers"));
+
+        // Ajaxなら部分ビューだけ返す
+        if ($request->ajax()) {
+            // return view('card.partials.cardlist', compact('cardusers'));
+            return response()->json([
+                'html' => view('card.partials.cardlist', compact('cardusers'))->render(),
+                'total' => $totalCount,
+                'myCount' => $myCount,
+            ]);
+        }
+
+        // 初回ロードはフルビュー
+        return view('card.cardview', compact("prefix", "server", "cardusers", "totalCount", "myCount"));
     }
+
     public function cardviewsizeget($size)
     {
         $user = User::find(Auth::user()->id);
@@ -153,7 +196,7 @@ class CardController extends Controller
                 ORDER BY 最新フラグ DESC, cards.id ASC
             ) as row_num')
             )
-            ->where('削除','!=','削除')
+            ->where('削除', '!=', '削除')
             ->where('cards.ユーザーID', '!=', $user_id)
             ->orderBy('名刺ユーザーID', 'asc')
             ->orderBy('最新フラグ', 'desc')
@@ -343,8 +386,7 @@ class CardController extends Controller
                 $now_card = $card;
                 $card->表示最新フラグ = 1;
                 $now_card_flag = true;
-            }
-            else if ($card->ユーザーID != Auth::id()) {
+            } else if ($card->ユーザーID != Auth::id()) {
                 // 他人の名刺の場合
                 $card->表示最新フラグ = 2;
                 $other_card = $card;
@@ -352,8 +394,7 @@ class CardController extends Controller
                     $now_card = $other_card;
                     $now_card_flag = true;
                 }
-            }
-            else {
+            } else {
                 $card->表示最新フラグ = 0;
             }
         }
@@ -2395,7 +2436,57 @@ class CardController extends Controller
         $worksheet = $spreadsheet->getActiveSheet();
 
         $row = 3;
-        $cards = Card::whereIn('id', $cardIds)->get();
+        // $cards = Card::whereIn('id', $cardIds)->get();
+        $search     = $request->input('search', '');
+        $start_date = $request->input('start_date') ?: '1900-01-01';
+        $end_date   = $request->input('end_date')   ?: '2100-12-31';
+        $sort       = $request->input('sort', '1'); // デフォルト: 名前順
+        // サブクエリ: 名刺ユーザーごとに最新カード1件をROW_NUMBERで抽出
+        $sub = DB::table('cards')
+            ->select(
+                'cards.*',
+                DB::raw("ROW_NUMBER() OVER (
+        PARTITION BY 名刺ユーザーID
+        ORDER BY 最新フラグ DESC, id ASC
+    ) as row_num")
+            );
+
+        // メインクエリ
+        $query = DB::table('cardusers')
+            ->select(
+                'cardusers.id as carduser_id',
+                'cardusers.表示名',
+                'latest_cards.*',
+                'companies.*'
+            )
+            ->joinSub($sub, 'latest_cards', function ($join) {
+                $join->on('cardusers.id', '=', 'latest_cards.名刺ユーザーID')
+                    ->where('latest_cards.row_num', 1);
+            })
+            ->leftJoin('companies', 'latest_cards.会社ID', '=', 'companies.id')
+            ->whereBetween('latest_cards.created_at', [$start_date, $end_date]);
+
+        // 検索条件
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('cardusers.表示名', 'like', "%$search%")
+                    ->orWhere('companies.会社名', 'like', "%$search%");
+            });
+        }
+
+        // ソート
+        if ($sort === '1') {
+            $query->orderBy('cardusers.表示名カナ');
+        } elseif ($sort === '2') {
+            $query->orderBy('companies.会社名カナ');
+        } elseif ($sort === '3') {
+            $query->orderBy('latest_cards.created_at');
+        } elseif ($sort === '4') {
+            $query->orderBy('latest_cards.updated_at');
+        }
+
+        $cards = $query->get();
+
         foreach ($cards as $card) {
             $card_department = Card_Department::where('名刺ID', $card->id)->pluck('部署ID')->toArray();
             $departments = Department::whereIn('id', $card_department)->pluck('部署名');
