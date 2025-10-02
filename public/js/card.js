@@ -1440,6 +1440,9 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response);
                 response.forEach(function (card) {
+                    if ($('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]').length > 0) {
+                        return;
+                    }
                     $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]').removeClass('display_none');
                     $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"] .other_user_list').append(
                         `<span class="other_user_list_item">${card.表示名}</span>`);
