@@ -1440,7 +1440,7 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response);
                 response.forEach(function (card) {
-                    if ($('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]').length > 0) {
+                    if ($('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]:not(.display_none)').length > 0) {
                         return;
                     }
                     $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]').removeClass('display_none');
