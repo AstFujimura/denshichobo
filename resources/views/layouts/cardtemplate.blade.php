@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
     <title>@yield('title')</title>
-    <link rel="icon" href="{{ asset(config('prefix.prefix').'/'.'icon/favicon.ico') }}" id="favicon">
+    <link rel="icon" href="{{ asset(config('prefix.prefix').'/'.'icon/readbridge.ico') }}" id="favicon">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin01.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin001.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
@@ -36,22 +36,27 @@
 <header class="header001">
     <div class="logo01">
         <a href="{{route('cardviewget')}}" class="logoelement01" id="cardtemplate">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge_logo.svg') }}" alt="Rapid" class="readbridge_logo">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge_logo_only.svg') }}" alt="Rapid" class="readbridge_logo">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge.svg') }}" alt="Rapid" class="readbridge_char">
         </a>
 
         @if (App\Models\Version::where('tameru', true)->first())
         <a href="{{route('topGet')}}" class="tameru_banner"><img
                 src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
-        @endif
+        @endif        
         @if (App\Models\Version::where('フロー', true)->first())
         <a href="{{route('workflow')}}" class="tameru_banner">
             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapid_logo_only.svg') }}" alt="TAMERU">
         </a>
         @endif
+        @if (App\Models\Version::where('スケジュール', true)->first())
+        <a href="{{route('topGet')}}" class="tameru_banner"><img
+                src="{{ asset(config('prefix.prefix').'/'.'img/header/skett_logo_only.svg') }}" alt="TAMERU"></a>
+        @endif
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
-    <span class="version">ver.5.7.0</span>
+    <span class="version">ver.5.9.0</span>
 </header>
 <div class="menu001">
 

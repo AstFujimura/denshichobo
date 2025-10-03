@@ -9,12 +9,13 @@
 
 .container {
   max-width: 600px;
+  margin-inline: auto;
 }
 
 .card {
   border-radius: 5px;
   box-shadow: 0px 0px 5px #ccc;
-  margin-top: 20px;
+  margin-top: 25%;
 }
 
 .card-header {
@@ -23,14 +24,27 @@
   padding: 10px 20px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+
+  &.readbridge_card_header {
+    background-color: #104577;
+  }
 }
 
 .card-body {
   padding: 20px;
+
+  #loginForm {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 20rem;
+  }
 }
 
 .form-group {
   margin-bottom: 20px;
+  gap: 0.4rem;
+  display: flex;
+  flex-direction: column;
 }
 
 label {
@@ -43,24 +57,47 @@ label {
   border-radius: 5px;
   border: none;
   outline: none;
-
   color: #FFFFFF;
   background-color: #76a861;
   border-color: #76a861;
-  padding: 10px 20px;
+  padding: 0.6rem 4rem;
   font-size: 16px;
   font-weight: bold;
+  width: fit-content;
+  margin-inline: auto;
+  cursor: pointer;
+  &:hover {
+    background-color: #3b8a1c;
+    border-color: #3b8a1c;
+  }
+  &.readbridge_btn {
+    background-color: #104577;
+    border-color: #104577;
+    &:hover {
+      background-color: #0c3052;
+      border-color: #0c3052;
+    }
+  }
 }
 
-.btn-primary:hover {
-
-  background-color: #3b8a1c;
-  border-color: #3b8a1c;
-
-}
 
 .alert {
   color: red;
+}
+
+.produced_by {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+
+  a {
+    color: #666;
+  }
+
+  a:hover {
+    color: #3e8db9;
+  }
 }
 
 .start_choice_container {
@@ -75,11 +112,13 @@ label {
   margin-inline: auto;
   min-width: 40rem;
   height: 20rem;
+
   @media screen and (max-width: 800px) {
     flex-direction: column;
     max-width: 90%;
     min-width: 0;
   }
+
   .start_choice_element {
     background-color: #f3f3f3;
     border-radius: 10px;
@@ -95,16 +134,19 @@ label {
     justify-content: center;
 
     &:hover {
-      background-color: #91d7ff;
+      box-shadow: 0px 0px 9px #3e8db9;
       color: white;
     }
-    .rapid_logo{
-    width: 8rem;
-    }
-    .tameru_logo{
+
+    .rapid_logo {
       width: 8rem;
     }
-    .readbridge_logo{
+
+    .tameru_logo {
+      width: 8rem;
+    }
+
+    .readbridge_logo {
       width: 8rem;
     }
   }

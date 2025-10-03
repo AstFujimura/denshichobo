@@ -37,7 +37,7 @@
         @endif
         @if (App\Models\Version::where('名刺', true)->first())
         <a href="{{route('cardviewget')}}" class="tameru_banner">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge_logo_only.svg') }}" alt="TAMERU">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge_icon.svg') }}" alt="Readbridge">
         </a>
         @endif
         
@@ -50,7 +50,7 @@
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
     
-    <span class="version">ver.5.7.0</span>
+    <span class="version">ver.5.9.0</span>
 
 </header>
 <div class="menu001">

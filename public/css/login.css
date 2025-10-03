@@ -8,12 +8,13 @@
 
 .container {
   max-width: 600px;
+  margin-inline: auto;
 }
 
 .card {
   border-radius: 5px;
   box-shadow: 0px 0px 5px #ccc;
-  margin-top: 20px;
+  margin-top: 25%;
 }
 
 .card-header {
@@ -23,13 +24,24 @@
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
+.card-header.readbridge_card_header {
+  background-color: #104577;
+}
 
 .card-body {
   padding: 20px;
 }
+.card-body #loginForm {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 20rem;
+}
 
 .form-group {
   margin-bottom: 20px;
+  gap: 0.4rem;
+  display: flex;
+  flex-direction: column;
 }
 
 label {
@@ -45,18 +57,41 @@ label {
   color: #FFFFFF;
   background-color: #76a861;
   border-color: #76a861;
-  padding: 10px 20px;
+  padding: 0.6rem 4rem;
   font-size: 16px;
   font-weight: bold;
+  width: fit-content;
+  margin-inline: auto;
+  cursor: pointer;
 }
-
 .btn-primary:hover {
   background-color: #3b8a1c;
   border-color: #3b8a1c;
 }
+.btn-primary.readbridge_btn {
+  background-color: #104577;
+  border-color: #104577;
+}
+.btn-primary.readbridge_btn:hover {
+  background-color: #0c3052;
+  border-color: #0c3052;
+}
 
 .alert {
   color: red;
+}
+
+.produced_by {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
+.produced_by a {
+  color: #666;
+}
+.produced_by a:hover {
+  color: #3e8db9;
 }
 
 .start_choice_container {
@@ -94,7 +129,7 @@ label {
   justify-content: center;
 }
 .start_choice_container .start_choice_element:hover {
-  background-color: #91d7ff;
+  box-shadow: 0px 0px 9px #3e8db9;
   color: white;
 }
 .start_choice_container .start_choice_element .rapid_logo {
