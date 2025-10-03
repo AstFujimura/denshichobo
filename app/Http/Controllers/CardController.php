@@ -126,7 +126,6 @@ class CardController extends Controller
         } elseif ($sort == 4) {
             $query->orderBy('latest_cards.updated_at', 'desc');
         }
-        $query->distinct(); // 念のため
         $totalCount = $query->count(); // 検索条件に合致する総件数
 
         // マイ名刺件数（ユーザーIDが自分のもの）
