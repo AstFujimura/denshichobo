@@ -831,7 +831,7 @@ $(document).ready(function () {
         var prefix = $('#prefix').val();
         lazyload('imgset');
 
-        let page = 1;
+        let page = 2;
         let loading = false;
         let hasMore = true;
         let currentSort = 1; // デフォルトはユーザー名順

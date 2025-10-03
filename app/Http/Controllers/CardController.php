@@ -66,7 +66,7 @@ class CardController extends Controller
         $server = config('prefix.server');
         $userId = Auth::id();
 
-        $perPage = 50;
+        $perPage = 200;
         $page = $request->input('page', 1);
 
         // サブクエリ
@@ -126,6 +126,7 @@ class CardController extends Controller
         } elseif ($sort == 4) {
             $query->orderBy('latest_cards.updated_at', 'desc');
         }
+        $query->distinct(); // 念のため
         $totalCount = $query->count(); // 検索条件に合致する総件数
 
         // マイ名刺件数（ユーザーIDが自分のもの）
@@ -203,6 +204,7 @@ class CardController extends Controller
             ->get()
             ->filter(fn($row) => $row->row_num == 1) // Laravelコレクションで1位だけ残す
             ->values();
+            
         return response()->json($cards);
     }
 
