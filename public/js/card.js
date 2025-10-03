@@ -868,8 +868,7 @@ $(document).ready(function () {
                 success: function (res) {
                     if ($.trim(res.html) === '') {
                         hasMore = false;
-                        $('.card_view_header_count_text_my').text(res.myCount); // 件数を更新
-                        $('.card_view_header_count_text_total').text(res.total); // 件数を更新
+                        $('.card_view_header_count_text').text(res.total); // 件数を更新
                         return;
                     }
                     $('#card-list').append(res.html);
