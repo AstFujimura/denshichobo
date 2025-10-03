@@ -823,7 +823,7 @@ $(document).ready(function () {
             form.find('input[name="start_date"]').val($('#start_date').val());
             form.find('input[name="end_date"]').val($('#end_date').val());
             form.find('input[name="sort"]').val($('#sort_select').val());
-        
+
             form.submit();
         });
 
@@ -838,8 +838,9 @@ $(document).ready(function () {
         let currentSearch = '';
         let currentStart = '';
         let currentEnd = '';
-        
-        $(window).on('scroll', function() {
+        let currentTab = 'my_card_user'; // 追加: 今どのタブか
+
+        $(window).on('scroll', function () {
             // すでに読み込み中なら二重呼び出ししない
             if (loading || !hasMore) return;
 
@@ -851,7 +852,8 @@ $(document).ready(function () {
         function loadMoreCards() {
             if (loading || !hasMore) return;
             loading = true;
-        
+            currentTab = $('.tab_item_active').data('tab');
+
             $.ajax({
                 url: prefix + '/card/cardview',
                 method: 'GET',
@@ -860,9 +862,10 @@ $(document).ready(function () {
                     sort: currentSort,
                     search: currentSearch,
                     start_date: currentStart,
-                    end_date: currentEnd
+                    end_date: currentEnd,
+                    only_my: (currentTab === 'my_card_user' ? 1 : 0), // ← マイ名刺ならフラグを送る
                 },
-                success: function(res) {
+                success: function (res) {
                     if ($.trim(res.html) === '') {
                         hasMore = false;
                         $('.card_view_header_count_text_my').text(res.myCount); // 件数を更新
@@ -870,16 +873,15 @@ $(document).ready(function () {
                         return;
                     }
                     $('#card-list').append(res.html);
-                    $('.card_view_header_count_text_my').text(res.myCount); // 件数を更新
-                    $('.card_view_header_count_text_total').text(res.total); // 件数を更新
+                    // $('.card_view_header_count_text_my').text(res.myCount); // 件数を更新
+                    $('.card_view_header_count_text').text(res.total); // 件数を更新
                     lazyload('imgset');
 
-                    tab_change($('.tab_item_active').data('tab'));
                     var user_id = $('#user_id').val();
                     other_user_card_check(user_id);
                     page++;
                 },
-                complete: function() {
+                complete: function () {
                     loading = false;
                 }
             });
@@ -964,7 +966,7 @@ $(document).ready(function () {
             currentSearch = $('.search_input').val();
             currentStart = $('#start_date').val();
             currentEnd = $('#end_date').val();
-        
+
             // リセットして再検索
             page = 1;
             hasMore = true;
@@ -983,49 +985,18 @@ $(document).ready(function () {
         //     $('.card_view_header_count_text').text($('.card_view_card[data-show="true"]:not(.none_search_card)').length);
         // }
 
-        function tab_change(tab) {
-            if (tab == 'my_card_user') {
-                $('.card_view_header_count_text_my').show();
-                $('.card_view_header_count_text_total').hide();
-                $('.card_view_card').each(function () {
-                    if ($(this).attr('data-my_card_user') == "true") {
-                        $(this).data('show', "true");
-                        $(this).attr('data-show', "true");
-                    }
-                    else {
-                        $(this).data('show', "false");
-                        $(this).attr('data-show', "false");
-                    }
-                });
-            }
-            else if (tab == 'favorite_user') {
-                $('.card_view_card').each(function () {
-                    if ($(this).attr('data-favorite_user') == "true") {
-                        $(this).data('show', "true");
-                        $(this).attr('data-show', "true");
-                    }
-                    else {
-                        $(this).data('show', "false");
-                        $(this).attr('data-show', "false");
-                    }
-                });
-            }
-            else {
-                $('.card_view_card').data('show', "true");
-                $('.card_view_card').attr('data-show', "true");
-                $('.card_view_header_count_text_my').hide();
-                $('.card_view_header_count_text_total').show();
-
-            }
-
-        }
-        // 名刺の種類のタブを切り替えた時
+        // タブ切り替え処理
         $(document).on('click', '.tab_item:not(.tab_item_active)', function () {
             $('.tab_item').removeClass('tab_item_active');
             $(this).addClass('tab_item_active');
-            tab_change($(this).data('tab'));
-            lazyload('imgset');
-            // card_view_header_count_text_update();
+
+            currentTab = $(this).data('tab'); // ← all, my_card_user, favorite_user が入る
+
+            page = 1;
+            hasMore = true;
+            $('#card-list').empty(); // 一覧をクリア
+
+            loadMoreCards(); // そのタブの条件で再取得
         });
 
 
@@ -1362,23 +1333,23 @@ $(document).ready(function () {
     function lazyload(addclass) {
         const prefix = $('#prefix').val();
         const server = $('#server').val();
-    
+
         // IntersectionObserver を使って、画面に入ったときだけ処理
         const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (!entry.isIntersecting) return; // 画面外なら無視
-    
+
                 const img = $(entry.target);
-    
-                // data-show="false" の場合は読み込まない
-                if (img.closest('.card_view_card').attr('data-show') === "false") {
-                    obs.unobserve(entry.target);
-                    return;
-                }
-    
+
+                // // data-show="false" の場合は読み込まない
+                // if (img.closest('.card_view_card').attr('data-show') === "false") {
+                //     obs.unobserve(entry.target);
+                //     return;
+                // }
+
                 const cardId = img.data('card_id');
                 const front = img.data('front');
-    
+
                 if (server === "cloud") {
                     // cloud モード → サーバーから JSON で署名付きURLが返る
                     $.ajax({
@@ -1408,7 +1379,7 @@ $(document).ready(function () {
                                 const Url = URL.createObjectURL(response);
                                 img.attr('src', Url);
                                 img.addClass(addclass);
-    
+
                                 // 読み込み完了後にメモリ解放
                                 img.on('load', () => URL.revokeObjectURL(Url));
                             }
@@ -1418,19 +1389,19 @@ $(document).ready(function () {
                         }
                     });
                 }
-    
+
                 obs.unobserve(entry.target); // 一度読み込んだら監視解除
             });
         }, {
             rootMargin: '100px' // 少し余裕をもってロード
         });
-    
+
         // lazyload クラスがついていて、まだ addclass が付いてない要素を監視対象にする
         $('img.lazyload:not(.' + addclass + ')').each(function () {
             observer.observe(this);
         });
     }
-    
+
     // 一覧画面において他のユーザーの名刺があるかどうかをチェック
     function other_user_card_check(user_id) {
         var prefix = $('#prefix').val();

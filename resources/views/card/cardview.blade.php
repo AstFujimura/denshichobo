@@ -62,12 +62,13 @@
         <div class="card_view_header_count">
             <div class="card_view_header_count_text_container">
                 <span class="card_view_header_count_text">
-                    <span class="card_view_header_count_text_my">
+                    {{-- <span class="card_view_header_count_text_my">
                         {{ $myCount ?? 0 }}
                     </span>
                     <span class="card_view_header_count_text_total" style="display: none;">
                         {{ $totalCount ?? 0 }}
-                    </span>
+                    </span> --}}
+                    {{ $totalCount ?? 0 }}
                 </span>件
             </div>
 

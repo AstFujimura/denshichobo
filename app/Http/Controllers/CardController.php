@@ -69,6 +69,7 @@ class CardController extends Controller
         $perPage = 100;
         $page = $request->input('page', 1);
 
+        $only_my = $request->input('only_my', 1);
         // サブクエリ
         $sub = DB::table('cards')
             ->select(
@@ -88,6 +89,8 @@ class CardController extends Controller
         $start_date = $request->input('start_date') ?: '1900-01-01';
         $end_date   = $request->input('end_date')   ?: '2100-12-31';
 
+
+
         $query = DB::table('cardusers')
             ->select(
                 'cardusers.id as carduser_id',
@@ -103,6 +106,12 @@ class CardController extends Controller
                     ->where('latest_cards.row_num', '=', 1);
             })
             ->leftJoin('companies', 'latest_cards.会社ID', '=', 'companies.id');
+
+      
+        // ★ もし「マイ名刺だけ」を取得したい場合だけ join
+        if ($only_my) {
+            $query->where('latest_cards.ユーザーID', $userId);
+        }
 
         // 検索条件
         if ($search) {
@@ -128,9 +137,6 @@ class CardController extends Controller
         }
         $totalCount = $query->count(); // 検索条件に合致する総件数
 
-        // マイ名刺件数（ユーザーIDが自分のもの）
-        $myCount = (clone $query)->where('latest_cards.ユーザーID', $userId)->count();
-
         $cardusers = $query
             ->skip(($page - 1) * $perPage)
             ->take($perPage)
@@ -151,7 +157,6 @@ class CardController extends Controller
                 ->first();
 
             $carduser->マイ名刺ユーザー = ($carduser->ユーザーID == $userId) ? "true" : "false";
-            $carduser->お気に入りユーザー = ($carduser_user && $carduser_user->お気に入りユーザー == 1) ? "true" : "false";
         }
 
         // Ajaxなら部分ビューだけ返す
@@ -160,12 +165,11 @@ class CardController extends Controller
             return response()->json([
                 'html' => view('card.partials.cardlist', compact('cardusers'))->render(),
                 'total' => $totalCount,
-                'myCount' => $myCount,
             ]);
         }
 
         // 初回ロードはフルビュー
-        return view('card.cardview', compact("prefix", "server", "cardusers", "totalCount", "myCount"));
+        return view('card.cardview', compact("prefix", "server", "cardusers", "totalCount"));
     }
 
     public function cardviewsizeget($size)
@@ -203,7 +207,7 @@ class CardController extends Controller
             ->get()
             ->filter(fn($row) => $row->row_num == 1) // Laravelコレクションで1位だけ残す
             ->values();
-            
+
         return response()->json($cards);
     }
 

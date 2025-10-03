@@ -1,6 +1,5 @@
 @foreach ($cardusers as $carduser)
 <a href="{{ route('carddetailget', ['id' => $carduser->carduser_id]) }}" class="card_view_card @if(Auth::user()->名刺表示サイズ) large_view @else small_view @endif"
-    data-show="{{ $carduser->マイ名刺ユーザー ?? false }}" data-my_card_user="{{ $carduser->マイ名刺ユーザー ?? false }}"
     {{-- data-favorite_user="{{ $carduser->お気に入りユーザー ?? false }}" --}}
     data-name_kana="{{ $carduser->名前カナ }}"
     data-company_name="{{ $carduser->会社名カナ }}"

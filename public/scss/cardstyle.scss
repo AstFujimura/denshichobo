@@ -711,6 +711,7 @@ body {
             padding: 10px;
             width: 50rem;
             transition: all 0.3s;
+            display: flex;
 
             @media screen and (max-width: 1200px) {
                 width: 90%;
@@ -884,6 +885,7 @@ body {
         &.small_view {
             margin: 0;
             transition: all 0.3s;
+            display: flex;
 
             &:nth-child(odd) {
                 background: #f9f9f9;
@@ -993,17 +995,17 @@ body {
 
         }
 
-        &[data-show=true] {
-            display: flex;
-        }
+        // &[data-show=true] {
+        //     display: flex;
+        // }
 
-        &.none_search_card {
-            display: none;
-        }
+        // &.none_search_card {
+        //     display: none;
+        // }
 
-        &[data-show=false] {
-            display: none;
-        }
+        // &[data-show=false] {
+        //     display: none;
+        // }
 
 
         &:hover {

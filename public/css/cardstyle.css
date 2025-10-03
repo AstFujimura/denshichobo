@@ -648,6 +648,7 @@ body .usersettingtitle {
   padding: 10px;
   width: 50rem;
   transition: all 0.3s;
+  display: flex;
 }
 @media screen and (max-width: 1200px) {
   .card_view_container .card_view_card.large_view {
@@ -805,6 +806,7 @@ body .usersettingtitle {
 .card_view_container .card_view_card.small_view {
   margin: 0;
   transition: all 0.3s;
+  display: flex;
   padding: 0 0.5rem;
   width: 80rem;
   border-bottom: solid 0.1rem #e0e0e0;
@@ -898,15 +900,6 @@ body .usersettingtitle {
     font-size: 1rem;
     width: 13rem;
   }
-}
-.card_view_container .card_view_card[data-show=true] {
-  display: flex;
-}
-.card_view_container .card_view_card.none_search_card {
-  display: none;
-}
-.card_view_container .card_view_card[data-show=false] {
-  display: none;
 }
 .card_view_container .card_view_card:hover {
   background: #f9f9f9;
