@@ -66,7 +66,7 @@ class CardController extends Controller
         $server = config('prefix.server');
         $userId = Auth::id();
 
-        $perPage = 200;
+        $perPage = 100;
         $page = $request->input('page', 1);
 
         // サブクエリ
