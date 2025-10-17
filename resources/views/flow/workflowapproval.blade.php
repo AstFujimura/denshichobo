@@ -75,13 +75,13 @@ Rapid ~電子承認システム
                                         却下する
                                     </div>
                                 </label>
+                                <button class="approval_decision">
+                                    決定
+                                </button>
                                 <div class="approve_comment_container">
                                     <div>承認者コメント</div>
                                     <textarea class="approvecomment" name="approvecomment" id="approvecomment">{{$comment}}</textarea>
                                 </div>
-                                <button class="approval_decision">
-                                    決定
-                                </button>
 
 
                                 <input type="hidden" name="approval_id" value="{{$t_approval->id}}">

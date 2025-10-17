@@ -2337,11 +2337,11 @@ body #usersetting {
   font-size: 14px;
   font-weight: bold;
   height: 20px;
-  padding: 10px 20px;
+  padding: 10px 10px;
   margin-top: auto;
   display: flex;
   border-radius: 5px;
-  width: 300px;
+  width: 206px;
 }
 
 .unselected {
@@ -2451,7 +2451,7 @@ body #usersetting {
   height: 50px;
   line-height: 50px;
   font-size: 20px;
-  width: 160px;
+  width: 250px;
   text-align: center;
   border-radius: 3px;
   cursor: pointer;
@@ -2465,7 +2465,7 @@ body #usersetting {
 }
 
 .approve_comment_container {
-  margin-bottom: 20px;
+  margin-block: 20px;
 }
 
 .approval_content {
@@ -2474,9 +2474,16 @@ body #usersetting {
   margin-left: 20px;
 }
 
+.approve_form {
+  position: relative;
+}
+
 .approval_input:checked ~ .approval_content {
   display: block;
   transition: all 0.2s;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .approvecomment {

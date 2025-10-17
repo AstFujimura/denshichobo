@@ -603,6 +603,7 @@ body {
     display: flex;
     margin-bottom: 2px;
     position: relative;
+
     input[type="text"] {
         border: solid 1px #b1b1b1;
         border-radius: 3px;
@@ -1167,7 +1168,7 @@ body {
         gap: 1rem;
         height: 26rem;
         margin-inline: auto;
-        
+
 
         .flow_application_title {
             position: sticky;
@@ -2439,11 +2440,11 @@ body {
     font-size: 14px;
     font-weight: bold;
     height: 20px;
-    padding: 10px 20px;
+    padding: 10px 10px;
     margin-top: auto;
     display: flex;
     border-radius: 5px;
-    width: 300px;
+    width: 206px;
 }
 
 .unselected {
@@ -2566,7 +2567,7 @@ body {
     height: 50px;
     line-height: 50px;
     font-size: 20px;
-    width: 160px;
+    width: 250px;
     text-align: center;
     border-radius: 3px;
     cursor: pointer;
@@ -2580,7 +2581,7 @@ body {
 }
 
 .approve_comment_container {
-    margin-bottom: 20px;
+    margin-block: 20px;
 }
 
 .approval_content {
@@ -2589,9 +2590,16 @@ body {
     margin-left: 20px;
 }
 
+.approve_form {
+    position: relative;
+}
+
 .approval_input:checked~.approval_content {
     display: block;
     transition: all 0.2s;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .approvecomment {
