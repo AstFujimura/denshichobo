@@ -1324,7 +1324,10 @@ $(document).ready(function () {
 
     }
 
-
+    $(document).on('mouseover', '.other_user_card_check:not(.other_user_card_check_hover)', function () {
+        $(this).addClass('other_user_card_check_hover');
+        other_list_load($(this).data('carduser_id'));
+    });
 
 
     // data-card_idから画像を読み込んで出力
@@ -1401,6 +1404,7 @@ $(document).ready(function () {
         });
     }
 
+
     // 一覧画面において他のユーザーの名刺があるかどうかをチェック
     function other_user_card_check(user_id) {
         var prefix = $('#prefix').val();
@@ -1410,12 +1414,17 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response);
                 response.forEach(function (card) {
-                    if ($('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]:not(.display_none)').length > 0) {
-                        return;
+                    // すでに表示されている場合
+                    if ($('.other_user_card_check.display_none[data-carduser_id="' + card.名刺ユーザーID + '"]').length > 0) {
+                        $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]').removeClass('display_none');
                     }
-                    $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"]').removeClass('display_none');
-                    $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"] .other_user_list').append(
-                        `<span class="other_user_list_item">${card.表示名}</span>`);
+                    if ($('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"] .other_user_list_item[data-user_id="' + card.user_id + '"]').length == 0) {
+                        $('.other_user_card_check[data-carduser_id="' + card.名刺ユーザーID + '"] .other_user_list').append(
+                            `<span class="other_user_list_item" data-user_id="${card.user_id}">${card.表示名}</span>`);
+                    }
+
+
+
                 });
             },
             error: function (xhr, status, error) {

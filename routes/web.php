@@ -13,6 +13,7 @@ use App\Http\Controllers\AssetController;
 use App\Http\Controllers\FlowController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\TranscribeController;
 use App\Http\Middleware\CheckSessionTimeout;
 use Illuminate\Support\Facades\Config;
 
@@ -432,6 +433,12 @@ Route::prefix($prefix)->group(function () {
             Route::post('/schedule/master/regist', [ScheduleController::class, 'schedulemasterregistpost'])->name('schedulemasterregistpost');
             // Route::get('/schedule/csv', [ScheduleController::class, 'schedulecsvget'])->name('schedulecsvget');
             // Route::post('/schedule/csv', [ScheduleController::class, 'schedulecsvpost'])->name('schedulecsvpost');
+        }
+
+        // -----------------------------文書抽出--------------------------------
+        if (Version::where('文書', true)->first()) {
+            Route::get('/transcribe', [TranscribeController::class, 'transcribeget'])->name('transcribeget');
+            Route::post('/transcribe', [TranscribeController::class, 'transcribepost'])->name('transcribepost');
         }
     });
 });

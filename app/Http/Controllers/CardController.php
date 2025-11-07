@@ -188,25 +188,12 @@ class CardController extends Controller
     public function otherusercardcheckget(Request $request, $user_id)
     {
         $cards = DB::table('cards')
-            ->leftJoin('users', 'cards.ユーザーID', '=', 'users.id')
-            ->select(
-                'cards.id as card_id',
-                'cards.名刺ユーザーID',
-                'cards.ユーザーID',
-                'cards.最新フラグ',
-                'users.表示名',
-                DB::raw('ROW_NUMBER() OVER (
-                PARTITION BY 名刺ユーザーID
-                ORDER BY 最新フラグ DESC, cards.id ASC
-            ) as row_num')
-            )
-            ->where('削除', '!=', '削除')
-            ->where('cards.ユーザーID', '!=', $user_id)
-            ->orderBy('名刺ユーザーID', 'asc')
-            ->orderBy('最新フラグ', 'desc')
-            ->get()
-            ->filter(fn($row) => $row->row_num == 1) // Laravelコレクションで1位だけ残す
-            ->values();
+        ->leftJoin('users', 'cards.ユーザーID', '=', 'users.id')
+        ->where('users.削除', '!=', '削除')         // 論理削除されていない
+        ->where('cards.ユーザーID', '!=', $user_id) // 自分以外のユーザー
+        ->select('cards.名刺ユーザーID', 'users.表示名', 'users.id as user_id') // 名刺ユーザーIDだけを抽出
+        // ->groupBy('cards.名刺ユーザーID', 'users.id')
+        ->get();
 
         return response()->json($cards);
     }
