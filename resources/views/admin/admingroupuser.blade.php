@@ -33,9 +33,9 @@
     <span class="savemessage">※更新ボタンを押して変更を反映させてください</span>
     <div class="link_container">
 
-        <div class="groupuser_change_button">
+        <button class="groupuser_change_button">
             更新
-        </div> 
+        </button> 
     </div>
     <input type="hidden" id="save" value="save">
     <div class="groupuser_addbutton" id="groupuser_addbutton">
