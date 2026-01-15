@@ -17,94 +17,97 @@ Rapid ~電子承認システム
 <div class="MainElement">
 
     <h2 class="pagetitle" id="flow_confirm"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">確認画面</h2>
-    <form action="{{route('workflowconfirmpost')}}" method="post" id="flow_application_choice_form" class="flow_confirm_form" enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" value="{{$t_flow->フローマスタID}}" name="m_flow_id" id="m_flow_id">
-        <input type="hidden" value="{{$t_flow->id}}" name="t_flow_id" id="t_flow_id">
+    <div class="flow_confirm_wrapper">
+        <form action="{{route('workflowconfirmpost')}}" method="post" id="flow_application_choice_form" class="flow_confirm_form" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" value="{{$t_flow->フローマスタID}}" name="m_flow_id" id="m_flow_id">
+            <input type="hidden" value="{{$t_flow->id}}" name="t_flow_id" id="t_flow_id">
 
-        <a href="{{route('workflowchoiceget',['id' => $id])}}" class="back_button flow_application_back_button">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
-            もどる
-        </a>
-        <button class="dicision_button flow_application_button" id="flow_next_button">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/button/application.svg') }}" alt="" class="button_icon">
-            申請
-        </button>
-
-
-    </form>
-    <div class="flow_confirm_container">
-        <div class="flow_meta_information_container">
-            <div class="view_application_title">
-                申請情報
-            </div>
-            @foreach ($t_optionals as $t_optional)
-            <div class="flow_confirm_content">
-                <div class="flow_confirm_label">
-                    {{$t_optional->項目名}}
+            <a href="{{route('workflowchoiceget',['id' => $id])}}" class="back_button flow_application_back_button">
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                もどる
+            </a>
+            <button class="dicision_button flow_application_button" id="flow_next_button">
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/application.svg') }}" alt="" class="button_icon">
+                申請
+            </button>
+        </form>
+        <div class="flow_confirm_container">
+            <div class="flow_meta_information_container">
+                <div class="view_application_title">
+                    申請情報
                 </div>
-                <div class="flow_confirm_element">
-                    @if ($t_optional->値 == "file_regist_2545198")
-                    <div class="approve_preview_button" data-id="{{$t_optional->id}}" data-type="t_optional">プレビュー</div>
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_optional->id}}?type=t_optional&timestamp={{time()}}">
-                    @elseif ($t_optional->値 == "file_none_246851")
-                    @else
-                    {{$t_optional->値}}
-                    @endif
+                @foreach ($t_optionals as $t_optional)
+                <div class="flow_confirm_content">
+                    <div class="flow_confirm_label">
+                        {{$t_optional->項目名}}
+                    </div>
+                    <div class="flow_confirm_element">
+                        @if ($t_optional->値 == "file_regist_2545198")
+                        <div class="approve_preview_button" data-id="{{$t_optional->id}}" data-type="t_optional">プレビュー</div>
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_optional->id}}?type=t_optional&timestamp={{time()}}">
+                        @elseif ($t_optional->値 == "file_none_246851")
+                        @else
+                        {{$t_optional->値}}
+                        @endif
+                    </div>
                 </div>
-            </div>
-            @endforeach
-            @if ($m_category->発行)
-            <div class="view_application_title">
-                承認用紙
-            </div>
-            <div class="flow_confirm_content">
-                <div class="flow_confirm_label">
+                @endforeach
+                @if ($m_category->発行)
+                <div class="view_application_title">
                     承認用紙
                 </div>
-                <div class="flow_confirm_element">
-                    <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_after">プレビュー</div>
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_flow->id}}?type=t_flow_after&timestamp={{time()}}">
-                </div>
-            </div>
-            @endif
-        </div>
-        <div class="flow_confirm_view_container">
-
-            <div class="flow_confirm_meta_container">
-                <div class="view_condition_title">
-                    経路情報
-                </div>
-                <div class="condition_accordion_trigger">
-                    条件詳細
-                </div>
-                <div class="condition_accordion condition_accordion_close">
-                    <div class="view_condition_group_content">
-                        <div class="view_condition_group_title">
-                            申請者グループ
-                        </div>
-                        <div class="view_condition_group_element">
-
-                        </div>
+                <div class="flow_confirm_content">
+                    <div class="flow_confirm_label">
+                        承認用紙
                     </div>
-                    <div class="view_condition_price_content">
-                        <div class="view_condition_price_title">
-                            金額
-                        </div>
-                        <div class="view_condition_start_price">
-                            下限金額: <span class="view_condition_start_price_value"></span>
-                        </div>
-                        <div class="view_condition_end_price">
-                            上限金額: <span class="view_condition_end_price_value"></span>
-                        </div>
+                    <div class="flow_confirm_element">
+                        <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_after">プレビュー</div>
+                        <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_flow->id}}?type=t_flow_after&timestamp={{time()}}">
                     </div>
                 </div>
+                @endif
             </div>
-            <div class="view_grid">
+            <div class="flow_confirm_view_container">
+                <div class="view_application_title flow_confirm_route_title">
+                    経路
+                </div>
+                <div class="view_grid_container">
+                    <div class="view_grid">
 
+                    </div>
+                </div>
+                <div class="flow_confirm_meta_container">
+                    <div class="view_condition_title">
+                        経路情報
+                    </div>
+                    <div class="condition_accordion_trigger">
+                        条件詳細
+                    </div>
+                    <div class="condition_accordion">
+                        <div class="view_condition_group_content">
+                            <div class="view_condition_group_title">
+                                申請者グループ
+                            </div>
+                            <div class="view_condition_group_element">
+
+                            </div>
+                        </div>
+                        <div class="view_condition_price_content">
+                            <div class="view_condition_price_title">
+                                金額
+                            </div>
+                            <div class="view_condition_start_price">
+                                下限金額: <span class="view_condition_start_price_value"></span>
+                            </div>
+                            <div class="view_condition_end_price">
+                                上限金額: <span class="view_condition_end_price_value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 
 

@@ -76,9 +76,7 @@ Rapid ~電子承認システム
                 </div>
             </div>
             <div class="view_grid_container">
-                <div class="view_grid">
-
-                </div>
+                <div class="view_grid"></div>
             </div>
 
         </div>

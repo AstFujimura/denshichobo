@@ -41,7 +41,7 @@ Rapid ~電子承認システム
                             <div>{{$group->グループ名}}</div>
                             @endif
                             @endforeach
-                        <div class="flow_master_group_arrow"></div>
+                        {{-- <div class="flow_master_group_arrow"></div> --}}
                         </div>
                         <div class="flow_master_start_price">
                             @if ($flow->金額下限条件 == 0)
