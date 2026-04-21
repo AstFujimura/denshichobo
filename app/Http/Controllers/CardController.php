@@ -978,7 +978,7 @@ class CardController extends Controller
                 $imageBase64 = base64_encode(file_get_contents($imageFile->getRealPath()));
                 $mimeType = $imageFile->getMimeType(); // e.g., image/jpeg
                 $apiKey = config('gemini.api_key');
-                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
+                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key={$apiKey}";
 
                 $prompt = $this->getJsonPrompt();
 
@@ -1419,7 +1419,7 @@ class CardController extends Controller
                 $imageBase64 = base64_encode(file_get_contents($file->getRealPath()));
                 $mimeType = $file->getMimeType(); // e.g., image/jpeg
                 $apiKey = config('gemini.api_key');
-                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
+                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key={$apiKey}";
                 $prompt = $this->getJsonPrompt();
                 // リトライ回数の上限を設定
                 $maxRetries = 1;
