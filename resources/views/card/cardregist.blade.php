@@ -276,6 +276,8 @@
                 </table>
             </div>
 
+            @include('card.partials.card_tag_picker_form')
+
         </form>
     </div>
 </div>

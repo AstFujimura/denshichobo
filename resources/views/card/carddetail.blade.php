@@ -94,6 +94,7 @@
                 </label>
             </div>
             @endforeach
+
             <div class="card_history_close_button">
                 閉じる
             </div>
@@ -101,6 +102,27 @@
             <a href="{{ route('cardaddget', ['id' => $carduser->id]) }}" class="card_history_add_button">
                 名刺を追加する
             </a>
+            @endif
+
+            @if ($userTags->isNotEmpty())
+                <div
+                    class="card_history_tag_block @if ((int) ($now_card->ユーザーID ?? 0) !== (int) Auth::id()) display_none @endif">
+                    <div id="card_detail_tags" class="card_detail_tags">
+                        <input type="hidden" id="card_detail_csrf" value="{{ csrf_token() }}">
+                        <input type="hidden" id="card_detail_active_card_id" value="{{ $now_card->card_id }}">
+                        <div class="card_detail_tags_title">タグ</div>
+                        <div class="card_tag_checkbox_list card_tag_checkbox_list_detail">
+                            @foreach ($userTags as $tag)
+                                <label class="card_tag_checkbox_item card_detail_tag_cb_wrap"
+                                    style="--tag-color: {{ $tag->カラーコード }}">
+                                    <input type="checkbox" class="card_detail_tag_cb" data-tag-id="{{ $tag->id }}"
+                                        @checked(in_array((int) $tag->id, $nowCardTagIds, true))>
+                                    <span class="card_tag_checkbox_label">{{ $tag->タグ名 }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             @endif
         </div>
         <div class="card_info_container">
@@ -160,6 +182,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="company_info">
                     <div class="company_info_content">
                         <div class="company_info_content_title">

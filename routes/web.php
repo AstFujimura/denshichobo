@@ -364,6 +364,13 @@ Route::prefix($prefix)->group(function () {
 
             // 名刺情報API
             Route::get('/card/history/{id}', [CardController::class, 'cardinfoget'])->name('cardinfoget');
+            // タグマスタ設定
+            Route::get('/card/tags', [CardController::class, 'cardtagsettingsget'])->name('cardtagsettingsget');
+            Route::post('/card/tags', [CardController::class, 'cardtagsettingspost'])->name('cardtagsettingspost');
+            Route::post('/card/tag/toggle', [CardController::class, 'cardtagtogglepost'])->name('cardtagtogglepost');
+            // タグごとの名刺紐付けモーダル用 API
+            Route::get('/card/tag/{tag}/cards', [CardController::class, 'cardtagcardsget'])->name('cardtagcardsget');
+            Route::post('/card/tag/{tag}/cards', [CardController::class, 'cardtagcardspost'])->name('cardtagcardspost');
             // 名刺登録
             Route::get('/card/regist', [CardController::class, 'cardregistget'])->name('cardregistget');
             // 名刺編集

@@ -16,4 +16,9 @@ class Card extends Model
     protected $fillable = [
         '最新フラグ',
     ];
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'card_tag', '名刺ID', 'タグID')->withTimestamps();
+    }
 }

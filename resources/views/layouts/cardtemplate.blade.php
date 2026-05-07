@@ -70,6 +70,9 @@
         <img src="{{ asset(config('prefix.prefix').'/'.'img/card/folder_gray.svg') }}" class="menuicon01"
             title="名刺一括登録">
     </a>
+    <a class="headerIcon001" href="{{route('cardtagsettingsget')}}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/tag_gray.svg') }}" class="menuicon01" title="タグ設定">
+    </a>
 
 
     <div class="headerIcon001 rightmenue001"
@@ -130,6 +133,19 @@
                         </div>
                         <div class="button1name01">
                             名刺登録
+                        </div>
+
+                    </div>
+
+                </a>
+                <a href="{{route('cardtagsettingsget')}}" class="button1_01">
+                    <div class="button1element01">
+                        <div class="button1logo01">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/tag_gray.svg') }}"
+                                class="flow_right_icon">
+                        </div>
+                        <div class="button1name01">
+                            タグ設定
                         </div>
 
                     </div>

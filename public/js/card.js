@@ -486,6 +486,8 @@ $(document).ready(function () {
                                             case 'register_other':
                                                 autoFillForm(response.data);
                                                 getCompanyCandidate(response.data.会社名, true);
+                                                // 別人物として登録するのでタグは引き継がない
+                                                applyTagCheckboxes([]);
                                                 console.log(response.data);
                                                 console.log(response.existing_card);
                                                 break;
@@ -497,6 +499,8 @@ $(document).ready(function () {
                                                 $('#edit').val('add');
                                                 $('#carduser').val(response.existing_card.名刺ユーザーID);
                                                 $('#card_regist_title span').text(response.data.名前 + 'さん 名刺追加');
+                                                // 既存の人物にすでに付いているタグを自動でチェック
+                                                applyTagCheckboxes(response.existing_tag_ids || []);
                                                 break;
                                             case 'mycard':
                                                 window.location.href = prefix + '/card/mycard/' + response.existing_card.id;
@@ -541,6 +545,15 @@ $(document).ready(function () {
             });
         }
         // フォームにデータを自動入力
+        // タグチェックボックスを与えられた配列で再設定（既存のチェックは全部クリアしてから付け直す）
+        function applyTagCheckboxes(tagIds) {
+            var ids = (tagIds || []).map(function (v) { return parseInt(v, 10); }).filter(function (v) { return !isNaN(v); });
+            $('input[name="tag_ids[]"]').each(function () {
+                var v = parseInt($(this).val(), 10);
+                $(this).prop('checked', ids.indexOf(v) !== -1);
+            });
+        }
+
         function autoFillForm(data) {
             $('#name').val(data.名前);
             $('#name_kana').val(data.名前カナ);
@@ -823,6 +836,12 @@ $(document).ready(function () {
             form.find('input[name="start_date"]').val($('#start_date').val());
             form.find('input[name="end_date"]').val($('#end_date').val());
             form.find('input[name="sort"]').val($('#sort_select').val());
+            var tagCsv = $('.card_view_tag_filter_cb:checked').map(function () {
+                return $(this).val();
+            }).get().join(',');
+            form.find('input[name="tag_ids"]').val(tagCsv);
+            var activeTab = $('.tab_item_active').data('tab');
+            form.find('input[name="only_my"]').val(activeTab === 'my_card_user' ? 1 : 0);
 
             form.submit();
         });
@@ -834,10 +853,11 @@ $(document).ready(function () {
         let page = 2;
         let loading = false;
         let hasMore = true;
-        let currentSort = 1; // デフォルトはユーザー名順
+        let currentSort = $('#sort_select').val() || 1;
         let currentSearch = '';
         let currentStart = '';
         let currentEnd = '';
+        let currentTagIds = [];
         let currentTab = 'my_card_user'; // 追加: 今どのタブか
 
         $(window).on('scroll', function () {
@@ -864,6 +884,7 @@ $(document).ready(function () {
                     start_date: currentStart,
                     end_date: currentEnd,
                     only_my: (currentTab === 'my_card_user' ? 1 : 0), // ← マイ名刺ならフラグを送る
+                    tag_ids: currentTagIds,
                 },
                 success: function (res) {
                     if ($.trim(res.html) === '') {
@@ -902,16 +923,101 @@ $(document).ready(function () {
             dateFormat: 'Y/m/d',
             allowInput: true,
             locale: 'ja'
-        })
-
-        // 並び替えを押したとき
-        $('#sort_select').on('change', function () {
-            currentSort = $(this).val();
-            page = 1;
-            hasMore = true;
-            $('#card-list').empty(); // 一覧クリア
-            loadMoreCards(); // 並び替え条件付きで再取得
         });
+
+        var $tagMovable = $('#card_view_tag_filter_movable');
+        var $tagSlotDesktop = $('#card_view_tag_slot_desktop');
+        var $tagSlotModal = $('#card_view_tag_slot_modal');
+        var $tagModal = $('#card_view_tag_modal');
+
+        function cardViewTagIsMobile() {
+            return window.matchMedia('(max-width: 800px)').matches;
+        }
+
+        function cardViewTagModalClose() {
+            $tagModal.attr('hidden', true).removeClass('is_open');
+            $('body').removeClass('card_view_tag_modal_open');
+        }
+
+        function cardViewTagPanelPlace() {
+            if (cardViewTagIsMobile()) {
+                $tagMovable.appendTo($tagSlotModal);
+            } else {
+                cardViewTagModalClose();
+                $tagMovable.appendTo($tagSlotDesktop);
+            }
+        }
+
+        function cardViewTagModalOpen() {
+            if (!cardViewTagIsMobile()) {
+                return;
+            }
+            $tagModal.removeAttr('hidden').addClass('is_open');
+            $('body').addClass('card_view_tag_modal_open');
+        }
+
+        cardViewTagPanelPlace();
+
+        // 詳細条件（日付・並び替え・表示切替）の折り畳み制御
+        var $extraToggle = $('#card_view_toggle_extra');
+        var $extraFilters = $('#card_view_extra_filters');
+
+        function cardViewExtraSync() {
+            if (cardViewTagIsMobile()) {
+                // スマホは初期状態で折り畳み
+                if (!$extraToggle.data('user-toggled')) {
+                    $extraFilters.addClass('is_collapsed');
+                    $extraToggle.attr('aria-expanded', 'false');
+                }
+            } else {
+                // PCは常に展開状態に戻す
+                $extraFilters.removeClass('is_collapsed');
+                $extraToggle.attr('aria-expanded', 'true');
+            }
+        }
+        cardViewExtraSync();
+
+        $extraToggle.on('click', function () {
+            $(this).data('user-toggled', true);
+            var expanded = $(this).attr('aria-expanded') === 'true';
+            if (expanded) {
+                $extraFilters.addClass('is_collapsed');
+                $(this).attr('aria-expanded', 'false');
+            } else {
+                $extraFilters.removeClass('is_collapsed');
+                $(this).attr('aria-expanded', 'true');
+            }
+        });
+
+        var cardViewTagResizeTimer;
+        $(window).on('resize', function () {
+            clearTimeout(cardViewTagResizeTimer);
+            cardViewTagResizeTimer = setTimeout(function () {
+                cardViewTagPanelPlace();
+                cardViewExtraSync();
+            }, 120);
+        });
+
+        $(document).on('click', '.card_view_tag_modal_open', function (e) {
+            e.preventDefault();
+            cardViewTagModalOpen();
+        });
+
+        $(document).on('click', '.card_view_tag_modal_overlay', function () {
+            cardViewTagModalClose();
+        });
+
+        $(document).on('click', '.card_view_tag_modal_close, .card_view_tag_modal_done', function () {
+            cardViewTagModalClose();
+        });
+
+        $(document).on('keydown', function (e) {
+            if (e.key === 'Escape' && $tagModal.hasClass('is_open')) {
+                cardViewTagModalClose();
+            }
+        });
+
+        // 並び替え・日付・キーワード・タグは「条件を反映」で一覧更新
         // 表示タイプを押したとき
         $('input[name="view_type"]').on('change', function () {
             const viewType = $(this).val();
@@ -943,37 +1049,32 @@ $(document).ready(function () {
         });
 
 
-        // 検索のフォーカス時にエンターを押したとき
+        // キーワード欄で Enter でも条件反映
         $('.search_input').on('keydown', function (e) {
             if (e.key === 'Enter') {
-                $('.search_button').click();
+                e.preventDefault();
+                $('.card_view_apply_search').trigger('click');
             }
         });
 
-
-        // 検索を押した時
-        $(document).on('click', '.search_button', function () {
-            search_card();
-        });
-        // 登録年月日の値が変更した時
-        $('#start_date,#end_date').on('change', function () {
+        $(document).on('click', '.card_view_apply_search', function () {
             search_card();
         });
 
-        // 検索文字と登録年月日で名刺を絞り込む
+        // 検索文字・登録年月日・並び替え・タグをまとめて反映
         function search_card() {
+            currentSort = $('#sort_select').val();
             currentSearch = $('.search_input').val();
             currentStart = $('#start_date').val();
             currentEnd = $('#end_date').val();
+            currentTagIds = $('.card_view_tag_filter_cb:checked').map(function () {
+                return $(this).val();
+            }).get();
 
-            // リセットして再検索
             page = 1;
             hasMore = true;
             $('#card-list').empty();
             loadMoreCards();
-
-
-            // card_view_header_count_text_update();
         }
 
 
@@ -1219,7 +1320,54 @@ $(document).ready(function () {
                     </div>
                 `)
             })
+
+            if ($('#card_detail_tags').length) {
+                if (response.history_card_id !== undefined) {
+                    $('#card_detail_active_card_id').val(response.history_card_id);
+                }
+                if (response.attached_tag_ids !== undefined) {
+                    var tagIds = (response.attached_tag_ids || []).map(Number);
+                    $('.card_detail_tag_cb').each(function () {
+                        var tid = Number($(this).data('tag-id'));
+                        $(this).prop('checked', tagIds.indexOf(tid) >= 0);
+                    });
+                }
+                if (response.can_edit_tags !== undefined) {
+                    $('#card_detail_tags').closest('.card_history_tag_block').toggleClass('display_none', !response.can_edit_tags);
+                }
+            }
         }
+
+        $(document).on('change', '.card_detail_tag_cb', function () {
+            var $wrap = $('#card_detail_tags').closest('.card_history_tag_block');
+            if (!$('#card_detail_tags').length || $wrap.hasClass('display_none')) {
+                return;
+            }
+            var cardId = $('#card_detail_active_card_id').val();
+            var tagId = $(this).data('tag-id');
+            var attach = $(this).is(':checked');
+            var cb = $(this);
+            $.ajax({
+                url: prefix + '/card/tag/toggle',
+                method: 'POST',
+                data: {
+                    card_id: cardId,
+                    tag_id: tagId,
+                    attach: attach ? 1 : 0,
+                    _token: $('#card_detail_csrf').val()
+                },
+                success: function (res) {
+                    if (!res.success) {
+                        cb.prop('checked', !attach);
+                        alert('タグの更新に失敗しました。');
+                    }
+                },
+                error: function () {
+                    cb.prop('checked', !attach);
+                    alert('タグの更新に失敗しました。');
+                }
+            });
+        });
     }
 
     function company_valid_check() {
