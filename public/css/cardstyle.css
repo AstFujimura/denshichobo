@@ -1414,7 +1414,7 @@ body.card_view_tag_modal_active {
 }
 @media screen and (max-width: 600px) {
   .card_view_container .card_view_card.large_view .card_view_card_tag_swatches {
-    max-width: 2rem;
+    max-width: 1.5rem;
     max-height: 4rem;
     gap: 0.25rem;
     overflow: auto;
