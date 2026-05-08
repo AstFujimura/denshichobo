@@ -958,6 +958,28 @@ $(document).ready(function () {
 
         cardViewTagPanelPlace();
 
+        // 件数 / Excel出力ブロックを画面幅で配置切り替え
+        var $metaMovable = $('#card_view_header_meta');
+        var $metaSlotMobile = $('#card_view_meta_slot_mobile');
+        var metaDesktopParent = $metaMovable.parent();
+
+        function cardViewMetaPlace() {
+            if (!$metaMovable.length || !$metaSlotMobile.length || !metaDesktopParent.length) {
+                return;
+            }
+            if (cardViewTagIsMobile()) {
+                if (!$metaMovable.parent().is($metaSlotMobile)) {
+                    $metaMovable.appendTo($metaSlotMobile);
+                }
+            } else {
+                if (!$metaMovable.parent().is(metaDesktopParent)) {
+                    $metaMovable.appendTo(metaDesktopParent);
+                }
+            }
+        }
+
+        cardViewMetaPlace();
+
         // 詳細条件（日付・並び替え・表示切替）の折り畳み制御
         var $extraToggle = $('#card_view_toggle_extra');
         var $extraFilters = $('#card_view_extra_filters');
@@ -994,6 +1016,7 @@ $(document).ready(function () {
             clearTimeout(cardViewTagResizeTimer);
             cardViewTagResizeTimer = setTimeout(function () {
                 cardViewTagPanelPlace();
+                cardViewMetaPlace();
                 cardViewExtraSync();
             }, 120);
         });

@@ -36,6 +36,7 @@
                             </svg>
                             <span class="card_view_toggle_extra_label">詳細条件</span>
                         </button>
+                        <div id="card_view_meta_slot_mobile" class="card_view_meta_slot card_view_meta_slot_mobile"></div>
                     </div>
                 </div>
                 <div class="sub_search_container" id="card_view_extra_filters">
@@ -144,7 +145,7 @@
                     お気に入り
                 </div> --}}
             </div>
-            <div class="card_view_header_meta">
+            <div class="card_view_header_meta" id="card_view_header_meta">
         <div class="card_view_header_count">
             <div class="card_view_header_count_text_container">
                 <span class="card_view_header_count_text">

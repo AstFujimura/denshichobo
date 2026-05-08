@@ -27,23 +27,11 @@
         <a href="{{route('adminGet')}}" class="logoelement01">
             管理画面
         </a>
-        @if (App\Models\Version::where('tameru', true)->first())
-        <a href="{{route('topGet')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU"></a>
-        @endif
-        @if (App\Models\Version::where('フロー', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapid_logo_only.svg') }}" alt="TAMERU"></a>
-        @endif
-        @if (App\Models\Version::where('名刺', true)->first())
-        <a href="{{route('cardviewget')}}" class="tameru_banner">名</a>
-        @endif
-        @if (App\Models\Version::where('スケジュール', true)->first())
-        <a href="{{route('workflow')}}" class="tameru_banner"><img src="{{ asset(config('prefix.prefix').'/'.'img/header/skett_logo_only.svg') }}" alt="TAMERU"></a>
-        @endif
-
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
     <span class="version">ver.5.7.0</span>
+    @include('partials.app_launcher')
 </header>
 <div class="menu001">
 

@@ -429,6 +429,11 @@ body {
     gap: 0.45rem;
     flex: 0 1 auto;
     flex-wrap: wrap;
+
+    // PCでは空のスマホ用メタスロットは非表示
+    .card_view_meta_slot_mobile {
+        display: none;
+    }
 }
 
 // 詳細条件折り畳みトグル
@@ -466,6 +471,23 @@ body {
 
     @media screen and (max-width: 800px) {
         display: inline-flex;
+    }
+
+    @media screen and (max-width: 480px) {
+        padding: 0 0.55rem;
+        font-size: 0.78rem;
+        gap: 0.25rem;
+
+        .card_view_toggle_extra_icon {
+            width: 0.95rem;
+            height: 0.95rem;
+        }
+    }
+
+    @media screen and (max-width: 380px) {
+        padding: 0 0.4rem;
+        font-size: 0.74rem;
+        gap: 0.2rem;
     }
 }
 
@@ -636,15 +658,22 @@ body {
         }
     }
 
-    // 画面が狭いときはアイコンだけにしてラベルを隠す
+    // 画面が狭くてもラベルは残し、サイズだけ詰める
     @media screen and (max-width: 480px) {
-        padding: 0;
-        width: 2.5rem;
-        min-width: 2.5rem;
+        padding: 0 0.55rem;
+        font-size: 0.78rem;
+        gap: 0.3rem;
 
-        .card_view_tag_modal_open_label {
-            display: none;
+        .card_view_tag_modal_open_icon {
+            width: 0.95rem;
+            height: 0.95rem;
         }
+    }
+
+    @media screen and (max-width: 380px) {
+        padding: 0 0.4rem;
+        font-size: 0.74rem;
+        gap: 0.25rem;
     }
 }
 
@@ -885,6 +914,112 @@ body.card_view_tag_modal_active {
             display: flex;
             flex-wrap: nowrap;
             gap: 0.4rem;
+            align-items: stretch;
+        }
+
+        // 件数 + Excel ボタンをアクション行の右端に配置
+        .card_view_meta_slot_mobile {
+            display: inline-flex;
+            align-items: stretch;
+            margin-left: auto;
+            min-width: 0;
+            flex: 0 1 auto;
+        }
+
+        .card_view_meta_slot_mobile .card_view_header_meta {
+            display: inline-flex;
+            align-items: stretch;
+            margin: 0;
+            min-width: 0;
+        }
+
+        // PC同様、白背景カードに件数とExcelボタンを並べる
+        .card_view_meta_slot_mobile .card_view_header_count {
+            margin: 0;
+            padding: 0.2rem 0.5rem;
+            width: auto;
+            height: auto;
+            min-height: 2.5rem;
+            position: static;
+            background: #ffffff;
+            border: solid 1px #dcdcdc;
+            border-radius: 0.55rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+            color: #666;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 0 0 auto;
+            box-sizing: border-box;
+        }
+
+        .card_view_meta_slot_mobile .card_view_header_count_text_container {
+            margin: 0;
+            display: inline-flex;
+            align-items: baseline;
+            gap: 0.1rem;
+        }
+
+        .card_view_meta_slot_mobile .card_view_header_count_text {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .card_view_meta_slot_mobile .card_view_excel_button {
+            position: static !important;
+            top: auto !important;
+            right: auto !important;
+            margin: 0;
+            padding: 0.3rem 0.65rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+            border-radius: 0.4rem;
+            white-space: nowrap;
+            min-height: 1.85rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .card_view_meta_slot_mobile .card_view_header_count {
+            padding: 0.18rem 0.4rem;
+            gap: 0.4rem;
+            font-size: 0.78rem;
+        }
+
+        .card_view_meta_slot_mobile .card_view_header_count_text {
+            font-size: 0.95rem;
+        }
+
+        .card_view_meta_slot_mobile .card_view_excel_button {
+            padding: 0.28rem 0.5rem;
+            font-size: 0.72rem;
+            min-height: 1.7rem;
+        }
+    }
+
+    @media screen and (max-width: 380px) {
+        .card_view_search_actions {
+            gap: 0.3rem;
+        }
+
+        .card_view_meta_slot_mobile .card_view_header_count {
+            padding: 0.15rem 0.35rem;
+            gap: 0.3rem;
+        }
+
+        .card_view_meta_slot_mobile .card_view_header_count_text {
+            font-size: 0.9rem;
+        }
+
+        .card_view_meta_slot_mobile .card_view_excel_button {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.68rem;
         }
     }
 
@@ -980,18 +1115,26 @@ body.card_view_tag_modal_active {
     align-items: center;
     margin-bottom: 0.35rem;
     gap: 0.6rem;
+    box-sizing: border-box;
+    min-width: 0;
 
     @media screen and (max-width: 800px) {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.4rem 0.5rem;
+        // minmax(0, 1fr) によりグリッドトラックがコンテンツ最小幅を理由に親をはみ出さないようにする
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.4rem 0.4rem;
         width: 100%;
         max-width: 100%;
         margin-inline: 0;
+        padding-inline: 0;
+    }
+
+    @media screen and (max-width: 480px) {
+        gap: 0.35rem 0.35rem;
     }
 
     @media screen and (max-width: 360px) {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .sub_search_container_item {
@@ -1001,6 +1144,8 @@ body.card_view_tag_modal_active {
         margin-left: 0;
         height: 100%;
         min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
 
         .sub_search_container_item_label {
             font-size: 0.8rem;
@@ -1010,6 +1155,38 @@ body.card_view_tag_modal_active {
                 font-size: 0.72rem;
                 margin-bottom: 0.1rem;
             }
+        }
+
+        // ベーススタイル（モバイル用 @media が後段で上書きできるように先に定義）
+        input[type="text"] {
+            border: solid 0.1rem gainsboro;
+            border-radius: 0.5rem;
+            padding-left: 0.5rem;
+            background: #ffffff;
+            color: #0c3a75;
+            font-size: 1.1rem;
+        }
+
+        input[type="date"] {
+            border: solid 0.1rem gainsboro;
+            border-radius: 0.5rem;
+            padding-left: 1rem;
+            background: #ffffff;
+            color: #0c3a75;
+            font-size: 1.1rem;
+
+            &::-webkit-date-and-time-value {
+                text-align: left !important;
+            }
+        }
+
+        select {
+            border: solid 0.1rem gainsboro;
+            border-radius: 0.5rem;
+            padding-left: 0.5rem;
+            background: #ffffff;
+            color: #0c3a75;
+            font-size: 1.1rem;
         }
 
         @media screen and (min-width: 801px) {
@@ -1033,43 +1210,50 @@ body.card_view_tag_modal_active {
             input,
             select {
                 width: 100%;
-                height: 2.4rem;
+                max-width: 100%;
+                height: 2.3rem;
                 min-width: 0;
-                font-size: 0.95rem;
+                font-size: 0.85rem;
                 box-sizing: border-box;
             }
-        }
 
-        input[type="text"] {
-            border: solid 0.1rem gainsboro;
-            border-radius: 0.5rem;
-            padding-left: 0.5rem;
-            background: #ffffff;
-            color: #0c3a75;
-            font-size: 1.1rem;
+            // iOS Safariなどでのデフォルト余白・ズーム防止と、グリッドセル幅を超えないように
+            input[type="text"],
+            input[type="date"] {
+                font-size: 0.85rem;
+                padding-left: 0.5rem;
+                padding-right: 0.4rem;
+                -webkit-appearance: none;
+                appearance: none;
+            }
 
-        }
-
-        input[type="date"] {
-            border: solid 0.1rem gainsboro;
-            border-radius: 0.5rem;
-            padding-left: 1rem;
-            background: #ffffff;
-            color: #0c3a75;
-            font-size: 1.1rem;
-
-            &::-webkit-date-and-time-value {
-                text-align: left !important;
+            select {
+                font-size: 0.85rem;
+                padding-left: 0.45rem;
+                padding-right: 1.4rem;
             }
         }
 
-        select {
-            border: solid 0.1rem gainsboro;
-            border-radius: 0.5rem;
-            padding-left: 0.5rem;
-            background: #ffffff;
-            color: #0c3a75;
-            font-size: 1.1rem;
+        @media screen and (max-width: 480px) {
+
+            input,
+            select {
+                height: 2.2rem;
+                font-size: 0.8rem;
+            }
+
+            input[type="text"],
+            input[type="date"] {
+                font-size: 0.8rem;
+                padding-left: 0.4rem;
+                padding-right: 0.3rem;
+            }
+
+            select {
+                font-size: 0.8rem;
+                padding-left: 0.35rem;
+                padding-right: 1.2rem;
+            }
         }
 
         .item_view_container {
