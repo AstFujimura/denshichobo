@@ -532,7 +532,6 @@ a {
   border: solid 0.1px #bababa;
   margin-block: 20px;
   position: relative;
-  /*アイコンの＋と×*/
 }
 @media screen and (max-width: 800px) {
   .important {
@@ -549,6 +548,9 @@ a {
 }
 .important .title {
   margin: 0.8rem 3rem;
+}
+.important {
+  /*アイコンの＋と×*/
 }
 .important .title::before,
 .important .title::after {

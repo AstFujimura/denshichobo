@@ -17,12 +17,33 @@
             @csrf
 
 
-            <input type="file" id="folder_upload" class="folder_upload" webkitdirectory multiple>
-            <label for="folder_upload" class="folder_upload_label">
-                <div class="folder_upload_label_text">
-                    タップしてフォルダを選択
-                </div>
-            </label>
+            <div class="upload_source_picker" aria-label="取込方法の選択">
+                <input type="file" id="folder_upload" class="folder_upload" webkitdirectory multiple>
+                <label for="folder_upload" class="upload_source_card folder_upload_label" data-upload-source="folder">
+                    <div class="upload_source_card_inner">
+                        <div class="upload_source_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/folder_gray.svg') }}" alt="" class="upload_source_icon_img">
+                        </div>
+                        <div class="upload_source_text">
+                            <div class="upload_source_title">フォルダから取込</div>
+                            <div class="upload_source_desc folder_upload_label_text">タップしてフォルダを選択</div>
+                        </div>
+                    </div>
+                </label>
+
+                <input type="file" id="image_upload" class="image_upload" accept="image/*" multiple>
+                <label for="image_upload" class="upload_source_card image_upload_label" data-upload-source="images">
+                    <div class="upload_source_card_inner">
+                        <div class="upload_source_icon">
+                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/image_gray.svg') }}" alt="" class="upload_source_icon_img">
+                        </div>
+                        <div class="upload_source_text">
+                            <div class="upload_source_title">画像から取込</div>
+                            <div class="upload_source_desc image_upload_label_text">タップして画像を複数選択</div>
+                        </div>
+                    </div>
+                </label>
+            </div>
             <div class="analyzing_text">
                 <img src="{{ asset(config('prefix.prefix').'/'.'img/card/analyzing.gif') }}" alt="" class="loading_icon">
                 解析中

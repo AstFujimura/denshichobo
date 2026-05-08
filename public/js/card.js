@@ -936,7 +936,7 @@ $(document).ready(function () {
 
         function cardViewTagModalClose() {
             $tagModal.attr('hidden', true).removeClass('is_open');
-            $('body').removeClass('card_view_tag_modal_open');
+            $('body').removeClass('card_view_tag_modal_active');
         }
 
         function cardViewTagPanelPlace() {
@@ -953,7 +953,7 @@ $(document).ready(function () {
                 return;
             }
             $tagModal.removeAttr('hidden').addClass('is_open');
-            $('body').addClass('card_view_tag_modal_open');
+            $('body').addClass('card_view_tag_modal_active');
         }
 
         cardViewTagPanelPlace();
@@ -1003,8 +1003,11 @@ $(document).ready(function () {
             cardViewTagModalOpen();
         });
 
-        $(document).on('click', '.card_view_tag_modal_overlay', function () {
-            cardViewTagModalClose();
+        // モーダル内のパネル外（オーバーレイや余白）をタップすると閉じる
+        $tagModal.on('click', function (e) {
+            if (!$(e.target).closest('.card_view_tag_modal_panel').length) {
+                cardViewTagModalClose();
+            }
         });
 
         $(document).on('click', '.card_view_tag_modal_close, .card_view_tag_modal_done', function () {
@@ -1653,36 +1656,44 @@ $(document).ready(function () {
     let selectedFiles = [];
     let uploadId = '';
 
-    $('#folder_upload').on('change', function (event) {
-        $('.analyzing_text').addClass('loading');
-        $('.folder_upload_label').addClass('loading');
-        uploadId = generateUUID(); // ここで一度作成！
-        const allowedExtensions = ['jpg', 'jpeg', 'png'];
-        const files = Array.from(event.target.files);
-
-        if (files.length === 0) {
-            $('.analyzing_text').removeClass('loading');
-            $('.folder_upload_label').removeClass('loading');
-            return;
+    function resetUploadPickers() {
+        if ($('.folder_upload_label_text').length) {
+            $('.folder_upload_label_text').text('タップしてフォルダを選択');
         }
-        // 拡張子フィルタ
-        selectedFiles = files.filter(file => {
-            const ext = file.name.split('.').pop().toLowerCase();
+        if ($('.image_upload_label_text').length) {
+            $('.image_upload_label_text').text('タップして画像を複数選択');
+        }
+    }
+
+    function setPickerLoading(isLoading) {
+        if (isLoading) {
+            $('.analyzing_text').addClass('loading');
+            $('.upload_source_card').addClass('loading');
+        } else {
+            $('.analyzing_text').removeClass('loading');
+            $('.upload_source_card').removeClass('loading');
+        }
+    }
+
+    function handleMultipleUploadFiles(rawFiles) {
+        const allowedExtensions = ['jpg', 'jpeg', 'png'];
+        const filteredFiles = (rawFiles || []).filter(file => {
+            const ext = (file.name || '').split('.').pop().toLowerCase();
             return allowedExtensions.includes(ext);
         });
-        if (selectedFiles.length === 0) {
+
+        if (filteredFiles.length === 0) {
             alert('アップロードできる画像ファイルがありません。');
-            $('.analyzing_text').removeClass('loading');
-            $('.folder_upload_label').removeClass('loading');
+            setPickerLoading(false);
             return;
         }
 
-        selectedFiles = Array.from(event.target.files);
+        selectedFiles = filteredFiles;
         let fileMap = {}; // cleanedName ごとに front/back を管理
         let payload = []; // サーバーに送る配列
 
         selectedFiles.forEach(file => {
-            const ext = file.name.split('.').pop().toLowerCase();
+            const ext = (file.name || '').split('.').pop().toLowerCase();
             if (!['jpg', 'jpeg', 'png'].includes(ext)) return;
 
             // 個別IDを生成して file オブジェクトに保持
@@ -1715,7 +1726,6 @@ $(document).ready(function () {
 
             fileMap[cleanedName][front_back] = true;
 
-            // payload に格納（file.id を含める）
             payload.push({
                 core_id: file.core_id,
                 front_back: front_back,
@@ -1723,11 +1733,9 @@ $(document).ready(function () {
             });
         });
 
-
-        // ここで payload を一括送信
         $.ajax({
             url: prefix + '/card/multiple/past',
-            method: 'POST',  // ← GET から POST に変更
+            method: 'POST',
             data: JSON.stringify({
                 files: payload,
                 upload_id: uploadId
@@ -1735,31 +1743,26 @@ $(document).ready(function () {
             headers: {
                 'X-CSRF-TOKEN': $('input[name="_token"]').val()
             },
-            contentType: 'application/json', // JSON で送る宣言
+            contentType: 'application/json',
             success: function (response) {
                 $('.upload_list_container').addClass('upload_list_container_open');
                 $('.upload_list_item_container').empty();
                 response.forEach(function (item) {
-                    // 元のFileオブジェクト取得
                     let originalFile = selectedFiles.find(f => f.core_id === item.core_id);
 
-                    // 見つかったら status を追加
                     if (originalFile) {
                         originalFile.uploaded_card_id = item.uploaded_card_id;
-                        originalFile.status = item.status; // ← ここで status を保持
+                        originalFile.status = item.status;
                         originalFile.front_back = item.front_back;
                         originalFile.card_id = item.card_id;
-
                     }
 
                     let imgUrl = originalFile ? URL.createObjectURL(originalFile) : '';
 
-                    // data属性用フラグ初期化
                     let isMyCard = (item.status === 'mycard');
                     let isOtherCard = (item.status === 'othercard');
                     let isNewCard = (item.status === 'newcard');
 
-                    // 既存アイテムチェック
                     let list_item = $('.upload_list_item[data-uploaded_card_id="' + item.uploaded_card_id + '"]');
 
                     if (item.front_back === 'front') {
@@ -1778,8 +1781,7 @@ $(document).ready(function () {
                                         <input type="checkbox"
                                                class="checkbox_list_item_checkbox"
                                                data-uploaded_card_id="${item.uploaded_card_id}"
-                                               id="${item.core_id}"
-                                               >
+                                               id="${item.core_id}">
                                     </div>
                                     <div class="upload_list_item_front">
                                         <img class="front_img" src="${imgUrl}" alt="${item.filename}" data-core_id="${item.core_id}">
@@ -1807,8 +1809,7 @@ $(document).ready(function () {
                                         <input type="checkbox"
                                                class="checkbox_list_item_checkbox"
                                                data-uploaded_card_id="${item.uploaded_card_id}"
-                                               id="${item.core_id}"
-                                               >
+                                               id="${item.core_id}">
                                     </div>
                                     <div class="upload_list_item_front"></div>
                                     <div class="upload_list_item_back">
@@ -1822,7 +1823,8 @@ $(document).ready(function () {
                         }
                     }
                 });
-                $('.analyzing_text').removeClass('loading');
+
+                setPickerLoading(false);
                 $('.checkbox_description_container[data-status="new"]').removeClass('close');
                 $('.checkbox_description_container[data-status="again"]').addClass('close');
                 $('.checkbox_controller_item_container').removeClass('close');
@@ -1833,18 +1835,43 @@ $(document).ready(function () {
                     $('.upload_button').addClass('enabled');
                 }
                 $('.upload_button').text('アップロード開始');
-
-
             },
-
-
             error: function () {
+                setPickerLoading(false);
                 console.error('送信失敗');
             }
         });
+    }
 
+    $('#folder_upload, #image_upload').on('change', function (event) {
+        const inputId = event.target.id;
+        const sourceType = inputId === 'folder_upload' ? 'folder' : 'images';
+        const rawFiles = Array.from(event.target.files || []);
 
+        if (rawFiles.length === 0) {
+            setPickerLoading(false);
+            return;
+        }
 
+        // 切替時はもう一方をクリア
+        if (sourceType === 'folder') {
+            $('#image_upload').val('');
+        } else {
+            $('#folder_upload').val('');
+        }
+        resetUploadPickers();
+
+        // 選択中表示（拡張子フィルタ前は「何枚選んだか」表示だけにする）
+        if (sourceType === 'folder') {
+            const folderName = rawFiles[0].webkitRelativePath ? rawFiles[0].webkitRelativePath.split('/')[0] : '';
+            $('.folder_upload_label_text').text(folderName ? ('選択中: フォルダ「' + folderName + '」') : ('選択中: ' + rawFiles.length + '枚'));
+        } else {
+            $('.image_upload_label_text').text('選択中: ' + rawFiles.length + '枚');
+        }
+
+        setPickerLoading(true);
+        uploadId = generateUUID();
+        handleMultipleUploadFiles(rawFiles);
     });
     $(document).on('change', '.checkbox_controller_item_all', function () {
         if (this.checked) {
@@ -1910,8 +1937,8 @@ $(document).ready(function () {
         $('.upload_list_container').removeClass('upload_list_container_open');
         $('.upload_list_item_container').empty();
         $('.upload_button').removeClass('enabled');
-        $('.analyzing_text').removeClass('loading');
-        $('.folder_upload_label').removeClass('loading');
+        setPickerLoading(false);
+        resetUploadPickers();
         $.ajax({
             url: prefix + '/card/multiple/delete',
             method: 'GET',
@@ -1921,6 +1948,7 @@ $(document).ready(function () {
         });
         selectedFiles = [];
         $('#folder_upload').val('');
+        $('#image_upload').val('');
     })
 
     $(document).on('click', '.upload_button.enabled', function (event) {
@@ -2107,7 +2135,7 @@ $(document).ready(function () {
             $('.progress_message').text('AI解析中 :' + progress);
             $('.progress_bar').css('width', progress);
             if ($('#uploadedfiles_count').val() === $('#total_files_count').val()) {
-                $('.folder_upload_label_text').text('タップしてフォルダを選択');
+                resetUploadPickers();
                 $('#upload_complete_flag').val('true');
                 clearInterval(intervalId); // 通信を止める
                 $('.progress_container_wrapper').removeClass('progress_container_wrapper_open');

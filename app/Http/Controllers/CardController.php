@@ -1643,12 +1643,6 @@ class CardController extends Controller
             ->filter(fn ($r) => filled(trim((string) ($r['タグ名'] ?? ''))))
             ->values();
 
-        if ($tagsRows->isEmpty()) {
-            return redirect()->route('cardtagsettingsget')
-                ->withErrors(['tags' => '保存するタグを1行以上入力してください。'])
-                ->withInput();
-        }
-
         $deletedIds = collect($request->input('deleted_ids', []))
             ->filter(fn ($v) => $v !== null && $v !== '')
             ->map(fn ($id) => (int) $id)
