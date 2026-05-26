@@ -12,6 +12,9 @@
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/jquery-ui.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css"
+        integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui.js')}}"></script>
     <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui_ja.js')}}"></script>
@@ -34,7 +37,7 @@
         <input type="hidden" id="prefix" value="{{$prefix}}">
     </div>
 
-    <span class="version">ver.5.9.0</span>
+    @include('partials.app_version')
     @include('partials.app_launcher')
 
 </header>
@@ -160,12 +163,23 @@
 
     </div>
 
+    @if (session('error'))
+    <input type="hidden" id="error_message" value="{{ session('error') }}">
+    @php session()->forget('error'); @endphp
+    @endif
+    @if (session('success'))
+    <input type="hidden" id="success_message" value="{{ session('success') }}">
+    @php session()->forget('success'); @endphp
+    @endif
+
 </body>
 <footer>
     @yield('footer')
 </footer>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/all.js') }}"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/usersetting.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
 <script src="{{ asset(config('prefix.prefix').'/'.'js/style.js') }}"></script>
 @if ($server == 'onpre')
 <script src="{{ asset(config('prefix.prefix').'/'.'js/onpre.js') }}"></script>

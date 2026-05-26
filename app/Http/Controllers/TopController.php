@@ -84,9 +84,6 @@ class TopController extends Controller
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
         $today = Carbon::today(); // 今日の日付を取得
-        $users = User::where("id", "not like", 1)
-            ->where("削除", "")
-            ->get();
 
         $documents = Document::where("check", "check")
             ->orderBy('order', 'asc')
@@ -96,6 +93,8 @@ class TopController extends Controller
         $grouparray = Group_User::where('ユーザーID', $userId) // 条件を指定
             ->pluck('グループID') // グループID のみを取得
             ->toArray(); // コレクションを配列に変換
+
+        $users = $this->searchSelectUsers($admin, $grouparray);
 
 
 
@@ -236,18 +235,16 @@ class TopController extends Controller
 
         $userId = Auth::id(); // ログインしているユーザーのIDを取得
         $admin = User::find($userId)->管理;
-        $users = User::where("id", "not like", 1)
-            ->where("削除", "")
-            ->get();
         $documents = Document::where("check", "check")
             ->orderBy('order', 'asc')
             ->get();
-
 
         // 中間テーブルからログインユーザーが含まれる グループID のリストを取得
         $grouparray = Group_User::where('ユーザーID', $userId) // 条件を指定
             ->pluck('グループID') // グループID のみを取得
             ->toArray(); // コレクションを配列に変換
+
+        $users = $this->searchSelectUsers($admin, $grouparray);
 
         if ($admin == "一般") {
 
@@ -625,6 +622,16 @@ class TopController extends Controller
         return response()->download($filepath);
     }
 
+    private function fileDetailQuery()
+    {
+        return DB::table('files')
+            ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', 'groups.グループ名')
+            ->leftJoin('documents', 'files.書類ID', '=', 'documents.id')
+            ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
+            ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
+            ->leftJoin('groups', 'files.グループID', '=', 'groups.id');
+    }
+
     public function detail($id)
     {
         $prefix = config('prefix.prefix');
@@ -632,39 +639,39 @@ class TopController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        $file = DB::table('files')
-            ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', 'groups.グループ名')
-            ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-            ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
-            ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
-            ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
-            ->where('過去データID', $id)
-            ->orderby('バージョン', 'desc')
-            ->first();
-        // ファイルのダウンロード
-        return view('information.detailpage', compact('file', 'prefix', 'server'));
-    }
-    public function history($id)
-    {
-        $prefix = config('prefix.prefix');
-        if ($prefix !== "") {
-            $prefix = "/" . $prefix;
-        }
-        $server = config('prefix.server');
-        $files = DB::table('files')
-            ->select('files.*', 'documents.書類', 'creators.表示名 as 作成者', 'updaters.表示名 as 更新者', 'groups.グループ名')
-            ->leftJoin('documents', 'files.書類ID', '=', 'documents.id') // documentsテーブルの結合
-            ->leftJoin('users as creators', 'files.保存者ID', '=', 'creators.id')
-            ->leftJoin('users as updaters', 'files.更新者ID', '=', 'updaters.id')
-            ->leftJoin('groups', 'files.グループID', '=', 'groups.id')
+
+        $historyFiles = $this->fileDetailQuery()
             ->where('過去データID', $id)
             ->orderby('バージョン', 'asc')
             ->get();
 
+        $file = $historyFiles->sortByDesc('バージョン')->first();
 
-        $count = $files->count();
+        if (!$file) {
+            abort(404);
+        }
 
-        return view('information.historypage', compact('files',  'count', 'prefix', 'server'));
+        $registeredAt = $historyFiles->first()->created_at ?? null;
+        $updatedAt = $file->created_at ?? null;
+        $count = $historyFiles->count();
+
+        return view('information.filedetailpage', compact(
+            'file',
+            'historyFiles',
+            'registeredAt',
+            'updatedAt',
+            'count',
+            'prefix',
+            'server'
+        ));
+    }
+
+    public function history($id)
+    {
+        $prefix = config('prefix.prefix');
+        $path = ($prefix !== '' ? '/' . $prefix : '') . '/detail/' . $id;
+
+        return redirect($path);
     }
 
     public function imgget($id)
@@ -963,5 +970,32 @@ class TopController extends Controller
         $writer = new XlsxWriter($spreadsheet);
         $writer->save('php://output');
         exit;
+    }
+
+    /**
+     * 検索ボックスの更新者・作成者セレクト用ユーザー一覧
+     * 一般ユーザーは同一グループ所属ユーザーのみ
+     */
+    private function searchSelectUsers(string $admin, array $grouparray)
+    {
+        $query = User::where('id', '!=', 1)
+            ->where('削除', '');
+
+        if ($admin === '一般') {
+            $userIds = Group_User::whereIn('グループID', $grouparray)
+                ->pluck('ユーザーID')
+                ->unique()
+                ->filter()
+                ->values()
+                ->all();
+
+            if (empty($userIds)) {
+                $userIds = [Auth::id()];
+            }
+
+            $query->whereIn('id', $userIds);
+        }
+
+        return $query->orderBy('表示名')->get();
     }
 }

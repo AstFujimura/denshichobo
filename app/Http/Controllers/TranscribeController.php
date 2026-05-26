@@ -47,6 +47,7 @@ use Gemini\Data\Blob;
 use Gemini\Enums\MimeType;
 use Gemini\Laravel\Facades\Gemini;
 use Gemini\Client as GeminiClient;
+use App\Support\GeminiApi;
 
 use Illuminate\Support\Facades\Mail;
 
@@ -105,10 +106,9 @@ class TranscribeController extends Controller
         }
 
         // --- Gemini API 呼び出し ---
-        $apiKey = config('gemini.api_key');
         $imageBase64 = base64_encode($imageData);
         $mimeType = 'image/jpeg';
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
+        $url = GeminiApi::generateContentUrl();
 
         $prompt = $this->getJsonPrompt();
 

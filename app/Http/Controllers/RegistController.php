@@ -191,7 +191,8 @@ class RegistController extends Controller
         //バージョンはデフォルトで1になるのでここでは記載しない。変更の時には記述
         //最新フラグはデフォルトで最新になるのでここでは記載しない。変更の時に過去データの最新フラグを外す
         $file->save();
-        return redirect()->route('registGet');
+
+        return redirect()->route('registGet')->with('success', '帳簿を登録しました。');
     }
 
     //クラウドでjqueryから直接アップロードされる場合の機能
@@ -265,6 +266,15 @@ class RegistController extends Controller
         $file->グループID = $group;
         //最新フラグはデフォルトで最新になるのでここでは記載しない。
         $file->save();
+
+        if ($filechange === "") {
+            session()->flash('success', '帳簿を登録しました。');
+
+            return route('registGet');
+        }
+
+        session()->flash('success', '帳簿を変更しました。');
+
         return route('topGet');
     }
     public function convert($int)

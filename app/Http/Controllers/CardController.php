@@ -48,6 +48,7 @@ use Gemini\Data\Blob;
 use Gemini\Enums\MimeType;
 use Gemini\Laravel\Facades\Gemini;
 use Gemini\Client as GeminiClient;
+use App\Support\GeminiApi;
 
 use Illuminate\Support\Facades\Mail;
 
@@ -1134,8 +1135,7 @@ class CardController extends Controller
                 // Gemini APIを使用
                 $imageBase64 = base64_encode(file_get_contents($imageFile->getRealPath()));
                 $mimeType = $imageFile->getMimeType(); // e.g., image/jpeg
-                $apiKey = config('gemini.api_key');
-                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key={$apiKey}";
+                $url = GeminiApi::generateContentUrl();
 
                 $prompt = $this->getJsonPrompt();
 
@@ -2023,8 +2023,7 @@ class CardController extends Controller
                 // Gemini APIを使用
                 $imageBase64 = base64_encode(file_get_contents($file->getRealPath()));
                 $mimeType = $file->getMimeType(); // e.g., image/jpeg
-                $apiKey = config('gemini.api_key');
-                $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key={$apiKey}";
+                $url = GeminiApi::generateContentUrl();
                 $prompt = $this->getJsonPrompt();
                 // リトライ回数の上限を設定
                 $maxRetries = 1;

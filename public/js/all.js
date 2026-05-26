@@ -32,6 +32,16 @@ $(document).ready(function () {
   });
 
 
+  function applyLedgerEditPreviewMedia($media) {
+    $media.addClass('imgset');
+    if ($('.ledger-regist--edit').length) {
+      $media.css({ width: '100%', height: '100%' });
+      return;
+    }
+    $media.attr('width', '100%');
+    $media.attr('height', '600px');
+  }
+
   if ($(".pagetitle").text() == "帳簿変更") {
     var ID = $(".pagetitle").attr("id");
     if ($('#server').val() == "cloud") {
@@ -43,19 +53,15 @@ $(document).ready(function () {
           if (response.Type === 'application/pdf') {
             var embed = $('<embed>');
             embed.attr('src', response.path);
-            embed.attr('width', '100%');
-            embed.attr('height', '600px');
             embed.attr('type', 'application/pdf');
-            embed.addClass('imgset');
+            applyLedgerEditPreviewMedia(embed);
 
             $('.pastpreview').html(embed);
           }
           else if (response.Type.startsWith('image/')) {
             var img = $('<img>');
             img.attr('src', response.path);
-            img.attr('width', '100%');
-            img.attr('height', '600px');
-            img.addClass('imgset');
+            applyLedgerEditPreviewMedia(img);
 
             $('.pastpreview').html(img);
           }
@@ -75,19 +81,15 @@ $(document).ready(function () {
           if (response.type === 'application/pdf') {
             var embed = $('<embed>');
             embed.attr('src', Url);
-            embed.attr('width', '100%');
-            embed.attr('height', '600px');
             embed.attr('type', 'application/pdf');
-            embed.addClass('imgset');
+            applyLedgerEditPreviewMedia(embed);
 
             $('.pastpreview').html(embed);
           }
           else if (response.type.startsWith('image/')) {
             var img = $('<img>');
             img.attr('src', Url);
-            img.attr('width', '100%');
-            img.attr('height', '600px');
-            img.addClass('imgset');
+            applyLedgerEditPreviewMedia(img);
 
             $('.pastpreview').html(img);
           }
@@ -245,6 +247,10 @@ $(document).ready(function () {
 
 
 
+  $('.ledger-regist .droparea').on('click', function () {
+    $('#file').trigger('click');
+  });
+
   $('.droparea').on('dragover', function (event) {
     event.preventDefault();
     $(this).addClass("dragover");
@@ -276,8 +282,8 @@ $(document).ready(function () {
       var pdfUrl = URL.createObjectURL(File);
       var embed = $('<embed>');
       embed.attr('src', pdfUrl);
-      embed.attr('width', '100%');
-      embed.attr('height', '600px'); // 適切な高さを指定
+      embed.attr('type', 'application/pdf');
+      applyLedgerEditPreviewMedia(embed);
 
       $('.previewarea').html(embed);
       // $('.previewarea').addClass("previewopen");
@@ -314,8 +320,8 @@ $(document).ready(function () {
         var pdfUrl = URL.createObjectURL(this.files[0]);
         var embed = $('<embed>');
         embed.attr('src', pdfUrl);
-        embed.attr('width', '100%');
-        embed.attr('height', '600px'); // 適切な高さを指定
+        embed.attr('type', 'application/pdf');
+        applyLedgerEditPreviewMedia(embed);
 
         $('.previewarea').html(embed);
         // $('.previewarea').addClass("previewopen");
