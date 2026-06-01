@@ -18,6 +18,7 @@ use App\Models\Document;
 use App\Models\Group;
 use App\Models\Group_User;
 use Aws\S3\S3Client;
+use App\Models\Version;
 
 class RegistController extends Controller
 {
@@ -53,7 +54,9 @@ class RegistController extends Controller
         //該当するグループの情報を取得
         $groups = Group::whereIn("id", $grouparray)->get();
 
-        return view('information.resistpage', compact('documents', 'prefix', 'server', 'groups'));
+        $banbanEnabled = Version::where('BANBAN', true)->exists();
+
+        return view('information.resistpage', compact('documents', 'prefix', 'server', 'groups', 'banbanEnabled'));
     }
 
     public function registURL(Request $request)
@@ -193,6 +196,104 @@ class RegistController extends Controller
         $file->save();
 
         return redirect()->route('registGet')->with('success', '帳簿を登録しました。');
+    }
+
+    /**
+     * BANBAN: 帳簿保存の一括取込
+     */
+    public function registBulkPost(Request $request)
+    {
+        if (!Version::where('BANBAN', true)->exists()) {
+            abort(404);
+        }
+
+        $maxFileKb = 51200; // 50MB
+        $request->validate([
+            'files' => ['required', 'array', 'min:1'],
+            'files.*' => ['required', 'file', 'max:' . $maxFileKb],
+            'hiduke' => ['required', 'array'],
+            'kinngaku' => ['required', 'array'],
+            'torihikisaki' => ['required', 'array'],
+            'syorui' => ['required', 'array'],
+            'teisyutu' => ['required', 'array'],
+            'hozonn' => ['required', 'array'],
+            'group' => ['required', 'array'],
+            'kennsakuword' => ['nullable', 'array'],
+        ]);
+
+        $files = $request->file('files');
+        $count = count($files);
+
+        foreach (['hiduke', 'kinngaku', 'torihikisaki', 'syorui', 'teisyutu', 'hozonn', 'group'] as $key) {
+            if (count($request->input($key, [])) !== $count) {
+                return redirect()->back()->with('error', '一括取込の入力データが不正です。');
+            }
+        }
+
+        for ($i = 0; $i < $count; $i++) {
+            $fileUpload = $files[$i];
+
+            $request->validate([
+                "torihikisaki.$i" => 'string|not_four_byte_chars',
+                "kennsakuword.$i" => 'nullable|not_four_byte_chars',
+            ], [
+                "torihikisaki.$i.not_four_byte_chars" => '環境依存文字は使用しないでください。',
+                "kennsakuword.$i.not_four_byte_chars" => '環境依存文字は使用しないでください。',
+            ]);
+
+            $now = Carbon::now();
+            $currentTime = $now->format('YmdHis');
+
+            $date = (string) $request->input("hiduke.$i");
+            $date = str_replace('/', '', $date);
+            $torihikisaki = (string) $request->input("torihikisaki.$i");
+            $kinngaku = (string) $request->input("kinngaku.$i");
+            $kinngaku = str_replace(',', '', $kinngaku);
+            $syorui = $request->input("syorui.$i");
+            $teisyutu = (string) $request->input("teisyutu.$i");
+            $hozonn = (string) $request->input("hozonn.$i");
+            $kennsaku = (string) ($request->input("kennsakuword.$i") ?? '');
+            $group = $request->input("group.$i");
+
+            $pastID = $this->generateRandomCode();
+            $extension = $fileUpload->getClientOriginalExtension();
+
+            $filename = Config::get('custom.file_upload_path');
+            $filepath = $currentTime . '_' . $pastID;
+
+            if (!$extension) {
+                if (config('app.env') == 'production') {
+                    // 本番環境用の設定
+                } else {
+                    copy($fileUpload->getRealPath(), $filename . "\\" . $filepath);
+                }
+                $extension = "";
+            } else {
+                if (config('app.env') == 'production') {
+                    // 本番環境用の設定
+                } else {
+                    copy($fileUpload->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+                }
+            }
+
+            $file = new File();
+            $file->日付 = $date;
+            $file->取引先 = $torihikisaki;
+            $file->金額 = $kinngaku;
+            $file->書類ID = $syorui;
+            $file->保存者ID = Auth::user()->id;
+            $file->更新者ID = Auth::user()->id;
+            $file->ファイルパス = $filepath;
+            $file->ファイル形式 = $extension;
+            $file->過去データID = $pastID;
+            $file->保存 = $hozonn;
+            $file->提出 = $teisyutu;
+            $file->備考 = $kennsaku;
+            $file->グループID = $group;
+            $file->save();
+        }
+
+        return redirect()->route('registGet')->with('success', '帳簿を一括登録しました。');
     }
 
     //クラウドでjqueryから直接アップロードされる場合の機能

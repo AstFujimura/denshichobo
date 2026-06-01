@@ -26,12 +26,19 @@
 
 </head>
 
-
-<header class="header001">
+@php
+$banbanLogo = \App\Models\Version::where('BANBAN', true)->exists();
+@endphp
+<header class="header001 {{ $banbanLogo ? 'header001--tameru-banban' : '' }}">
     <div class="logo01">
         <a href="{{route('topGet')}}" class="logoelement01">
+
             <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU" class="tameru_logo">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru.svg') }}" alt="TAMERU" class="tameru_char">
+            @if($banbanLogo)
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/header/banban_tameru.svg') }}" alt="TAMERU" class="tameru_char tameru_char--banban">
+            @else
+                <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru.svg') }}" alt="TAMERU" class="tameru_char">
+            @endif
         </a>
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
         <input type="hidden" id="prefix" value="{{$prefix}}">

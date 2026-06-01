@@ -18,6 +18,8 @@
     <form class="ledger-regist__form form" action="{{ route('editPost', ['path' => $file->過去データID]) }}" method="post" enctype="multipart/form-data">
         @csrf
         <input type="hidden" value="{{ $file->過去データID }}" id="id">
+        <input type="hidden" id="banbanEnabled" value="{{ !empty($banbanEnabled) ? 1 : 0 }}">
+        <input type="hidden" id="aiOcrTraceEnabled" value="{{ config('ai_ocr.trace') ? 1 : 0 }}">
 
         <div class="ledger-regist__layout">
             <div class="ledger-regist__fields">
@@ -48,7 +50,7 @@
                         </div>
                     </div>
 
-                    <div class="ledger-regist__field ledger-regist__field--span2">
+                    <div class="ledger-regist__field">
                         <label class="ledger-regist__label" for="torihikisaki">取引先<span class="requirered">*</span></label>
                         <div class="ledger-regist__control torihikisakiinput">
                             <input type="text" name="torihikisaki" class="input-field ledger-regist__input" id="torihikisaki" value="{{ $file->取引先 }}" autocomplete="off">
@@ -59,6 +61,11 @@
                             <span class="errorsentence ledger-regist__error">{{ $message }}</span>
                             @enderror
                         </div>
+                    </div>
+
+                    <div class="ledger-regist__field ledger-regist__field--aiocr">
+                        <label class="ledger-regist__label" aria-hidden="true">&nbsp;</label>
+                        <div class="ledger-regist__control ledger-regist__aiocr-slot" id="aiOcrButtonSlot"></div>
                     </div>
                 </div>
 

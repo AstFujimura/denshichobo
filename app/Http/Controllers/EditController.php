@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Config;
 
 use App\Models\Group;
 use App\Models\Group_User;
+use App\Models\Version;
 
 class EditController extends Controller
 {
@@ -113,6 +114,7 @@ class EditController extends Controller
             'server' => $server,
             'groups' => $groups,
             'selectstatus' => $selectstatus,
+            'banbanEnabled' => Version::where('BANBAN', true)->exists(),
         ];
 
 

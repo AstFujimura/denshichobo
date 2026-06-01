@@ -14,6 +14,7 @@ use App\Http\Controllers\FlowController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TranscribeController;
+use App\Http\Controllers\AiOcrController;
 use App\Http\Middleware\CheckSessionTimeout;
 use Illuminate\Support\Facades\Config;
 
@@ -100,6 +101,11 @@ Route::prefix($prefix)->group(function () {
 
         Route::get('/objectURL', [RegistController::class, 'registURL'])->name('registURl');
 
+        // -------------------------------BANBAN: 一括取込（帳簿保存）----------------------------------------------------
+        if (Version::where('BANBAN', true)->first()) {
+            Route::post('/regist/bulk', [RegistController::class, 'registBulkPost'])->name('registBulkPost');
+        }
+
 
         // 変更ページ
         Route::get('/edit/{path}', [EditController::class, 'editGet'])->name('editGet');
@@ -160,6 +166,11 @@ Route::prefix($prefix)->group(function () {
         Route::post('/userexcel', [TestController::class, 'userexcel'])->name('userexcel');
 
         Route::get('/question', [TopController::class, 'question'])->name('question');
+
+        // -------------------------------BANBAN: AI OCR（帳簿保存/変更）----------------------------------------------------
+        if (Version::where('BANBAN', true)->first()) {
+            Route::post('/ai/ocr/ledger', [AiOcrController::class, 'ledger'])->name('aiOcrLedger');
+        }
 
         // -------------------------------承認機能----------------------------------------------------
         if (Version::where('フロー', true)->first()) {

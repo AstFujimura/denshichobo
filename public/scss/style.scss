@@ -1,3 +1,5 @@
+@use "sass:color";
+
 @font-face {
   font-family: 'Noto';
   src: url('https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/Noto.ttf') format('truetype');
@@ -300,7 +302,7 @@ $ledger-max-width: 75rem;
 
 .ledger-table .top_table_div {
   display: flex;
-  border-bottom: 2px solid darken($ledger-border, 6%);
+  border-bottom: 2px solid color.adjust($ledger-border, $lightness: -6%);
 
   > div {
     display: flex;
@@ -443,9 +445,7 @@ $ledger-max-width: 75rem;
 }
 
 .ledger-table .top_table_column_fixed {
-  width: 90%;
-  max-width: $ledger-max-width;
-  left: 0;
+  // left / width / top は style.js で .ledger-table の位置に合わせて設定
   transform: none;
   border-radius: 10px 10px 0 0;
   box-shadow: 0 4px 12px rgba(15, 35, 55, 0.12);
@@ -1213,7 +1213,7 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
 }
 
 // 広い画面：詳細検索は常時表示
-@media (min-width: $search-compact-break + 0.0625rem) {
+@media (min-width: calc(#{$search-compact-break} + 0.0625rem)) {
   .searchbox-detail {
     display: flex !important;
   }
@@ -1395,6 +1395,51 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
 
     &--span2 {
       grid-column: 1 / -1;
+    }
+
+    &--aiocr {
+      align-self: end;
+
+      .ledger-regist__label {
+        visibility: hidden;
+      }
+
+      .ledger-regist__control {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .aiocrbutton {
+    min-height: 2rem;
+    padding: 0 1rem;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.32);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 6px rgba(37, 99, 235, 0.22);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+      box-shadow: none;
     }
   }
 
@@ -1723,6 +1768,232 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
       border: none !important;
     }
   }
+}
+
+// 帳簿保存（BANBAN）: 通常/一括タブ + 一括取込UI
+.ledger-regist-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0.75rem;
+
+  &__tab {
+    flex: 0 0 auto;
+    min-height: 2.25rem;
+    padding: 0 1.1rem;
+    border: 1px solid $search-input-border;
+    border-radius: 999px;
+    background: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    color: #2a3f4f;
+
+    &.is-active {
+      background: rgba(20, 183, 123, 0.12);
+      border-color: $search-accent;
+      color: #0e6c4a;
+    }
+  }
+}
+
+.ledger-regist-tabpanel {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
+
+.ledger-bulk {
+  padding: 0.85rem 1rem;
+  background: $search-bg;
+  border: 1px solid $search-border;
+  border-radius: 10px;
+
+  &__file-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding-bottom: 0.85rem;
+    margin-bottom: 0.85rem;
+    border-bottom: 1px solid $search-border;
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    color: $search-label;
+  }
+
+  &__common {
+    padding-bottom: 0.85rem;
+    margin-bottom: 0.85rem;
+    border-bottom: 1px solid $search-border;
+  }
+
+  &__common-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.65rem 1rem;
+  }
+
+  &__common-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+  }
+
+  &__action {
+    min-height: 2rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 1px solid $search-input-border;
+    background: #fff;
+    font-weight: 700;
+    cursor: pointer;
+
+    &--primary {
+      border: none;
+      background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+      color: #fff;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.ledger-bulk-row {
+  background: #fff;
+  border: 1px solid $search-border;
+  border-radius: 10px;
+  margin-bottom: 0.65rem;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    background: rgba(15, 35, 55, 0.02);
+  }
+
+  &__name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #1f2d3a;
+    word-break: break-all;
+  }
+
+  &__header-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  &__toggle {
+    min-height: 2rem;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    border: 1px solid $search-input-border;
+    background: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  &__body {
+    padding: 0.75rem;
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 31rem) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  &__preview.previewarea {
+    min-height: 12rem;
+    border: 1px solid $search-border;
+    border-radius: 10px;
+    padding: 0.75rem;
+    background: #fff;
+    box-sizing: border-box;
+  }
+
+  &.is-ocr-running {
+    border-color: #3b82f6;
+  }
+
+  &.is-ocr-error {
+    border-color: #c0392b;
+  }
+}
+
+.ledger-bulk-row.is-ocr-running {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    right: 0.9rem;
+    top: 0.75rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(37, 99, 235, 0.25);
+    border-top-color: rgba(37, 99, 235, 0.95);
+    animation: ledgerSpin 0.8s linear infinite;
+    z-index: 1;
+  }
+}
+
+.ledger-bulk-row [data-bulk-action="ocrOne"].is-done {
+  background: rgba(20, 183, 123, 0.14);
+  color: #0e6c4a;
+  box-shadow: none;
+}
+
+@keyframes ledgerSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 48rem) {
+  .ledger-bulk__common-grid {
+    grid-template-columns: 1fr;
+  }
+  .ledger-bulk-row__layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+// BANBANロゴ（ヘッダーの文字部分）だけ横幅を広げる
+.tameru_char--banban {
+  height: 2.8rem !important;
+  max-width: none;
+}
+
+// TAMERUヘッダー：左→右で濃くなるプレミアムグラデーション
+.header001--tameru-banban {
+  background: linear-gradient(90deg, #ebfff9 0%, #1a9d7e 85%, #98bfb4 100%) !important;
 }
 
 .ledger-regist-modal {
@@ -2115,8 +2386,6 @@ body.ledger-regist-modal-open {
   .input-container {
     flex-direction: column;
     margin-top: 1rem;
-
-    .label {}
 
     .dateform {
       .input-field {

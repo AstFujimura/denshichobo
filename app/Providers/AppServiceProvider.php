@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 
 use Illuminate\Support\Facades\Validator;
+use App\Contracts\AiOcrLedgerProvider;
+use App\Services\AiOcr\Providers\GeminiLedgerOcrProvider;
+use App\Services\AiOcr\Providers\InternalHttpLedgerOcrProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,7 +20,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(AiOcrLedgerProvider::class, function () {
+            $provider = (string) config('ai_ocr.provider', 'gemini');
+
+            return match ($provider) {
+                'internal' => new InternalHttpLedgerOcrProvider(),
+                default => new GeminiLedgerOcrProvider(),
+            };
+        });
     }
 
     /**

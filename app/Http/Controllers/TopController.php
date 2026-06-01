@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\Paginator;
-use Aws\S3\S3Client;
 use Illuminate\Support\Facades\File as PDF;
 use Illuminate\Support\Facades\Response;
 
@@ -677,55 +676,62 @@ class TopController extends Controller
     public function imgget($id)
     {
         $img = File::where('id', $id)->first();
+        if (!$img) {
+            abort(404);
+        }
 
-
-
-        $filepath = $img->ファイルパス;
         $extension = $img->ファイル形式;
-
+        $contentType = $this->resolveLedgerFileContentType($extension);
 
         if (config('prefix.server') == "cloud") {
-            // S3バケットの情報
-            $bucket = 'astdocs.com';
-            $key = $img->ファイルパス . "." . $img->ファイル形式;
-            $expiration = '+1 hour'; // 有効期限
+            $key = $this->resolveLedgerFileS3Key($img);
+            if (!Storage::disk('s3')->exists($key)) {
+                abort(404);
+            }
 
-            $s3Client = new S3Client([
-                'region' => 'ap-northeast-1',
-                'version' => 'latest',
+            return response(Storage::disk('s3')->get($key), 200, [
+                'Content-Type' => $contentType,
             ]);
-
-            $command = $s3Client->getCommand('GetObject', [
-                'Bucket' => $bucket,
-                'Key' => $key
-            ]);
-            // 署名付きURLを生成
-            $path = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-        } else {
-            $path = Config::get('custom.file_upload_path') . "\\" . $filepath . '.' . $extension;
         }
 
+        $path = $this->resolveLedgerFileLocalPath($img);
+        if (!file_exists($path)) {
+            abort(404);
+        }
 
-        // 画像形式の場合は画像を表示
+        return response()->file($path, ['Content-Type' => $contentType]);
+    }
+
+    private function resolveLedgerFileS3Key(File $file): string
+    {
+        if ($file->ファイル形式 == "") {
+            return $file->ファイルパス;
+        }
+
+        return $file->ファイルパス . "." . $file->ファイル形式;
+    }
+
+    private function resolveLedgerFileLocalPath(File $file): string
+    {
+        $base = Config::get('custom.file_upload_path');
+        if ($file->ファイル形式 == "") {
+            return $base . "\\" . $file->ファイルパス;
+        }
+
+        return $base . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
+    }
+
+    private function resolveLedgerFileContentType(?string $extension): string
+    {
         if (in_array($extension, ['jpeg', 'jpg', 'JPG', 'jpe', 'JPEG', 'png', 'PNG', 'gif', 'bmp', 'svg'])) {
-            if (config('prefix.server') == "cloud") {
-                return response()->json(['path' => $path, 'Type' => 'image/' . $extension]);
-            } else {
-                return response()->file($path, ['Content-Type' => 'image/' . $extension]);
-            }
-        } else if (in_array($extension, ['PDF', 'pdf'])) {
-            if (config('prefix.server') == "cloud") {
-                return response()->json(['path' => $path, 'Type' => 'application/pdf']);
-            } else {
-                return response()->file($path, ['Content-Type' => 'application/pdf']);
-            }
-        } else {
-            if (config('prefix.server') == "cloud") {
-                return response()->json(['path' => $path, 'Type' => '']);
-            } else {
-                return response()->file($path, ['Content-Type' => '']);
-            }
+            return 'image/' . $extension;
         }
+
+        if (in_array($extension, ['PDF', 'pdf'])) {
+            return 'application/pdf';
+        }
+
+        return 'application/octet-stream';
     }
 
     public function usersettingGet(Request $request)
