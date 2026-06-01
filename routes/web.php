@@ -17,6 +17,7 @@ use App\Http\Controllers\TranscribeController;
 use App\Http\Controllers\AiOcrController;
 use App\Http\Middleware\CheckSessionTimeout;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
 
 use App\Models\Version;
 
@@ -167,8 +168,8 @@ Route::prefix($prefix)->group(function () {
 
         Route::get('/question', [TopController::class, 'question'])->name('question');
 
-        // -------------------------------BANBAN: AI OCR（帳簿保存/変更）----------------------------------------------------
-        if (Version::where('BANBAN', true)->first()) {
+        // -------------------------------一藤（ichifuji）: AI OCR（帳簿保存/変更）----------------------------------------------------
+        if (Schema::hasColumn('versions', 'ichifuji') && Version::where('ichifuji', true)->first()) {
             Route::post('/ai/ocr/ledger', [AiOcrController::class, 'ledger'])->name('aiOcrLedger');
         }
 

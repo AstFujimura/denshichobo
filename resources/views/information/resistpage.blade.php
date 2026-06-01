@@ -16,6 +16,7 @@
 
 <div class="ledger-regist droppreview">
     <input type="hidden" id="banbanEnabled" value="{{ !empty($banbanEnabled) ? 1 : 0 }}">
+    <input type="hidden" id="ichifujiEnabled" value="{{ !empty($ichifujiEnabled) ? 1 : 0 }}">
     <input type="hidden" id="aiOcrTraceEnabled" value="{{ config('ai_ocr.trace') ? 1 : 0 }}">
 
     @if(!empty($banbanEnabled))

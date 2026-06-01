@@ -12,6 +12,7 @@ use App\Models\Document;
 use App\Models\File as Filemodel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
 
 use App\Models\Group;
 use App\Models\Group_User;
@@ -115,6 +116,8 @@ class EditController extends Controller
             'groups' => $groups,
             'selectstatus' => $selectstatus,
             'banbanEnabled' => Version::where('BANBAN', true)->exists(),
+            'ichifujiEnabled' => Schema::hasColumn('versions', 'ichifuji')
+                && Version::where('ichifuji', true)->exists(),
         ];
 
 

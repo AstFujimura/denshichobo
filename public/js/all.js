@@ -179,6 +179,10 @@ $(document).ready(function () {
     return $('#banbanEnabled').val() === '1';
   }
 
+  function isIchifujiEnabled() {
+    return $('#ichifujiEnabled').val() === '1';
+  }
+
   function isAiOcrTraceEnabled() {
     return $('#aiOcrTraceEnabled').val() === '1';
   }
@@ -402,7 +406,7 @@ $(document).ready(function () {
   }
 
   function ensureAiOcrButtonVisible(file) {
-    if (!isBanbanEnabled()) {
+    if (!isIchifujiEnabled()) {
       return;
     }
     if (!file) {
@@ -573,6 +577,8 @@ $(document).ready(function () {
   function initLedgerBulkUI() {
     if (!isBanbanEnabled()) return;
     if (!$('.ledger-regist-tabs').length) return;
+    var aiEnabled = isIchifujiEnabled();
+    $('#bulkAiOcrAll').toggle(aiEnabled);
 
     function switchTab(target) {
       $('.ledger-regist-tabs__tab').removeClass('is-active').attr('aria-selected', 'false');
@@ -601,7 +607,7 @@ $(document).ready(function () {
         + '    </div>'
         + '    <div class="ledger-bulk-row__header-actions">'
         + '      <button type="button" class="ledger-bulk-row__toggle" data-bulk-action="toggle">フォームを表示</button>'
-        + '      <button type="button" class="aiocrbutton" data-bulk-action="ocrOne">AI OCR</button>'
+        + (aiEnabled ? '      <button type="button" class="aiocrbutton" data-bulk-action="ocrOne">AI OCR</button>' : '')
         + '    </div>'
         + '  </div>'
         + '  <div class="ledger-bulk-row__body" style="display:none;">'
@@ -609,21 +615,24 @@ $(document).ready(function () {
         + '      <div class="ledger-bulk-row__fields">'
         + '        <div class="ledger-regist__ocr-grid">'
         + '          <div class="ledger-regist__field">'
-        + '            <label class="ledger-regist__label">取引日</label>'
+        + '            <label class="ledger-regist__label">取引日<span class="requirered">*</span></label>'
         + '            <div class="ledger-regist__control dateform">'
-        + '              <input type="text" name="hiduke[]" class="input-field dateinputtext ledger-regist-date ledger-regist__input" data-bulk-field="hiduke" autocomplete="off">'
+        + '              <input type="text" name="hiduke[]" class="input-field dateinputtext ledger-regist-date ledger-regist__input" data-bulk-field="hiduke" autocomplete="off" required>'
+        + '              <span class="errorelement ledger-regist__error bulk-required-msg" data-bulk-error="hiduke">必須項目です</span>'
         + '            </div>'
         + '          </div>'
         + '          <div class="ledger-regist__field">'
-        + '            <label class="ledger-regist__label">金額</label>'
+        + '            <label class="ledger-regist__label">金額<span class="requirered">*</span></label>'
         + '            <div class="ledger-regist__control">'
-        + '              <input type="text" name="kinngaku[]" class="input-field kinngakuinput-field ledger-regist__input ledger-regist__input--amount" data-bulk-field="kinngaku">'
+        + '              <input type="text" name="kinngaku[]" class="input-field kinngakuinput-field ledger-regist__input ledger-regist__input--amount" data-bulk-field="kinngaku" required>'
+        + '              <span class="errorelement ledger-regist__error bulk-required-msg" data-bulk-error="kinngaku">必須項目です</span>'
         + '            </div>'
         + '          </div>'
         + '          <div class="ledger-regist__field">'
-        + '            <label class="ledger-regist__label">取引先</label>'
+        + '            <label class="ledger-regist__label">取引先<span class="requirered">*</span></label>'
         + '            <div class="ledger-regist__control torihikisakiinput">'
-        + '              <input type="text" name="torihikisaki[]" class="input-field ledger-regist__input" data-bulk-field="torihikisaki" autocomplete="off">'
+        + '              <input type="text" name="torihikisaki[]" class="input-field ledger-regist__input" data-bulk-field="torihikisaki" autocomplete="off" required>'
+        + '              <span class="errorelement ledger-regist__error bulk-required-msg" data-bulk-error="torihikisaki">必須項目です</span>'
         + '            </div>'
         + '          </div>'
         + '        </div>'
@@ -635,9 +644,10 @@ $(document).ready(function () {
         + '            </div>'
         + '          </div>'
         + '          <div class="ledger-regist__field">'
-        + '            <label class="ledger-regist__label">受領・提出</label>'
+        + '            <label class="ledger-regist__label">受領・提出<span class="requirered">*</span></label>'
         + '            <div class="ledger-regist__control">'
-        + '              <select name="teisyutu[]" class="input-field ledger-regist__input ledger-regist__select" data-bulk-field="teisyutu"><option>受領</option><option>提出</option></select>'
+        + '              <select name="teisyutu[]" class="input-field ledger-regist__input ledger-regist__select" data-bulk-field="teisyutu" required><option>受領</option><option>提出</option></select>'
+        + '              <span class="errorelement ledger-regist__error bulk-required-msg" data-bulk-error="teisyutu">必須項目です</span>'
         + '            </div>'
         + '          </div>'
         + '          <div class="ledger-regist__field">'
@@ -685,6 +695,55 @@ $(document).ready(function () {
       var hasFiles = files.length > 0;
       $('#bulkCommonActions').toggleClass('is-hidden', !hasFiles);
       $('#bulkRegistButton').prop('disabled', !hasFiles);
+      $('#bulkAiOcrAll').toggle(aiEnabled);
+    });
+
+    function validateBulkRequiredFields() {
+      var hasError = false;
+      var $rows = $('#bulkFileList .ledger-bulk-row');
+
+      $rows.each(function () {
+        var $row = $(this);
+        var $hiduke = $row.find('[data-bulk-field="hiduke"]');
+        var $kinngaku = $row.find('[data-bulk-field="kinngaku"]');
+        var $torihikisaki = $row.find('[data-bulk-field="torihikisaki"]');
+        var $teisyutu = $row.find('[data-bulk-field="teisyutu"]');
+        var $hidukeMsg = $row.find('[data-bulk-error="hiduke"]');
+        var $kinngakuMsg = $row.find('[data-bulk-error="kinngaku"]');
+        var $torihikiMsg = $row.find('[data-bulk-error="torihikisaki"]');
+        var $teisyutuMsg = $row.find('[data-bulk-error="teisyutu"]');
+
+        var hidukeVal = String($hiduke.val() || '').trim();
+        var kinngakuVal = String($kinngaku.val() || '').trim();
+        var torihikiVal = String($torihikisaki.val() || '').trim();
+        var teisyutuVal = String($teisyutu.val() || '').trim();
+
+        $hiduke.toggleClass('invalid', !hidukeVal);
+        $kinngaku.toggleClass('invalid', !kinngakuVal);
+        $torihikisaki.toggleClass('invalid', !torihikiVal);
+        $teisyutu.toggleClass('invalid', !teisyutuVal);
+        $hidukeMsg.toggleClass('errorsentence', !hidukeVal);
+        $kinngakuMsg.toggleClass('errorsentence', !kinngakuVal);
+        $torihikiMsg.toggleClass('errorsentence', !torihikiVal);
+        $teisyutuMsg.toggleClass('errorsentence', !teisyutuVal);
+
+        if (!hidukeVal || !kinngakuVal || !torihikiVal || !teisyutuVal) {
+          hasError = true;
+          // 入力不足がある行は自動で開く
+          $row.find('.ledger-bulk-row__body').show();
+          $row.find('[data-bulk-action="toggle"]').text('フォームを隠す');
+        }
+      });
+
+      return !hasError;
+    }
+
+    $('#bulkRegistForm').on('submit', function (e) {
+      // HTMLのrequiredだけだと折りたたみ状態で気づきにくいので、明示チェックする
+      if (!validateBulkRequiredFields()) {
+        e.preventDefault();
+        alert('一括取込の必須項目（取引日・受領/提出・取引先）を入力してください。');
+      }
     });
 
     function applyCommonToAllRows() {
@@ -719,6 +778,9 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '[data-bulk-action="ocrOne"]', async function () {
+      if (!aiEnabled) {
+        return;
+      }
       var $btn = $(this);
       var $row = $btn.closest('.ledger-bulk-row');
       var file = $row.data('file');
@@ -760,6 +822,9 @@ $(document).ready(function () {
     });
 
     $('#bulkAiOcrAll').on('click', async function () {
+      if (!aiEnabled) {
+        return;
+      }
       var $btn = $(this);
       var $rows = $('#bulkFileList .ledger-bulk-row');
       if (!$rows.length) {

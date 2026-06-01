@@ -19,6 +19,7 @@
         @csrf
         <input type="hidden" value="{{ $file->過去データID }}" id="id">
         <input type="hidden" id="banbanEnabled" value="{{ !empty($banbanEnabled) ? 1 : 0 }}">
+        <input type="hidden" id="ichifujiEnabled" value="{{ !empty($ichifujiEnabled) ? 1 : 0 }}">
         <input type="hidden" id="aiOcrTraceEnabled" value="{{ config('ai_ocr.trace') ? 1 : 0 }}">
 
         <div class="ledger-regist__layout">

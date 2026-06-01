@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Schema;
 
 use App\Models\User;
 use App\Models\File;
@@ -55,8 +56,10 @@ class RegistController extends Controller
         $groups = Group::whereIn("id", $grouparray)->get();
 
         $banbanEnabled = Version::where('BANBAN', true)->exists();
+        $ichifujiEnabled = Schema::hasColumn('versions', 'ichifuji')
+            && Version::where('ichifuji', true)->exists();
 
-        return view('information.resistpage', compact('documents', 'prefix', 'server', 'groups', 'banbanEnabled'));
+        return view('information.resistpage', compact('documents', 'prefix', 'server', 'groups', 'banbanEnabled', 'ichifujiEnabled'));
     }
 
     public function registURL(Request $request)
