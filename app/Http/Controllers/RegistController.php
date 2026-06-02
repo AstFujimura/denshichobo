@@ -261,22 +261,36 @@ class RegistController extends Controller
             $pastID = $this->generateRandomCode();
             $extension = $fileUpload->getClientOriginalExtension();
 
-            $filename = Config::get('custom.file_upload_path');
             $filepath = $currentTime . '_' . $pastID;
 
-            if (!$extension) {
-                if (config('app.env') == 'production') {
-                    // 本番環境用の設定
+            // ファイル保存（クラウド: S3 / オンプレ: ローカル）
+            try {
+                if (config('prefix.server') === 'cloud') {
+                    // S3 は prefix 配下に保存する
+                    $prefix = (string) config('prefix.prefix', '');
+                    $keyBase = $prefix !== '' ? ($prefix . '/' . $filepath) : $filepath;
+
+                    if (!$extension) {
+                        Storage::disk('s3')->put($keyBase, fopen($fileUpload->getRealPath(), 'r'));
+                        $extension = '';
+                    } else {
+                        $key = $keyBase . '.' . $extension;
+                        Storage::disk('s3')->put($key, fopen($fileUpload->getRealPath(), 'r'));
+                    }
+
+                    // DBには（単体クラウド登録と同様に）prefix込みのパスを入れる
+                    $filepath = $keyBase;
                 } else {
-                    copy($fileUpload->getRealPath(), $filename . "\\" . $filepath);
+                    $filename = Config::get('custom.file_upload_path');
+                    if (!$extension) {
+                        copy($fileUpload->getRealPath(), $filename . "\\" . $filepath);
+                        $extension = "";
+                    } else {
+                        copy($fileUpload->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
+                    }
                 }
-                $extension = "";
-            } else {
-                if (config('app.env') == 'production') {
-                    // 本番環境用の設定
-                } else {
-                    copy($fileUpload->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-                }
+            } catch (\Throwable $e) {
+                return redirect()->back()->with('error', 'ファイルの保存に失敗しました: ' . $e->getMessage());
             }
 
             $file = new File();
