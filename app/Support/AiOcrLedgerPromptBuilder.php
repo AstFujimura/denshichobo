@@ -19,17 +19,16 @@ class AiOcrLedgerPromptBuilder
 
     public static function build(string $teisyutu): string
     {
-        $base = (string) config('ai_ocr.ledger_prompt', '');
-        $teisyutu = self::normalizeTeisyutu($teisyutu);
-
-        $torihikisakiRule = $teisyutu === self::TEISYUTU_TEISHUTSU
-            ? (string) config('ai_ocr.ledger_prompt_torihikisaki_teishutsu', '')
-            : (string) config('ai_ocr.ledger_prompt_torihikisaki_jyuryo', '');
-
-        if ($torihikisakiRule === '') {
-            return $base;
+        $template = (string) config('ai_ocr.ledger_prompt', '');
+        if ($template === '') {
+            return '';
         }
 
-        return rtrim($base) . "\n\n" . trim($torihikisakiRule);
+        $teisyutu = self::normalizeTeisyutu($teisyutu);
+        $torihikisakiLine = $teisyutu === self::TEISYUTU_TEISHUTSU
+            ? (string) config('ai_ocr.torihikisaki_line_teishutsu', '')
+            : (string) config('ai_ocr.torihikisaki_line_jyuryo', '');
+
+        return str_replace('{torihikisaki_line}', $torihikisakiLine, $template);
     }
 }
