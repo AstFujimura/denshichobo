@@ -27,7 +27,13 @@
 </head>
 
 @php
-$banbanLogo = \App\Models\Version::where('BANBAN', true)->exists();
+$banbanLogo = false;
+if (\App\Models\Version::where('BANBAN', true)->exists()) {
+    $banbanLogo = true;
+}
+if (today()->isBefore('2026-06-15')) {
+    $banbanLogo = false;
+}
 @endphp
 <header class="header001 {{ $banbanLogo ? 'header001--tameru-banban' : '' }}">
     <div class="logo01">
