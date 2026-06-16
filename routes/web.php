@@ -8,6 +8,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\VersionController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\FlowController;
@@ -121,6 +122,10 @@ Route::prefix($prefix)->group(function () {
 
         // 管理者ページトップ（ユーザー一覧）
         Route::get('/admin', [AdminController::class, 'adminGet'])->name('adminGet');
+
+        // 機能設定（astecユーザーのみ）
+        Route::get('/admin/version', [VersionController::class, 'versionGet'])->name('versionGet');
+        Route::post('/admin/version', [VersionController::class, 'versionPost'])->name('versionPost');
 
         // ユーザー登録画面
         Route::get('/admin/regist', [AdminController::class, 'adminregistGet'])->name('adminregistGet');

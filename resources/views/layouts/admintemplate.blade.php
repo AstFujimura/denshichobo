@@ -44,6 +44,11 @@
     <a class="headerIcon001" href="{{route('admingroupregistGet')}}" >
         <img src="{{ asset(config('prefix.prefix').'/'.'img/group.svg') }}" class="menuicon01" title="グループ管理">
     </a>
+    @if (Auth::id() === 1)
+    <a class="headerIcon001" href="{{ route('versionGet') }}">
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/settings_4_line.svg') }}" class="menuicon01" title="機能設定">
+    </a>
+    @endif
     @if (App\Models\Version::where('tameru', true)->first())
     <a class="headerIcon001" href="{{route('admindocumentGet')}}" >
         <img src="{{ asset(config('prefix.prefix').'/'.'img/document_2_line.svg') }}" class="menuicon01" title="書類管理">

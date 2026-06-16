@@ -13,4 +13,24 @@ class Version extends Model
     use HasFactory;
 
     protected $table = 'versions';
+
+    protected $fillable = [
+        'フロー',
+        '名刺',
+        'tameru',
+        'スケジュール',
+        '文書',
+        'BANBAN',
+        'ichifuji',
+    ];
+
+    protected $casts = [
+        'フロー' => 'boolean',
+        '名刺' => 'boolean',
+        'tameru' => 'boolean',
+        'スケジュール' => 'boolean',
+        '文書' => 'boolean',
+        'BANBAN' => 'boolean',
+        'ichifuji' => 'boolean',
+    ];
 }

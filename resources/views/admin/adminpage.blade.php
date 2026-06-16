@@ -35,6 +35,13 @@
             </a>
         </div>
         @endif
+        @if (Auth::id() === 1)
+        <div class="admin_console_item">
+            <a href="{{ route('versionGet') }}">
+                機能設定
+            </a>
+        </div>
+        @endif
     </div>
 </div>
 
