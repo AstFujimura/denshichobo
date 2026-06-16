@@ -28,8 +28,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('uploaded_cards', function (Blueprint $table) {
-            $table->dropColumn('ファイル名');
-            $table->dropColumn('名刺ID');
+            $table->dropForeign(['名刺ID']);
+            $table->dropColumn(['ファイル名', '名刺ID']);
         });
     }
 };
