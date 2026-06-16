@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Version;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class VersionController extends Controller
@@ -49,9 +50,26 @@ class VersionController extends Controller
 
     $version->save();
 
-    return redirect()
-      ->route('versionGet')
-      ->with('success', '機能設定を更新しました。');
+    $message = '機能設定を更新しました。';
+    $warning = null;
+
+    try {
+      $exitCode = Artisan::call('route:cache');
+      if ($exitCode === 0) {
+        $message .= ' ルートキャッシュを更新しました。';
+      } else {
+        $warning = 'ルートキャッシュの更新に失敗しました。手動で php artisan route:cache を実行してください。';
+      }
+    } catch (\Throwable $e) {
+      $warning = 'ルートキャッシュの更新に失敗しました。手動で php artisan route:cache を実行してください。';
+    }
+
+    $redirect = redirect()->route('versionGet')->with('success', $message);
+    if ($warning !== null) {
+      return $redirect->with('warning', $warning);
+    }
+
+    return $redirect;
   }
 
   private function ensureAstecUser()

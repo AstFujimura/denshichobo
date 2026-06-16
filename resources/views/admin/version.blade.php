@@ -26,6 +26,9 @@
 @if (session('success'))
 <p class="savemessage">{{ session('success') }}</p>
 @endif
+@if (session('warning'))
+<p class="savemessage" style="color: #c00;">{{ session('warning') }}</p>
+@endif
 
 <form action="{{ route('versionPost') }}" method="post" id="admin_version_form">
     @csrf
