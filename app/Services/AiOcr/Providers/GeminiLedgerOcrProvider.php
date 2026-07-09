@@ -23,8 +23,8 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
                     'parts' => [
                         ['text' => $prompt],
                         [
-                            'inline_data' => [
-                                'mime_type' => $mimeType,
+                            'inlineData' => [
+                                'mimeType' => $mimeType,
                                 'data' => $base64,
                             ],
                         ],
@@ -33,7 +33,17 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
             ],
             'generationConfig' => [
                 'temperature' => 0.2,
+                'maxOutputTokens' => 512,
                 'responseMimeType' => 'application/json',
+                'responseSchema' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'hiduke' => ['type' => 'string'],
+                        'kinngaku' => ['type' => 'number'],
+                        'torihikisaki' => ['type' => 'string'],
+                    ],
+                    'required' => ['hiduke', 'kinngaku', 'torihikisaki'],
+                ],
             ],
         ];
 
@@ -85,8 +95,9 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
             );
         }
 
-        $text = data_get($resp->json(), 'candidates.0.content.parts.0.text');
-        if (!is_string($text) || $text === '') {
+        $body = $resp->json();
+        $text = $this->extractTextFromResponse($body);
+        if ($text === null || $text === '') {
             Log::warning('ai_ocr.gemini.empty_text', ['step' => 'gemini.empty_response']);
 
             return new LedgerOcrResult(
@@ -95,7 +106,7 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
                 torihikisaki: null,
                 raw: [
                     'ok' => false,
-                    'body' => $resp->json(),
+                    'body' => $body,
                 ],
                 provider: 'gemini',
                 step: 'gemini.empty_response',
@@ -107,7 +118,9 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
         if (!is_array($decoded)) {
             Log::warning('ai_ocr.gemini.json_decode_error', [
                 'step' => 'gemini.json_decode_error',
+                'finish_reason' => data_get($body, 'candidates.0.finishReason'),
                 'raw_preview' => mb_substr($text, 0, 200),
+                'raw_length' => mb_strlen($text),
             ]);
 
             return new LedgerOcrResult(
@@ -147,5 +160,40 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
         }
 
         return $result;
+    }
+
+    private function extractTextFromResponse(array $body): ?string
+    {
+        $parts = data_get($body, 'candidates.0.content.parts', []);
+        if (!is_array($parts)) {
+            return null;
+        }
+
+        $texts = [];
+        foreach ($parts as $part) {
+            if (!is_array($part)) {
+                continue;
+            }
+
+            $partText = $part['text'] ?? null;
+            if (is_string($partText) && $partText !== '') {
+                $texts[] = $partText;
+            }
+        }
+
+        if ($texts === []) {
+            return null;
+        }
+
+        return $this->normalizeJsonText(implode('', $texts));
+    }
+
+    private function normalizeJsonText(string $text): string
+    {
+        $text = trim($text);
+        $text = preg_replace('/^```json\s*/i', '', $text) ?? $text;
+        $text = preg_replace('/```\s*$/', '', $text) ?? $text;
+
+        return trim($text);
     }
 }
