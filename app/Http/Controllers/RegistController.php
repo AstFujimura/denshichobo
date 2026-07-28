@@ -23,7 +23,7 @@ use App\Models\Version;
 
 class RegistController extends Controller
 {
-    public function registGet()
+    public function registGet(Request $request)
     {
         $prefix = config('prefix.prefix');
         if ($prefix !== "") {
@@ -59,7 +59,12 @@ class RegistController extends Controller
         $ichifujiEnabled = Schema::hasColumn('versions', 'ichifuji')
             && Version::where('ichifuji', true)->exists();
 
-        return view('information.resistpage', compact('documents', 'prefix', 'server', 'groups', 'banbanEnabled', 'ichifujiEnabled'));
+        $ledgerRegistMode = $request->query('mode') === 'bulk' ? 'bulk' : 'normal';
+        if ($ledgerRegistMode === 'bulk' && !$banbanEnabled) {
+            $ledgerRegistMode = 'normal';
+        }
+
+        return view('information.resistpage', compact('documents', 'prefix', 'server', 'groups', 'banbanEnabled', 'ichifujiEnabled', 'ledgerRegistMode'));
     }
 
     public function registURL(Request $request)
@@ -336,7 +341,7 @@ class RegistController extends Controller
             $file->save();
         }
 
-        return redirect()->route('registGet')->with('success', '帳簿を一括登録しました。');
+        return redirect()->route('registGet', ['mode' => 'bulk'])->with('success', '帳簿を一括登録しました。');
     }
 
     //クラウドでjqueryから直接アップロードされる場合の機能

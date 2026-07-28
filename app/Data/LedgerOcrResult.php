@@ -4,6 +4,9 @@ namespace App\Data;
 
 class LedgerOcrResult
 {
+    /**
+     * @param  list<array{amount: int, label: string}>  $kinngakuBreakdown
+     */
     public function __construct(
         public readonly ?string $hiduke,
         public readonly ?string $kinngaku,
@@ -14,6 +17,7 @@ class LedgerOcrResult
         public readonly ?string $step = null,
         /** 切り分け用: 人が読めるエラー概要 */
         public readonly ?string $error = null,
+        public readonly array $kinngakuBreakdown = [],
     ) {}
 
     public function hasAnyField(): bool
@@ -27,6 +31,7 @@ class LedgerOcrResult
             'hiduke' => $this->hiduke,
             'kinngaku' => $this->kinngaku,
             'torihikisaki' => $this->torihikisaki,
+            'kinngaku_breakdown' => $this->kinngakuBreakdown,
         ];
     }
 }

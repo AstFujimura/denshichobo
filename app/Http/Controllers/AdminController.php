@@ -302,11 +302,23 @@ class AdminController extends Controller
         $docuarray = json_decode($request->getContent());
 
         foreach ($docuarray as $document) {
+            $ocrRaw = isset($document->ocr_settings) ? (array) $document->ocr_settings : [];
+            $ocrSettings = [
+                'sum_amounts' => !empty($ocrRaw['sum_amounts']),
+                'tax_mode' => (($ocrRaw['tax_mode'] ?? Document::TAX_MODE_EXCLUDED) === Document::TAX_MODE_INCLUDED)
+                    ? Document::TAX_MODE_INCLUDED
+                    : Document::TAX_MODE_EXCLUDED,
+            ];
+
             if ($document->past == "past") {
                 $pastdocument = Document::where("id", $document->id)->first();
+                if (!$pastdocument) {
+                    continue;
+                }
                 $pastdocument->check = $document->check;
                 $pastdocument->書類 = $document->document;
                 $pastdocument->order = $document->order;
+                $pastdocument->ocr_settings = $ocrSettings;
                 $pastdocument->save();
             } else if ($document->past == "new") {
                 $docu = Document::where("書類", $document->document)->first();
@@ -315,6 +327,7 @@ class AdminController extends Controller
                     $newdocument->check = $document->check;
                     $newdocument->書類 = $document->document;
                     $newdocument->order = $document->order;
+                    $newdocument->ocr_settings = $ocrSettings;
                     $newdocument->save();
                 }
             }

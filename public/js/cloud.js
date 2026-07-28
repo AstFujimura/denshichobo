@@ -147,12 +147,15 @@ $(document).on('keydown', function(e){
     if (torihikisaki_focus) {
       e.preventDefault(); // デフォルトのスクロール動作を防ぐ
       if ($('.torihikisakielement_select').length == 0) {
-        $('.torihikisakielement').first().addClass('torihikisakielement_select');
+        visibleTorihikisakiItems().first().addClass('torihikisakielement_select');
       }
       else {
         var now_select = $('.torihikisakielement_select');
         now_select.removeClass('torihikisakielement_select');
-        now_select.next().addClass('torihikisakielement_select');
+        var $next = now_select.next('.torihikisakielement');
+        if ($next.length) {
+          $next.addClass('torihikisakielement_select');
+        }
       }
     }
   }
@@ -160,12 +163,15 @@ $(document).on('keydown', function(e){
     if (torihikisaki_focus) {
       e.preventDefault(); // デフォルトのスクロール動作を防ぐ
       if ($('.torihikisakielement_select').length == 0) {
-        $('.torihikisakielement').last().addClass('torihikisakielement_select');
+        visibleTorihikisakiItems().last().addClass('torihikisakielement_select');
       }
       else {
         var now_select = $('.torihikisakielement_select');
         now_select.removeClass('torihikisakielement_select');
-        now_select.prev().addClass('torihikisakielement_select');
+        var $prev = now_select.prev('.torihikisakielement');
+        if ($prev.length) {
+          $prev.addClass('torihikisakielement_select');
+        }
       }
     }
   }
@@ -179,69 +185,99 @@ $(document).on('keydown', function(e){
   
 })
 
-  $("#torihikisaki").on("focus", function () {
-    torihikisaki_focus = true
-    $("#torihikisakiselect").show()
-    var searchText = $(this).val();
-    torihikiselect(searchText, "torihikisakiselect")
-  });
-  var isComposing = false; // 日本語入力などの変換中かどうかのフラグ
+  function torihikisakiSelectBox($input) {
+    return $input.closest('.torihikisakiinput').find('.registtorihikisakiselect').first();
+  }
 
-  $("#torihikisaki").on('compositionstart', function () {
-    isComposing = true;
+  function hideTorihikisakiSelectBoxes(except$box) {
+    $('.torihikisakielement_select').removeClass('torihikisakielement_select');
+    $('.registtorihikisakiselect').each(function () {
+      var $box = $(this);
+      if (except$box && except$box.length && $box.is(except$box)) {
+        return;
+      }
+      $box.hide().empty();
+    });
+  }
+
+  function visibleTorihikisakiItems() {
+    return $('.registtorihikisakiselect:visible .torihikisakielement');
+  }
+
+  var torihikisakiInputSelector = '#torihikisaki, #bulkDetailPanel [data-bulk-field="torihikisaki"]';
+  var torihikisakiComposing = false;
+
+  function showTorihikisakiCandidates($input) {
+    torihikisaki_focus = true;
+    var $box = torihikisakiSelectBox($input);
+    hideTorihikisakiSelectBoxes($box);
+    $box.show();
+    torihikiselect($input.val(), $box);
+  }
+
+  $(document).on('focus', torihikisakiInputSelector, function () {
+    showTorihikisakiCandidates($(this));
   });
 
-  $("#torihikisaki").on('compositionend', function () {
-    var searchText = $(this).val();
-    isComposing = false;
-    torihikiselect(searchText, "torihikisakiselect")
+  $(document).on('compositionstart', torihikisakiInputSelector, function () {
+    torihikisakiComposing = true;
   });
-  $("#torihikisaki").on("input", function () {
-    var searchText = $(this).val();
-    if (!isComposing) {
-      // 入力操作の終了時に履歴を更新
-      torihikiselect(searchText, "torihikisakiselect")
+
+  $(document).on('compositionend', torihikisakiInputSelector, function () {
+    torihikisakiComposing = false;
+    var $input = $(this);
+    torihikiselect($input.val(), torihikisakiSelectBox($input));
+  });
+
+  $(document).on('input', torihikisakiInputSelector, function () {
+    if (!torihikisakiComposing) {
+      var $input = $(this);
+      torihikiselect($input.val(), torihikisakiSelectBox($input));
     }
-
   });
-  $("#torihikisakiselect").on("click", ".torihikisakielement", function () {
+
+  $(document).on('click', '.registtorihikisakiselect .torihikisakielement', function () {
     var torihikisaki = $(this).text();
-    $('#torihikisaki').val(torihikisaki);
-    $("#torihikisakiselect").hide()
-    $('#torihikisaki').focus();
+    var $box = $(this).closest('.registtorihikisakiselect');
+    var $input = $box.closest('.torihikisakiinput').find('input[type="text"]').first();
+    $input.val(torihikisaki).trigger('change');
+    $box.hide().empty();
+    $input.focus();
   });
-  $(document).on("click", function (event) {
-    var target = $(event.target);
-    if (!target.is("#torihikisaki, #torihikisakiselect")) {
-      $("#torihikisakiselect").hide()
-    }
-  });
-  // torihikisakiのキーアップイベント（Enterキー）
-  $("#torihikisaki").keydown(function (e) {
-    if (e.keyCode === 13) { // Enterキー
-      $("#torihikisakiselect").hide();
+
+  $(document).on('click', function (event) {
+    if (!$(event.target).closest('.torihikisakiinput').length) {
+      hideTorihikisakiSelectBoxes();
+      torihikisaki_focus = false;
     }
   });
 
-
-
+  $(document).on('keydown', torihikisakiInputSelector, function (e) {
+    if (e.keyCode === 13) {
+      torihikisakiSelectBox($(this)).hide();
+    }
+  });
 
   //searchTextには取引先の検索ワード
-  //torihikisakiselectには表示するセレクトボックスのid
-  function torihikiselect(searchText, torihikisakiselect) {
+  // selectTarget … 候補を表示する .registtorihikisakiselect（jQuery）または id 文字列
+  function torihikiselect(searchText, selectTarget) {
+    var $box = typeof selectTarget === 'string' ? $('#' + selectTarget) : $(selectTarget);
+    if (!$box.length) {
+      return;
+    }
     $.ajax({
       url: prefix + '/torihikisaki/',
       method: 'GET',
       data: { search: searchText },
       success: function (response) {
-        $('#' + torihikisakiselect).empty();
+        $box.empty();
 
         if (response == "該当なし") {
-          $('#' + torihikisakiselect).append('<div class="gaitounashi">該当なし</div>');
+          $box.append('<div class="gaitounashi">該当なし</div>');
         }
         else {
           $.each(response, function (index, clients) {
-            $('#' + torihikisakiselect).append('<div class="torihikisakielement">' + clients.取引先 + '</div>');
+            $box.append('<div class="torihikisakielement">' + clients.取引先 + '</div>');
           });
         }
 

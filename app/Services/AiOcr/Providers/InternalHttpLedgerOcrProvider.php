@@ -4,6 +4,7 @@ namespace App\Services\AiOcr\Providers;
 
 use App\Contracts\AiOcrLedgerProvider;
 use App\Data\LedgerOcrResult;
+use App\Support\AiOcrKinngakuBreakdownNormalizer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -55,8 +56,9 @@ class InternalHttpLedgerOcrProvider implements AiOcrLedgerProvider
         return $message;
     }
 
-    public function ledgerOcr(UploadedFile $file, string $prompt): LedgerOcrResult
+    public function ledgerOcr(UploadedFile $file, string $prompt, array $options = []): LedgerOcrResult
     {
+        $sumAmounts = !empty($options['sum_amounts']);
         $baseUrl = $this->normalizeBaseUrl((string) config('ai_ocr.internal.base_url', ''));
         $path = (string) config('ai_ocr.internal.ledger_path', '/ocr/ledger');
         $token = (string) config('ai_ocr.internal.token', '');
@@ -163,6 +165,8 @@ class InternalHttpLedgerOcrProvider implements AiOcrLedgerProvider
             );
         }
 
+        $breakdown = $sumAmounts ? AiOcrKinngakuBreakdownNormalizer::fromDecoded($json) : [];
+
         $result = new LedgerOcrResult(
             hiduke: isset($json['hiduke']) ? (string) $json['hiduke'] : null,
             kinngaku: isset($json['kinngaku']) ? (string) $json['kinngaku'] : null,
@@ -171,6 +175,7 @@ class InternalHttpLedgerOcrProvider implements AiOcrLedgerProvider
             provider: 'internal',
             step: 'internal.completed',
             error: null,
+            kinngakuBreakdown: $breakdown,
         );
 
         if (!$result->hasAnyField()) {

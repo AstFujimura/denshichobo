@@ -11,10 +11,15 @@ $(document).ready(function () {
         buttonImageOnly: true, // テキストを非表示にする
     });
 
-    if (typeof flatpickr !== 'undefined') {
-        var flatpickrSelector = '.search-date-flatpickr, .ledger-regist-date';
-        if ($(flatpickrSelector).length) {
-            flatpickr(flatpickrSelector, {
+    window.initSearchDateFlatpickr = function () {
+        if (typeof flatpickr === 'undefined') {
+            return;
+        }
+        $('.search-date-flatpickr').each(function () {
+            if (this._flatpickr) {
+                return;
+            }
+            flatpickr(this, {
                 dateFormat: 'Y/m/d',
                 allowInput: true,
                 locale: 'ja',
@@ -22,8 +27,31 @@ $(document).ready(function () {
                     $(instance.element).trigger('blur');
                 },
             });
+        });
+    };
+
+    window.initLedgerRegistDateFlatpickr = function (scope) {
+        if (typeof flatpickr === 'undefined') {
+            return;
         }
-    }
+        var $targets = scope ? $(scope).find('.ledger-regist-date') : $('.ledger-regist-date');
+        $targets.each(function () {
+            if (this._flatpickr) {
+                return;
+            }
+            flatpickr(this, {
+                dateFormat: 'Y/m/d',
+                allowInput: true,
+                locale: 'ja',
+                onClose: function (selectedDates, dateStr, instance) {
+                    $(instance.element).trigger('blur');
+                },
+            });
+        });
+    };
+
+    initSearchDateFlatpickr();
+    initLedgerRegistDateFlatpickr();
 
     $('.news_delete_button').click(function () {
         $('.news_black').addClass('news_black_none')

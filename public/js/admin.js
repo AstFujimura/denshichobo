@@ -3,7 +3,11 @@ $(document).ready(function () {
 
   // -------------ユーザー管理画面----------------
   $('.add_user_button').on('click', function () {
-    $('.admin_header_container').toggleClass('add_user_form_open');
+    var $container = $(this).closest('.admin_header_container');
+    if (!$container.find('.add_user_form').length) {
+      return;
+    }
+    $container.toggleClass('add_user_form_open');
     $('.user_setting_edit_content').removeClass('user_edit_container_open');
   });
 
@@ -157,163 +161,292 @@ $(document).ready(function () {
 
   // -------------書類管理画面----------------
 
-  var adddocumentCount = 1000
-  $(".documenttable_body").on("drop", function (event) {
-    change_button_show()
+  var adddocumentCount = 1000;
+
+  function syncDocumentEnabledToggle($row) {
+    var enabled = $row.find('.docu_check').first().prop('checked');
+    var $btn = $row.find('.document_enabled_toggle_btn');
+    $btn.toggleClass('is-on', enabled).attr('aria-pressed', enabled ? 'true' : 'false');
+  }
+
+  function formatDocumentOcrBadgeText(sumAmounts, taxIncluded) {
+    var parts = [taxIncluded ? '税込' : '税抜'];
+    if (sumAmounts) {
+      parts.push('複数合算');
+    }
+    return parts.join('・');
+  }
+
+  function isDocumentOcrTaxIncluded($row) {
+    return $row.find('.ocr_tax_mode_radio:checked').val() === 'included';
+  }
+
+  function syncDocumentOcrTaxNote($row) {
+    var included = isDocumentOcrTaxIncluded($row);
+    $row.find('.document_ocr_tax_note').toggleClass('is-hidden', !included);
+  }
+
+  function syncDocumentRowDisplay($row) {
+    if (!$row || !$row.length) return;
+    var id = $row.attr('data-document-id') || $row.attr('id').replace('container', '');
+    var name = $.trim($row.find('.document_name_input').first().val() || '');
+    var sumAmounts = $row.find('.ocr_sum_amounts_check').prop('checked');
+    var taxIncluded = isDocumentOcrTaxIncluded($row);
+
+    $row.find('#text' + id + ', .admin_document_name_display').first().text(name);
+    syncDocumentEnabledToggle($row);
+    syncDocumentOcrTaxNote($row);
+    $row.find('[data-ocr-badge="' + id + '"]')
+      .toggleClass('is-on', sumAmounts || taxIncluded)
+      .text(formatDocumentOcrBadgeText(sumAmounts, taxIncluded));
+  }
+
+  function buildDocumentOcrSettingsHtml(documentId) {
+    var taxName = 'ocr_tax_mode_' + documentId;
+    return ''
+      + '      <div class="user_form_content document_ocr_settings_block" data-form_content="ocr">'
+      + '        <label>OCR設定</label>'
+      + '        <div class="document_ocr_settings">'
+      + '          <div class="document_ocr_option_row document_ocr_tax_row">'
+      + '            <span class="document_ocr_tax_heading">金額の税区分</span>'
+      + '            <label class="document_ocr_radio_label">'
+      + '              <input type="radio" class="ocr_tax_mode_radio" name="' + taxName + '" value="excluded" checked>'
+      + '              <span>税抜</span>'
+      + '            </label>'
+      + '            <label class="document_ocr_radio_label">'
+      + '              <input type="radio" class="ocr_tax_mode_radio" name="' + taxName + '" value="included">'
+      + '              <span>税込</span>'
+      + '            </label>'
+      + '            <span class="document_ocr_tax_note is-hidden">税抜表示の場合は、税抜金額から税込金額を計算します。</span>'
+      + '          </div>'
+      + '          <div class="document_ocr_option_row">'
+      + '            <label class="document_ocr_checkbox_label">'
+      + '              <input type="checkbox" class="ocr_sum_amounts_check">'
+      + '              <span>1ファイル内の複数ページ・複数セットの金額を合算する</span>'
+      + '            </label>'
+      + '            <button type="button" class="document_ocr_info_btn" aria-label="複数ページ・複数セットの金額合算について">i</button>'
+      + '          </div>'
+      + '        </div>'
+      + '      </div>';
+  }
+
+  function buildDocumentEnabledCellHtml(id, enabled) {
+    var on = enabled !== false;
+    return ''
+      + '  <div class="cell_content document_enabled_cell" data-cell="enabled">'
+      + '    <input type="checkbox" class="docu_check document_enabled_input" id="check' + id + '"' + (on ? ' checked' : '') + '>'
+      + '    <button type="button" class="document_enabled_toggle_btn' + (on ? ' is-on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="帳簿保存で選択可能">'
+      + '      <span class="document_enabled_toggle_track" aria-hidden="true"><span class="document_enabled_toggle_knob"></span></span>'
+      + '    </button>'
+      + '  </div>';
+  }
+
+  function buildNewDocumentRowHtml(count) {
+    return ''
+      + '<div class="admin_top_table_element admin_document_row new" id="container' + count + '" data-document-id="' + count + '">'
+      + buildDocumentEnabledCellHtml(count, true)
+      + '  <div class="cell_content" data-cell="name">'
+      + '    <span class="admin_document_name_display" id="text' + count + '"></span>'
+      + '  </div>'
+      + '      <div class="cell_content" data-cell="ocr">'
+      + '    <span class="admin_document_ocr_badge" data-ocr-badge="' + count + '">税抜</span>'
+      + '  </div>'
+      + '  <div class="cell_content icon_cell" data-cell="change">'
+      + '    <div class="document_edit_button user_edit_button">'
+      + '      <img src="' + prefix + '/img/edit.svg" class="edit_icon" alt="">'
+      + '      <span>編集</span>'
+      + '    </div>'
+      + '  </div>'
+      + '  <div class="cell_content icon_cell" data-cell="delete">'
+      + '    <div class="user_delete_button document_row_delete" id="' + count + '">'
+      + '      <img src="' + prefix + '/img/delete.svg" class="delete_icon" alt="">'
+      + '      <span>削除</span>'
+      + '    </div>'
+      + '  </div>'
+      + '  <div class="document_edit_container">'
+      + '    <div class="document_setting_edit_content document_edit_container_open">'
+      + '      <div class="user_form_content document_name_form_content">'
+      + '        <label for="value' + count + '">書類名</label>'
+      + '        <input type="text" class="add_document document_name_input" id="value' + count + '" autocomplete="off">'
+      + '      </div>'
+      + buildDocumentOcrSettingsHtml(count)
+      + '      <div class="user_setting_edit_button_container document_edit_actions">'
+      + '        <button type="button" class="document_setting_cancel_button">閉じる</button>'
+      + '      </div>'
+      + '    </div>'
+      + '  </div>'
+      + '</div>';
+  }
+
+  function openDocumentOcrSumModal() {
+    $('#documentOcrSumInfoModal').addClass('is-open').attr('aria-hidden', 'false');
+    $('body').addClass('admin_document_modal_open');
+    $('#documentOcrSumInfoModal .admin_document_info_modal__close').focus();
+  }
+
+  function closeDocumentOcrSumModal() {
+    $('#documentOcrSumInfoModal').removeClass('is-open').attr('aria-hidden', 'true');
+    $('body').removeClass('admin_document_modal_open');
+  }
+
+  $('#docu_addbutton').on('click keydown', function (event) {
+    if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+    if (event.type === 'keydown') {
+      event.preventDefault();
+    }
+    change_button_show();
+    var $row = $(buildNewDocumentRowHtml(adddocumentCount));
+    $('.document_add_rows.add').append($row);
+    adddocumentCount++;
+    $row.find('.document_name_input').focus();
   });
-  $('#docu_addbutton').on("click", function (event) {
-    change_button_show()
 
-    $('.add').append(
-      '<div class="documenttable_body new" id ="' + 'container' + adddocumentCount + '"><div class="admin_use"><input type="checkbox" class="docu_check" checked name ="' + 'addcheck' + adddocumentCount + '"></div><div class="admin_document"><input type="text" class="add_document" name="' + adddocumentCount + '"></div><div class="admin_document_delete"><div class="docu_delete_button" id ="' + adddocumentCount + '">削除</div></div></div>'
-    )
-    adddocumentCount++
-  })
+  $(document).on('click', '.document_edit_button', function (e) {
+    e.stopPropagation();
+    var $row = $(this).closest('.admin_document_row');
+    var $panel = $row.find('.document_setting_edit_content');
+    $('.document_setting_edit_content').not($panel).removeClass('document_edit_container_open');
+    $panel.toggleClass('document_edit_container_open');
+    if ($panel.hasClass('document_edit_container_open')) {
+      $panel.find('.document_name_input').trigger('focus');
+    }
+  });
 
-  //既存の書類の削除ボタンを押したとき
-  $(".docu_delete_button").on("click", function () {
-    $id = $(this).attr("id")
-    if (confirm("本当に削除しますか")) {
-      // FormDataをサーバーに送信
-      $.ajax({
-        url: prefix + '/admin/documentcheck/' + $id,
-        type: 'GET',
-        processData: false,
-        contentType: false,
-        success: function (response) {
-          if (response) {
-            alert("帳簿が保存されているため削除できません。")
-          }
-          else {
-            var deletecontainer = 'container' + $id;
+  $(document).on('click', '.document_setting_cancel_button', function () {
+    $(this).closest('.document_setting_edit_content').removeClass('document_edit_container_open');
+  });
 
-            $('#' + deletecontainer).remove();
-          }
-        }
-      });
+  $(document).on('click', '.document_enabled_toggle_btn', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var $row = $(this).closest('.admin_document_row');
+    var $check = $row.find('.docu_check').first();
+    $check.prop('checked', !$check.prop('checked'));
+    change_button_show();
+    syncDocumentRowDisplay($row);
+  });
+
+  $(document).on('click', '.document_ocr_info_btn', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    openDocumentOcrSumModal();
+  });
+
+  $(document).on('click', '#documentOcrSumInfoModal .admin_document_info_modal__backdrop, #documentOcrSumInfoModal .admin_document_info_modal__close', function () {
+    closeDocumentOcrSumModal();
+  });
+
+  $(document).on('keydown', function (e) {
+    if (e.key === 'Escape' && $('#documentOcrSumInfoModal').hasClass('is-open')) {
+      closeDocumentOcrSumModal();
+    }
+  });
+
+  $(document).on('input change', '.admin_document_row .document_name_input, .admin_document_row .ocr_sum_amounts_check, .admin_document_row .ocr_tax_mode_radio', function () {
+    change_button_show();
+    syncDocumentRowDisplay($(this).closest('.admin_document_row'));
+  });
+
+  $(document).on('click', '.admin_document_row .document_row_delete', function (e) {
+    e.stopPropagation();
+    var $row = $(this).closest('.admin_document_row');
+    var id = $(this).attr('id');
+
+    if ($row.hasClass('new')) {
+      if (confirm('追加した行を削除しますか？')) {
+        $row.remove();
+        change_button_show();
+      }
+      return;
     }
 
+    if (!confirm('本当に削除しますか？')) {
+      return;
+    }
 
-
-
-  });
-  $('input').on("change", function () {
-    change_button_show()
-  });
-
-  //新しく追加した書類要素を削除するとき
-  $('.add').on("click", ".docu_delete_button", function () {
-
-    var deletecontainer = 'container' + $(this).attr("id");
-
-    $('#' + deletecontainer).remove();
-  });
-
-  $('.docu_change_button').on("click", function () {
-    var valueid = 'value' + $(this).attr("id").replace("change", "");
-    var textid = 'text' + $(this).attr("id").replace("change", "");
-    $('#' + valueid).addClass("document_open");
-    $('#' + valueid).focus();
-    $('#' + textid).removeClass("document_open");
+    $.ajax({
+      url: prefix + '/admin/documentcheck/' + id,
+      type: 'GET',
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response) {
+          alert('帳簿が保存されているため削除できません。');
+        } else {
+          $row.remove();
+          change_button_show();
+        }
+      }
+    });
   });
 
-  $('.admin_document_value').on("blur", function () {
-    var textid = 'text' + $(this).attr("id").replace("value", "");
-    $('#' + textid).text($(this).val())
-    $(this).removeClass("document_open");
-    $('#' + textid).addClass("document_open");
-  });
+  function collectDocumentRowPayload($row, pastType, order) {
+    var id = $row.attr('data-document-id') || $row.attr('id').replace('container', '');
+    var documentName = $.trim($row.find('.document_name_input').val() || '');
+    if (!documentName) {
+      return null;
+    }
+    var obj = {
+      id: id,
+      check: $row.find('.docu_check').prop('checked') ? 'check' : '',
+      document: documentName,
+      delete: '',
+      past: pastType,
+      order: order,
+      ocr_settings: {
+        sum_amounts: $row.find('.ocr_sum_amounts_check').prop('checked') === true,
+        tax_mode: isDocumentOcrTaxIncluded($row) ? 'included' : 'excluded'
+      }
+    };
+    return obj;
+  }
 
-  //書類を送信する時
   $('#admin_document_form').on('submit', function (event) {
-    event.preventDefault()
-    var docuarray = []
-    var order = 1
-    $(".docu_past").each(function () {
-      var id = $(this).attr("id").replace("container", "");
-      var check = $(this).find("input[type='checkbox']")
-      var document = $(this).find(".admin_document_value").val();
-      var deleteobj = $(this).find(".docu_delete_button").text();
-      var obj = {}
-      obj.id = id
+    event.preventDefault();
+    var docuarray = [];
+    var order = 1;
 
-      var isChecked = check.prop("checked");
-      if (isChecked) {
-        obj.check = "check"
+    $('#admin_document_sortable .admin_document_row').each(function () {
+      var $row = $(this);
+      var pastType = $row.hasClass('new') ? 'new' : 'past';
+      var payload = collectDocumentRowPayload($row, pastType, order);
+      if (payload) {
+        docuarray.push(payload);
+        order++;
       }
-      else {
-        obj.check = ""
-      }
-      obj.document = document
-      if (deleteobj != "削除") {
-        obj.delete = "削除"
-      }
-      else {
-        obj.delete = ""
-      }
-      obj.past = "past"
-      obj.order = order
-      order++
-      docuarray.push(obj);
-
     });
-    $(".new").each(function () {
-      var id = $(this).attr("id").replace("container", "");
-      var check = $(this).find("input[type='checkbox']")
-      var document = $(this).find(".add_document").val();
-      var deleteobj = $(this).find(".docu_delete_button").text();
-      var obj = {}
-      obj.id = id
 
-      var isChecked = check.prop("checked");
-      if (isChecked) {
-        obj.check = "check"
-      }
-      else {
-        obj.check = ""
-      }
-      obj.document = document
-      if (deleteobj != "削除") {
-        obj.delete = "削除"
-      }
-      else {
-        obj.delete = ""
-      }
-      obj.past = "new"
-
-      if (obj.document) {
-        obj.order = order
-        order++
-        docuarray.push(obj);
-      }
-
-    });
-    console.log(docuarray)
-    if (confirm("本当に変更しますか。")) {
-      // FormDataをサーバーに送信
-      $.ajax({
-        url: prefix + '/admin/document',
-        type: 'POST',
-        data: JSON.stringify(docuarray),
-        contentType: "application/json",
-        dataType: "json",
-        headers: {
-          'X-CSRF-TOKEN': $('input[name="_token"]').val(),
-        },
-        success: function (response) {
-          if (response == "成功") {
-            $('#save').val("save");
-            window.location.href = prefix + "/admin/document"
-          }
-          else {
-          }
-        }
-
-      })
+    if (!docuarray.length) {
+      alert('保存する書類がありません。');
+      return;
     }
 
+    if (!confirm('本当に変更しますか。')) {
+      return;
+    }
 
+    $.ajax({
+      url: prefix + '/admin/document',
+      type: 'POST',
+      data: JSON.stringify(docuarray),
+      contentType: 'application/json',
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+      },
+      success: function (response) {
+        if (response == '成功') {
+          $('#save').val('save');
+          window.location.href = prefix + '/admin/document';
+        }
+      }
+    });
+  });
 
+  $('#admin_document_sortable').on('sortupdate', function () {
+    change_button_show();
   });
 
 
@@ -727,13 +860,13 @@ $(document).ready(function () {
 
 
 
-  $(".sortable").sortable(
-    {
-      update: function () {
-        change_button_show()
-      }
-    });
-  $(".sortable").disableSelection();
+  $(".sortable").sortable({
+    cancel: 'input,textarea,button,select,option,a,label,.document_edit_container,.document_enabled_cell,.document_ocr_settings,.icon_cell',
+    update: function () {
+      change_button_show();
+    }
+  });
+  $(".sortable").not('#admin_document_sortable').disableSelection();
 
 
 

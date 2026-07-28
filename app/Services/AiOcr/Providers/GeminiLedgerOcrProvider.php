@@ -4,6 +4,7 @@ namespace App\Services\AiOcr\Providers;
 
 use App\Contracts\AiOcrLedgerProvider;
 use App\Data\LedgerOcrResult;
+use App\Support\AiOcrKinngakuBreakdownNormalizer;
 use App\Support\GeminiApi;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -11,7 +12,58 @@ use Illuminate\Support\Facades\Log;
 
 class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
 {
-    public function ledgerOcr(UploadedFile $file, string $prompt): LedgerOcrResult
+    public function ledgerOcr(UploadedFile $file, string $prompt, array $options = []): LedgerOcrResult
+    {
+        $sumAmounts = !empty($options['sum_amounts']);
+        $maxTokens = max(256, (int) config('ai_ocr.gemini.max_output_tokens', 2048));
+        $retryTokens = max($maxTokens, (int) config('ai_ocr.gemini.max_output_tokens_retry', 8192));
+        $tokenLimits = array_values(array_unique([$maxTokens, $retryTokens]));
+
+        $lastResult = null;
+
+        foreach ($tokenLimits as $attemptIndex => $maxOutputTokens) {
+            if ($attemptIndex > 0) {
+                Log::info('ai_ocr.gemini.retry_max_tokens', [
+                    'step' => 'gemini.retry_max_tokens',
+                    'attempt' => $attemptIndex + 1,
+                    'max_output_tokens' => $maxOutputTokens,
+                ]);
+            }
+
+            $httpResult = $this->requestGemini($file, $prompt, $maxOutputTokens, $sumAmounts);
+            if ($httpResult instanceof LedgerOcrResult) {
+                return $httpResult;
+            }
+
+            [$body, $text, $finishReason] = $httpResult;
+            $decoded = json_decode($text, true);
+
+            if (is_array($decoded)) {
+                return $this->buildSuccessResult($decoded, $sumAmounts);
+            }
+
+            $lastResult = $this->buildJsonDecodeErrorResult($text, $body, $finishReason, $maxOutputTokens);
+
+            if ($finishReason !== 'MAX_TOKENS' || $attemptIndex >= count($tokenLimits) - 1) {
+                return $lastResult;
+            }
+        }
+
+        return $lastResult ?? new LedgerOcrResult(
+            hiduke: null,
+            kinngaku: null,
+            torihikisaki: null,
+            raw: ['ok' => false],
+            provider: 'gemini',
+            step: 'gemini.json_decode_error',
+            error: 'Gemini の応答を JSON として解釈できませんでした',
+        );
+    }
+
+    /**
+     * @return LedgerOcrResult|array{0: array, 1: string, 2: ?string}
+     */
+    private function requestGemini(UploadedFile $file, string $prompt, int $maxOutputTokens, bool $sumAmounts): LedgerOcrResult|array
     {
         $mimeType = $file->getMimeType() ?? 'application/octet-stream';
         $base64 = base64_encode(file_get_contents($file->getRealPath()));
@@ -31,20 +83,7 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
                     ],
                 ],
             ],
-            'generationConfig' => [
-                'temperature' => 0.2,
-                'maxOutputTokens' => 512,
-                'responseMimeType' => 'application/json',
-                'responseSchema' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'hiduke' => ['type' => 'string'],
-                        'kinngaku' => ['type' => 'number'],
-                        'torihikisaki' => ['type' => 'string'],
-                    ],
-                    'required' => ['hiduke', 'kinngaku', 'torihikisaki'],
-                ],
-            ],
+            'generationConfig' => $this->buildGenerationConfig($maxOutputTokens, $sumAmounts),
         ];
 
         $url = GeminiApi::generateContentUrl();
@@ -53,6 +92,8 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
             'step' => 'gemini.requesting',
             'file_name' => $file->getClientOriginalName(),
             'mime' => $mimeType,
+            'max_output_tokens' => $maxOutputTokens,
+            'thinking_budget' => (int) config('ai_ocr.gemini.thinking_budget', 0),
         ]);
 
         try {
@@ -114,28 +155,63 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
             );
         }
 
-        $decoded = json_decode($text, true);
-        if (!is_array($decoded)) {
-            Log::warning('ai_ocr.gemini.json_decode_error', [
-                'step' => 'gemini.json_decode_error',
-                'finish_reason' => data_get($body, 'candidates.0.finishReason'),
-                'raw_preview' => mb_substr($text, 0, 200),
-                'raw_length' => mb_strlen($text),
-            ]);
+        $finishReason = data_get($body, 'candidates.0.finishReason');
 
-            return new LedgerOcrResult(
-                hiduke: null,
-                kinngaku: null,
-                torihikisaki: null,
-                raw: [
-                    'ok' => false,
-                    'raw' => $text,
+        return [$body, $text, is_string($finishReason) ? $finishReason : null];
+    }
+
+    private function buildGenerationConfig(int $maxOutputTokens, bool $sumAmounts): array
+    {
+        $properties = [
+            'hiduke' => ['type' => 'string'],
+            'kinngaku' => ['type' => 'number'],
+            'kinngaku_tax_basis' => [
+                'type' => 'string',
+                'enum' => ['included', 'excluded'],
+            ],
+            'torihikisaki' => ['type' => 'string'],
+        ];
+        $required = ['hiduke', 'kinngaku', 'kinngaku_tax_basis', 'torihikisaki'];
+
+        if ($sumAmounts) {
+            $properties['kinngaku_items'] = [
+                'type' => 'array',
+                'items' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'amount' => ['type' => 'number'],
+                        'label' => ['type' => 'string'],
+                    ],
+                    'required' => ['amount'],
                 ],
-                provider: 'gemini',
-                step: 'gemini.json_decode_error',
-                error: 'Gemini の応答を JSON として解釈できませんでした',
-            );
+            ];
+            $required[] = 'kinngaku_items';
         }
+
+        $config = [
+            'temperature' => 0.2,
+            'maxOutputTokens' => $maxOutputTokens,
+            'responseMimeType' => 'application/json',
+            'responseSchema' => [
+                'type' => 'object',
+                'properties' => $properties,
+                'required' => $required,
+            ],
+        ];
+
+        $thinkingBudget = (int) config('ai_ocr.gemini.thinking_budget', 0);
+        if ($thinkingBudget >= 0) {
+            $config['thinkingConfig'] = [
+                'thinkingBudget' => $thinkingBudget,
+            ];
+        }
+
+        return $config;
+    }
+
+    private function buildSuccessResult(array $decoded, bool $sumAmounts): LedgerOcrResult
+    {
+        $breakdown = $sumAmounts ? AiOcrKinngakuBreakdownNormalizer::fromDecoded($decoded) : [];
 
         $result = new LedgerOcrResult(
             hiduke: isset($decoded['hiduke']) ? (string) $decoded['hiduke'] : null,
@@ -145,6 +221,7 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
             provider: 'gemini',
             step: 'gemini.completed',
             error: null,
+            kinngakuBreakdown: $breakdown,
         );
 
         if (!$result->hasAnyField()) {
@@ -160,6 +237,42 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
         }
 
         return $result;
+    }
+
+    private function buildJsonDecodeErrorResult(
+        string $text,
+        array $body,
+        ?string $finishReason,
+        int $maxOutputTokens,
+    ): LedgerOcrResult {
+        Log::warning('ai_ocr.gemini.json_decode_error', [
+            'step' => 'gemini.json_decode_error',
+            'finish_reason' => $finishReason,
+            'max_output_tokens' => $maxOutputTokens,
+            'raw_preview' => mb_substr($text, 0, 200),
+            'raw_length' => mb_strlen($text),
+        ]);
+
+        $error = 'Gemini の応答を JSON として解釈できませんでした';
+        if ($finishReason === 'MAX_TOKENS') {
+            $error = 'Gemini の出力がトークン上限（MAX_TOKENS）で途中切断されました。'
+                . ' config/ai_ocr.php の gemini.max_output_tokens を確認してください。';
+        }
+
+        return new LedgerOcrResult(
+            hiduke: null,
+            kinngaku: null,
+            torihikisaki: null,
+            raw: [
+                'ok' => false,
+                'raw' => $text,
+                'finish_reason' => $finishReason,
+                'max_output_tokens' => $maxOutputTokens,
+            ],
+            provider: 'gemini',
+            step: 'gemini.json_decode_error',
+            error: $error,
+        );
     }
 
     private function extractTextFromResponse(array $body): ?string

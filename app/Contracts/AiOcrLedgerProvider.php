@@ -7,6 +7,9 @@ use Illuminate\Http\UploadedFile;
 
 interface AiOcrLedgerProvider
 {
-    public function ledgerOcr(UploadedFile $file, string $prompt): LedgerOcrResult;
+    /**
+     * @param  array{sum_amounts?: bool}  $options
+     */
+    public function ledgerOcr(UploadedFile $file, string $prompt, array $options = []): LedgerOcrResult;
 }
 

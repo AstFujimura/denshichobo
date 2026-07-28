@@ -172,6 +172,9 @@ $(document).ready(function () {
 
 
   $('.ledger-regist .droparea').on('click', function () {
+    if (!$(this).closest('#ledgerRegistTabNormal').length) {
+      return;
+    }
     $('#file').trigger('click');
   });
 
@@ -258,6 +261,239 @@ $(document).ready(function () {
     str = str.replace(/[^\d.-]/g, '');
     return str;
   }
+
+  var ledgerOcrKinngakuModalItems = [];
+  var ledgerOcrKinngakuModalTargetInput = null;
+  var ocrKinngakuBreakdownByInput = new WeakMap();
+
+  function parseBreakdownAmount(value) {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number' && !isNaN(value)) {
+      return Math.round(value);
+    }
+    var normalized = normalizeAmount(value);
+    if (normalized === '' || normalized === '-') return null;
+    var n = parseFloat(normalized);
+    if (isNaN(n)) return null;
+    return Math.round(n);
+  }
+
+  function getKinngakuBreakdownForInput($input) {
+    if (!$input || !$input.length) return null;
+    return ocrKinngakuBreakdownByInput.get($input[0]) || null;
+  }
+
+  function setKinngakuBreakdownForInput($input, items) {
+    if (!$input || !$input.length) return;
+    if (!items || !items.length) {
+      ocrKinngakuBreakdownByInput.delete($input[0]);
+      return;
+    }
+    ocrKinngakuBreakdownByInput.set($input[0], items);
+  }
+
+  function labelsSuggestMissingFirstBreakdownPage(items) {
+    var hasFirst = false;
+    var hasSecondOrLater = false;
+    (items || []).forEach(function (it) {
+      var label = String(it.label || '');
+      if (/1\s*[枚页ページ]/.test(label)) hasFirst = true;
+      if (/[2-9]\s*[枚页ページ]/.test(label)) hasSecondOrLater = true;
+    });
+    return hasSecondOrLater && !hasFirst;
+  }
+
+  function reconcileBreakdownWithKinngakuTotal(items, kinngakuTotal) {
+    var list = cloneBreakdownItems(items);
+    if (!list.length) return list;
+
+    var expected = parseBreakdownAmount(kinngakuTotal);
+    if (expected === null) return list;
+
+    var sum = 0;
+    list.forEach(function (it) {
+      var part = parseBreakdownAmount(it.amount);
+      if (part !== null) sum += part;
+    });
+
+    if (sum === expected) {
+      return list;
+    }
+
+    var diff = expected - sum;
+
+    var missingLabel = labelsSuggestMissingFirstBreakdownPage(list)
+      ? '1枚目'
+      : '1枚目（OCR内訳に未記載の金額）';
+
+    list.unshift({
+      id: 'kb_missing_' + Date.now(),
+      amount: String(diff),
+      label: missingLabel,
+      included: true,
+    });
+
+    return list;
+  }
+
+  function formatYenDisplay(amountStr) {
+    var n = parseBreakdownAmount(amountStr);
+    if (n === null) return '0円';
+    var prefix = n < 0 ? '-' : '';
+    return prefix + Math.abs(n).toLocaleString('ja-JP') + '円';
+  }
+
+  function cloneBreakdownItems(items) {
+    return (items || []).map(function (it, idx) {
+      var amountNum = parseBreakdownAmount(it.amount);
+      return {
+        id: it.id || ('kb_' + idx + '_' + Date.now()),
+        amount: amountNum !== null && amountNum !== 0 ? String(amountNum) : '',
+        label: (it.label && String(it.label).trim()) ? String(it.label).trim() : ('項目' + (idx + 1)),
+        included: it.included !== false,
+      };
+    }).filter(function (it) { return it.amount !== ''; });
+  }
+
+  function normalizeKinngakuBreakdownFromApi(raw) {
+    if (!raw || !raw.length) return [];
+    return cloneBreakdownItems(raw.map(function (item, idx) {
+      return {
+        id: 'kb_' + idx + '_' + Date.now(),
+        amount: item.amount != null ? item.amount : item,
+        label: item.label,
+        included: true,
+      };
+    }));
+  }
+
+  function sumBreakdownItems(items) {
+    var total = 0;
+    (items || []).forEach(function (it) {
+      if (!it.included) return;
+      var n = parseBreakdownAmount(it.amount);
+      if (n !== null) total += n;
+    });
+    return String(total);
+  }
+
+  function removeKinngakuBreakdownUi($input) {
+    if (!$input || !$input.length) return;
+    $input.closest('.ledger-regist__control').find('.ledger-ocr-kinngaku-breakdown').remove();
+    setKinngakuBreakdownForInput($input, null);
+  }
+
+  function renderKinngakuBreakdownSummary($input, items) {
+    var $wrap = $input.closest('.ledger-regist__control');
+    $wrap.find('.ledger-ocr-kinngaku-breakdown').remove();
+    if (!items || items.length < 2) return;
+
+    var includedCount = items.filter(function (it) { return it.included; }).length;
+    var total = sumBreakdownItems(items);
+    var $bar = $('<div class="ledger-ocr-kinngaku-breakdown"></div>');
+    var $text = $('<span class="ledger-ocr-kinngaku-breakdown__text"></span>');
+    $text.text('OCR合算: ' + formatYenDisplay(total) + '（全' + items.length + '件・採用' + includedCount + '件）');
+    var $btn = $('<button type="button" class="ledger-ocr-kinngaku-breakdown__detail">詳細</button>');
+    $btn.on('click', function (e) {
+      e.preventDefault();
+      openLedgerOcrKinngakuBreakdownModal($input);
+    });
+    $bar.append($text, $btn);
+    $wrap.append($bar);
+  }
+
+  function applyKinngakuBreakdownItems($input, items) {
+    if (!$input || !$input.length) return;
+    var cloned = cloneBreakdownItems(items);
+    if (cloned.length < 2) {
+      removeKinngakuBreakdownUi($input);
+      return;
+    }
+    setKinngakuBreakdownForInput($input, cloned);
+    $input.val(sumBreakdownItems(cloned)).trigger('change').trigger('blur');
+    renderKinngakuBreakdownSummary($input, cloned);
+  }
+
+  function attachKinngakuBreakdownFromOcrData($input, data) {
+    if (!$input || !$input.length || !data) return;
+    var items = normalizeKinngakuBreakdownFromApi(data.kinngaku_breakdown);
+    items = reconcileBreakdownWithKinngakuTotal(items, data.kinngaku);
+    if (items.length < 2) {
+      removeKinngakuBreakdownUi($input);
+      return;
+    }
+    applyKinngakuBreakdownItems($input, items);
+  }
+
+  function refreshLedgerOcrKinngakuBreakdownModalList() {
+    var $list = $('#ledgerOcrKinngakuBreakdownList');
+    var $total = $('#ledgerOcrKinngakuBreakdownTotal');
+    if (!$list.length) return;
+    $list.empty();
+
+    ledgerOcrKinngakuModalItems.forEach(function (item) {
+      var $row = $('<div class="ledger-ocr-kinngaku-breakdown-modal__row"></div>');
+      if (!item.included) {
+        $row.addClass('is-excluded');
+      }
+      var $label = $('<span class="ledger-ocr-kinngaku-breakdown-modal__label"></span>').text(item.label);
+      var $amount = $('<span class="ledger-ocr-kinngaku-breakdown-modal__amount"></span>').text(formatYenDisplay(item.amount));
+      var $toggle = $('<button type="button" class="ledger-ocr-kinngaku-breakdown-modal__exclude" title="合算から除外／再び含める" aria-label="合算から除外"></button>');
+      $toggle.text('×');
+      $toggle.on('click', function (e) {
+        e.preventDefault();
+        item.included = !item.included;
+        refreshLedgerOcrKinngakuBreakdownModalList();
+      });
+      $row.append($label, $amount, $toggle);
+      $list.append($row);
+    });
+
+    if ($total.length) {
+      $total.text(formatYenDisplay(sumBreakdownItems(ledgerOcrKinngakuModalItems)));
+    }
+  }
+
+  function closeLedgerOcrKinngakuBreakdownModal() {
+    $('#ledgerOcrKinngakuBreakdownModal').removeClass('is-open');
+    $('body').removeClass('ledger-regist-modal-open');
+    ledgerOcrKinngakuModalTargetInput = null;
+    ledgerOcrKinngakuModalItems = [];
+  }
+
+  function openLedgerOcrKinngakuBreakdownModal($input) {
+    var stored = getKinngakuBreakdownForInput($input);
+    if (!stored || stored.length < 2) return;
+    ledgerOcrKinngakuModalTargetInput = $input;
+    ledgerOcrKinngakuModalItems = cloneBreakdownItems(stored);
+    refreshLedgerOcrKinngakuBreakdownModalList();
+    $('#ledgerOcrKinngakuBreakdownModal').addClass('is-open');
+    $('body').addClass('ledger-regist-modal-open');
+  }
+
+  function bindLedgerOcrKinngakuBreakdownModal() {
+    var $modal = $('#ledgerOcrKinngakuBreakdownModal');
+    if (!$modal.length || $modal.data('bound')) return;
+    $modal.data('bound', true);
+
+    $modal.on('click', '[data-kinngaku-breakdown-close]', function (e) {
+      e.preventDefault();
+      closeLedgerOcrKinngakuBreakdownModal();
+    });
+
+    $('#ledgerOcrKinngakuBreakdownApply').on('click', function (e) {
+      e.preventDefault();
+      if (ledgerOcrKinngakuModalTargetInput && ledgerOcrKinngakuModalTargetInput.length) {
+        applyKinngakuBreakdownItems(
+          ledgerOcrKinngakuModalTargetInput,
+          cloneBreakdownItems(ledgerOcrKinngakuModalItems)
+        );
+      }
+      closeLedgerOcrKinngakuBreakdownModal();
+    });
+  }
+
+  bindLedgerOcrKinngakuBreakdownModal();
 
   function normalizeCompanyNameForMatch(value) {
     if (!value) return '';
@@ -348,27 +584,54 @@ $(document).ready(function () {
       var embed = $('<embed>');
       embed.attr('src', pdfUrl);
       embed.attr('type', 'application/pdf');
-      applyLedgerEditPreviewMedia(embed);
+      if ($target.is('#bulkSharedPreview') || $target.closest('#bulkSharedPreview').length) {
+        embed.addClass('ledger-bulk__pdf');
+      } else {
+        applyLedgerEditPreviewMedia(embed);
+      }
       $target.html(embed);
       return;
     }
     $target.text("対応していないファイル形式です");
   }
 
-  function applyOcrDataToRow($row, data) {
-    if (!$row || !$row.length || !data) return;
+  function setLedgerRegistDateInputValue($input, value) {
+    if (!$input || !$input.length) return;
+    var el = $input[0];
+    var dateStr = value ? String(value).trim() : '';
+    $input.val(dateStr).trigger('change').trigger('blur');
+    if (el && el._flatpickr && dateStr) {
+      el._flatpickr.setDate(dateStr, true);
+    }
+  }
+
+  function applyOcrDataToRow($row, data, onSettled) {
+    if (!$row || !$row.length || !data) {
+      if (typeof onSettled === 'function') onSettled();
+      return;
+    }
     var hiduke = normalizeDateString(data.hiduke);
     var kinngaku = normalizeAmount(data.kinngaku);
     var torihikisaki = data.torihikisaki ? String(data.torihikisaki).trim() : '';
 
-    if (hiduke) $row.find('[data-bulk-field="hiduke"]').val(hiduke).trigger('change').trigger('blur');
-    if (kinngaku) $row.find('[data-bulk-field="kinngaku"]').val(kinngaku).trigger('change').trigger('blur');
+    if (hiduke) setLedgerRegistDateInputValue($row.find('[data-bulk-field="hiduke"]'), hiduke);
+    var $kinInput = $row.find('[data-bulk-field="kinngaku"]');
+    if (kinngaku) {
+      $kinInput.val(kinngaku).trigger('change').trigger('blur');
+      attachKinngakuBreakdownFromOcrData($kinInput, data);
+    } else {
+      removeKinngakuBreakdownUi($kinInput);
+    }
     if (torihikisaki) {
       resolveTorihikisakiByExistingCandidates(torihikisaki).then(function (resolved) {
         if (resolved) {
           $row.find('[data-bulk-field="torihikisaki"]').val(resolved).trigger('change').trigger('blur');
         }
+      }).finally(function () {
+        if (typeof onSettled === 'function') onSettled();
       });
+    } else if (typeof onSettled === 'function') {
+      onSettled();
     }
   }
 
@@ -385,11 +648,181 @@ $(document).ready(function () {
     return normalVal || '受領';
   }
 
-  function runSingleOcr(file, teisyutu) {
+  function getLedgerSyoruiIdForOcr($row) {
+    if ($row && $row.length) {
+      var rowVal = $row.find('[data-bulk-field="syorui"]').val();
+      if (rowVal) return rowVal;
+    }
+    if ($('#ledgerRegistTabBulk').hasClass('is-active')) {
+      var bulkVal = $('#bulkCommonSyorui').val();
+      if (bulkVal) return bulkVal;
+    }
+    var normalVal = $('#syorui').val();
+    return normalVal || '';
+  }
+
+  var ledgerOcrSettingsSyoruiSource = null;
+
+  function getLedgerSyoruiSelectForOcrSettings() {
+    if (ledgerOcrSettingsSyoruiSource === 'bulk') {
+      return $('#bulkCommonSyorui');
+    }
+    if (ledgerOcrSettingsSyoruiSource === 'normal') {
+      return $('#syorui');
+    }
+    return getLedgerSyoruiSelectForOcr();
+  }
+
+  function openLedgerOcrSettingsModal(source) {
+    ledgerOcrSettingsSyoruiSource = source || null;
+    syncLedgerOcrOptionsFromMaster();
+    $('#ledgerOcrSettingsModal').addClass('is-open').attr('aria-hidden', 'false');
+    $('body').addClass('ledger-regist-modal-open');
+    $('#ledgerOcrSettingsModal .ledger-ocr-settings-modal__close-btn').focus();
+  }
+
+  function closeLedgerOcrSettingsModal() {
+    $('#ledgerOcrSettingsModal').removeClass('is-open').attr('aria-hidden', 'true');
+    $('body').removeClass('ledger-regist-modal-open');
+    refreshLedgerOcrSettingsChips();
+  }
+
+  function bindLedgerOcrSettingsModal() {
+    var $modal = $('#ledgerOcrSettingsModal');
+    if (!$modal.length || $modal.data('bound')) {
+      return;
+    }
+    $modal.data('bound', true);
+
+    $(document).on('click', '[data-ledger-ocr-settings-open]', function (e) {
+      e.preventDefault();
+      var source = $(this).attr('data-ocr-syorui-source') || 'normal';
+      openLedgerOcrSettingsModal(source);
+    });
+
+    $modal.on('click', '[data-ledger-ocr-settings-close]', function (e) {
+      e.preventDefault();
+      closeLedgerOcrSettingsModal();
+    });
+
+    $(document).on('keydown', function (e) {
+      if (e.key === 'Escape' && $modal.hasClass('is-open')) {
+        closeLedgerOcrSettingsModal();
+      }
+    });
+  }
+
+  function getLedgerSyoruiSelectForOcr($row) {
+    if ($row && $row.length) {
+      var $rowSelect = $row.find('[data-bulk-field="syorui"]');
+      if ($rowSelect.length) return $rowSelect;
+    }
+    if ($('#ledgerRegistTabBulk').hasClass('is-active')) {
+      return $('#bulkCommonSyorui');
+    }
+    return $('#syorui');
+  }
+
+  function readDocumentOcrMasterFromSelect($select) {
+    if (!$select || !$select.length) {
+      return { sumAmounts: false, taxIncluded: false };
+    }
+    var $opt = $select.find('option:selected');
+    if (!$opt.length) {
+      return { sumAmounts: false, taxIncluded: false };
+    }
+    return {
+      sumAmounts: String($opt.attr('data-ocr-sum-amounts') || '') === '1',
+      taxIncluded: String($opt.attr('data-ocr-tax-included') || '') === '1',
+    };
+  }
+
+  function syncLedgerOcrOptionsFromMaster() {
+    if (!isIchifujiEnabled() || !$('#ledgerOcrSettingsModal').length) {
+      return;
+    }
+    var $select = getLedgerSyoruiSelectForOcrSettings();
+    var master = readDocumentOcrMasterFromSelect($select);
+    var $sumWrap = $('#ledgerOcrSumAmountsWrap');
+    var $sumCheck = $('#ledgerOcrUseSumAmounts');
+
+    if (master.sumAmounts) {
+      $sumWrap.removeClass('is-hidden');
+      if (!$sumCheck.data('userTouched')) {
+        $sumCheck.prop('checked', true);
+      }
+    } else {
+      $sumWrap.addClass('is-hidden');
+      $sumCheck.prop('checked', false).data('userTouched', false);
+    }
+
+    if (!$('input[name="ledger_ocr_tax_mode"]').data('userTouched')) {
+      $('input[name="ledger_ocr_tax_mode"][value="' + (master.taxIncluded ? 'included' : 'excluded') + '"]')
+        .prop('checked', true);
+    }
+
+    var hints = [];
+    if (master.sumAmounts) hints.push('複数合算');
+    if (master.taxIncluded) hints.push('税込');
+    if (!hints.length) hints.push('標準（税抜・単一金額）');
+    $('#ledgerOcrOptionsMasterHint').text('書類区分の初期設定: ' + hints.join('・') + '（必要なら変更できます）');
+    refreshLedgerOcrSettingsChips();
+  }
+
+  function getLedgerOcrRequestOptionsForSelect($select) {
+    var master = readDocumentOcrMasterFromSelect($select);
+    var sumAmounts = false;
+    if (master.sumAmounts && $('#ledgerOcrUseSumAmounts').prop('checked')) {
+      sumAmounts = true;
+    }
+    var taxIncluded = $('input[name="ledger_ocr_tax_mode"]:checked').val() === 'included';
+    return {
+      sumAmounts: sumAmounts,
+      taxIncluded: taxIncluded,
+    };
+  }
+
+  function renderLedgerOcrSettingsChips($container, opts) {
+    if (!$container || !$container.length) {
+      return;
+    }
+    $container.empty();
+    var labels = [opts.taxIncluded ? '税込' : '税抜'];
+    if (opts.sumAmounts) {
+      labels.push('合算');
+    }
+    labels.forEach(function (label) {
+      $container.append($('<span class="ledger-ocr-settings-chip"></span>').text(label));
+    });
+    $container.attr('title', 'AI OCR: ' + labels.join('・'));
+  }
+
+  function refreshLedgerOcrSettingsChips() {
+    if (!isIchifujiEnabled()) {
+      return;
+    }
+    renderLedgerOcrSettingsChips($('#ledgerOcrSettingsChipNormal'), getLedgerOcrRequestOptionsForSelect($('#syorui')));
+    renderLedgerOcrSettingsChips($('#ledgerOcrSettingsChipBulk'), getLedgerOcrRequestOptionsForSelect($('#bulkCommonSyorui')));
+  }
+
+  function getLedgerOcrRequestOptions($row) {
+    return getLedgerOcrRequestOptionsForSelect(getLedgerSyoruiSelectForOcr($row));
+  }
+
+  function runSingleOcr(file, teisyutu, syoruiId, ocrOptions, $row) {
     var formData = new FormData();
     formData.append('_token', $('input[name="_token"]').val());
     formData.append('file', file);
     formData.append('teisyutu', teisyutu || '受領');
+    if (syoruiId) {
+      formData.append('syorui', syoruiId);
+    }
+
+    if (isIchifujiEnabled()) {
+      var opts = ocrOptions || getLedgerOcrRequestOptions($row);
+      formData.append('ocr_sum_amounts', opts.sumAmounts ? '1' : '0');
+      formData.append('ocr_tax_included', opts.taxIncluded ? '1' : '0');
+    }
 
     return new Promise(function (resolve, reject) {
       $.ajax({
@@ -424,7 +857,7 @@ $(document).ready(function () {
       return;
     }
 
-    var $btn = $('<button type="button" id="aiOcrLedgerButton" class="aiocrbutton">AI OCRで読み込む</button>');
+    var $btn = $('<button type="button" id="aiOcrLedgerButton" class="ledger-regist__action ledger-regist__action--ocr">AI OCRで読み込む</button>');
     $btn.on('click', function () {
       var input = document.getElementById('file');
       var selected = input && input.files && input.files[0] ? input.files[0] : null;
@@ -437,7 +870,7 @@ $(document).ready(function () {
 
       var teisyutu = getLedgerTeisyutuForOcr();
 
-      runSingleOcr(selected, teisyutu).then(function (resp) {
+      runSingleOcr(selected, teisyutu, getLedgerSyoruiIdForOcr(), null, null).then(function (resp) {
           logAiOcrResponse(resp, 'AI OCR');
           if (resp && resp.ok && resp.data) {
             var hiduke = normalizeDateString(resp.data.hiduke);
@@ -448,7 +881,9 @@ $(document).ready(function () {
               $('#hiduke').val(hiduke).trigger('change').trigger('blur');
             }
             if (kinngaku) {
-              $('#kinngaku').val(kinngaku).trigger('change').trigger('blur');
+              var $kinInput = $('#kinngaku');
+              $kinInput.val(kinngaku).trigger('change').trigger('blur');
+              attachKinngakuBreakdownFromOcrData($kinInput, resp.data);
             }
             if (torihikisaki) {
               resolveTorihikisakiByExistingCandidates(torihikisaki).then(function (resolved) {
@@ -578,7 +1013,31 @@ $(document).ready(function () {
     if (!isBanbanEnabled()) return;
     if (!$('.ledger-regist-tabs').length) return;
     var aiEnabled = isIchifujiEnabled();
-    $('#bulkAiOcrAll').toggle(aiEnabled);
+    if (!aiEnabled) {
+      $('#bulkAiOcrAll').addClass('is-hidden');
+    }
+
+    function bulkHasFiles() {
+      return $('#ledgerBulkLayout').hasClass('has-files');
+    }
+
+    function setBulkHasFiles(hasFiles) {
+      $('#ledgerBulkLayout').toggleClass('has-files', hasFiles);
+      $('#bulkRegistForm').toggleClass('has-files', hasFiles);
+    }
+
+    function syncLedgerRegistModeInUrl(mode) {
+      try {
+        var url = new URL(window.location.href);
+        if (mode === 'bulk') {
+          url.searchParams.set('mode', 'bulk');
+        } else {
+          url.searchParams.delete('mode');
+        }
+        var qs = url.searchParams.toString();
+        window.history.replaceState({}, '', url.pathname + (qs ? '?' + qs : '') + url.hash);
+      } catch (e) { /* noop */ }
+    }
 
     function switchTab(target) {
       $('.ledger-regist-tabs__tab').removeClass('is-active').attr('aria-selected', 'false');
@@ -590,29 +1049,273 @@ $(document).ready(function () {
         $('[data-ledger-tab="normal"]').addClass('is-active').attr('aria-selected', 'true');
         $('#ledgerRegistTabNormal').addClass('is-active');
       }
+      syncLedgerRegistModeInUrl(target === 'bulk' ? 'bulk' : 'normal');
+      if (typeof syncLedgerOcrOptionsFromMaster === 'function') {
+        ledgerOcrSettingsSyoruiSource = null;
+        $('#ledgerOcrUseSumAmounts').data('userTouched', false);
+        $('input[name="ledger_ocr_tax_mode"]').data('userTouched', false);
+        syncLedgerOcrOptionsFromMaster();
+      }
     }
+
+    var initialMode = $('#ledgerRegistInitialMode').val() === 'bulk' ? 'bulk' : 'normal';
+    switchTab(initialMode);
 
     $(document).on('click', '.ledger-regist-tabs__tab', function () {
       var tab = $(this).data('ledger-tab');
       switchTab(tab);
     });
 
+    function updateBulkRowStatus($header, $body) {
+      if (!$body || !$body.length) {
+        $body = $header && $header.data('bulkBody');
+      }
+      if (!$header || !$header.length) {
+        $header = $body && $body.data('bulkHeader');
+      }
+      if (!$header || !$header.length || !$body || !$body.length) return;
+      var fields = ['hiduke', 'kinngaku', 'torihikisaki'];
+      fields.forEach(function (key) {
+        var val = String($body.find('[data-bulk-field="' + key + '"]').val() || '').trim();
+        $header.find('[data-bulk-chip="' + key + '"]').toggleClass('is-filled', !!val);
+      });
+      var complete = fields.every(function (key) {
+        return !!String($body.find('[data-bulk-field="' + key + '"]').val() || '').trim()
+          && !!String($body.find('[data-bulk-field="teisyutu"]').val() || '').trim();
+      });
+      $header.toggleClass('is-complete', complete);
+    }
+
+    var bulkFilesCache = [];
+    var selectedBulkIndex = -1;
+    var bulkAddMorePending = false;
+    var bulkRowStateByFile = new WeakMap();
+    var bulkRowStateFieldKeys = ['hiduke', 'kinngaku', 'torihikisaki', 'syorui', 'teisyutu', 'hozonn', 'group', 'kennsakuword'];
+
+    function captureBulkRowState($header, $body) {
+      if (!$body || !$body.length) return null;
+      var state = {};
+      bulkRowStateFieldKeys.forEach(function (key) {
+        state[key] = String($body.find('[data-bulk-field="' + key + '"]').val() || '');
+      });
+      if ($header && $header.length) {
+        var $ocrBtn = $header.find('[data-bulk-action="ocrOne"]');
+        state.ocrDone = $ocrBtn.hasClass('is-done');
+        state.ocrError = $header.hasClass('is-ocr-error');
+      }
+      return state;
+    }
+
+    function saveBulkRowState(file, $header, $body) {
+      if (!file || !$body || !$body.length) return;
+      var state = captureBulkRowState($header, $body);
+      if (state) {
+        bulkRowStateByFile.set(file, state);
+      }
+    }
+
+    function snapshotAllBulkRowStates() {
+      $('#bulkFileList .ledger-bulk-file').each(function () {
+        var $header = $(this);
+        var $body = $header.data('bulkBody');
+        var file = $header.data('file');
+        if (file && $body && $body.length) {
+          saveBulkRowState(file, $header, $body);
+        }
+      });
+    }
+
+    function restoreBulkRowState(file, $header, $body) {
+      var state = bulkRowStateByFile.get(file);
+      if (!state || !$body || !$body.length) return;
+
+      bulkRowStateFieldKeys.forEach(function (key) {
+        var $el = $body.find('[data-bulk-field="' + key + '"]');
+        if (!$el.length) return;
+        var val = state[key] != null ? state[key] : '';
+        if (key === 'hiduke') {
+          setLedgerRegistDateInputValue($el, val);
+        } else {
+          $el.val(val).trigger('change');
+        }
+      });
+
+      if ($header && $header.length) {
+        var $ocrBtn = $header.find('[data-bulk-action="ocrOne"]');
+        $header.removeClass('is-ocr-error');
+        if (state.ocrError) {
+          $header.addClass('is-ocr-error');
+        }
+        if (state.ocrDone && $ocrBtn.length) {
+          $ocrBtn.addClass('is-done').prop('disabled', true).html('✓');
+        } else if ($ocrBtn.length) {
+          $ocrBtn.removeClass('is-done is-loading').prop('disabled', false).text('AI OCR');
+        }
+      }
+      updateBulkRowStatus($header, $body);
+    }
+
+    function syncBulkRowDatesAfterFlatpickr() {
+      $('#bulkFileList .ledger-bulk-file').each(function () {
+        var $header = $(this);
+        var $body = $header.data('bulkBody');
+        var file = $header.data('file');
+        if (!file || !$body || !$body.length) return;
+        var state = bulkRowStateByFile.get(file);
+        if (!state || !state.hiduke) return;
+        setLedgerRegistDateInputValue($body.find('[data-bulk-field="hiduke"]'), state.hiduke);
+      });
+    }
+
+    function updateBulkUiForFileCount(files, hasFiles) {
+      bulkFilesCache = files.slice();
+      setBulkHasFiles(hasFiles);
+      $('#bulkRegistButton').prop('disabled', !hasFiles);
+      if (aiEnabled) {
+        $('#bulkAiOcrAll').prop('disabled', !hasFiles);
+      }
+      $('#bulkListCount').text(hasFiles ? (files.length + '件') : '');
+      $('#bulkFilesLoaded').toggleClass('is-hidden', !hasFiles);
+      $('#bulkFilePickRow').toggleClass('is-hidden', hasFiles);
+    }
+
+    function selectBulkRow(index) {
+      var $headers = $('#bulkFileList .ledger-bulk-file');
+      if (!$headers.length) {
+        selectedBulkIndex = -1;
+        $('#bulkSharedPreview').text('プレビュー');
+        return;
+      }
+      if (index < 0 || index >= $headers.length) {
+        index = 0;
+      }
+      $headers.removeClass('is-selected');
+      $('#bulkDetailPanel .ledger-bulk-row__body').removeClass('is-active').hide();
+      var $header = $headers.filter('[data-bulk-index="' + index + '"]');
+      if (!$header.length) {
+        $header = $headers.first();
+        index = parseInt($header.attr('data-bulk-index'), 10) || 0;
+      }
+      var $body = $header.data('bulkBody');
+      $header.addClass('is-selected');
+      if ($body && $body.length) {
+        $body.addClass('is-active').show();
+      }
+      renderPreviewInto($('#bulkSharedPreview'), $header.data('file'));
+      selectedBulkIndex = index;
+      var el = $header.get(0);
+      if (el && el.scrollIntoView) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      }
+    }
+
+    function applyCommonToAllRows() {
+      var common = {
+        syorui: $('#bulkCommonSyorui').val(),
+        teisyutu: $('#bulkCommonTeisyutu').val(),
+        hozonn: $('#bulkCommonHozonn').val(),
+        group: $('#bulkCommonGroup').val(),
+        kennsakuword: $('#bulkCommonKensaku').val(),
+      };
+
+      $('#bulkFileList .ledger-bulk-file').each(function () {
+        var $header = $(this);
+        var $body = $header.data('bulkBody');
+        if (!$body || !$body.length) return;
+        $body.find('[data-bulk-field="syorui"]').val(common.syorui).trigger('change');
+        $body.find('[data-bulk-field="teisyutu"]').val(common.teisyutu).trigger('change');
+        $body.find('[data-bulk-field="hozonn"]').val(common.hozonn).trigger('change');
+        $body.find('[data-bulk-field="group"]').val(common.group).trigger('change');
+        $body.find('[data-bulk-field="kennsakuword"]').val(common.kennsakuword).trigger('change');
+        updateBulkRowStatus($header, $body);
+        saveBulkRowState($header.data('file'), $header, $body);
+      });
+    }
+
+    function setBulkInputFiles(fileList) {
+      var input = document.getElementById('bulkFiles');
+      if (!input || typeof DataTransfer === 'undefined') return;
+      var dt = new DataTransfer();
+      fileList.forEach(function (file) {
+        dt.items.add(file);
+      });
+      input.files = dt.files;
+    }
+
+    function refreshBulkFileList(files, options) {
+      options = options || {};
+      var $list = $('#bulkFileList');
+      var $detail = $('#bulkDetailPanel');
+      var keepIndex = selectedBulkIndex;
+      if (!options.skipSnapshot) {
+        snapshotAllBulkRowStates();
+      }
+      $list.empty();
+      $detail.empty();
+      files.forEach(function (file, idx) {
+        var parts = makeBulkRow(idx, file);
+        $list.append(parts.$header);
+        $detail.append(parts.$body);
+        applyCommonValuesToRow(parts.$body);
+        restoreBulkRowState(file, parts.$header, parts.$body);
+        updateBulkRowStatus(parts.$header, parts.$body);
+      });
+
+      var hasFiles = files.length > 0;
+      updateBulkUiForFileCount(files, hasFiles);
+
+      if (hasFiles) {
+        var selectIndex = typeof options.selectIndex === 'number'
+          ? options.selectIndex
+          : (keepIndex >= 0 ? Math.min(keepIndex, files.length - 1) : 0);
+        selectBulkRow(selectIndex);
+      } else {
+        selectedBulkIndex = -1;
+        $('#bulkSharedPreview').text('プレビュー');
+        $('#bulkDetailPanel').empty();
+        bulkRowStateByFile = new WeakMap();
+      }
+
+      if (typeof window.initLedgerRegistDateFlatpickr === 'function') {
+        window.initLedgerRegistDateFlatpickr('#bulkDetailPanel');
+      }
+      syncBulkRowDatesAfterFlatpickr();
+    }
+
+    function appendBulkFileRows(newFiles, mergedFiles, selectIndex) {
+      if (!newFiles.length) return;
+      var $list = $('#bulkFileList');
+      var $detail = $('#bulkDetailPanel');
+      var startIndex = mergedFiles.length - newFiles.length;
+      newFiles.forEach(function (file, i) {
+        var idx = startIndex + i;
+        var parts = makeBulkRow(idx, file);
+        $list.append(parts.$header);
+        $detail.append(parts.$body);
+        applyCommonValuesToRow(parts.$body);
+        updateBulkRowStatus(parts.$header, parts.$body);
+      });
+
+      updateBulkUiForFileCount(mergedFiles, mergedFiles.length > 0);
+
+      if (typeof window.initLedgerRegistDateFlatpickr === 'function') {
+        window.initLedgerRegistDateFlatpickr('#bulkDetailPanel');
+      }
+
+      selectBulkRow(typeof selectIndex === 'number' ? selectIndex : startIndex);
+    }
+
+    function applyCommonValuesToRow($body) {
+      $body.find('[data-bulk-field="syorui"]').val($('#bulkCommonSyorui').val());
+      $body.find('[data-bulk-field="teisyutu"]').val($('#bulkCommonTeisyutu').val());
+      $body.find('[data-bulk-field="hozonn"]').val($('#bulkCommonHozonn').val());
+      $body.find('[data-bulk-field="group"]').val($('#bulkCommonGroup').val());
+      $body.find('[data-bulk-field="kennsakuword"]').val($('#bulkCommonKensaku').val());
+    }
+
     function makeBulkRow(index, file) {
       var safeName = file && file.name ? file.name : ('file_' + index);
-      var html = ''
-        + '<div class="ledger-bulk-row" data-bulk-index="' + index + '">'
-        + '  <div class="ledger-bulk-row__header">'
-        + '    <div class="ledger-bulk-row__meta">'
-        + '      <span class="ledger-bulk-row__name">' + safeName + '</span>'
-        + '    </div>'
-        + '    <div class="ledger-bulk-row__header-actions">'
-        + '      <button type="button" class="ledger-bulk-row__toggle" data-bulk-action="toggle">フォームを表示</button>'
-        + (aiEnabled ? '      <button type="button" class="aiocrbutton" data-bulk-action="ocrOne">AI OCR</button>' : '')
-        + '    </div>'
-        + '  </div>'
-        + '  <div class="ledger-bulk-row__body" style="display:none;">'
-        + '    <div class="ledger-bulk-row__layout">'
-        + '      <div class="ledger-bulk-row__fields">'
+      var fieldsHtml = ''
         + '        <div class="ledger-regist__ocr-grid">'
         + '          <div class="ledger-regist__field">'
         + '            <label class="ledger-regist__label">取引日<span class="requirered">*</span></label>'
@@ -632,6 +1335,7 @@ $(document).ready(function () {
         + '            <label class="ledger-regist__label">取引先<span class="requirered">*</span></label>'
         + '            <div class="ledger-regist__control torihikisakiinput">'
         + '              <input type="text" name="torihikisaki[]" class="input-field ledger-regist__input" data-bulk-field="torihikisaki" autocomplete="off" required>'
+        + '              <div class="registtorihikisakiselect"></div>'
         + '              <span class="errorelement ledger-regist__error bulk-required-msg" data-bulk-error="torihikisaki">必須項目です</span>'
         + '            </div>'
         + '          </div>'
@@ -668,50 +1372,153 @@ $(document).ready(function () {
         + '              <input type="text" name="kennsakuword[]" class="input-field ledger-regist__input" data-bulk-field="kennsakuword">'
         + '            </div>'
         + '          </div>'
-        + '        </div>'
-        + '      </div>'
-        + '      <div class="ledger-bulk-row__preview previewarea"></div>'
-        + '    </div>'
-        + '  </div>'
-        + '</div>';
+        + '        </div>';
 
-      var $row = $(html);
-      $row.data('file', file);
-      $row.find('[data-bulk-field="syorui"]').html($('#bulkCommonSyorui').html());
-      $row.find('[data-bulk-field="group"]').html($('#bulkCommonGroup').html());
-      renderPreviewInto($row.find('.ledger-bulk-row__preview'), file);
-      return $row;
+      var $header = $('<div class="ledger-bulk-file" data-bulk-index="' + index + '" role="button" tabindex="0"></div>');
+      $header.append(
+        '<div class="ledger-bulk-file__inner">'
+        + '  <span class="ledger-bulk-file__name">' + safeName + '</span>'
+        + '  <span class="ledger-bulk-file__status" aria-hidden="true">'
+        + '    <span class="ledger-bulk-row__chip" data-bulk-chip="hiduke"></span>'
+        + '    <span class="ledger-bulk-row__chip" data-bulk-chip="kinngaku"></span>'
+        + '    <span class="ledger-bulk-row__chip" data-bulk-chip="torihikisaki"></span>'
+        + '  </span>'
+        + '</div>'
+        + (aiEnabled ? '<button type="button" class="aiocrbutton ledger-bulk-file__ocr" data-bulk-action="ocrOne">AI OCR</button>' : '')
+      );
+      $header.data('file', file);
+
+      var $body = $('<div class="ledger-bulk-row__body" data-bulk-index="' + index + '"></div>');
+      $body.html(fieldsHtml);
+      $body.find('[data-bulk-field="syorui"]').html($('#bulkCommonSyorui').html());
+      $body.find('[data-bulk-field="group"]').html($('#bulkCommonGroup').html());
+
+      $header.data('bulkBody', $body);
+      $body.data('bulkHeader', $header);
+      return { $header: $header, $body: $body };
+    }
+
+    function ingestBulkFiles(rawFiles, mode) {
+      var incoming = Array.from(rawFiles || []).filter(Boolean);
+      if (!incoming.length) {
+        bulkAddMorePending = false;
+        return;
+      }
+      if (mode === 'append' && bulkFilesCache.length) {
+        snapshotAllBulkRowStates();
+        var merged = bulkFilesCache.concat(incoming);
+        setBulkInputFiles(merged);
+        appendBulkFileRows(incoming, merged, merged.length - incoming.length);
+        bulkAddMorePending = false;
+        var input = document.getElementById('bulkFiles');
+        if (input) {
+          input.value = '';
+        }
+        return;
+      }
+      var next = incoming;
+      setBulkInputFiles(next);
+      refreshBulkFileList(next);
+      bulkAddMorePending = false;
     }
 
     $('#bulkFiles').on('change', function (e) {
       var files = (e.target && e.target.files) ? Array.from(e.target.files) : [];
-      var $list = $('#bulkFileList');
-      $list.empty();
-      files.forEach(function (file, idx) {
-        $list.append(makeBulkRow(idx, file));
-      });
+      if (bulkAddMorePending) {
+        ingestBulkFiles(files, 'append');
+        bulkAddMorePending = false;
+      } else {
+        ingestBulkFiles(files, 'replace');
+      }
+    });
 
-      // ファイル選択後に初めて共通操作・登録ボタンを表示/有効化
-      var hasFiles = files.length > 0;
-      $('#bulkCommonActions').toggleClass('is-hidden', !hasFiles);
-      $('#bulkRegistButton').prop('disabled', !hasFiles);
-      $('#bulkAiOcrAll').toggle(aiEnabled);
+    function openBulkFilePicker(appendMode) {
+      bulkAddMorePending = !!appendMode;
+      $('#bulkFiles').trigger('click');
+    }
+
+    $('#bulkPickZone').on('click', function () {
+      openBulkFilePicker(false);
+    }).on('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openBulkFilePicker(false);
+      }
+    });
+
+    $('#bulkAddMoreFiles').on('click', function (e) {
+      e.preventDefault();
+      openBulkFilePicker(true);
+    });
+
+    $(document).on('click', '.ledger-bulk-file', function (e) {
+      if ($(e.target).closest('[data-bulk-action="ocrOne"]').length) {
+        return;
+      }
+      var index = parseInt($(this).attr('data-bulk-index'), 10);
+      if (!isNaN(index)) {
+        selectBulkRow(index);
+      }
+    });
+
+    $(document).on('keydown', '.ledger-bulk-file', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        $(this).trigger('click');
+      }
+    });
+
+    function bindBulkDropTarget($target) {
+      $target.on('dragover', function (event) {
+        event.preventDefault();
+        $(this).addClass('dragover');
+      }).on('dragleave', function (event) {
+        event.preventDefault();
+        $(this).removeClass('dragover');
+      }).on('drop', function (event) {
+        event.preventDefault();
+        $(this).removeClass('dragover');
+        var dropped = event.originalEvent.dataTransfer && event.originalEvent.dataTransfer.files;
+        if (!dropped || !dropped.length) return;
+        var mode = bulkHasFiles() ? 'append' : 'replace';
+        ingestBulkFiles(dropped, mode);
+      });
+    }
+
+    bindBulkDropTarget($('#bulkFilesBar'));
+    bindBulkDropTarget($('#bulkSharedPreview'));
+
+    $('#bulkCommonSyorui, #bulkCommonTeisyutu, #bulkCommonHozonn, #bulkCommonGroup, #bulkCommonKensaku').on('change input', function () {
+      if (!bulkHasFiles()) return;
+      applyCommonToAllRows();
+    });
+
+    $(document).on('input change', '#bulkDetailPanel [data-bulk-field]', function () {
+      var $body = $(this).closest('.ledger-bulk-row__body');
+      var $header = $body.data('bulkHeader');
+      var file = $header && $header.data('file');
+      if (file) {
+        saveBulkRowState(file, $header, $body);
+      }
+      updateBulkRowStatus($header, $body);
     });
 
     function validateBulkRequiredFields() {
       var hasError = false;
-      var $rows = $('#bulkFileList .ledger-bulk-row');
 
-      $rows.each(function () {
-        var $row = $(this);
-        var $hiduke = $row.find('[data-bulk-field="hiduke"]');
-        var $kinngaku = $row.find('[data-bulk-field="kinngaku"]');
-        var $torihikisaki = $row.find('[data-bulk-field="torihikisaki"]');
-        var $teisyutu = $row.find('[data-bulk-field="teisyutu"]');
-        var $hidukeMsg = $row.find('[data-bulk-error="hiduke"]');
-        var $kinngakuMsg = $row.find('[data-bulk-error="kinngaku"]');
-        var $torihikiMsg = $row.find('[data-bulk-error="torihikisaki"]');
-        var $teisyutuMsg = $row.find('[data-bulk-error="teisyutu"]');
+      $('#bulkFileList .ledger-bulk-file').each(function () {
+        var $header = $(this);
+        var $body = $header.data('bulkBody');
+        if (!$body || !$body.length) return;
+
+        var $hiduke = $body.find('[data-bulk-field="hiduke"]');
+        var $kinngaku = $body.find('[data-bulk-field="kinngaku"]');
+        var $torihikisaki = $body.find('[data-bulk-field="torihikisaki"]');
+        var $teisyutu = $body.find('[data-bulk-field="teisyutu"]');
+        var $hidukeMsg = $body.find('[data-bulk-error="hiduke"]');
+        var $kinngakuMsg = $body.find('[data-bulk-error="kinngaku"]');
+        var $torihikiMsg = $body.find('[data-bulk-error="torihikisaki"]');
+        var $teisyutuMsg = $body.find('[data-bulk-error="teisyutu"]');
 
         var hidukeVal = String($hiduke.val() || '').trim();
         var kinngakuVal = String($kinngaku.val() || '').trim();
@@ -729,92 +1536,69 @@ $(document).ready(function () {
 
         if (!hidukeVal || !kinngakuVal || !torihikiVal || !teisyutuVal) {
           hasError = true;
-          // 入力不足がある行は自動で開く
-          $row.find('.ledger-bulk-row__body').show();
-          $row.find('[data-bulk-action="toggle"]').text('フォームを隠す');
+          var index = parseInt($header.attr('data-bulk-index'), 10);
+          if (!isNaN(index)) {
+            selectBulkRow(index);
+          }
         }
+        updateBulkRowStatus($header, $body);
       });
 
       return !hasError;
     }
 
     $('#bulkRegistForm').on('submit', function (e) {
-      // HTMLのrequiredだけだと折りたたみ状態で気づきにくいので、明示チェックする
       if (!validateBulkRequiredFields()) {
         e.preventDefault();
-        alert('一括取込の必須項目（取引日・受領/提出・取引先）を入力してください。');
+        alert('一括取込の必須項目（取引日・金額・受領/提出・取引先）を入力してください。');
       }
     });
 
-    function applyCommonToAllRows() {
-      var common = {
-        syorui: $('#bulkCommonSyorui').val(),
-        teisyutu: $('#bulkCommonTeisyutu').val(),
-        hozonn: $('#bulkCommonHozonn').val(),
-        group: $('#bulkCommonGroup').val(),
-        kennsakuword: $('#bulkCommonKensaku').val(),
-      };
-
-      $('#bulkFileList .ledger-bulk-row').each(function () {
-        var $row = $(this);
-        $row.find('[data-bulk-field="syorui"]').val(common.syorui).trigger('change');
-        $row.find('[data-bulk-field="teisyutu"]').val(common.teisyutu).trigger('change');
-        $row.find('[data-bulk-field="hozonn"]').val(common.hozonn).trigger('change');
-        $row.find('[data-bulk-field="group"]').val(common.group).trigger('change');
-        $row.find('[data-bulk-field="kennsakuword"]').val(common.kennsakuword).trigger('change');
-      });
-    }
-
-    $('#bulkApplyCommon').on('click', function () {
-      applyCommonToAllRows();
-    });
-
-    $(document).on('click', '[data-bulk-action="toggle"]', function () {
-      var $row = $(this).closest('.ledger-bulk-row');
-      var $body = $row.find('.ledger-bulk-row__body');
-      var isOpen = $body.is(':visible');
-      $body.toggle(!isOpen);
-      $(this).text(isOpen ? 'フォームを表示' : 'フォームを隠す');
-    });
-
-    $(document).on('click', '[data-bulk-action="ocrOne"]', async function () {
+    $(document).on('click', '[data-bulk-action="ocrOne"]', async function (e) {
+      e.stopPropagation();
       if (!aiEnabled) {
         return;
       }
       var $btn = $(this);
-      var $row = $btn.closest('.ledger-bulk-row');
-      var file = $row.data('file');
-      if (!file) return;
+      var $header = $btn.closest('.ledger-bulk-file');
+      var $body = $header.data('bulkBody');
+      var file = $header.data('file');
+      if (!$body || !$body.length || !file) return;
 
       if ($btn.hasClass('is-done')) {
         return;
       }
 
-      $row.removeClass('is-ocr-error');
-      $row.addClass('is-ocr-running');
+      $header.removeClass('is-ocr-error');
+      $header.addClass('is-ocr-running');
       $btn.addClass('is-loading').prop('disabled', true).text('OCR中...');
       try {
-        var teisyutu = getLedgerTeisyutuForOcr($row);
-        var resp = await runSingleOcr(file, teisyutu);
+        var teisyutu = getLedgerTeisyutuForOcr($body);
+        var syoruiId = getLedgerSyoruiIdForOcr($body);
+        var resp = await runSingleOcr(file, teisyutu, syoruiId, null, $body);
         logAiOcrResponse(resp, 'AI OCR bulk');
         if (resp && resp.ok && resp.data) {
-          applyOcrDataToRow($row, resp.data);
+          applyOcrDataToRow($body, resp.data, function () {
+            updateBulkRowStatus($header, $body);
+            saveBulkRowState(file, $header, $body);
+          });
         } else {
-          $row.addClass('is-ocr-error');
+          $header.addClass('is-ocr-error');
           showAiOcrFailure(resp);
           throw new Error(resp && resp.step ? resp.step : 'ocr_failed');
         }
       } catch (e) {
         console.warn('AI OCR error (bulk):', e);
-        $row.addClass('is-ocr-error');
+        $header.addClass('is-ocr-error');
         if (!e || e.message !== 'ocr_failed') {
           showAiOcrFailure(null, e && e.status ? e : null);
         }
       } finally {
-        $row.removeClass('is-ocr-running');
+        $header.removeClass('is-ocr-running');
         $btn.removeClass('is-loading');
-        if (!$row.hasClass('is-ocr-error')) {
+        if (!$header.hasClass('is-ocr-error')) {
           $btn.addClass('is-done').prop('disabled', true).html('✓');
+          saveBulkRowState(file, $header, $body);
         } else {
           $btn.prop('disabled', false).text('AI OCR');
         }
@@ -826,52 +1610,54 @@ $(document).ready(function () {
         return;
       }
       var $btn = $(this);
-      var $rows = $('#bulkFileList .ledger-bulk-row');
-      if (!$rows.length) {
-        alert('先にファイルを選択してください');
+      var $headers = $('#bulkFileList .ledger-bulk-file');
+      if (!$headers.length) {
         return;
       }
 
       $btn.prop('disabled', true).text('一括OCR実行中...');
       try {
-        // すでに完了している行はスキップ
         var tasks = [];
-        $rows.each(function (i) {
-          var $row = $(this);
-          var file = $row.data('file');
-          if (!file) return;
+        $headers.each(function (i) {
+          var $header = $(this);
+          var $body = $header.data('bulkBody');
+          var file = $header.data('file');
+          if (!$body || !$body.length || !file) return;
 
-          var $rowBtn = $row.find('[data-bulk-action="ocrOne"]');
+          var $rowBtn = $header.find('[data-bulk-action="ocrOne"]');
           if ($rowBtn.hasClass('is-done')) return;
 
-          $row.removeClass('is-ocr-error');
-          $row.addClass('is-ocr-running');
+          $header.removeClass('is-ocr-error');
+          $header.addClass('is-ocr-running');
           $rowBtn.addClass('is-loading').prop('disabled', true).text('OCR中...');
 
           var task = (async function () {
-            // 0.5秒間隔で「送信開始」だけずらす（完了待ちはしない）
             if (i !== 0) {
               await sleepMs(500 * i);
             }
             try {
-              var teisyutu = getLedgerTeisyutuForOcr($row);
-              var resp = await runSingleOcr(file, teisyutu);
+              var teisyutu = getLedgerTeisyutuForOcr($body);
+              var syoruiId = getLedgerSyoruiIdForOcr($body);
+              var resp = await runSingleOcr(file, teisyutu, syoruiId, null, $body);
               logAiOcrResponse(resp, 'AI OCR bulk all');
               if (resp && resp.ok && resp.data) {
-                applyOcrDataToRow($row, resp.data);
-                $rowBtn.addClass('is-done').prop('disabled', true).html('✓');
+                applyOcrDataToRow($body, resp.data, function () {
+                  updateBulkRowStatus($header, $body);
+                  saveBulkRowState(file, $header, $body);
+                  $rowBtn.addClass('is-done').prop('disabled', true).html('✓');
+                });
               } else {
-                $row.addClass('is-ocr-error');
+                $header.addClass('is-ocr-error');
                 showAiOcrFailure(resp);
                 $rowBtn.prop('disabled', false).text('AI OCR');
               }
             } catch (e) {
               console.warn('AI OCR error (bulk all):', e);
-              $row.addClass('is-ocr-error');
+              $header.addClass('is-ocr-error');
               $rowBtn.prop('disabled', false).text('AI OCR');
               showAiOcrFailure(null, e && e.status ? e : null);
             } finally {
-              $row.removeClass('is-ocr-running');
+              $header.removeClass('is-ocr-running');
               $rowBtn.removeClass('is-loading');
             }
           })();
@@ -934,6 +1720,25 @@ $(document).ready(function () {
 
 
 
+
+  if (isIchifujiEnabled()) {
+    bindLedgerOcrSettingsModal();
+    syncLedgerOcrOptionsFromMaster();
+    $(document).on('change', '#syorui, #bulkCommonSyorui', function () {
+      $('#ledgerOcrUseSumAmounts').data('userTouched', false);
+      $('input[name="ledger_ocr_tax_mode"]').data('userTouched', false);
+      syncLedgerOcrOptionsFromMaster();
+    });
+    $('#ledgerOcrUseSumAmounts').on('change', function () {
+      $(this).data('userTouched', true);
+      refreshLedgerOcrSettingsChips();
+    });
+    $(document).on('change', 'input[name="ledger_ocr_tax_mode"]', function () {
+      $('input[name="ledger_ocr_tax_mode"]').data('userTouched', true);
+      refreshLedgerOcrSettingsChips();
+    });
+    refreshLedgerOcrSettingsChips();
+  }
 
 });
 

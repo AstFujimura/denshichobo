@@ -39,6 +39,20 @@ TAMERU ~電子帳簿保存
     <div class="searchcomment">検索中です</div>
 </div>
 <h2 class="pagetitle">帳簿一覧</h2>
+
+<div class="ledger-top-actions">
+    <a href="{{ route('registGet') }}" class="ledger-top-actions__btn ledger-top-actions__btn--single">
+        <img src="{{ asset($prefix.'/img/pencil_2_line.svg') }}" alt="" class="ledger-top-actions__icon" width="16" height="16">
+        <span class="ledger-top-actions__label">新規帳簿保存</span>
+    </a>
+    @if(!empty($banbanEnabled))
+    <a href="{{ route('registGet', ['mode' => 'bulk']) }}" class="ledger-top-actions__btn ledger-top-actions__btn--bulk">
+        <img src="{{ asset($prefix.'/img/pencil_2_line.svg') }}" alt="" class="ledger-top-actions__icon" width="16" height="16">
+        <span class="ledger-top-actions__label">一括帳簿保存</span>
+    </a>
+    @endif
+</div>
+
 <form class="searchform" action="{{route('searchPost')}}" method="get" enctype="multipart/form-data">
     @include('information.partials.searchbox', ['datacountZenkenValue' => '10000'])
 </form>

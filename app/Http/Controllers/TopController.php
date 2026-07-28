@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\Document;
 use App\Models\Group;
 use App\Models\Group_User;
+use App\Models\Version;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -184,8 +185,10 @@ class TopController extends Controller
             $this->excel($request, $files);
         }
 
+        $banbanEnabled = Version::where('BANBAN', true)->exists();
+
         // 取得したデータをビューに渡すなどの処理
-        return view('information.toppage', compact('files', 'users', 'groups', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server', 'newsshow'));
+        return view('information.toppage', compact('files', 'users', 'groups', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server', 'newsshow', 'banbanEnabled'));
     }
 
     //表示するページネーションボタンの配列を返す
