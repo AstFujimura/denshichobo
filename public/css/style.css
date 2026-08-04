@@ -665,8 +665,8 @@ a {
 @media (min-width: 801px) {
   .ledger-table .hiduke,
   .ledger-table .hidukeTd {
-    width: 8.5rem;
-    flex: 0 0 8.5rem;
+    width: 7rem;
+    flex: 0 0 7rem;
   }
   .ledger-table .kinngaku,
   .ledger-table .kinngakuTd {
@@ -685,8 +685,8 @@ a {
     min-width: 22rem;
   }
   .ledger-table .syoruikubunn {
-    width: 5.75rem;
-    flex: 0 0 5.75rem;
+    width: 8.25rem;
+    flex: 0 0 8.25rem;
   }
   .ledger-table .teisyutu {
     width: 6.5rem;
@@ -2830,91 +2830,207 @@ body.ledger-regist-modal-open {
   font-size: 12px;
 }
 
-#usersetting {
-  width: fit-content;
-  max-width: 95%;
-  background: white;
-  padding: 1rem 2rem;
-  border-radius: 30px;
-  margin-left: 3rem;
-  width: 30rem;
-  max-width: 75%;
-}
-#usersetting .input-container {
-  flex-direction: column;
-  margin-top: 1rem;
-}
-#usersetting .input-container .dateform .input-field {
-  width: 100%;
-}
-@media screen and (min-width: 801px) {
-  #usersetting .important {
-    width: 16rem;
-    padding: 0;
-    position: relative;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.5s ease;
-    border: solid 0.1px #bababa;
-    margin-block: 20px;
-  }
-  #usersetting .important .important_title {
-    margin: 0.7rem 3rem;
-  }
-  #usersetting .important .importantelement.open {
-    display: flex;
-    flex-direction: column;
-  }
-}
-@media screen and (max-width: 800px) {
-  #usersetting {
-    font-size: 0.8rem;
-    margin-inline: auto;
-  }
-  #usersetting .important {
-    width: 20rem;
-    padding: 0;
-    position: relative;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.5s ease;
-    border: solid 0.1px #bababa;
-    margin-block: 20px;
-  }
-  #usersetting .important .important_title {
-    margin: 0.7rem 3rem;
-  }
-  #usersetting .important .importantelement.open {
-    display: flex;
-    flex-direction: column;
-  }
-}
-#usersetting .important_title::before,
-#usersetting .important_title::after {
-  position: absolute;
-  content: "";
-  width: 1rem;
-  height: 2px;
-  background-color: #333;
-  top: 1.35rem;
-  left: 5%;
-  transition: all 0.3s ease;
-}
-#usersetting .usersettingbutton {
-  border: 0;
-  background: rgb(0, 108, 203);
-  color: white;
-  padding: 5px;
-  border-radius: 3px;
-  cursor: pointer;
-  height: 3rem;
-  width: 14rem;
-  font-size: 1rem;
-}
-#usersetting .usersettingbutton:hover {
-  background: rgb(3, 71, 131);
+.usersetting-page {
+  width: min(92vw, 34rem);
+  margin: 0 0 1.5rem;
 }
 
+.usersettingtitle {
+  margin-bottom: 0.35rem;
+}
+
+.usersetting-page__lead {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: #5c6b7a;
+  line-height: 1.5;
+}
+
+#usersetting.usersetting-form {
+  width: 100%;
+  margin: 0;
+  padding: 1.15rem 1.25rem 1.25rem;
+  background: #fff;
+  border: 1px solid #b8c5d1;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(15, 35, 55, 0.06);
+  box-sizing: border-box;
+}
+
+.usersetting-form__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.usersetting-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.usersetting-form__field--checkbox {
+  padding-top: 0.15rem;
+}
+
+.usersetting-form__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #5c6b7a;
+  line-height: 1.35;
+}
+
+.usersetting-form__input {
+  width: 100%;
+  height: 2.125rem;
+  padding: 0 0.75rem;
+  border: 1px solid #8a9aab;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a2332;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  box-shadow: inset 0 1px 2px rgba(15, 35, 55, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.usersetting-form__input:hover {
+  border-color: #6f8294;
+}
+.usersetting-form__input:focus {
+  outline: none;
+  border-color: #14b77b;
+  box-shadow: 0 0 0 3px rgba(20, 183, 123, 0.15);
+}
+
+.usersetting-form__checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: #3d5a6c;
+  cursor: pointer;
+}
+.usersetting-form__checkbox input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #14b77b;
+}
+
+.usersetting-form__error {
+  margin: 0;
+}
+
+.usersetting-form__password {
+  margin-top: 1rem;
+  border: 1px solid #b8c5d1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fafcfd;
+}
+
+.usersetting-form__password-toggle.important_title {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: #1a2f3f;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.usersetting-form__password-toggle.important_title::before, .usersetting-form__password-toggle.important_title::after {
+  position: absolute;
+  content: "";
+  width: 0.85rem;
+  height: 2px;
+  background-color: #5c6b7a;
+  top: 50%;
+  right: 1rem;
+  left: auto;
+  transition: transform 0.2s ease;
+}
+.usersetting-form__password-toggle.important_title::before {
+  transform: translateY(-50%) rotate(0deg);
+}
+.usersetting-form__password-toggle.important_title::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+.usersetting-form__password-toggle.important_title.close::before {
+  transform: translateY(-50%) rotate(45deg);
+}
+.usersetting-form__password-toggle.important_title.close::after {
+  transform: translateY(-50%) rotate(135deg);
+}
+
+.usersetting-form__password-fields.importantelement {
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  padding: 0 1rem;
+  background: #fff;
+  transition: opacity 0.2s ease, padding 0.2s ease;
+}
+.usersetting-form__password-fields.importantelement.open {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  height: auto;
+  opacity: 1;
+  padding: 0.85rem 1rem 1rem;
+  border-top: 1px solid #b8c5d1;
+}
+
+.usersetting-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.15rem;
+  padding-top: 1rem;
+  border-top: 1px solid #b8c5d1;
+}
+
+#usersetting .usersettingbutton {
+  min-width: 7.5rem;
+  height: 2.125rem;
+  padding: 0 1.5rem;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #1ac989 0%, #14b77b 100%);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(20, 183, 123, 0.28);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+#usersetting .usersettingbutton:hover {
+  background: linear-gradient(180deg, #14b77b 0%, #0e7c54 100%);
+  box-shadow: 0 4px 14px rgba(14, 124, 84, 0.35);
+  transform: translateY(-1px);
+  color: #fff;
+}
+#usersetting .usersettingbutton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 800px) {
+  .usersetting-page {
+    width: 100%;
+    max-width: 100%;
+  }
+  #usersetting.usersetting-form {
+    padding: 1rem 0.9rem;
+    border-radius: 10px;
+  }
+  .usersetting-form__actions {
+    justify-content: stretch;
+  }
+  #usersetting .usersettingbutton {
+    width: 100%;
+  }
+}
 .pagetitle {
   margin-top: 20px;
 }
@@ -3218,21 +3334,6 @@ body.ledger-regist-modal-open {
   margin-left: 50px;
 }
 
-.usersettingbutton {
-  border: solid #2978a6 2px;
-  background: rgb(196, 243, 255);
-  padding: 5px;
-  border-radius: 3px;
-  cursor: pointer;
-  height: 32px;
-  width: 100px;
-}
-
-.usersettingbutton:hover {
-  background: rgb(24, 115, 189);
-  color: white;
-}
-
 .adminregistbutton {
   border: 0;
   background: rgb(0, 108, 203);
@@ -3269,8 +3370,8 @@ body.ledger-regist-modal-open {
   }
   .ledger-table .hiduke,
   .ledger-table .hidukeTd {
-    width: 5.5rem;
-    flex: 0 0 5.5rem;
+    width: 5rem;
+    flex: 0 0 5rem;
   }
   .ledger-table .kinngaku,
   .ledger-table .kinngakuTd {
