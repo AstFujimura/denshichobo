@@ -1,7 +1,18 @@
 $(document).ready(function() {
   var prefix = $('#prefix').val();
 
-  $('.important_title').on('click',function(){
+  if ($('#error_message').length) {
+    var errorMessage = $('#error_message').val() || '';
+    if (errorMessage.indexOf('パスワード') >= 0) {
+      $('.importantelement').addClass('open');
+      $('.important_title').addClass('close').attr('aria-expanded', 'true');
+      if (errorMessage.indexOf('違い') >= 0) {
+        $('.differencepass').addClass('errorsentence');
+      }
+    }
+  }
+
+  $('.important_title').on('click', function(){
     //パスワード変更アコーディオンメニューを閉じた時はパスワードの空欄エラーを取る
     $('#oldpass').removeClass("invalid");
     $('#required3').removeClass("errorsentence");
@@ -20,7 +31,7 @@ $(document).ready(function() {
     const displayname = $('#displayname').val();
     const email = $('#email').val();
     const mail = $('#mail').prop('checked');
-    const system_type = $('#system_type').val();
+    const system_type = $('#system_type').val() || $('input[name="system_type"]').val();
     if (!name){
       $('#name').addClass("invalid");
       $('#required1').addClass("errorsentence");

@@ -776,54 +776,58 @@ class TopController extends Controller
             $prefix = "/" . $prefix;
         }
         $server = config('prefix.server');
-        $system_type = $request->input('system_type') ?? "";
+        $system_type = $this->normalizeUsersettingSystemType($request->input('system_type'));
 
         $user = Auth::user();
         return view('information.usersetting', compact('user', 'prefix', 'server', 'system_type'));
     }
+
     public function usersettingPost(Request $request)
     {
         $user = User::find(Auth::user()->id);
         if (!$request->input('name') || !$request->input('displayname') || !$request->input('email')) {
-            return redirect()->back()->with('error', '必須項目を入力してください');
+            return redirect()->back()->withInput()->with('error', '必須項目を入力してください');
         }
 
-        //パスワード設定変更
-        if ($request->input('oldpass')) {
-            if (Hash::check($request->input('oldpass'), $user->password)) {
-                $user->name = $request->input('name');
-                $user->表示名 = $request->input('displayname');
-                $user->email = $request->input('email');
-                $user->password = Hash::make($request->input('newpass'));
-                $user->save();
-            } else {
-                return redirect()->back()->with('error', 'パスワードが違います');
+        if ($request->filled('oldpass')) {
+            if (!Hash::check($request->input('oldpass'), $user->password)) {
+                return redirect()->back()->withInput()->with('error', 'パスワードが違います');
             }
-        } else {
-            $user->name = $request->input('name');
-            $user->表示名 = $request->input('displayname');
-            $user->email = $request->input('email');
-            $user->save();
+            if (!$request->filled('newpass')) {
+                return redirect()->back()->withInput()->with('error', '新パスワードを入力してください');
+            }
+            $user->password = Hash::make($request->input('newpass'));
         }
 
-        if ($request->input('mail')) {
-            $user->メール許可 = true;
-        } else {
-            $user->メール許可 = false;
-        }
+        $user->name = $request->input('name');
+        $user->表示名 = $request->input('displayname');
+        $user->email = $request->input('email');
+        $user->メール許可 = $request->boolean('mail');
         $user->save();
 
-        if ($request->input('system_type') == "tameru") {
-            return redirect()->route('usersettingGet', ['system_type' => 'tameru'])->with('success', 'ユーザー情報を更新しました');
-        } else if ($request->input('system_type') == "flow") {
-            return redirect()->route('usersettingGet', ['system_type' => 'flow'])->with('success', 'ユーザー情報を更新しました');
+        return redirect()
+            ->route('usersettingGet', $this->usersettingRouteParams($request->input('system_type')))
+            ->with('success', 'ユーザー情報を更新しました');
+    }
+
+    private function normalizeUsersettingSystemType(?string $systemType): string
+    {
+        $systemType = (string) ($systemType ?? '');
+        if ($systemType === '' || $systemType === 'tameru') {
+            return '';
         }
-        else if ($request->input('system_type') == "card") {
-            return redirect()->route('usersettingGet', ['system_type' => 'card'])->with('success', 'ユーザー情報を更新しました');
+        if (in_array($systemType, ['flow', 'card', 'schedule'], true)) {
+            return $systemType;
         }
-        else if ($request->input('system_type') == "schedule") {
-            return redirect()->route('usersettingGet', ['system_type' => 'schedule'])->with('success', 'ユーザー情報を更新しました');
-        }
+
+        return '';
+    }
+
+    private function usersettingRouteParams(?string $systemType): array
+    {
+        $normalized = $this->normalizeUsersettingSystemType($systemType);
+
+        return $normalized === '' ? [] : ['system_type' => $normalized];
     }
     public function usercheck(Request $request)
     {
