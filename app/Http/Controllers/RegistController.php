@@ -265,31 +265,8 @@ class RegistController extends Controller
 
             $extension = $fileUpload->getClientOriginalExtension();
 
-            // 重複判定: 取引日・金額・取引先 が一致する最新データがあれば履歴として追加
-            $latestSame = File::where('日付', $date)
-                ->where('金額', $kinngaku)
-                ->where('取引先', $torihikisaki)
-                ->where('削除フラグ', '!=', '済')
-                ->orderBy('バージョン', 'desc')
-                ->first();
-
-            if ($latestSame) {
-                // 既存の過去データIDにぶら下げ、バージョンを上げる
-                $pastID = (string) $latestSame->過去データID;
-                $version = (int) $latestSame->バージョン + 1;
-                $creater = (int) $latestSame->保存者ID;
-                $filechange = 'あり';
-                $latestSame->最新フラグ = '';
-                $latestSame->save();
-            } else {
-                // 新規
-                $pastID = $this->generateRandomCode();
-                $version = 1;
-                $creater = (int) Auth::user()->id;
-                $filechange = '';
-            }
-
-            // 過去データIDベースのファイルパスに統一（変更画面と同じ発想）
+            // 一括取込は重複判定せず、各行を新規登録する（通常取込と同様）
+            $pastID = $this->generateRandomCode();
             $filepath = $currentTime . '_' . $pastID;
 
             // ファイル保存（クラウド: S3 / オンプレ: ローカル）
@@ -327,7 +304,7 @@ class RegistController extends Controller
             $file->取引先 = $torihikisaki;
             $file->金額 = $kinngaku;
             $file->書類ID = $syorui;
-            $file->保存者ID = $creater;
+            $file->保存者ID = Auth::user()->id;
             $file->更新者ID = Auth::user()->id;
             $file->ファイルパス = $filepath;
             $file->ファイル形式 = $extension;
@@ -336,8 +313,6 @@ class RegistController extends Controller
             $file->提出 = $teisyutu;
             $file->備考 = $kennsaku;
             $file->グループID = $group;
-            $file->バージョン = $version;
-            $file->ファイル変更 = $filechange;
             $file->save();
         }
 
