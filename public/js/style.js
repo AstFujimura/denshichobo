@@ -84,7 +84,7 @@ $(document).ready(function () {
     });
 
     // 帳簿一覧：詳細検索の表示切替（狭い画面）
-    var searchCompactMq = window.matchMedia('(max-width: 62.5rem)');
+    var searchCompactMq = window.matchMedia('(max-width: 68rem)');
 
     function syncSearchboxDetail() {
         if (!searchCompactMq.matches) {

@@ -925,9 +925,9 @@ a {
 }
 
 .searchbox {
-  width: 90vw;
-  max-width: 84rem;
-  padding: 0.85rem 1rem;
+  width: 92vw;
+  max-width: 96rem;
+  padding: 0.9rem 1.1rem;
   background: #f0f4f8;
   border: 1px solid #b8c5d1;
   border-radius: 12px;
@@ -941,26 +941,41 @@ a {
   cursor: text;
 }
 
-.searchbox-primary {
+.searchbox-layout {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.5rem 0.75rem;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.searchbox-primary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem 0.75rem;
+  align-items: end;
 }
 
 .searchbox-detail {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.55rem 0.75rem;
+  align-items: end;
+  margin: 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid #b8c5d1;
+}
+
+.searchbox-submit {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.5rem 0.75rem;
-  margin-top: 0.65rem;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0;
   padding-top: 0.65rem;
   border-top: 1px solid #b8c5d1;
 }
 
 .searchbox-detail-toggle {
   display: none;
-  margin-top: 0.45rem;
+  margin: 0;
   padding: 0;
   border: none;
   background: none;
@@ -969,6 +984,7 @@ a {
   font-weight: 600;
   text-decoration: underline;
   cursor: pointer;
+  align-self: flex-start;
 }
 .searchbox-detail-toggle:hover {
   color: #1a4f8a;
@@ -978,22 +994,17 @@ a {
 }
 
 .searchelement {
-  display: inline-flex;
-  flex: 0 0 auto;
+  display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 0.2rem;
   position: relative;
   width: auto;
+  min-width: 0;
   vertical-align: bottom;
 }
-.searchelement--date {
-  width: 19rem;
-}
-.searchelement--amount {
-  width: 21rem;
-}
-.searchelement--torihikisaki, .searchelement--keyword {
-  width: 11.5rem;
+.searchelement--date, .searchelement--amount, .searchelement--torihikisaki, .searchelement--keyword {
+  width: auto;
 }
 
 .searchlabel {
@@ -1025,7 +1036,8 @@ a {
 
 .searchfield-control {
   position: relative;
-  width: 11.5rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .searchfield-separator {
@@ -1048,14 +1060,15 @@ a {
 }
 
 .searchbox-detail .searchelement {
-  width: 9.5rem;
+  width: auto;
+  min-width: 0;
 }
 
 .searchselect,
 .dataselect,
 .userselectbox {
-  width: 9.5rem;
-  max-width: 9.5rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .userselect {
@@ -1113,24 +1126,25 @@ a {
   box-shadow: 0 0 0 3px rgba(20, 183, 123, 0.15);
 }
 
+.searchfield-group--range {
+  width: 100%;
+}
 .searchfield-group--range .dateinputtext {
-  width: 7.25rem;
-  min-width: 7.25rem;
-  flex: 0 0 7.25rem;
+  width: 0;
+  min-width: 0;
+  flex: 1 1 6.5rem;
 }
 .searchfield-group--range .kinngakuinput {
-  width: 6.25rem;
-  min-width: 6.25rem;
-  flex: 0 0 6.25rem;
+  width: 0;
+  min-width: 0;
+  flex: 1 1 5.75rem;
 }
 
-.buttonarea {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: flex-end;
-  margin: 0;
-  padding: 0;
-  border: none;
+.kensakuwordinput,
+.torihikisakiinput {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .searchbutton {
@@ -1159,36 +1173,47 @@ a {
   box-shadow: 0 1px 4px rgba(14, 124, 84, 0.3);
 }
 
-@media (min-width: calc(62.5rem + 0.0625rem)) {
+@media (min-width: calc(68rem + 0.0625rem)) {
   .searchbox-detail {
-    display: flex !important;
+    display: grid !important;
   }
   .searchbox-detail-toggle {
     display: none !important;
   }
 }
-@media (max-width: 62.5rem) {
+@media (max-width: 68rem) {
   .searchbox {
     padding: 0.85rem 0.75rem;
     border-radius: 10px;
   }
+  .searchbox-primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .searchbox-detail {
     display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-top: 0;
+    border-top: none;
   }
   .searchbox-detail.is-open {
-    display: flex;
+    display: grid;
+    padding-top: 0.65rem;
+    border-top: 1px solid #b8c5d1;
   }
   .searchbox-detail-toggle {
     display: inline-block;
   }
-  .buttonarea {
-    margin-left: 0;
+  .searchbox-submit {
+    justify-content: stretch;
+  }
+  .searchbutton {
+    width: 100%;
   }
 }
 @media (max-width: 30rem) {
-  .searchelement--date,
-  .searchelement--amount {
-    width: 100%;
+  .searchbox-primary,
+  .searchbox-detail {
+    grid-template-columns: 1fr;
   }
   .searchfield-group--range {
     flex-wrap: wrap;
@@ -2637,18 +2662,7 @@ body.ledger-regist-modal-open {
   }
 }
 @media (max-width: 30rem) {
-  .searchelement--torihikisaki,
-  .searchelement--keyword,
-  .searchfield-control {
-    width: 100%;
-  }
-  .kensakuwordinput,
-  .torihikisakiinput {
-    width: 100%;
-    max-width: 100%;
-  }
-  .buttonarea {
-    width: 100%;
+  .searchbox-submit {
     justify-content: center;
   }
 }

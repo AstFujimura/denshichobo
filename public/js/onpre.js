@@ -114,6 +114,12 @@ $(document).ready(function () {
   $('#endyear').blur(function () {
     datecheck_change("endyear");
   });
+  $('#starttourokubi').blur(function () {
+    datecheck_change("starttourokubi");
+  });
+  $('#endtourokubi').blur(function () {
+    datecheck_change("endtourokubi");
+  });
   $('#hiduke').blur(function () {
     datecheck_change("hiduke");
   });
@@ -288,9 +294,12 @@ $(document).ready(function () {
     event.preventDefault();
     datecheck_change('startyear')
     datecheck_change('endyear')
+    datecheck_change('starttourokubi')
+    datecheck_change('endtourokubi')
     kinngakucheck_change("startkinngaku");
     kinngakucheck_change("endkinngaku");
     date_start_end('startyear', 'endyear');
+    date_start_end('starttourokubi', 'endtourokubi');
     kinngaku_start_end("startkinngaku", "endkinngaku");
 
     //金額や日付のフォーマットが誤っている場合はsearcherror値の対象

@@ -38,6 +38,8 @@ TAMERU ~電子帳簿保存
         'searchDetailOpen' => $searchDetailOpen,
         'starthiduke' => $starthiduke,
         'endhiduke' => $endhiduke,
+        'starttourokubi' => $starttourokubi ?? '',
+        'endtourokubi' => $endtourokubi ?? '',
         'startkinngaku' => $startkinngaku,
         'endkinngaku' => $endkinngaku,
         'torihikisaki' => $torihikisaki,

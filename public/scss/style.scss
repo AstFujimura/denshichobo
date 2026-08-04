@@ -1014,14 +1014,13 @@ $search-border: #b8c5d1;
 $search-input-border: #8a9aab;
 $search-label: #5c6b7a;
 $search-bg: #f0f4f8;
-$search-max-width: 84rem; // 1200px
-$search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
+$search-max-width: 96rem;
+$search-compact-break: 68rem;
 
 .searchbox {
-  width: 90vw;
+  width: 92vw;
   max-width: $search-max-width;
-  // margin: 0.75rem auto 1rem;
-  padding: 0.85rem 1rem;
+  padding: 0.9rem 1.1rem;
   background: $search-bg;
   border: 1px solid $search-border;
   border-radius: 12px;
@@ -1037,26 +1036,41 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
   }
 }
 
-.searchbox-primary {
+.searchbox-layout {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.5rem 0.75rem;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.searchbox-primary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem 0.75rem;
+  align-items: end;
 }
 
 .searchbox-detail {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.55rem 0.75rem;
+  align-items: end;
+  margin: 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid $search-border;
+}
+
+.searchbox-submit {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.5rem 0.75rem;
-  margin-top: 0.65rem;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0;
   padding-top: 0.65rem;
   border-top: 1px solid $search-border;
 }
 
 .searchbox-detail-toggle {
   display: none;
-  margin-top: 0.45rem;
+  margin: 0;
   padding: 0;
   border: none;
   background: none;
@@ -1065,6 +1079,7 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
   font-weight: 600;
   text-decoration: underline;
   cursor: pointer;
+  align-self: flex-start;
 
   &:hover {
     color: #1a4f8a;
@@ -1076,25 +1091,20 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
 }
 
 .searchelement {
-  display: inline-flex;
-  flex: 0 0 auto;
+  display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 0.2rem;
   position: relative;
   width: auto;
+  min-width: 0;
   vertical-align: bottom;
 
-  &--date {
-    width: 19rem;
-  }
-
-  &--amount {
-    width: 21rem;
-  }
-
+  &--date,
+  &--amount,
   &--torihikisaki,
   &--keyword {
-    width: 11.5rem;
+    width: auto;
   }
 }
 
@@ -1129,7 +1139,8 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
 
 .searchfield-control {
   position: relative;
-  width: 11.5rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .searchfield-separator {
@@ -1152,14 +1163,15 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
 }
 
 .searchbox-detail .searchelement {
-  width: 9.5rem;
+  width: auto;
+  min-width: 0;
 }
 
 .searchselect,
 .dataselect,
 .userselectbox {
-  width: 9.5rem;
-  max-width: 9.5rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .userselect {
@@ -1223,32 +1235,26 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
 }
 
 .searchfield-group--range {
+  width: 100%;
+
   .dateinputtext {
-    width: 7.25rem;
-    min-width: 7.25rem;
-    flex: 0 0 7.25rem;
+    width: 0;
+    min-width: 0;
+    flex: 1 1 6.5rem;
   }
 
   .kinngakuinput {
-    width: 6.25rem;
-    min-width: 6.25rem;
-    flex: 0 0 6.25rem;
+    width: 0;
+    min-width: 0;
+    flex: 1 1 5.75rem;
   }
 }
 
 .kensakuwordinput,
 .torihikisakiinput {
-  // width: 11.5rem;
-  // max-width: 11.5rem;
-}
-
-.buttonarea {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: flex-end;
-  margin: 0;
-  padding: 0;
-  border: none;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .searchbutton {
@@ -1282,7 +1288,7 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
 // 広い画面：詳細検索は常時表示
 @media (min-width: calc(#{$search-compact-break} + 0.0625rem)) {
   .searchbox-detail {
-    display: flex !important;
+    display: grid !important;
   }
 
   .searchbox-detail-toggle {
@@ -1290,18 +1296,27 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
   }
 }
 
-// 狭い画面：2段目に取引先・検索ワード・ボタン、詳細は折りたたみ
+// 狭い画面：折り返し・詳細は折りたたみ
 @media (max-width: $search-compact-break) {
   .searchbox {
     padding: 0.85rem 0.75rem;
     border-radius: 10px;
   }
 
+  .searchbox-primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .searchbox-detail {
     display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-top: 0;
+    border-top: none;
 
     &.is-open {
-      display: flex;
+      display: grid;
+      padding-top: 0.65rem;
+      border-top: 1px solid $search-border;
     }
   }
 
@@ -1309,15 +1324,19 @@ $search-compact-break: 62.5rem; // 1000px（2段目へ折り返す目安）
     display: inline-block;
   }
 
-  .buttonarea {
-    margin-left: 0;
+  .searchbox-submit {
+    justify-content: stretch;
+  }
+
+  .searchbutton {
+    width: 100%;
   }
 }
 
 @media (max-width: 30rem) {
-  .searchelement--date,
-  .searchelement--amount {
-    width: 100%;
+  .searchbox-primary,
+  .searchbox-detail {
+    grid-template-columns: 1fr;
   }
 
   .searchfield-group--range {
@@ -2992,20 +3011,7 @@ body.ledger-regist-modal-open {
 }
 
 @media (max-width: 30rem) {
-  .searchelement--torihikisaki,
-  .searchelement--keyword,
-  .searchfield-control {
-    width: 100%;
-  }
-
-  .kensakuwordinput,
-  .torihikisakiinput {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .buttonarea {
-    width: 100%;
+  .searchbox-submit {
     justify-content: center;
   }
 }

@@ -301,6 +301,12 @@ class TopController extends Controller
         $endDateStr = $request->input('endhiduke');
         $endDateStr = str_replace('/', '', $endDateStr);
 
+        $startRegistStr = $request->input('starttourokubi');
+        $startRegistStr = str_replace('/', '', (string) $startRegistStr);
+
+        $endRegistStr = $request->input('endtourokubi');
+        $endRegistStr = str_replace('/', '', (string) $endRegistStr);
+
         $startKinngakuStr = $request->input('startkinngaku');
         $startKinngakuStr = str_replace(',', '', $startKinngakuStr);
         // dd($startKinngakuStr);
@@ -407,6 +413,21 @@ class TopController extends Controller
             ->where('files.保存者ID', 'like', $creater)
             ->where('files.削除フラグ', 'like', $selectdata);
 
+        if ($startRegistStr !== '') {
+            $files = $files->where(
+                'files.created_at',
+                '>=',
+                Carbon::createFromFormat('Ymd', $startRegistStr)->startOfDay()
+            );
+        }
+        if ($endRegistStr !== '') {
+            $files = $files->where(
+                'files.created_at',
+                '<=',
+                Carbon::createFromFormat('Ymd', $endRegistStr)->endOfDay()
+            );
+        }
+
         $alldata = $files->count();
 
         $files = $files->paginate($show);
@@ -479,6 +500,15 @@ class TopController extends Controller
             $endDateStr = substr_replace($endDateStr, '/', 7, 0);
         }
 
+        if ($startRegistStr !== "") {
+            $startRegistStr = substr_replace($startRegistStr, '/', 4, 0);
+            $startRegistStr = substr_replace($startRegistStr, '/', 7, 0);
+        }
+        if ($endRegistStr !== "") {
+            $endRegistStr = substr_replace($endRegistStr, '/', 4, 0);
+            $endRegistStr = substr_replace($endRegistStr, '/', 7, 0);
+        }
+
         if ($startKinngakuStr == "-2100000000") {
             $startKinngakuStr = "";
         } else {
@@ -499,6 +529,8 @@ class TopController extends Controller
             'files' => $files,
             'starthiduke' => $startDateStr,
             'endhiduke' => $endDateStr,
+            'starttourokubi' => $startRegistStr,
+            'endtourokubi' => $endRegistStr,
             'startkinngaku' => $startKinngakuStr,
             'endkinngaku' => $endKinngakuStr,
             'torihikisaki' => $torihikisaki,
