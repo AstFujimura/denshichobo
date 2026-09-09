@@ -5,6 +5,7 @@ namespace App\Services\AiOcr\Providers;
 use App\Contracts\AiOcrLedgerProvider;
 use App\Data\LedgerOcrResult;
 use App\Support\AiOcrKinngakuBreakdownNormalizer;
+use App\Support\AiOcrPdfToJpegConverter;
 use App\Support\GeminiApi;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
@@ -19,68 +20,90 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
         $retryTokens = max($maxTokens, (int) config('ai_ocr.gemini.max_output_tokens_retry', 8192));
         $tokenLimits = array_values(array_unique([$maxTokens, $retryTokens]));
 
-        $lastResult = null;
-
-        foreach ($tokenLimits as $attemptIndex => $maxOutputTokens) {
-            if ($attemptIndex > 0) {
-                Log::info('ai_ocr.gemini.retry_max_tokens', [
-                    'step' => 'gemini.retry_max_tokens',
-                    'attempt' => $attemptIndex + 1,
-                    'max_output_tokens' => $maxOutputTokens,
-                ]);
-            }
-
-            $httpResult = $this->requestGemini($file, $prompt, $maxOutputTokens, $sumAmounts);
-            if ($httpResult instanceof LedgerOcrResult) {
-                return $httpResult;
-            }
-
-            [$body, $text, $finishReason] = $httpResult;
-            $decoded = json_decode($text, true);
-
-            if (is_array($decoded)) {
-                return $this->buildSuccessResult($decoded, $sumAmounts);
-            }
-
-            $lastResult = $this->buildJsonDecodeErrorResult($text, $body, $finishReason, $maxOutputTokens);
-
-            if ($finishReason !== 'MAX_TOKENS' || $attemptIndex >= count($tokenLimits) - 1) {
-                return $lastResult;
-            }
+        $images = AiOcrPdfToJpegConverter::toInlineImages($file);
+        if ($images === []) {
+            return new LedgerOcrResult(
+                hiduke: null,
+                kinngaku: null,
+                torihikisaki: null,
+                raw: ['ok' => false],
+                provider: 'gemini',
+                step: 'gemini.file_read_failed',
+                error: 'OCR 用ファイルの読み込みに失敗しました',
+            );
         }
 
-        return $lastResult ?? new LedgerOcrResult(
-            hiduke: null,
-            kinngaku: null,
-            torihikisaki: null,
-            raw: ['ok' => false],
-            provider: 'gemini',
-            step: 'gemini.json_decode_error',
-            error: 'Gemini の応答を JSON として解釈できませんでした',
-        );
+        try {
+            $lastResult = null;
+
+            foreach ($tokenLimits as $attemptIndex => $maxOutputTokens) {
+                if ($attemptIndex > 0) {
+                    Log::info('ai_ocr.gemini.retry_max_tokens', [
+                        'step' => 'gemini.retry_max_tokens',
+                        'attempt' => $attemptIndex + 1,
+                        'max_output_tokens' => $maxOutputTokens,
+                    ]);
+                }
+
+                $httpResult = $this->requestGemini($file, $prompt, $maxOutputTokens, $sumAmounts, $images);
+                if ($httpResult instanceof LedgerOcrResult) {
+                    return $httpResult;
+                }
+
+                [$body, $text, $finishReason] = $httpResult;
+                $decoded = json_decode($text, true);
+
+                if (is_array($decoded)) {
+                    return $this->buildSuccessResult($decoded, $sumAmounts);
+                }
+
+                $lastResult = $this->buildJsonDecodeErrorResult($text, $body, $finishReason, $maxOutputTokens);
+
+                if ($finishReason !== 'MAX_TOKENS' || $attemptIndex >= count($tokenLimits) - 1) {
+                    return $lastResult;
+                }
+            }
+
+            return $lastResult ?? new LedgerOcrResult(
+                hiduke: null,
+                kinngaku: null,
+                torihikisaki: null,
+                raw: ['ok' => false],
+                provider: 'gemini',
+                step: 'gemini.json_decode_error',
+                error: 'Gemini の応答を JSON として解釈できませんでした',
+            );
+        } finally {
+            AiOcrPdfToJpegConverter::cleanup($images);
+        }
     }
 
     /**
+     * @param  list<array{mime: string, path: string, base64: string, cleanup: bool}>  $images
      * @return LedgerOcrResult|array{0: array, 1: string, 2: ?string}
      */
-    private function requestGemini(UploadedFile $file, string $prompt, int $maxOutputTokens, bool $sumAmounts): LedgerOcrResult|array
-    {
-        $mimeType = $file->getMimeType() ?? 'application/octet-stream';
-        $base64 = base64_encode(file_get_contents($file->getRealPath()));
+    private function requestGemini(
+        UploadedFile $file,
+        string $prompt,
+        int $maxOutputTokens,
+        bool $sumAmounts,
+        array $images,
+    ): LedgerOcrResult|array {
+        $parts = [['text' => $prompt]];
+        foreach ($images as $image) {
+            $parts[] = [
+                'inlineData' => [
+                    'mimeType' => $image['mime'],
+                    'data' => $image['base64'],
+                ],
+            ];
+        }
 
         $payload = [
             'contents' => [
                 [
                     'role' => 'user',
-                    'parts' => [
-                        ['text' => $prompt],
-                        [
-                            'inlineData' => [
-                                'mimeType' => $mimeType,
-                                'data' => $base64,
-                            ],
-                        ],
-                    ],
+                    'parts' => $parts,
                 ],
             ],
             'generationConfig' => $this->buildGenerationConfig($maxOutputTokens, $sumAmounts),
@@ -91,13 +114,15 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
         Log::info('ai_ocr.gemini.request', [
             'step' => 'gemini.requesting',
             'file_name' => $file->getClientOriginalName(),
-            'mime' => $mimeType,
+            'mime' => $file->getMimeType(),
+            'inline_parts' => count($images),
+            'inline_mime' => $images[0]['mime'] ?? null,
             'max_output_tokens' => $maxOutputTokens,
             'thinking_budget' => (int) config('ai_ocr.gemini.thinking_budget', 0),
         ]);
 
         try {
-            $resp = Http::timeout(60)->post($url, $payload);
+            $resp = Http::timeout(90)->post($url, $payload);
         } catch (\Throwable $e) {
             Log::error('ai_ocr.gemini.exception', [
                 'step' => 'gemini.connection_failed',

@@ -5,6 +5,7 @@ namespace App\Services\AiOcr\Providers;
 use App\Contracts\AiOcrLedgerProvider;
 use App\Data\LedgerOcrResult;
 use App\Support\AiOcrKinngakuBreakdownNormalizer;
+use App\Support\AiOcrPdfToJpegConverter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -94,17 +95,37 @@ class InternalHttpLedgerOcrProvider implements AiOcrLedgerProvider
             $req = $req->withToken($token);
         }
 
+        $images = AiOcrPdfToJpegConverter::toInlineImages($file);
+        if ($images === []) {
+            return new LedgerOcrResult(
+                hiduke: null,
+                kinngaku: null,
+                torihikisaki: null,
+                raw: ['ok' => false],
+                provider: 'internal',
+                step: 'internal.file_read_failed',
+                error: 'OCR 用ファイルの読み込みに失敗しました',
+            );
+        }
+
+        $primary = $images[0];
+        $attachName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.jpg';
+        if (($primary['mime'] ?? '') === 'application/pdf') {
+            $attachName = $file->getClientOriginalName();
+        }
+
         try {
             $resp = $req->attach(
                 name: 'file',
-                contents: file_get_contents($file->getRealPath()),
-                filename: $file->getClientOriginalName(),
-                headers: ['Content-Type' => $file->getMimeType() ?? 'application/octet-stream'],
+                contents: base64_decode($primary['base64'], true) ?: file_get_contents($primary['path']),
+                filename: $attachName,
+                headers: ['Content-Type' => $primary['mime']],
             )->post($url, [
                 'prompt' => $prompt,
                 'task' => 'ledger',
             ]);
         } catch (\Throwable $e) {
+            AiOcrPdfToJpegConverter::cleanup($images);
             Log::error('ai_ocr.internal.exception', [
                 'step' => 'internal.connection_failed',
                 'message' => $e->getMessage(),
@@ -120,6 +141,8 @@ class InternalHttpLedgerOcrProvider implements AiOcrLedgerProvider
                 error: '社内 OCR サーバーへ接続できません: ' . $e->getMessage(),
             );
         }
+
+        AiOcrPdfToJpegConverter::cleanup($images);
 
         if (!$resp->successful()) {
             $body = $resp->json() ?? $resp->body();

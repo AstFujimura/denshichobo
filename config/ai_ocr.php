@@ -63,7 +63,7 @@ PROMPT,
 
     // 【受領した書類用】取引先 ＝ 「書類の発行元（請求元）」
     'torihikisaki_line_jyuryo' => '取引先名（必ず「書類の発行元・請求元・店舗名」の会社名を抽出してください。※宛名側にある自社名は絶対に抽出しないでください）',
-    
+
     // 【提出する書類用】取引先 ＝ 「提出先（宛名・請求先）」
     'torihikisaki_line_teishutsu' => '取引先名（必ず「宛名・請求先・提出先（御中や様が付いている側）」の会社名を抽出してください。敬称は除外。※差出人側にある自社名は絶対に抽出しないでください）',
 
@@ -117,5 +117,23 @@ PROMPT,
         'max_output_tokens' => 2048,
         'max_output_tokens_retry' => 8192,
         'thinking_budget' => 0,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | PDF → JPEG（OCR 前ラスタライズ）
+    |--------------------------------------------------------------------------
+    |
+    | PDF のままでは社名が読めないケースがあるため、既定で JPEG に変換してから送る。
+    | ImageMagick (magick) 優先、失敗時 Ghostscript。
+    |
+    */
+    'pdf_to_image' => [
+        'enabled' => env('TAMERU_AI_OCR_PDF_TO_IMAGE', true),
+        'magick_path' => env('IMAGEMAGICK_PATH', 'C:\\xampp\\ImageMagick-7.1.0-18-vc15-x64\\bin\\magick.exe'),
+        'gs_path' => env('GHOSTSCRIPT_PATH', 'C:\\Program Files\\gs\\gs10.04.0\\bin\\gswin64c.exe'),
+        'density' => (int) env('TAMERU_AI_OCR_PDF_DENSITY', 200),
+        'quality' => (int) env('TAMERU_AI_OCR_PDF_QUALITY', 90),
+        'max_pages' => (int) env('TAMERU_AI_OCR_PDF_MAX_PAGES', 20),
     ],
 ];
