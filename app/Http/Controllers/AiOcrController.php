@@ -98,9 +98,9 @@ class AiOcrController extends Controller
             'ocr_sum_amounts' => $sumAmountsOcr,
             'ocr_tax_included' => $taxIncludedOcr,
             'error' => $result->error,
-            'has_hiduke' => $data['hiduke'] !== null,
-            'has_kinngaku' => $data['kinngaku'] !== null,
-            'has_torihikisaki' => $data['torihikisaki'] !== null,
+            'has_hiduke' => filled($data['hiduke']),
+            'has_kinngaku' => filled($data['kinngaku']),
+            'has_torihikisaki' => filled($data['torihikisaki']),
             'kinngaku_breakdown_count' => count($data['kinngaku_breakdown'] ?? []),
         ]);
 

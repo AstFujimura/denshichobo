@@ -95,7 +95,11 @@ class InternalHttpLedgerOcrProvider implements AiOcrLedgerProvider
             $req = $req->withToken($token);
         }
 
-        $images = AiOcrPdfToJpegConverter::toInlineImages($file);
+        $images = AiOcrPdfToJpegConverter::toInlineImages($file, [
+            'max_pages' => $sumAmounts
+                ? max(1, (int) config('ai_ocr.pdf_to_image.max_pages', 20))
+                : 1,
+        ]);
         if ($images === []) {
             return new LedgerOcrResult(
                 hiduke: null,
@@ -191,9 +195,9 @@ class InternalHttpLedgerOcrProvider implements AiOcrLedgerProvider
         $breakdown = $sumAmounts ? AiOcrKinngakuBreakdownNormalizer::fromDecoded($json) : [];
 
         $result = new LedgerOcrResult(
-            hiduke: isset($json['hiduke']) ? (string) $json['hiduke'] : null,
-            kinngaku: isset($json['kinngaku']) ? (string) $json['kinngaku'] : null,
-            torihikisaki: isset($json['torihikisaki']) ? (string) $json['torihikisaki'] : null,
+            hiduke: LedgerOcrResult::nullableString($json['hiduke'] ?? null),
+            kinngaku: LedgerOcrResult::nullableString($json['kinngaku'] ?? null),
+            torihikisaki: LedgerOcrResult::nullableString($json['torihikisaki'] ?? null),
             raw: $json,
             provider: 'internal',
             step: 'internal.completed',

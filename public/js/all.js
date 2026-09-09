@@ -878,7 +878,7 @@ $(document).ready(function () {
             var torihikisaki = resp.data.torihikisaki ? String(resp.data.torihikisaki).trim() : '';
 
             if (hiduke) {
-              $('#hiduke').val(hiduke).trigger('change').trigger('blur');
+              setLedgerRegistDateInputValue($('#hiduke'), hiduke);
             }
             if (kinngaku) {
               var $kinInput = $('#kinngaku');
