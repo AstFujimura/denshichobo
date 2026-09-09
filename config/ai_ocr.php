@@ -118,21 +118,4 @@ PROMPT,
         'max_output_tokens_retry' => 8192,
         'thinking_budget' => 0,
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | PDF → JPEG（OCR 前）
-    |--------------------------------------------------------------------------
-    |
-    | Ghostscript のみ使用。本番 Linux は `sudo apt install ghostscript` 等で gs を入れる。
-    | パスを固定したい場合だけ GHOSTSCRIPT_PATH を指定。
-    |
-    */
-    'pdf_to_image' => [
-        'enabled' => env('TAMERU_AI_OCR_PDF_TO_IMAGE', true),
-        'gs_path' => env('GHOSTSCRIPT_PATH', ''), // 空なら PATH の gs / gswin64c
-        'density' => (int) env('TAMERU_AI_OCR_PDF_DENSITY', 200),
-        'quality' => (int) env('TAMERU_AI_OCR_PDF_QUALITY', 90),
-        'max_pages' => (int) env('TAMERU_AI_OCR_PDF_MAX_PAGES', 20),
-    ],
 ];
