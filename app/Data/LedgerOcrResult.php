@@ -25,6 +25,12 @@ class LedgerOcrResult
         return (bool) ($this->hiduke || $this->kinngaku || $this->torihikisaki);
     }
 
+    /** 取引日・金額・取引先のいずれかが欠落している */
+    public function hasMissingCoreFields(): bool
+    {
+        return !$this->hiduke || !$this->kinngaku || !$this->torihikisaki;
+    }
+
     public static function nullableString(mixed $value): ?string
     {
         if ($value === null) {
@@ -34,6 +40,29 @@ class LedgerOcrResult
         $trimmed = trim((string) $value);
 
         return $trimmed === '' ? null : $trimmed;
+    }
+
+    /**
+     * PDF 結果を優先し、欠落項目だけ JPEG 再試行結果で埋める。
+     */
+    public static function mergePreferPrimary(self $primary, self $fallback): self
+    {
+        return new self(
+            hiduke: $primary->hiduke ?: $fallback->hiduke,
+            kinngaku: $primary->kinngaku ?: $fallback->kinngaku,
+            torihikisaki: $primary->torihikisaki ?: $fallback->torihikisaki,
+            raw: [
+                'hybrid' => true,
+                'primary' => $primary->raw,
+                'jpeg_retry' => $fallback->raw,
+            ],
+            provider: $primary->provider ?? $fallback->provider,
+            step: 'hybrid.pdf_then_jpeg',
+            error: null,
+            kinngakuBreakdown: $primary->kinngakuBreakdown !== []
+                ? $primary->kinngakuBreakdown
+                : $fallback->kinngakuBreakdown,
+        );
     }
 
     public function toArray(): array

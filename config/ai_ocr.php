@@ -118,4 +118,22 @@ PROMPT,
         'max_output_tokens_retry' => 8192,
         'thinking_budget' => 0,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | PDF → JPEG（欠落時の再試行のみ）
+    |--------------------------------------------------------------------------
+    |
+    | 通常は PDF のまま OCR。hiduke/kinngaku/torihikisaki のいずれか欠落時だけ
+    | Ghostscript で JPEG 化し再送し、欠落項目のみ埋める。
+    | 本番 Linux は ghostscript（gs）を PATH に入れる。
+    |
+    */
+    'pdf_to_image' => [
+        'retry_on_missing' => env('TAMERU_AI_OCR_JPEG_RETRY', true),
+        'gs_path' => env('GHOSTSCRIPT_PATH', ''),
+        'density' => (int) env('TAMERU_AI_OCR_PDF_DENSITY', 200),
+        'quality' => (int) env('TAMERU_AI_OCR_PDF_QUALITY', 90),
+        'max_pages' => (int) env('TAMERU_AI_OCR_PDF_MAX_PAGES', 3),
+    ],
 ];

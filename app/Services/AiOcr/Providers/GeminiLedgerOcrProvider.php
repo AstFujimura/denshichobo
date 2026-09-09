@@ -30,7 +30,7 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
                 ]);
             }
 
-            $httpResult = $this->requestGemini($file, $prompt, $maxOutputTokens, $sumAmounts);
+            $httpResult = $this->requestGemini($file, $prompt, $maxOutputTokens, $sumAmounts, $options);
             if ($httpResult instanceof LedgerOcrResult) {
                 return $httpResult;
             }
@@ -61,6 +61,7 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
     }
 
     /**
+     * @param  array<string, mixed>  $options
      * @return LedgerOcrResult|array{0: array, 1: string, 2: ?string}
      */
     private function requestGemini(
@@ -68,10 +69,49 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
         string $prompt,
         int $maxOutputTokens,
         bool $sumAmounts,
+        array $options = [],
     ): LedgerOcrResult|array {
-        $mimeType = $file->getMimeType() ?? 'application/octet-stream';
-        $binary = file_get_contents($file->getRealPath());
-        if ($binary === false) {
+        $inlineImages = $options['inline_images'] ?? null;
+        $parts = [['text' => $prompt]];
+
+        if (is_array($inlineImages) && $inlineImages !== []) {
+            foreach ($inlineImages as $image) {
+                if (empty($image['mime']) || empty($image['base64'])) {
+                    continue;
+                }
+                $parts[] = [
+                    'inlineData' => [
+                        'mimeType' => $image['mime'],
+                        'data' => $image['base64'],
+                    ],
+                ];
+            }
+            $mimeType = (string) ($inlineImages[0]['mime'] ?? 'image/jpeg');
+            $inlineCount = count($inlineImages);
+        } else {
+            $mimeType = $file->getMimeType() ?? 'application/octet-stream';
+            $binary = file_get_contents($file->getRealPath());
+            if ($binary === false) {
+                return new LedgerOcrResult(
+                    hiduke: null,
+                    kinngaku: null,
+                    torihikisaki: null,
+                    raw: ['ok' => false],
+                    provider: 'gemini',
+                    step: 'gemini.file_read_failed',
+                    error: 'OCR 用ファイルの読み込みに失敗しました',
+                );
+            }
+            $parts[] = [
+                'inlineData' => [
+                    'mimeType' => $mimeType,
+                    'data' => base64_encode($binary),
+                ],
+            ];
+            $inlineCount = 1;
+        }
+
+        if (count($parts) < 2) {
             return new LedgerOcrResult(
                 hiduke: null,
                 kinngaku: null,
@@ -87,15 +127,7 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
             'contents' => [
                 [
                     'role' => 'user',
-                    'parts' => [
-                        ['text' => $prompt],
-                        [
-                            'inlineData' => [
-                                'mimeType' => $mimeType,
-                                'data' => base64_encode($binary),
-                            ],
-                        ],
-                    ],
+                    'parts' => $parts,
                 ],
             ],
             'generationConfig' => $this->buildGenerationConfig($maxOutputTokens, $sumAmounts),
@@ -107,12 +139,13 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
             'step' => 'gemini.requesting',
             'file_name' => $file->getClientOriginalName(),
             'mime' => $mimeType,
+            'inline_parts' => $inlineCount,
             'max_output_tokens' => $maxOutputTokens,
             'thinking_budget' => (int) config('ai_ocr.gemini.thinking_budget', 0),
         ]);
 
         try {
-            $resp = Http::timeout(60)->post($url, $payload);
+            $resp = Http::timeout(90)->post($url, $payload);
         } catch (\Throwable $e) {
             Log::error('ai_ocr.gemini.exception', [
                 'step' => 'gemini.connection_failed',

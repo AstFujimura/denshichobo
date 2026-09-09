@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\AiOcrLedgerProvider;
+use App\Data\LedgerOcrResult;
 use App\Support\AiOcrKinngakuTaxConverter;
 use App\Support\AiOcrLedgerPromptBuilder;
+use App\Support\AiOcrPdfToJpegConverter;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -78,6 +81,15 @@ class AiOcrController extends Controller
             'sum_amounts' => $sumAmountsOcr,
         ]);
 
+        // PDF で欠落があるときだけ JPEG 再試行し、足りない項目だけ埋める
+        $result = $this->retryWithJpegIfNeeded(
+            $file,
+            $prompt,
+            $result,
+            $sumAmountsOcr,
+            $traceId,
+        );
+
         if ($result->hasAnyField()) {
             $result = AiOcrKinngakuTaxConverter::normalizeResultForTargetTaxMode(
                 $result,
@@ -123,5 +135,61 @@ class AiOcrController extends Controller
         }
 
         return response()->json($payload);
+    }
+
+    private function retryWithJpegIfNeeded(
+        UploadedFile $file,
+        string $prompt,
+        LedgerOcrResult $primary,
+        bool $sumAmounts,
+        string $traceId,
+    ): LedgerOcrResult {
+        if (!AiOcrPdfToJpegConverter::retryEnabled()) {
+            return $primary;
+        }
+        if (!AiOcrPdfToJpegConverter::isPdf($file)) {
+            return $primary;
+        }
+        if (!$primary->hasMissingCoreFields()) {
+            return $primary;
+        }
+
+        $maxPages = $sumAmounts
+            ? max(1, (int) config('ai_ocr.pdf_to_image.max_pages', 3))
+            : 1;
+
+        Log::info('ai_ocr.ledger.jpeg_retry', [
+            'trace_id' => $traceId,
+            'step' => 'controller.jpeg_retry',
+            'missing_hiduke' => !$primary->hiduke,
+            'missing_kinngaku' => !$primary->kinngaku,
+            'missing_torihikisaki' => !$primary->torihikisaki,
+            'max_pages' => $maxPages,
+        ]);
+
+        $images = AiOcrPdfToJpegConverter::toInlineImages($file, ['max_pages' => $maxPages]);
+        if ($images === []) {
+            Log::warning('ai_ocr.ledger.jpeg_retry_skipped', [
+                'trace_id' => $traceId,
+                'reason' => 'convert_failed',
+            ]);
+
+            return $primary;
+        }
+
+        try {
+            $retry = $this->provider->ledgerOcr($file, $prompt, [
+                'sum_amounts' => $sumAmounts,
+                'inline_images' => $images,
+            ]);
+
+            if (!$retry->hasAnyField()) {
+                return $primary;
+            }
+
+            return LedgerOcrResult::mergePreferPrimary($primary, $retry);
+        } finally {
+            AiOcrPdfToJpegConverter::cleanup($images);
+        }
     }
 }

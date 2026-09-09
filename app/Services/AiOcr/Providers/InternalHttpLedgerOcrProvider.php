@@ -94,12 +94,36 @@ class InternalHttpLedgerOcrProvider implements AiOcrLedgerProvider
             $req = $req->withToken($token);
         }
 
+        $inlineImages = $options['inline_images'] ?? null;
+        if (is_array($inlineImages) && $inlineImages !== [] && !empty($inlineImages[0]['base64'])) {
+            $primary = $inlineImages[0];
+            $contents = base64_decode((string) $primary['base64'], true);
+            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.jpg';
+            $contentType = (string) ($primary['mime'] ?? 'image/jpeg');
+        } else {
+            $contents = file_get_contents($file->getRealPath());
+            $filename = $file->getClientOriginalName();
+            $contentType = $file->getMimeType() ?? 'application/octet-stream';
+        }
+
+        if ($contents === false || $contents === '') {
+            return new LedgerOcrResult(
+                hiduke: null,
+                kinngaku: null,
+                torihikisaki: null,
+                raw: ['ok' => false],
+                provider: 'internal',
+                step: 'internal.file_read_failed',
+                error: 'OCR 用ファイルの読み込みに失敗しました',
+            );
+        }
+
         try {
             $resp = $req->attach(
                 name: 'file',
-                contents: file_get_contents($file->getRealPath()),
-                filename: $file->getClientOriginalName(),
-                headers: ['Content-Type' => $file->getMimeType() ?? 'application/octet-stream'],
+                contents: $contents,
+                filename: $filename,
+                headers: ['Content-Type' => $contentType],
             )->post($url, [
                 'prompt' => $prompt,
                 'task' => 'ledger',
