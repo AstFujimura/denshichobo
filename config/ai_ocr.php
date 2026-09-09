@@ -126,7 +126,7 @@ PROMPT,
     |
     | 通常は PDF のまま OCR。hiduke/kinngaku/torihikisaki のいずれか欠落時だけ
     | Ghostscript で JPEG 化し再送し、欠落項目のみ埋める。
-    | 本番 Linux は ghostscript（gs）を PATH に入れる。
+    | 本番 Linux（dnf）: sudo dnf install -y ghostscript（詳細は docs/ai_ocr.md）
     |
     */
     'pdf_to_image' => [
