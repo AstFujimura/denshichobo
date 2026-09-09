@@ -25,6 +25,17 @@ class LedgerOcrResult
         return (bool) ($this->hiduke || $this->kinngaku || $this->torihikisaki);
     }
 
+    public static function nullableString(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $trimmed = trim((string) $value);
+
+        return $trimmed === '' ? null : $trimmed;
+    }
+
     public function toArray(): array
     {
         return [

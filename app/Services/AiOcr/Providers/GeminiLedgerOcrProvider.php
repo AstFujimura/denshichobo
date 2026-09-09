@@ -20,7 +20,12 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
         $retryTokens = max($maxTokens, (int) config('ai_ocr.gemini.max_output_tokens_retry', 8192));
         $tokenLimits = array_values(array_unique([$maxTokens, $retryTokens]));
 
-        $images = AiOcrPdfToJpegConverter::toInlineImages($file);
+        $images = AiOcrPdfToJpegConverter::toInlineImages($file, [
+            // 合算OFFは1ページ目だけで十分（多ページマニュアル等で項目が空になるのを防ぐ）
+            'max_pages' => $sumAmounts
+                ? max(1, (int) config('ai_ocr.pdf_to_image.max_pages', 20))
+                : 1,
+        ]);
         if ($images === []) {
             return new LedgerOcrResult(
                 hiduke: null,
@@ -239,9 +244,9 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
         $breakdown = $sumAmounts ? AiOcrKinngakuBreakdownNormalizer::fromDecoded($decoded) : [];
 
         $result = new LedgerOcrResult(
-            hiduke: isset($decoded['hiduke']) ? (string) $decoded['hiduke'] : null,
-            kinngaku: isset($decoded['kinngaku']) ? (string) $decoded['kinngaku'] : null,
-            torihikisaki: isset($decoded['torihikisaki']) ? (string) $decoded['torihikisaki'] : null,
+            hiduke: LedgerOcrResult::nullableString($decoded['hiduke'] ?? null),
+            kinngaku: LedgerOcrResult::nullableString($decoded['kinngaku'] ?? null),
+            torihikisaki: LedgerOcrResult::nullableString($decoded['torihikisaki'] ?? null),
             raw: $decoded,
             provider: 'gemini',
             step: 'gemini.completed',

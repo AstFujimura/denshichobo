@@ -12,9 +12,10 @@ use Illuminate\Support\Str;
 class AiOcrPdfToJpegConverter
 {
     /**
+     * @param  array{max_pages?: int}  $options
      * @return list<array{mime: string, path: string, base64: string, cleanup: bool}>
      */
-    public static function toInlineImages(UploadedFile $file): array
+    public static function toInlineImages(UploadedFile $file, array $options = []): array
     {
         $path = (string) $file->getRealPath();
         $mime = (string) ($file->getMimeType() ?? '');
@@ -25,7 +26,11 @@ class AiOcrPdfToJpegConverter
             return self::asInline($path, $mime !== '' ? $mime : 'application/octet-stream', false);
         }
 
-        $jpegs = self::pdfToJpegPaths($path);
+        $maxPages = isset($options['max_pages'])
+            ? max(1, (int) $options['max_pages'])
+            : max(1, (int) config('ai_ocr.pdf_to_image.max_pages', 20));
+
+        $jpegs = self::pdfToJpegPaths($path, $maxPages);
         if ($jpegs === []) {
             Log::warning('ai_ocr.pdf_to_jpeg.fallback_original', [
                 'file' => $file->getClientOriginalName(),
@@ -83,7 +88,7 @@ class AiOcrPdfToJpegConverter
     /**
      * @return list<string>
      */
-    private static function pdfToJpegPaths(string $pdfPath): array
+    private static function pdfToJpegPaths(string $pdfPath, int $maxPages): array
     {
         $gs = self::ghostscriptBinary();
         if ($gs === null) {
@@ -101,9 +106,7 @@ class AiOcrPdfToJpegConverter
         $outputPattern = $prefix . '_%03d.jpg';
         $dpi = max(72, (int) config('ai_ocr.pdf_to_image.density', 200));
         $quality = max(40, min(100, (int) config('ai_ocr.pdf_to_image.quality', 90)));
-        $maxPages = max(1, (int) config('ai_ocr.pdf_to_image.max_pages', 20));
 
-        // 配列指定の proc_open なら Windows でも %03d が壊れない
         $cmd = [
             $gs,
             '-dSAFER',
@@ -112,7 +115,11 @@ class AiOcrPdfToJpegConverter
             '-dQUIET',
             '-sDEVICE=jpeg',
             '-dJPEGQ=' . $quality,
+            '-dTextAlphaBits=4',
+            '-dGraphicsAlphaBits=4',
             '-r' . $dpi,
+            '-dFirstPage=1',
+            '-dLastPage=' . $maxPages,
             '-sOutputFile=' . $outputPattern,
             $pdfPath,
         ];
