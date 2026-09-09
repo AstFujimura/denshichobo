@@ -121,17 +121,16 @@ PROMPT,
 
     /*
     |--------------------------------------------------------------------------
-    | PDF → JPEG（OCR 前ラスタライズ）
+    | PDF → JPEG（OCR 前）
     |--------------------------------------------------------------------------
     |
-    | PDF のままでは社名が読めないケースがあるため、既定で JPEG に変換してから送る。
-    | ImageMagick (magick) 優先、失敗時 Ghostscript。
+    | Ghostscript のみ使用。本番 Linux は `sudo apt install ghostscript` 等で gs を入れる。
+    | パスを固定したい場合だけ GHOSTSCRIPT_PATH を指定。
     |
     */
     'pdf_to_image' => [
         'enabled' => env('TAMERU_AI_OCR_PDF_TO_IMAGE', true),
-        'magick_path' => env('IMAGEMAGICK_PATH', 'C:\\xampp\\ImageMagick-7.1.0-18-vc15-x64\\bin\\magick.exe'),
-        'gs_path' => env('GHOSTSCRIPT_PATH', 'C:\\Program Files\\gs\\gs10.04.0\\bin\\gswin64c.exe'),
+        'gs_path' => env('GHOSTSCRIPT_PATH', ''), // 空なら PATH の gs / gswin64c
         'density' => (int) env('TAMERU_AI_OCR_PDF_DENSITY', 200),
         'quality' => (int) env('TAMERU_AI_OCR_PDF_QUALITY', 90),
         'max_pages' => (int) env('TAMERU_AI_OCR_PDF_MAX_PAGES', 20),
