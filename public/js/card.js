@@ -1698,12 +1698,23 @@ $(document).ready(function () {
         }
     }
 
+    function isAllowedMultipleUploadImage(file) {
+        const name = file.name || '';
+        const ext = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+        if (['jpg', 'jpeg', 'png'].includes(ext)) {
+            return true;
+        }
+        // 拡張子が欠ける端末向けに MIME でも判定
+        const type = (file.type || '').toLowerCase();
+        return type === 'image/jpeg' || type === 'image/jpg' || type === 'image/png';
+    }
+
+    function getUploadBasename(fileName) {
+        return (fileName || '').replace(/\.[^/.]+$/, '');
+    }
+
     function handleMultipleUploadFiles(rawFiles) {
-        const allowedExtensions = ['jpg', 'jpeg', 'png'];
-        const filteredFiles = (rawFiles || []).filter(file => {
-            const ext = (file.name || '').split('.').pop().toLowerCase();
-            return allowedExtensions.includes(ext);
-        });
+        const filteredFiles = (rawFiles || []).filter(isAllowedMultipleUploadImage);
 
         if (filteredFiles.length === 0) {
             alert('アップロードできる画像ファイルがありません。');
@@ -1715,27 +1726,33 @@ $(document).ready(function () {
         let fileMap = {}; // cleanedName ごとに front/back を管理
         let payload = []; // サーバーに送る配列
 
+        // 表裏ペア判定用（name.jpg + name_1.jpg のときのみ裏として扱う）
+        const basenames = new Set(selectedFiles.map(f => getUploadBasename(f.name)));
+
         selectedFiles.forEach(file => {
-            const ext = (file.name || '').split('.').pop().toLowerCase();
-            if (!['jpg', 'jpeg', 'png'].includes(ext)) return;
+            if (!isAllowedMultipleUploadImage(file)) return;
 
             // 個別IDを生成して file オブジェクトに保持
             file.core_id = generateUUID();
 
-            const basename = file.name.replace(/\.\w+$/, ''); // 拡張子除去
+            const basename = getUploadBasename(file.name);
             let front_back = 'front';
             let cleanedName = basename;
 
+            // フォルダ取込向けの表裏命名（name / name_1）のみ特別扱いする。
+            // スマホの IMG_1234.jpg や 20240101_120000.jpg などは単独の表として扱う。
             const match = basename.match(/_(\d+)$/);
             if (match) {
                 const number = parseInt(match[1], 10);
-                cleanedName = basename.replace(/_\d+$/, '');
-
-                if (number === 1) {
-                    front_back = 'back';
-                } else {
-                    // _002 以降はスキップ
-                    return;
+                const potentialFrontName = basename.replace(/_\d+$/, '');
+                if (basenames.has(potentialFrontName)) {
+                    if (number === 1) {
+                        front_back = 'back';
+                        cleanedName = potentialFrontName;
+                    } else {
+                        // 意図的な連番の裏（_2以降）はスキップ
+                        return;
+                    }
                 }
             }
 
@@ -1755,6 +1772,12 @@ $(document).ready(function () {
                 filename: cleanedName
             });
         });
+
+        if (payload.length === 0) {
+            alert('アップロードできる画像ファイルがありません。');
+            setPickerLoading(false);
+            return;
+        }
 
         $.ajax({
             url: prefix + '/card/multiple/past',

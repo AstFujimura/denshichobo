@@ -2881,8 +2881,10 @@ body.card_view_tag_modal_active {
 }
 @media screen and (max-width: 800px) {
   .multiple_upload_container .multiple_upload_form .upload_source_picker {
-    grid-template-columns: 1fr;
-    margin-top: 2.5rem;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 2rem;
+    gap: 0.75rem;
   }
 }
 .multiple_upload_container .multiple_upload_form .upload_source_card {
@@ -2896,6 +2898,8 @@ body.card_view_tag_modal_active {
   align-items: center;
   justify-content: center;
   transition: transform 0.08s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  box-sizing: border-box;
+  min-width: 0;
 }
 .multiple_upload_container .multiple_upload_form .upload_source_card:hover {
   border-color: #7fc8ee;
@@ -2905,12 +2909,33 @@ body.card_view_tag_modal_active {
 .multiple_upload_container .multiple_upload_form .upload_source_card.loading {
   display: none;
 }
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .multiple_upload_form .upload_source_card {
+    min-height: 0;
+    padding: 1rem 0.7rem;
+    border-width: 0.25rem;
+    border-radius: 0.6rem;
+  }
+  .multiple_upload_container .multiple_upload_form .upload_source_card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
 .multiple_upload_container .multiple_upload_form .upload_source_card_inner {
   display: flex;
   align-items: center;
   gap: 1rem;
   width: 100%;
   max-width: 34rem;
+}
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .multiple_upload_form .upload_source_card_inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.55rem;
+    max-width: 100%;
+  }
 }
 .multiple_upload_container .multiple_upload_form .upload_source_icon {
   width: 3.2rem;
@@ -2926,6 +2951,16 @@ body.card_view_tag_modal_active {
   object-fit: contain;
   opacity: 0.9;
 }
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .multiple_upload_form .upload_source_icon {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+  .multiple_upload_container .multiple_upload_form .upload_source_icon .upload_source_icon_img {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+}
 .multiple_upload_container .multiple_upload_form .upload_source_text {
   display: flex;
   flex-direction: column;
@@ -2938,11 +2973,23 @@ body.card_view_tag_modal_active {
   color: #3e6c86;
   letter-spacing: 0.02em;
 }
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .multiple_upload_form .upload_source_title {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+}
 .multiple_upload_container .multiple_upload_form .upload_source_desc {
   font-size: 1.05rem;
   color: #92b8cf;
   line-height: 1.35;
   word-break: break-word;
+}
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .multiple_upload_form .upload_source_desc {
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
 }
 .multiple_upload_container .multiple_upload_form .analyzing_text {
   display: none;
@@ -2957,6 +3004,12 @@ body.card_view_tag_modal_active {
 .multiple_upload_container .multiple_upload_form .analyzing_text.loading {
   display: flex;
 }
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .multiple_upload_form .analyzing_text {
+    font-size: 1.3rem;
+    margin-top: 2rem;
+  }
+}
 .multiple_upload_container .upload_list_container {
   display: none;
   gap: 1rem;
@@ -2966,10 +3019,20 @@ body.card_view_tag_modal_active {
   background: #ffffff;
   border-radius: 0.5rem;
   padding: 1rem 1rem 11rem 1rem;
+  box-sizing: border-box;
+}
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem 0.5rem 14rem 0.5rem;
+  }
 }
 .multiple_upload_container .upload_list_container .upload_list_item_container {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  width: 100%;
 }
 .multiple_upload_container .upload_list_container.upload_list_container_open {
   display: flex;
@@ -2990,13 +3053,16 @@ body.card_view_tag_modal_active {
 @media screen and (max-width: 1200px) {
   .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller {
     position: fixed;
-    bottom: 0rem;
+    bottom: 0;
     left: 0;
-    width: 90%;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
     background: aliceblue;
     z-index: 1000;
-    padding: 2rem;
+    padding: 1.2rem 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
     height: fit-content;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
   }
 }
 .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container {
@@ -3004,6 +3070,7 @@ body.card_view_tag_modal_active {
   align-items: center;
   justify-content: start;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container.close {
   display: none;
@@ -3013,6 +3080,12 @@ body.card_view_tag_modal_active {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+}
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container .checkbox_description_item {
+    font-size: 0.9rem;
+    gap: 0.35rem;
+  }
 }
 .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_description_container .checkbox_description_item .new_card_icon {
   display: flex;
@@ -3061,6 +3134,7 @@ body.card_view_tag_modal_active {
   justify-content: start;
   gap: 1rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
 }
 .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_controller_item_container.close {
   display: none;
@@ -3077,6 +3151,11 @@ body.card_view_tag_modal_active {
 }
 .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_controller_item_container .checkbox_controller_item label {
   cursor: pointer;
+}
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .checkbox_controller_item_container .checkbox_controller_item label {
+    font-size: 0.95rem;
+  }
 }
 @media screen and (max-width: 1200px) {
   .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container {
@@ -3101,6 +3180,7 @@ body.card_view_tag_modal_active {
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
+  box-sizing: border-box;
 }
 .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button.enabled {
   cursor: pointer;
@@ -3124,6 +3204,7 @@ body.card_view_tag_modal_active {
   justify-content: center;
   font-size: 1.2rem;
   cursor: pointer;
+  box-sizing: border-box;
 }
 .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button_cancel:hover {
   background: #3a3838;
@@ -3133,6 +3214,10 @@ body.card_view_tag_modal_active {
   .multiple_upload_container .upload_list_container.upload_list_container_open .checkbox_controller .upload_button_container .upload_button_cancel {
     padding: 0.5rem 1rem;
     margin: 0;
+    flex: 1 1 0;
+    max-width: 14rem;
+    width: auto;
+    font-size: 1.05rem;
   }
 }
 .multiple_upload_container .upload_list_container .upload_list_item {
@@ -3143,6 +3228,15 @@ body.card_view_tag_modal_active {
   border-bottom: solid 0.1rem #adadad;
   padding: 1rem;
   cursor: pointer;
+  min-width: 0;
+  box-sizing: border-box;
+}
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container .upload_list_item {
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 0.5rem;
+  }
 }
 .multiple_upload_container .upload_list_container .upload_list_item[data-newcard=true] {
   background: #f3fff3;
@@ -3169,22 +3263,35 @@ body.card_view_tag_modal_active {
 }
 .multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_front {
   width: 13rem;
+  flex: 0 0 auto;
 }
 @media screen and (max-width: 1200px) {
   .multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_front {
     width: 8rem;
   }
 }
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_front {
+    width: 6.5rem;
+  }
+}
 .multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_back {
   width: 9rem;
+  flex: 0 0 auto;
 }
 @media screen and (max-width: 1200px) {
   .multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_back {
     width: 5rem;
   }
 }
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .upload_list_item_back {
+    width: 4rem;
+  }
+}
 .multiple_upload_container .upload_list_container .upload_list_item .front_img {
   height: 8rem;
+  max-width: 100%;
   object-fit: contain;
   box-shadow: 2px 3px 7px 0 gray;
 }
@@ -3193,8 +3300,14 @@ body.card_view_tag_modal_active {
     height: 5rem;
   }
 }
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .front_img {
+    height: 4rem;
+  }
+}
 .multiple_upload_container .upload_list_container .upload_list_item .back_img {
   height: 5rem;
+  max-width: 100%;
   object-fit: contain;
   box-shadow: 2px 3px 7px 0 gray;
 }
@@ -3203,13 +3316,28 @@ body.card_view_tag_modal_active {
     height: 3rem;
   }
 }
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .back_img {
+    height: 2.5rem;
+  }
+}
 .multiple_upload_container .upload_list_container .upload_list_item .upload_list_name {
   font-size: 1.2rem;
   color: #333333;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+@media screen and (max-width: 800px) {
+  .multiple_upload_container .upload_list_container .upload_list_item .upload_list_name {
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
 }
 .multiple_upload_container .upload_list_container .upload_list_item .checkbox_list_item {
   margin-block: auto;
   width: 1.5rem;
+  flex: 0 0 auto;
 }
 .multiple_upload_container .upload_list_container .upload_list_item .checkbox_list_item input[type=checkbox] {
   width: 1.5rem;
