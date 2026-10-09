@@ -100,7 +100,7 @@ class CardController extends Controller
                             ->where('tags.非公開', true);
                     });
             });
-        $sort = $request->input('sort', 1);
+        $sort = $request->input('sort', 3);
         $search = $request->input('search', '');
         $start_date = $request->input('start_date') ?: '1900-01-01';
         $end_date   = $request->input('end_date')   ?: '2100-12-31';
@@ -122,12 +122,6 @@ class CardController extends Controller
             })
             ->leftJoin('companies', 'latest_cards.会社ID', '=', 'companies.id');
 
-      
-        // ★ もし「マイ名刺だけ」を取得したい場合だけ join
-        if ($only_my) {
-            $query->where('latest_cards.ユーザーID', $userId);
-        }
-
         // 検索条件
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -148,6 +142,15 @@ class CardController extends Controller
             });
         }
 
+        // タブ件数（絞り込み条件は共通、マイ / すべてで分岐）
+        $allCount = (clone $query)->count();
+        $myCount = (clone $query)->where('latest_cards.ユーザーID', $userId)->count();
+
+        // ★ もし「マイ名刺だけ」を取得したい場合だけ絞り込み
+        if ($only_my) {
+            $query->where('latest_cards.ユーザーID', $userId);
+        }
+
         // ソート条件
         if ($sort == 1) {
             $query->orderBy('cardusers.表示名カナ', 'asc');
@@ -158,7 +161,7 @@ class CardController extends Controller
         } elseif ($sort == 4) {
             $query->orderBy('latest_cards.updated_at', 'desc');
         }
-        $totalCount = $query->count(); // 検索条件に合致する総件数
+        $totalCount = $only_my ? $myCount : $allCount;
 
         $cardusers = $query
             ->skip(($page - 1) * $perPage)
@@ -233,6 +236,8 @@ class CardController extends Controller
             return response()->json([
                 'html' => view('card.partials.cardlist', compact('cardusers'))->render(),
                 'total' => $totalCount,
+                'myCount' => $myCount,
+                'allCount' => $allCount,
             ]);
         }
 
@@ -241,7 +246,7 @@ class CardController extends Controller
             ->get(['id', 'タグ名', 'カラーコード', '非公開']);
 
         // 初回ロードはフルビュー
-        return view('card.cardview', compact("prefix", "server", "cardusers", "totalCount", "filterTags"));
+        return view('card.cardview', compact("prefix", "server", "cardusers", "totalCount", "myCount", "allCount", "filterTags"));
     }
 
     public function cardviewsizeget($size)

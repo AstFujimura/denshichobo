@@ -3665,6 +3665,16 @@ body.card_view_tag_modal_active {
 
 .card_tag_settings_container {
   padding-bottom: 2rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container {
+    padding-inline: 0.75rem;
+    padding-bottom: 5rem;
+  }
 }
 .card_tag_settings_container .tag_settings_errors {
   margin: 0 1rem 1rem;
@@ -3674,13 +3684,25 @@ body.card_view_tag_modal_active {
   border-radius: 0.5rem;
   color: #333;
 }
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_settings_errors {
+    margin: 0 0 0.85rem;
+  }
+}
 .card_tag_settings_container .tag_settings_errors ul {
   margin: 0;
   padding-left: 1.25rem;
 }
 .card_tag_settings_container .tag_settings_form {
   width: fit-content;
+  max-width: 100%;
   margin-inline: auto;
+  box-sizing: border-box;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_settings_form {
+    width: 100%;
+  }
 }
 .card_tag_settings_container .deleted_ids_container {
   position: absolute;
@@ -3699,12 +3721,30 @@ body.card_view_tag_modal_active {
   overflow: auto;
   background: #fafafa;
   max-width: 56rem;
+  box-sizing: border-box;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_bulk_table_wrap {
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    background: transparent;
+    max-width: 100%;
+    width: 100%;
+  }
 }
 .card_tag_settings_container .tag_bulk_table {
   width: 100%;
   min-width: 28rem;
   border-collapse: collapse;
   background: #fff;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_bulk_table {
+    min-width: 0;
+    display: block;
+    background: transparent;
+  }
 }
 .card_tag_settings_container .tag_bulk_table thead th {
   background: #f0f0f0;
@@ -3715,10 +3755,62 @@ body.card_view_tag_modal_active {
   border-bottom: 1px solid #d0d0d0;
   white-space: nowrap;
 }
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_bulk_table thead {
+    display: none;
+  }
+  .card_tag_settings_container .tag_bulk_table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
 .card_tag_settings_container .tag_bulk_table tbody td {
   padding: 0.5rem 0.75rem;
   vertical-align: middle;
   border-bottom: 1px solid #e8e8e8;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_bulk_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem 0.75rem;
+    padding: 0.9rem 0.85rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.85rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .card_tag_settings_container .tag_bulk_table tbody td {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    padding: 0;
+    border: 0;
+    text-align: left !important;
+    min-width: 0;
+  }
+  .card_tag_settings_container .tag_bulk_table tbody td[data-label]:not([data-label=""])::before {
+    content: attr(data-label);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 0.02em;
+  }
+  .card_tag_settings_container .tag_bulk_table tbody td[data-label="タグ名"],
+  .card_tag_settings_container .tag_bulk_table tbody td[data-label="カラー"] {
+    grid-column: 1 / -1;
+  }
+  .card_tag_settings_container .tag_bulk_table tbody td.tag_bulk_action_cell {
+    grid-column: 1 / -1;
+    align-items: stretch;
+    margin-top: 0.15rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid #eef2f7;
+  }
 }
 .card_tag_settings_container .tag_bulk_col_name {
   width: 38%;
@@ -3740,6 +3832,16 @@ body.card_view_tag_modal_active {
   width: 6.5rem;
   text-align: right;
 }
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_bulk_col_name,
+  .card_tag_settings_container .tag_bulk_col_color,
+  .card_tag_settings_container .tag_bulk_col_hidden,
+  .card_tag_settings_container .tag_bulk_col_assign,
+  .card_tag_settings_container .tag_bulk_col_action {
+    width: auto;
+    min-width: 0;
+  }
+}
 .card_tag_settings_container .tag_bulk_assign_cell {
   text-align: center;
 }
@@ -3748,6 +3850,12 @@ body.card_view_tag_modal_active {
   font-size: 1rem;
   color: #c0c0c0;
   user-select: none;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_bulk_assign_placeholder {
+    font-size: 0.85rem;
+    color: #94a3b8;
+  }
 }
 .card_tag_settings_container .tag_row_assign_btn {
   display: inline-flex;
@@ -3768,12 +3876,30 @@ body.card_view_tag_modal_active {
   height: 1.15rem;
   display: block;
 }
+.card_tag_settings_container .tag_row_assign_btn .tag_row_assign_btn_text {
+  display: none;
+}
 .card_tag_settings_container .tag_row_assign_btn:hover {
   background: #14b77b;
   color: #fff;
 }
 .card_tag_settings_container .tag_row_assign_btn:active {
   transform: scale(0.95);
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_row_assign_btn {
+    width: 100%;
+    height: auto;
+    min-height: 2.4rem;
+    border-radius: 0.65rem;
+    gap: 0.4rem;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+  .card_tag_settings_container .tag_row_assign_btn .tag_row_assign_btn_text {
+    display: inline;
+  }
 }
 .card_tag_settings_container .tag_bulk_name_input {
   width: 100%;
@@ -3782,6 +3908,13 @@ body.card_view_tag_modal_active {
   border: #88b3e7 solid 1px;
   border-radius: 0.25rem;
   font-size: 1rem;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_bulk_name_input {
+    font-size: 0.95rem;
+    min-height: 2.5rem;
+    border-radius: 0.5rem;
+  }
 }
 .card_tag_settings_container .tag_bulk_color_controls {
   display: flex;
@@ -3798,6 +3931,16 @@ body.card_view_tag_modal_active {
   border: #88b3e7 solid 1px;
   border-radius: 0.25rem;
   background: #fff;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_color_preset_select {
+    max-width: none;
+    min-width: 0;
+    width: 100%;
+    min-height: 2.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+  }
 }
 .card_tag_settings_container .tag_row_custom_color {
   width: 2.75rem;
@@ -3820,6 +3963,21 @@ body.card_view_tag_modal_active {
 }
 .card_tag_settings_container .tag_hidden_toggle_compact {
   gap: 0;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_hidden_toggle_compact {
+    gap: 0.55rem;
+  }
+}
+.card_tag_settings_container .tag_hidden_toggle_label_mobile {
+  display: none;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_hidden_toggle_label_mobile {
+    display: inline;
+    font-size: 0.85rem;
+    color: #475569;
+  }
 }
 .card_tag_settings_container .tag_hidden_toggle_input {
   position: absolute;
@@ -3870,6 +4028,19 @@ body.card_view_tag_modal_active {
   margin-top: 1rem;
   align-items: center;
 }
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_bulk_toolbar {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    margin: 0.85rem -0.75rem 0;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.96);
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -6px 16px rgba(15, 23, 42, 0.06);
+    box-sizing: border-box;
+  }
+}
 .card_tag_settings_container .tag_add_row_btn {
   background: #e8e8e8;
   color: #333;
@@ -3881,6 +4052,13 @@ body.card_view_tag_modal_active {
 }
 .card_tag_settings_container .tag_add_row_btn:hover {
   background: #dcdcdc;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_add_row_btn {
+    flex: 1 1 0;
+    text-align: center;
+    min-height: 2.7rem;
+  }
 }
 .card_tag_settings_container .tag_settings_submit {
   background: #1d59ff;
@@ -3895,6 +4073,14 @@ body.card_view_tag_modal_active {
 .card_tag_settings_container .tag_settings_submit:hover {
   background: #1546cc;
 }
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_settings_submit {
+    flex: 1.4 1 0;
+    text-align: center;
+    min-height: 2.7rem;
+    box-shadow: none;
+  }
+}
 .card_tag_settings_container .tag_row_remove_btn {
   background: #fff;
   color: #c62828;
@@ -3907,6 +4093,15 @@ body.card_view_tag_modal_active {
 }
 .card_tag_settings_container .tag_row_remove_btn:hover {
   background: #ffebee;
+}
+@media screen and (max-width: 800px) {
+  .card_tag_settings_container .tag_row_remove_btn {
+    width: 100%;
+    min-height: 2.4rem;
+    border-radius: 0.55rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
 }
 
 .card_tag_checkbox_list {
@@ -3996,6 +4191,22 @@ body.tag_assign_modal_open {
   max-height: 88vh;
   overflow: hidden;
   box-shadow: 0 0.6rem 2.4rem rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+}
+@media screen and (max-width: 800px) {
+  .tag_assign_modal {
+    padding: 0.5rem;
+    align-items: flex-end;
+  }
+  .tag_assign_modal .tag_assign_modal_panel {
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 0.85rem 0.85rem 0.4rem 0.4rem;
+  }
+  .tag_assign_modal .tag_assign_modal_hint {
+    font-size: 0.72rem;
+    padding: 0.5rem 0.75rem;
+  }
 }
 .tag_assign_modal .tag_assign_modal_header {
   display: flex;

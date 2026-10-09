@@ -1,0 +1,474 @@
+/* =========================================================
+   Bulk upload redesign (mobile-first)
+   Visual only — keep existing upload control selectors.
+   ========================================================= */
+
+.bulk_upload_page {
+  --bu-blue: #2563eb;
+  --bu-blue-soft: #dbeafe;
+  --bu-bg: #f1f5f9;
+  --bu-card: #ffffff;
+  --bu-text: #0f172a;
+  --bu-muted: #64748b;
+  --bu-line: #e2e8f0;
+  --bu-new: #93c5fd;
+  --bu-other: #86efac;
+  --bu-my: #f9a8d4;
+  --bu-success: #fde68a;
+  --bu-failed: #94a3b8;
+  background: var(--bu-bg);
+  min-height: calc(100vh - 6rem);
+  padding: 0.75rem 0.85rem 2rem;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.bulk_upload_page .bulk_upload_hero {
+  max-width: 52rem;
+  margin: 0 auto 0.85rem;
+}
+
+.bulk_upload_page .bulk_upload_title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.35rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--bu-text);
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.bulk_upload_page .bulk_upload_title .title_icon {
+  width: 1.55rem;
+  height: 1.55rem;
+  margin: 0;
+}
+
+.bulk_upload_page .bulk_upload_lead {
+  margin: 0.2rem 0 0;
+  color: var(--bu-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.bulk_upload_page .multiple_upload_container {
+  width: 100% !important;
+  max-width: 52rem !important;
+  margin: 0 auto !important;
+}
+
+.bulk_upload_page .multiple_upload_form {
+  gap: 0.75rem;
+}
+
+.bulk_upload_page .upload_source_picker {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0.5rem 0 0 !important;
+  gap: 0.7rem !important;
+  grid-template-columns: 1fr 1fr !important;
+}
+
+.bulk_upload_page .upload_source_card {
+  min-height: 0 !important;
+  padding: 1.1rem 0.85rem !important;
+  border: 1.5px solid #93c5fd !important;
+  border-radius: 1rem !important;
+  background: var(--bu-card) !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.06);
+}
+
+.bulk_upload_page .upload_source_card:hover {
+  border-color: var(--bu-blue) !important;
+  transform: none !important;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.1);
+}
+
+.bulk_upload_page .upload_source_card_inner {
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 0.55rem !important;
+  max-width: 100% !important;
+}
+
+.bulk_upload_page .upload_source_icon,
+.bulk_upload_page .upload_source_icon .upload_source_icon_img {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+}
+
+.bulk_upload_page .upload_source_title {
+  font-size: 0.98rem !important;
+  color: var(--bu-blue) !important;
+  font-weight: 800 !important;
+}
+
+.bulk_upload_page .upload_source_desc {
+  font-size: 0.8rem !important;
+  color: #94a3b8 !important;
+}
+
+.bulk_upload_page .analyzing_text {
+  margin-top: 1.5rem !important;
+  font-size: 1.15rem !important;
+  color: var(--bu-muted) !important;
+}
+
+/* Selection bar */
+.bulk_upload_page .bulk_upload_selection_bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.75rem;
+  background: var(--bu-blue-soft);
+  border: 1px solid #bfdbfe;
+  border-radius: 0.85rem;
+  box-sizing: border-box;
+}
+
+.bulk_upload_page .upload_list_container.upload_list_container_open .bulk_upload_selection_bar {
+  display: flex;
+}
+
+.bulk_upload_page .bulk_upload_selection_count {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.bulk_upload_page .bulk_upload_selection_count_num {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.bulk_upload_page .bulk_upload_selection_clear {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 !important;
+  padding: 0.35rem 0.7rem !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 2.1rem;
+  border: 0;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: #64748b !important;
+  font-size: 0.82rem !important;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.bulk_upload_page .bulk_upload_selection_clear svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.bulk_upload_page .bulk_upload_selection_clear:hover {
+  background: #f8fafc !important;
+  color: #334155 !important;
+}
+
+/* List container */
+.bulk_upload_page .upload_list_container {
+  display: none;
+  flex-direction: column;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0.85rem 0 0 !important;
+  padding: 0 0 12rem !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  gap: 0.65rem !important;
+}
+.bulk_upload_page .upload_list_container.upload_list_container_open {
+  display: flex !important;
+}
+
+.bulk_upload_page .upload_list_item_container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+/* List item cards */
+.bulk_upload_page .upload_list_item {
+  display: grid !important;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center !important;
+  gap: 0.65rem 0.7rem !important;
+  margin: 0 !important;
+  padding: 0.75rem 0.8rem !important;
+  background: var(--bu-card) !important;
+  border: 1px solid var(--bu-line) !important;
+  border-radius: 0.9rem !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  order: 0 !important;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.bulk_upload_page .upload_list_item[data-newcard=true],
+.bulk_upload_page .upload_list_item[data-othercard=true],
+.bulk_upload_page .upload_list_item[data-mycard=true],
+.bulk_upload_page .upload_list_item[data-success=true],
+.bulk_upload_page .upload_list_item[data-failed=true] {
+  background: var(--bu-card) !important;
+}
+
+.bulk_upload_page .upload_list_item .checkbox_list_item {
+  margin: 0 !important;
+  width: auto !important;
+  display: flex;
+  align-items: center;
+}
+
+.bulk_upload_page .upload_list_item .checkbox_list_item input[type=checkbox] {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--bu-blue);
+}
+
+.bulk_upload_page .upload_list_item .upload_list_item_front,
+.bulk_upload_page .upload_list_item .upload_list_item_back {
+  width: auto !important;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.bulk_upload_page .upload_list_item .front_img,
+.bulk_upload_page .upload_list_item .back_img {
+  height: 3.4rem !important;
+  width: 5.4rem;
+  object-fit: cover;
+  border-radius: 0.35rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12) !important;
+  background: #f8fafc;
+}
+
+.bulk_upload_page .upload_list_item .back_img {
+  height: 2.6rem !important;
+  width: 4.1rem;
+  opacity: 0.92;
+}
+
+.bulk_upload_page .upload_list_item .upload_list_item_back:empty {
+  display: none;
+}
+.bulk_upload_page .upload_list_item:has(.upload_list_item_back:not(:empty)) {
+  grid-template-columns: auto auto auto minmax(0, 1fr) auto;
+}
+
+.bulk_upload_page .upload_list_item_meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.bulk_upload_page .upload_list_item .upload_list_name {
+  font-size: 0.98rem !important;
+  font-weight: 800;
+  color: var(--bu-text);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Status circle on the right */
+.bulk_upload_page .upload_list_status_dot {
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+  background: var(--bu-new);
+}
+
+.bulk_upload_page .upload_list_item[data-newcard=true] .upload_list_status_dot {
+  background: var(--bu-new);
+}
+
+.bulk_upload_page .upload_list_item[data-othercard=true] .upload_list_status_dot {
+  background: var(--bu-other);
+}
+
+.bulk_upload_page .upload_list_item[data-mycard=true] .upload_list_status_dot {
+  background: var(--bu-my);
+}
+
+.bulk_upload_page .upload_list_item[data-success=true] .upload_list_status_dot {
+  background: var(--bu-success);
+}
+
+.bulk_upload_page .upload_list_item[data-failed=true] .upload_list_status_dot {
+  background: var(--bu-failed);
+}
+
+.bulk_upload_page .upload_list_item[data-mycard=true] .checkbox_list_item input[type=checkbox] {
+  display: none !important;
+}
+
+/* Bottom controller */
+.bulk_upload_page .upload_list_container.upload_list_container_open .checkbox_controller {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom, 0px)) !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-top: 1px solid var(--bu-line);
+  box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08) !important;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+@media screen and (min-width: 1201px) {
+  .bulk_upload_page .upload_list_container.upload_list_container_open .checkbox_controller {
+    position: sticky !important;
+    top: auto !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    border-radius: 1rem 1rem 0 0;
+  }
+}
+
+.bulk_upload_page .checkbox_description_container {
+  gap: 0.65rem !important;
+  margin-bottom: 0.35rem;
+}
+
+.bulk_upload_page .checkbox_description_item {
+  gap: 0.4rem !important;
+  font-size: 0.82rem;
+  color: var(--bu-muted);
+  font-weight: 600;
+}
+
+.bulk_upload_page .new_card_icon,
+.bulk_upload_page .other_card_icon,
+.bulk_upload_page .my_card_icon,
+.bulk_upload_page .success_card_icon,
+.bulk_upload_page .failed_card_icon {
+  width: 0.85rem !important;
+  height: 0.85rem !important;
+  border-radius: 50% !important;
+  border: 0 !important;
+}
+
+.bulk_upload_page .new_card_icon {
+  background: var(--bu-new) !important;
+}
+
+.bulk_upload_page .other_card_icon {
+  background: var(--bu-other) !important;
+}
+
+.bulk_upload_page .my_card_icon {
+  background: var(--bu-my) !important;
+}
+
+.bulk_upload_page .success_card_icon {
+  background: var(--bu-success) !important;
+}
+
+.bulk_upload_page .failed_card_icon {
+  background: var(--bu-failed) !important;
+}
+
+.bulk_upload_page .checkbox_controller_item_container {
+  margin-top: 0.55rem !important;
+  gap: 0.85rem !important;
+}
+
+.bulk_upload_page .checkbox_controller_item input[type=checkbox] {
+  width: 1.15rem !important;
+  height: 1.15rem !important;
+  accent-color: var(--bu-blue);
+}
+
+.bulk_upload_page .checkbox_controller_item label {
+  font-size: 0.88rem !important;
+  color: var(--bu-text);
+  font-weight: 600;
+}
+
+.bulk_upload_page .upload_button_container {
+  display: flex !important;
+  align-items: center;
+  justify-content: stretch;
+  gap: 0.65rem !important;
+  margin-top: 0.75rem !important;
+}
+
+.bulk_upload_page .upload_button_container .upload_button,
+.bulk_upload_page .upload_button_container .upload_button_cancel {
+  flex: 1 1 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  height: 2.9rem !important;
+  margin: 0 !important;
+  border-radius: 0.85rem !important;
+  font-size: 1rem !important;
+  font-weight: 800;
+  box-sizing: border-box;
+}
+
+.bulk_upload_page .upload_button_container .upload_button {
+  background: #cbd5e1 !important;
+  color: #fff !important;
+}
+
+.bulk_upload_page .upload_button_container .upload_button.enabled {
+  background: var(--bu-blue) !important;
+}
+
+.bulk_upload_page .upload_button_container .upload_button.enabled:hover {
+  background: #1d4ed8 !important;
+}
+
+.bulk_upload_page .upload_button_container .upload_button_cancel {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+.bulk_upload_page .upload_button_container .upload_button_cancel:hover {
+  background: #cbd5e1 !important;
+}
+
+@media screen and (max-width: 480px) {
+  .bulk_upload_page {
+    padding: 0.55rem 0.65rem 1.5rem;
+  }
+
+  .bulk_upload_page .upload_list_item {
+    gap: 0.5rem !important;
+    padding: 0.65rem 0.7rem !important;
+  }
+
+  .bulk_upload_page .upload_list_item .front_img {
+    width: 4.6rem;
+    height: 2.9rem !important;
+  }
+
+  .bulk_upload_page .upload_list_item .upload_list_name {
+    font-size: 0.9rem !important;
+  }
+
+  .bulk_upload_page .checkbox_description_item {
+    font-size: 0.75rem;
+  }
+}

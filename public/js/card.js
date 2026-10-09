@@ -853,12 +853,24 @@ $(document).ready(function () {
         let page = 2;
         let loading = false;
         let hasMore = true;
-        let currentSort = $('#sort_select').val() || 1;
+        let currentSort = $('#sort_select').val() || 3;
         let currentSearch = '';
         let currentStart = '';
         let currentEnd = '';
         let currentTagIds = [];
         let currentTab = 'my_card_user'; // 追加: 今どのタブか
+
+        function updateCardViewCounts(res) {
+            if (typeof res.total !== 'undefined') {
+                $('.card_view_header_count_text').text(res.total);
+            }
+            if (typeof res.myCount !== 'undefined') {
+                $('.tab_item_count[data-count-for="my_card_user"]').text('(' + res.myCount + ')');
+            }
+            if (typeof res.allCount !== 'undefined') {
+                $('.tab_item_count[data-count-for="all_user"]').text('(' + res.allCount + ')');
+            }
+        }
 
         $(window).on('scroll', function () {
             // すでに読み込み中なら二重呼び出ししない
@@ -889,12 +901,11 @@ $(document).ready(function () {
                 success: function (res) {
                     if ($.trim(res.html) === '') {
                         hasMore = false;
-                        $('.card_view_header_count_text').text(res.total); // 件数を更新
+                        updateCardViewCounts(res);
                         return;
                     }
                     $('#card-list').append(res.html);
-                    // $('.card_view_header_count_text_my').text(res.myCount); // 件数を更新
-                    $('.card_view_header_count_text').text(res.total); // 件数を更新
+                    updateCardViewCounts(res);
                     lazyload('imgset');
 
                     var user_id = $('#user_id').val();
@@ -940,18 +951,11 @@ $(document).ready(function () {
         }
 
         function cardViewTagPanelPlace() {
-            if (cardViewTagIsMobile()) {
-                $tagMovable.appendTo($tagSlotModal);
-            } else {
-                cardViewTagModalClose();
-                $tagMovable.appendTo($tagSlotDesktop);
-            }
+            // タグ選択はモーダルに集約（スマホ見た目に合わせて PC も同じ導線）
+            $tagMovable.appendTo($tagSlotModal);
         }
 
         function cardViewTagModalOpen() {
-            if (!cardViewTagIsMobile()) {
-                return;
-            }
             $tagModal.removeAttr('hidden').addClass('is_open');
             $('body').addClass('card_view_tag_modal_active');
         }
@@ -980,22 +984,21 @@ $(document).ready(function () {
 
         cardViewMetaPlace();
 
-        // 詳細条件（日付・並び替え・表示切替）の折り畳み制御
+        // 詳細条件（日付など）の折り畳み制御
         var $extraToggle = $('#card_view_toggle_extra');
         var $extraFilters = $('#card_view_extra_filters');
 
+        function cardViewExtraLabelSync() {
+            var expanded = $extraToggle.attr('aria-expanded') === 'true';
+            $extraToggle.find('.card_view_toggle_extra_label').text(expanded ? '条件を隠す' : '条件を表示');
+        }
+
         function cardViewExtraSync() {
-            if (cardViewTagIsMobile()) {
-                // スマホは初期状態で折り畳み
-                if (!$extraToggle.data('user-toggled')) {
-                    $extraFilters.addClass('is_collapsed');
-                    $extraToggle.attr('aria-expanded', 'false');
-                }
-            } else {
-                // PCは常に展開状態に戻す
-                $extraFilters.removeClass('is_collapsed');
-                $extraToggle.attr('aria-expanded', 'true');
+            if (!$extraToggle.data('user-toggled')) {
+                $extraFilters.addClass('is_collapsed');
+                $extraToggle.attr('aria-expanded', 'false');
             }
+            cardViewExtraLabelSync();
         }
         cardViewExtraSync();
 
@@ -1009,6 +1012,7 @@ $(document).ready(function () {
                 $extraFilters.removeClass('is_collapsed');
                 $(this).attr('aria-expanded', 'true');
             }
+            cardViewExtraLabelSync();
         });
 
         var cardViewTagResizeTimer;
@@ -1030,20 +1034,22 @@ $(document).ready(function () {
         $tagModal.on('click', function (e) {
             if (!$(e.target).closest('.card_view_tag_modal_panel').length) {
                 cardViewTagModalClose();
+                search_card();
             }
         });
 
         $(document).on('click', '.card_view_tag_modal_close, .card_view_tag_modal_done', function () {
             cardViewTagModalClose();
+            search_card();
         });
 
         $(document).on('keydown', function (e) {
             if (e.key === 'Escape' && $tagModal.hasClass('is_open')) {
                 cardViewTagModalClose();
+                search_card();
             }
         });
 
-        // 並び替え・日付・キーワード・タグは「条件を反映」で一覧更新
         // 表示タイプを押したとき
         $('input[name="view_type"]').on('change', function () {
             const viewType = $(this).val();
@@ -1051,6 +1057,9 @@ $(document).ready(function () {
             $('.card_view_card').addClass(viewType);
             $('.card_view_card_header').removeClass('large_view small_view');
             $('.card_view_card_header').addClass(viewType);
+            if (viewType === 'large_view') {
+                lazyload('imgset');
+            }
             $.ajax({
                 url: prefix + '/card/cardview/size/' + viewType,
                 method: 'GET',
@@ -1060,10 +1069,27 @@ $(document).ready(function () {
             });
         });
 
-        // 他のユーザーの登録情報を見るボタンを押したときはaタグの遷移を行わない
+        // 右上の点々（他ユーザー登録情報）: クリック時のみ開閉（同時表示は1つ）
         $(document).on('click', '.other_user_card_check', function (e) {
-            e.preventDefault();    // aタグのデフォルト動作（遷移）を止める
-            e.stopPropagation();   // 親要素へのイベント伝播を止める
+            e.preventDefault();
+            e.stopPropagation();
+            var $btn = $(this);
+            var willOpen = !$btn.hasClass('is_open');
+            $('.other_user_card_check')
+                .removeClass('is_open other_user_card_check_hover');
+            if (willOpen) {
+                $btn.addClass('is_open');
+                if (typeof other_list_load === 'function') {
+                    other_list_load($btn.data('carduser_id'));
+                }
+            }
+        });
+
+        // 点々以外をクリックしたら他ユーザー一覧を閉じる
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.other_user_card_check').length) {
+                $('.other_user_card_check').removeClass('is_open other_user_card_check_hover');
+            }
         });
 
         // 会社名を押したとき
@@ -1079,11 +1105,29 @@ $(document).ready(function () {
         $('.search_input').on('keydown', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                $('.card_view_apply_search').trigger('click');
+                search_card();
             }
         });
 
+        var searchDebounceTimer;
+        $('.search_input').on('input', function () {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function () {
+                search_card();
+            }, 350);
+        });
+
         $(document).on('click', '.card_view_apply_search', function () {
+            search_card();
+        });
+
+        // 並び替え変更ですぐ反映
+        $('#sort_select').on('change', function () {
+            search_card();
+        });
+
+        // 日付変更でも反映
+        $('#start_date, #end_date').on('change', function () {
             search_card();
         });
 
@@ -1107,9 +1151,6 @@ $(document).ready(function () {
         if ($('.card_view_header_count_text').length > 0) {
             // card_view_header_count_text_update();
         }
-        // function card_view_header_count_text_update() {
-        //     $('.card_view_header_count_text').text($('.card_view_card[data-show="true"]:not(.none_search_card)').length);
-        // }
 
         // タブ切り替え処理
         $(document).on('click', '.tab_item:not(.tab_item_active)', function () {
@@ -1498,10 +1539,8 @@ $(document).ready(function () {
 
     }
 
-    $(document).on('mouseover', '.other_user_card_check:not(.other_user_card_check_hover)', function () {
-        $(this).addClass('other_user_card_check_hover');
-        other_list_load($(this).data('carduser_id'));
-    });
+    // ホバーでは開かない（クリックのみ）。旧 hover クラスも付けない
+    $(document).off('mouseover', '.other_user_card_check');
 
 
     // data-card_idから画像を読み込んで出力
@@ -1517,11 +1556,11 @@ $(document).ready(function () {
 
                 const img = $(entry.target);
 
-                // // data-show="false" の場合は読み込まない
-                // if (img.closest('.card_view_card').attr('data-show') === "false") {
-                //     obs.unobserve(entry.target);
-                //     return;
-                // }
+                // リスト形式では画像を読み込まない（密度優先）
+                if (img.closest('.card_view_card.small_view').length > 0) {
+                    obs.unobserve(entry.target);
+                    return;
+                }
 
                 const cardId = img.data('card_id');
                 const front = img.data('front');
@@ -1676,6 +1715,8 @@ $(document).ready(function () {
     }
 
     // 名刺一括アップロード
+    if ($('#multiple_upload_form').length > 0 || $('#folder_upload').length > 0 || $('#image_upload').length > 0) {
+    var prefix = $('#prefix').val() || '';
     let selectedFiles = [];
     let uploadId = '';
 
@@ -1833,9 +1874,10 @@ $(document).ready(function () {
                                         <img class="front_img" src="${imgUrl}" alt="${item.filename}" data-core_id="${item.core_id}">
                                     </div>
                                     <div class="upload_list_item_back"></div>
-                                    <div class="upload_list_name">
-                                        ${item.filename}
+                                    <div class="upload_list_item_meta">
+                                        <div class="upload_list_name">${item.filename}</div>
                                     </div>
+                                    <span class="upload_list_status_dot" title="${isMyCard ? 'マイ名刺登録済' : (isOtherCard ? '他ユーザーが登録済' : '新規名刺')}" aria-hidden="true"></span>
                                 </label>
                             `);
                         }
@@ -1861,9 +1903,10 @@ $(document).ready(function () {
                                     <div class="upload_list_item_back">
                                         <img class="back_img" src="${imgUrl}" alt="${item.filename}" data-core_id="${item.core_id}">
                                     </div>
-                                    <div class="upload_list_name">
-                                        ${item.filename}
+                                    <div class="upload_list_item_meta">
+                                        <div class="upload_list_name">${item.filename}</div>
                                     </div>
+                                    <span class="upload_list_status_dot" title="${isMyCard ? 'マイ名刺登録済' : (isOtherCard ? '他ユーザーが登録済' : '新規名刺')}" aria-hidden="true"></span>
                                 </label>
                             `);
                         }
@@ -1874,6 +1917,7 @@ $(document).ready(function () {
                 $('.checkbox_description_container[data-status="new"]').removeClass('close');
                 $('.checkbox_description_container[data-status="again"]').addClass('close');
                 $('.checkbox_controller_item_container').removeClass('close');
+                $('.bulk_upload_selection_count_num').text($('.upload_list_item').length);
                 if ($('.upload_list_item:not([data-mycard="true"])').length == 0) {
                     $('.upload_button').removeClass('enabled');
                 }
@@ -1882,9 +1926,10 @@ $(document).ready(function () {
                 }
                 $('.upload_button').text('アップロード開始');
             },
-            error: function () {
+            error: function (xhr) {
                 setPickerLoading(false);
-                console.error('送信失敗');
+                console.error('送信失敗', xhr && xhr.status, xhr && xhr.responseText);
+                alert('候補一覧の取得に失敗しました。再度お試しください。');
             }
         });
     }
@@ -1983,6 +2028,7 @@ $(document).ready(function () {
         $('.upload_list_container').removeClass('upload_list_container_open');
         $('.upload_list_item_container').empty();
         $('.upload_button').removeClass('enabled');
+        $('.bulk_upload_selection_count_num').text('0');
         setPickerLoading(false);
         resetUploadPickers();
         $.ajax({
@@ -2258,5 +2304,6 @@ $(document).ready(function () {
     //         });
     //     }, 300);
     // }
+    } // end multiple upload page
 });
 

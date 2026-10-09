@@ -11,6 +11,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin001.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/cardstyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/card_view_redesign.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/card_bulk_upload_redesign.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/jquery-ui.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/cropper.css') }}">
@@ -48,18 +50,22 @@
 </header>
 <div class="menu001">
 
-    <a class="headerIcon001" href="{{route('cardviewget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}" class="menuicon01" title="Top">
+    <a class="headerIcon001 card_nav_item @if(request()->routeIs('cardviewget')) is_active @endif" href="{{route('cardviewget')}}" data-nav="home" @if(request()->routeIs('cardviewget')) aria-current="page" @endif>
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}" class="menuicon01" title="Top" alt="">
+        <span class="card_nav_label">ホーム</span>
     </a>
-    <a class="headerIcon001" href="{{route('cardregistget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="menuicon01" title="名刺登録">
+    <a class="headerIcon001 card_nav_item @if(request()->routeIs('cardregistget')) is_active @endif" href="{{route('cardregistget')}}" data-nav="regist" @if(request()->routeIs('cardregistget')) aria-current="page" @endif>
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="menuicon01" title="名刺登録" alt="">
+        <span class="card_nav_label">名刺取込</span>
     </a>
-    <a class="headerIcon001" href="{{route('cardmultipleuploadget')}}">
+    <a class="headerIcon001 card_nav_item @if(request()->routeIs('cardmultipleuploadget')) is_active @endif" href="{{route('cardmultipleuploadget')}}" data-nav="bulk" @if(request()->routeIs('cardmultipleuploadget')) aria-current="page" @endif>
         <img src="{{ asset(config('prefix.prefix').'/'.'img/card/folder_gray.svg') }}" class="menuicon01"
-            title="名刺一括登録">
+            title="名刺一括登録" alt="">
+        <span class="card_nav_label">一括取込</span>
     </a>
-    <a class="headerIcon001" href="{{route('cardtagsettingsget')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/tag_gray.svg') }}" class="menuicon01" title="タグ設定">
+    <a class="headerIcon001 card_nav_item @if(request()->routeIs('cardtagsettingsget')) is_active @endif" href="{{route('cardtagsettingsget')}}" data-nav="tag" @if(request()->routeIs('cardtagsettingsget')) aria-current="page" @endif>
+        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/tag_gray.svg') }}" class="menuicon01" title="タグ設定" alt="">
+        <span class="card_nav_label">タグ管理</span>
     </a>
 
 

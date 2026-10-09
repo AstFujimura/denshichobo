@@ -4,18 +4,21 @@
 名刺管理
 @endsection
 
-
-
-
 @section('main')
-<div class="MainElement">
+<div class="MainElement bulk_upload_page">
 
-    <h2 class="pagetitle" id="card_view_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/card/title/folder_title.svg') }}" alt="" class="title_icon">名刺一括取込</h2>
+    <div class="bulk_upload_hero">
+        <h2 class="bulk_upload_title" id="card_multiple_upload_title">
+            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/title/folder_title.svg') }}" alt="" class="title_icon">
+            一括取込
+        </h2>
+        <p class="bulk_upload_lead">フォルダや画像から、名刺をまとめて取り込みます。</p>
+    </div>
+
     <div class="multiple_upload_container">
 
         <form id="multiple_upload_form" class="multiple_upload_form" action="{{ route('cardmultipleuploadpost') }}" method="POST" enctype="multipart/form-data">
             @csrf
-
 
             <div class="upload_source_picker" aria-label="取込方法の選択">
                 <input type="file" id="folder_upload" class="folder_upload" webkitdirectory multiple>
@@ -50,49 +53,51 @@
             </div>
 
         </form>
-        <div class="upload_list_container">
-            <div class="upload_list_item_container">
 
+        <div class="upload_list_container">
+            <div class="bulk_upload_selection_bar">
+                <div class="bulk_upload_selection_count">
+                    選択中：<span class="bulk_upload_selection_count_num">0</span>枚
+                </div>
+                <button type="button" class="bulk_upload_selection_clear upload_button_cancel" title="選択をクリア">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                        <path d="M10 11v6"></path>
+                        <path d="M14 11v6"></path>
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                    </svg>
+                    <span>選択をクリア</span>
+                </button>
             </div>
+
+            <div class="upload_list_item_container"></div>
+
             <div class="checkbox_controller">
                 <div class="checkbox_description_container" data-status="new">
                     <div class="checkbox_description_item">
                         <span class="new_card_icon"></span>
-                        <span class="new_card_text">
-                            新規名刺
-                        </span>
+                        <span class="new_card_text">新規名刺</span>
                     </div>
                     <div class="checkbox_description_item">
                         <span class="other_card_icon"></span>
-                        <span class="other_card_text">
-                            他ユーザーが登録済
-                        </span>
+                        <span class="other_card_text">他ユーザーが登録済</span>
                     </div>
                     <div class="checkbox_description_item">
                         <span class="my_card_icon"></span>
-                        <span class="my_card_text">
-                            マイ名刺登録済
-                        </span>
+                        <span class="my_card_text">マイ名刺登録済</span>
                     </div>
                 </div>
                 <div class="checkbox_description_container close" data-status="again">
                     <div class="checkbox_description_item">
                         <span class="failed_card_icon"></span>
-                        <span class="failed_card_text">
-                            取込失敗
-                        </span>
-                        <div class="failed_card_count">
-                            0
-                        </div>
+                        <span class="failed_card_text">取込失敗</span>
+                        <div class="failed_card_count">0</div>
                     </div>
                     <div class="checkbox_description_item">
                         <span class="success_card_icon"></span>
-                        <span class="success_card_text">
-                            取込済
-                        </span>
-                        <div class="success_card_count">
-                            0
-                        </div>
+                        <span class="success_card_text">取込済</span>
+                        <div class="success_card_count">0</div>
                     </div>
                 </div>
                 <div class="checkbox_controller_item_container">
@@ -107,7 +112,7 @@
                         <label for="checkbox_controller_item_new" class="checkbox_controller_item_new_label">
                             新規名刺のみチェック
                         </label>
-                    </div> 
+                    </div>
                 </div>
                 <div class="upload_button_container">
                     <div class="upload_button">
@@ -117,9 +122,7 @@
                         終了する
                     </div>
                 </div>
-
             </div>
-
         </div>
 
         <div class="progress_container_wrapper">
@@ -133,7 +136,6 @@
                 <div class="progress_bar_wrapper">
                     <div class="progress_bar"></div>
                 </div>
-
             </div>
             <input type="hidden" id="upload_complete_flag" value="false">
             <input type="hidden" id="uploadedfiles_count" value="0">
@@ -147,7 +149,6 @@
             <div class="error_content error_content_clone">
                 <form action="{{ route('cardmultipleuploadpost') }}" class="resend_form" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <!-- <input type="file" name="cards" class="error_file"> -->
                     <input type="hidden" name="upload_id" value="">
                     <input type="hidden" name="status" value="">
                     <input type="hidden" name="uploaded_card_id" value="">
@@ -168,7 +169,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
