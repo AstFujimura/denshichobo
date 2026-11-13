@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', '管理画面') — Binder管理画面</title>
+    <title>@yield('title', '管理画面') — 電子帳簿管理画面</title>
     <link rel="stylesheet" href="{{ asset('css/platform.css') }}">
 </head>
 <body>
 <div class="platform-shell">
     <div class="platform-top">
         <a class="platform-brand" href="{{ route('platform.tenants.index') }}">
-            <span class="platform-brand-mark">B</span>
-            <span>Binder管理画面</span>
+            <img src="{{ asset('img/header/tameru_logo_only.svg') }}" alt="" class="platform-brand-mark">
+            <span>電子帳簿管理画面</span>
         </a>
         <div class="platform-nav">
             <a href="{{ route('platform.tenants.index') }}">テナント管理</a>

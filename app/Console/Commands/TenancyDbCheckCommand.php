@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class TenancyDbCheckCommand extends Command
 {
     protected $signature = 'tenancy:db-check
-        {--create-probe : Create and leave a probe database named binder_provision_probe (no DROP)}';
+        {--create-probe : Create and leave a probe database named denshichobo_provision_probe (no DROP)}';
 
     protected $description = 'Verify app vs provision DB credentials and CREATE DATABASE capability';
 
@@ -67,7 +67,7 @@ class TenancyDbCheckCommand extends Command
         }
 
         if ($this->option('create-probe')) {
-            $probe = 'binder_provision_probe';
+            $probe = 'denshichobo_provision_probe';
             try {
                 $existed = $provision->databaseExists($probe);
                 $provision->createDatabase($probe);

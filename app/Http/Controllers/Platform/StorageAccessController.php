@@ -28,7 +28,7 @@ class StorageAccessController extends Controller
             ], 422);
         }
 
-        $testFile = $path . DIRECTORY_SEPARATOR . '.binder_access_test_' . Str::random(16);
+        $testFile = $path . DIRECTORY_SEPARATOR . '.denshichobo_access_test_' . Str::random(16);
         $handle = @fopen($testFile, 'x+b');
         if ($handle === false) {
             return response()->json([
@@ -36,7 +36,7 @@ class StorageAccessController extends Controller
             ], 422);
         }
 
-        $written = @fwrite($handle, 'binder storage access test');
+        $written = @fwrite($handle, 'denshichobo storage access test');
         @fclose($handle);
         $deleted = @unlink($testFile);
 

@@ -1,7 +1,7 @@
 # マルチテナント化メモ：制御DBとマイグレーションオーケストレーション
 
 作成日: 2026-11-12  
-対象: Binder（TAMERU / 名刺 / Rapid / Skett 等）のサーバー集約・テナント化  
+対象: 電子帳簿（TAMERU / 名刺 / Rapid / Skett 等）のサーバー集約・テナント化  
 
 **他開発者向け説明資料（図解HTML・A4印刷向け）**: [`multi_tenant_architecture.html`](./multi_tenant_architecture.html)（ブラウザで開く）
 
@@ -22,12 +22,12 @@
 ### 構成イメージ
 
 ```text
-[制御DB] 例: binder_control
+[制御DB] 例: denshichobo_control
   tenants / tenant_features / tenant_settings
   tenant_ai_settings / tenant_migration_runs
   platform_admins
 
-[テナントDB] 例: binder_astec, binder_xxx
+[テナントDB] 例: denshichobo_astec, denshichobo_xxx
   users, files, cards, groups ...（現行業務スキーマ）
   ※ versions 相当の機能フラグは持たない（制御DBへ移管）
 ```
@@ -45,9 +45,9 @@
 
 | 項目 | 案 |
 |------|-----|
-| DB名 | `binder_control` |
+| DB名 | `denshichobo_control` |
 | 接続名（Laravel） | `control`（`config/database.php` に追加） |
-| 環境変数例 | `CONTROL_DB_DATABASE=binder_control` など |
+| 環境変数例 | `CONTROL_DB_DATABASE=denshichobo_control` など |
 
 業務用の `DB_DATABASE` は「デフォルト／開発用の1テナント」または動的切替のベースとし、本番の顧客データは制御DBの `tenants.db_database` を正とする。
 
@@ -65,7 +65,7 @@
 | `code` | VARCHAR(64) UNIQUE | NO | システム用コード（英小文字・数字・`_` 推奨）。DB名生成にも利用可 |
 | `name` | VARCHAR(255) | NO | 表示名（会社名など） |
 | `prefix` | VARCHAR(64) UNIQUE | NO | URLプレフィックス（現行 `config('prefix.prefix')` 相当）。空文字は不可推奨 |
-| `db_database` | VARCHAR(128) UNIQUE | NO | テナントDB名（例: `binder_astec`） |
+| `db_database` | VARCHAR(128) UNIQUE | NO | テナントDB名（例: `denshichobo_astec`） |
 | `status` | VARCHAR(32) | NO | `provisioning` / `active` / `suspended` / `archived` |
 | `storage_mode` | VARCHAR(16) | NO | `cloud` / `onpre`（現行 `prefix.server` 相当をテナント単位へ） |
 | `storage_prefix` | VARCHAR(255) | NO | S3キーやローカル相対パスの先頭（通常は `prefix` と同値で開始可） |
@@ -310,7 +310,7 @@ tenants 1───* tenant_features
 
 | 接続名 | 用途 |
 |--------|------|
-| `control` | 制御DB（`binder_control`）。常時固定 |
+| `control` | 制御DB（`denshichobo_control`）。常時固定 |
 | `tenant` | 動的。実行中テナントの `db_database` を差し替えて使う |
 | `mysql`（default） | 開発用フォールバック。オーケストレーション本体では使わない |
 
@@ -444,8 +444,8 @@ tenants:migrate-status
 
 ```text
 code       db_database     tenant_status  last_migration              last_run      run_status
-astec      binder_astec    active         2026_07_28_000001_...       2 min ago     succeeded
-foo        binder_foo      active         2026_05_01_120001_...       2 min ago     failed
+astec      denshichobo_astec    active         2026_07_28_000001_...       2 min ago     succeeded
+foo        denshichobo_foo      active         2026_05_01_120001_...       2 min ago     failed
 ```
 
 - `last_migration` はテナントDBの `migrations` テーブルから取得  
@@ -465,7 +465,7 @@ tenants:provision
   {code : テナントコード}
   {--name= : 表示名（省略時は code）}
   {--prefix= : URLプレフィックス（省略時は code）}
-  {--db= : DB名（省略時は binder_{code}）}
+  {--db= : DB名（省略時は denshichobo_{code}）}
   {--storage=cloud : cloud|onpre}
   {--features=tameru,card : 有効化する feature_key（カンマ区切り）}
   {--admin-name= : 初期テナント管理者ログイン名}
@@ -1027,7 +1027,7 @@ DB dump とセットで「テナント完了パッケージ」にする（取り
 
 ```text
 1. 制御DB: tenants / features / ai_settings を登録（status=provisioning）
-2. MySQL: CREATE DATABASE binder_{code}
+2. MySQL: CREATE DATABASE denshichobo_{code}
 3. 新DBへ最新 migrate + 初期シード
 4. （任意）ストレージ区画の用意（S3 prefix / ローカルディレクトリ）
 5. status=active
@@ -1058,8 +1058,8 @@ DB dump とセットで「テナント完了パッケージ」にする（取り
 
 | 接続名（案） | 用途 | MySQL権限 |
 |--------------|------|-----------|
-| `control` | 制御DBの読み書き、テナント台帳 | `binder_control.*` のみ |
-| `tenant` | リクエスト中の業務CRUD | **既存テナントDBのみ**（`binder_%` への SELECT/INSERT/UPDATE/DELETE 等）。`CREATE DATABASE` なし |
+| `control` | 制御DBの読み書き、テナント台帳 | `denshichobo_control.*` のみ |
+| `tenant` | リクエスト中の業務CRUD | **既存テナントDBのみ**（`denshichobo_%` への SELECT/INSERT/UPDATE/DELETE 等）。`CREATE DATABASE` なし |
 | `provision`（追加） | テナント作成・migrate・取込だけ | `CREATE`（必要なら対象DBへの ALL）。可能なら `DROP DATABASE` は無し |
 
 ```text
@@ -1129,14 +1129,14 @@ DB dump とセットで「テナント完了パッケージ」にする（取り
 
 | 役割 | MySQLユーザー例 | `.env` | 権限 |
 |------|-----------------|--------|------|
-| 共通アプリ | `binder_app` | `DB_*` / `CONTROL_DB_*` / `TENANT_DB_*` | 既存DBの CRUD（＋migrate用DDL）。**CREATE DATABASE なし** |
-| プロビジョニング | `binder_provision` | `PROVISION_DB_*` | `CREATE DATABASE` 可。`DROP DATABASE` は付けない |
+| 共通アプリ | `denshichobo_app` | `DB_*` / `CONTROL_DB_*` / `TENANT_DB_*` | 既存DBの CRUD（＋migrate用DDL）。**CREATE DATABASE なし** |
+| プロビジョニング | `denshichobo_provision` | `PROVISION_DB_*` | `CREATE DATABASE` 可。`DROP DATABASE` は付けない |
 
 確認コマンド:
 
 ```bash
 php artisan tenancy:db-check
-php artisan tenancy:db-check --create-probe   # binder_provision_probe を作成（DROPしない）
+php artisan tenancy:db-check --create-probe   # denshichobo_provision_probe を作成（DROPしない）
 ```
 
 コード: `App\Support\Tenancy\ProvisionDatabaseManager`（CREATE DATABASE はここ経由のみ）。
@@ -1144,17 +1144,17 @@ php artisan tenancy:db-check --create-probe   # binder_provision_probe を作成
 MySQL側の作成例（共通ホストで一度だけ）:
 
 ```sql
-CREATE USER 'binder_app'@'%' IDENTIFIED BY '...';
-CREATE USER 'binder_provision'@'%' IDENTIFIED BY '...';
+CREATE USER 'denshichobo_app'@'%' IDENTIFIED BY '...';
+CREATE USER 'denshichobo_provision'@'%' IDENTIFIED BY '...';
 
 -- 制御DB＋既存/将来のテナントDB（必要に応じて DB 名を追加 GRANT）
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, REFERENCES
-  ON binder_control.* TO 'binder_app'@'%';
+  ON denshichobo_control.* TO 'denshichobo_app'@'%';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, REFERENCES
-  ON denshichobo2.* TO 'binder_app'@'%';
--- パターン運用するなら: GRANT ... ON `binder_%`.* TO 'binder_app'@'%';
+  ON denshichobo2.* TO 'denshichobo_app'@'%';
+-- パターン運用するなら: GRANT ... ON `denshichobo_%`.* TO 'denshichobo_app'@'%';
 
-GRANT CREATE ON *.* TO 'binder_provision'@'%';
+GRANT CREATE ON *.* TO 'denshichobo_provision'@'%';
 -- 作成後の初期 migrate を provision で行うなら対象DBへの権限も付与
 FLUSH PRIVILEGES;
 ```
@@ -1190,7 +1190,7 @@ AWS / 会社ポリシー側の観点:
         ↓ dump / sync
 [新] 集約サーバ
   制御DB: tenants 行を追加
-  テナントDB: binder_{code} として復元
+  テナントDB: denshichobo_{code} として復元
   ストレージ: storage_prefix 配下へ配置
   migrate: 集約版スキーマとの差分だけ適用
 ```
@@ -1398,8 +1398,8 @@ platform 上でテナントの users 一覧を表示（制御DB接続切替 or �
 
 | Cookie（案） | 用途 |
 |--------------|------|
-| `binder_platform_session` | `/platform` 用 |
-| `binder_session_{prefix}` または共通＋`tenant_id` 検証 | テナントアプリ用 |
+| `denshichobo_platform_session` | `/platform` 用 |
+| `denshichobo_session_{prefix}` または共通＋`tenant_id` 検証 | テナントアプリ用 |
 
 代理中のテナントセッションに必須で入れるもの:
 
@@ -1684,7 +1684,7 @@ PR4: /platform ログイン + 一覧
 
 ```bash
 # 制御DB作成（初回のみ）
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS binder_control CHARACTER SET utf8 COLLATE utf8_general_ci;"
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS denshichobo_control CHARACTER SET utf8 COLLATE utf8_general_ci;"
 
 # 制御DBマイグレーション
 php artisan control:migrate
@@ -1757,7 +1757,7 @@ php artisan tenants:ensure-support-user
 
 - プロジェクト単位で **PHP（と必要なら nginx/apache）をコンテナ化**し、バージョンを上げやすくする  
 - **MySQL は共通ホスト**のまま（他プロジェクトと同じ）。コンテナ内に MySQL を抱え込まない  
-- Binder だけ特別扱いせず、社内の「アプリはDocker・DBは共通」に揃える
+- 電子帳簿だけ特別扱いせず、社内の「アプリはDocker・DBは共通」に揃える
 
 ### 17.2 構成イメージ
 
@@ -1765,9 +1765,9 @@ php artisan tenants:ensure-support-user
 [開発用 Linux]
   ├── MySQL（共通・既存）
   │     users: app（CRUD）, provision（CREATE DATABASE 可・任意）
-  │     DBs:   binder_control, binder_{code}, （他プロジェクトのDB）
+  │     DBs:   denshichobo_control, denshichobo_{code}, （他プロジェクトのDB）
   │
-  └── binder（このプロジェクト）Docker
+  └── denshichobo（このプロジェクト）Docker
         ├── app (php-fpm … 上げたいPHPバージョン)
         ├── web (nginx または apache) ※1コンテナにまとめても可
         └── .env
@@ -1787,14 +1787,14 @@ php artisan tenants:ensure-support-user
 
 | 接続 | ユーザー | 権限 |
 |------|----------|------|
-| `mysql` / `control` / `tenant` | 共通 `binder_app`（`DB_*` 等） | 既存DBへの DML（＋migrate用DDL）。CREATE DATABASE なし |
-| `provision` | `binder_provision`（`PROVISION_DB_*`） | `CREATE DATABASE` 可（DROP DATABASE なし） |
+| `mysql` / `control` / `tenant` | 共通 `denshichobo_app`（`DB_*` 等） | 既存DBへの DML（＋migrate用DDL）。CREATE DATABASE なし |
+| `provision` | `denshichobo_provision`（`PROVISION_DB_*`） | `CREATE DATABASE` 可（DROP DATABASE なし） |
 
 テナントごとに MySQL ユーザーは **作らない**。  
 確認: `php artisan tenancy:db-check`
 ### 17.4 移行ステップ（Linux側・案）
 
-1. 共通 MySQL に `binder_control` と検証用テナントDBがあることを確認  
+1. 共通 MySQL に `denshichobo_control` と検証用テナントDBがあることを確認  
 2. このリポジトリ用 `Dockerfile` + `compose`（PHP上げ）を追加  
 3. `.env` のホストを共通 MySQL 向けに設定し、`control:migrate` / `tenants:migrate` が通ることを確認  
 4. 個人 XAMPP は参照・緊急用に残し、日常開発は Linux Docker へ切替  

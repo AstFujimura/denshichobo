@@ -20,3 +20,6 @@ yarn-error.log
 
 /config/custom.php
 /config/prefix.php
+/docker/dev.env
+/docker/env.local
+docker-compose.override.yml

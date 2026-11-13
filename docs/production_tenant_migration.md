@@ -35,7 +35,7 @@ dumpを復元
 - URLプレフィックス
 - 旧EC2の識別子・IP
 - 旧MySQLのホスト、ポート、DB名、MySQLバージョン
-- 新しいDB名（例: `binder_customer_a`）
+- 新しいDB名（例: `denshichobo_customer_a`）
 - 文字コード・照合順序
 - 利用機能
   - TAMERU: `tameru`
@@ -99,7 +99,7 @@ SELECT migration, batch FROM migrations ORDER BY id DESC LIMIT 10;
 
 ```text
 OLD_DB=旧環境のDB名
-NEW_DB=binder_customer_a
+NEW_DB=denshichobo_customer_a
 TENANT_CODE=customer_a
 TENANT_PREFIX=customer_a
 DUMP_FILE=customer_a.sql
@@ -164,7 +164,7 @@ mysql \
   -P 3306 \
   -u DB作成用ユーザー \
   -p \
-  -e "CREATE DATABASE \`binder_customer_a\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+  -e "CREATE DATABASE \`denshichobo_customer_a\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 ```
 
 作成前に同名DBが存在しないことを必ず確認する。
@@ -172,7 +172,7 @@ mysql \
 ```sql
 SELECT SCHEMA_NAME
 FROM INFORMATION_SCHEMA.SCHEMATA
-WHERE SCHEMA_NAME = 'binder_customer_a';
+WHERE SCHEMA_NAME = 'denshichobo_customer_a';
 ```
 
 ### 4.4 dumpを復元
@@ -183,13 +183,13 @@ mysql \
   -P 3306 \
   -u DB取込用ユーザー \
   -p \
-  binder_customer_a < customer_a.sql
+  denshichobo_customer_a < customer_a.sql
 ```
 
 復元後に最低限以下を確認する。
 
 ```sql
-USE binder_customer_a;
+USE denshichobo_customer_a;
 SHOW TABLES;
 SELECT COUNT(*) FROM migrations;
 SELECT migration, batch FROM migrations ORDER BY id DESC LIMIT 10;
@@ -205,7 +205,7 @@ php artisan tenants:register \
   --code=customer_a \
   --name="顧客A" \
   --prefix=customer_a \
-  --db=binder_customer_a \
+  --db=denshichobo_customer_a \
   --storage=cloud \
   --features=tameru,card,flow \
   --status=provisioning
@@ -218,7 +218,7 @@ php artisan tenants:register \
   --code=customer_a \
   --name="顧客A" \
   --prefix=customer_a \
-  --db=binder_customer_a \
+  --db=denshichobo_customer_a \
   --storage=onpre \
   --upload-path="/実際の保存先" \
   --features=tameru,card,flow \

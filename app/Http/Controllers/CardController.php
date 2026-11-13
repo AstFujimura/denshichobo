@@ -2283,7 +2283,7 @@ class CardController extends Controller
                 $openaiqueue->開始時刻 = $start;
                 $openaiqueue->save();
 
-                return [$start->diffInSeconds($now), $openaiqueue->id];
+                return [(int) $start->diffInSeconds($now, true), $openaiqueue->id];
             }
         }
         // 通常はここに来ないが念のため

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Binder マルチテナント構成</title>
+  <title>電子帳簿 マルチテナント構成</title>
   <style>
     :root {
       --ink: #182230;
@@ -513,7 +513,7 @@
 <body>
   <section class="sheet">
     <div class="kicker">システム構成</div>
-    <h1>Binder マルチテナント構成</h1>
+    <h1>電子帳簿 マルチテナント構成</h1>
     <p class="lead">URLプレフィックスは維持し、振り分けの責務を ALB からアプリケーションへ移す。</p>
 
     <h2><span class="no">1</span>ALB と EC2 の構成変更</h2>
@@ -558,8 +558,8 @@
         <div class="node shared"><strong>制御DB</strong><small>URLプレフィックス → 接続先DB名・設定</small></div>
         <div class="arrow-down"></div>
         <div class="branch">
-          <div class="node tenant"><strong>DB A</strong><small>binder_astec</small></div>
-          <div class="node tenant"><strong>DB B</strong><small>binder_xxx</small></div>
+          <div class="node tenant"><strong>DB A</strong><small>denshichobo_astec</small></div>
+          <div class="node tenant"><strong>DB B</strong><small>denshichobo_xxx</small></div>
         </div>
       </article>
     </div>
@@ -597,7 +597,7 @@
 
     <div class="db-grid">
       <article class="group shared">
-        <div class="group-title">制御DB <span class="mono">binder_control</span></div>
+        <div class="group-title">制御DB <span class="mono">denshichobo_control</span></div>
         <p>全顧客を管理する共通の台帳。業務データは置かない。</p>
         <div class="schema">
           <div>tenants</div>
@@ -614,11 +614,11 @@
         <p>顧客ごとの業務データ。顧客間で行を混在させない。</p>
         <div class="db-pair">
           <div class="db">
-            <strong class="mono">binder_astec</strong>
+            <strong class="mono">denshichobo_astec</strong>
             <span>users / cards / files / groups / …</span>
           </div>
           <div class="db">
-            <strong class="mono">binder_xxx</strong>
+            <strong class="mono">denshichobo_xxx</strong>
             <span>users / cards / files / groups / …</span>
           </div>
         </div>
@@ -630,8 +630,8 @@
     <table>
       <thead><tr><th>URLプレフィックス</th><th>接続先DB名</th><th>保存方式</th><th>状態</th></tr></thead>
       <tbody>
-        <tr><td class="mono">astec</td><td class="mono">binder_astec</td><td>クラウド</td><td>利用中</td></tr>
-        <tr><td class="mono">xxx</td><td class="mono">binder_xxx</td><td>ローカル</td><td>利用中</td></tr>
+        <tr><td class="mono">astec</td><td class="mono">denshichobo_astec</td><td>クラウド</td><td>利用中</td></tr>
+        <tr><td class="mono">xxx</td><td class="mono">denshichobo_xxx</td><td>ローカル</td><td>利用中</td></tr>
       </tbody>
     </table>
     <div class="foot">青 = 共通管理情報　／　緑 = 顧客別の業務データ</div>
@@ -686,7 +686,7 @@
     </div>
 
     <div class="result"><strong>変更点:</strong> サービス契約・利用機能の切り替え先を、各顧客DBから共通の制御DBへ移す。変更操作はプラットフォーム管理画面で行う。</div>
-    <div class="foot">管理画面: /platform/tenants/{tenant}　／　保存先: binder_control.tenant_features</div>
+    <div class="foot">管理画面: /platform/tenants/{tenant}　／　保存先: denshichobo_control.tenant_features</div>
   </section>
 
   <section class="sheet">
@@ -696,7 +696,7 @@
       <div class="step"><b>1</b><strong>ALB</strong><small>共通EC2へ転送</small></div>
       <div class="step"><b>2</b><strong>URLプレフィックス抽出</strong><small>astec を取得</small></div>
       <div class="step"><b>3</b><strong>制御DB参照</strong><small>tenants を検索</small></div>
-      <div class="step"><b>4</b><strong>接続切替</strong><small>binder_astec を選択</small></div>
+      <div class="step"><b>4</b><strong>接続切替</strong><small>denshichobo_astec を選択</small></div>
       <div class="step"><b>5</b><strong>業務処理</strong><small>顧客Aのデータだけを参照</small></div>
     </div>
 
@@ -753,7 +753,7 @@
     </div>
 
     <div class="credential-row">
-      <div class="credential"><strong>制御DB接続</strong><small>binder_control を参照</small></div>
+      <div class="credential"><strong>制御DB接続</strong><small>denshichobo_control を参照</small></div>
       <div class="credential"><strong>テナントDB接続</strong><small>業務DBを動的に切替</small></div>
       <div class="credential"><strong>DB作成用接続</strong><small>データベース作成専用</small></div>
     </div>

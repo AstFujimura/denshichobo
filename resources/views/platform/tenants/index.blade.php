@@ -72,7 +72,15 @@
                             @endforelse
                         </div>
                     </td>
-                    <td class="table-action"><a href="{{ route('platform.tenants.show', $tenant) }}">詳細</a></td>
+                    <td class="table-action">
+                        <a href="{{ route('platform.tenants.show', $tenant) }}">詳細</a>
+                        @if ($tenant->status === 'provisioning' && ! $tenant->provisioned_at && Auth::guard('platform')->user()->can_provision)
+                            <form method="POST" action="{{ route('platform.tenants.discard', $tenant) }}" onsubmit="return confirm(@json('準備中の「'.$tenant->name.'」を取り消します。作成途中のデータベースがある場合は削除します。この操作は元に戻せません。'))">
+                                @csrf
+                                <button type="submit" class="platform-btn danger compact">取り消す</button>
+                            </form>
+                        @endif
+                    </td>
                 </tr>
             @empty
                 <tr>

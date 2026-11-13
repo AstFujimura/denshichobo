@@ -30,7 +30,7 @@
             </div>
             <div>
                 <label for="db_database">データベース名</label>
-                <input id="db_database" type="text" name="db_database" value="{{ old('db_database') }}" placeholder="例：binder_astec" required>
+                <input id="db_database" type="text" name="db_database" value="{{ old('db_database') }}" placeholder="例：denshichobo_astec" required>
             </div>
             <div>
                 <label for="storage_mode">ファイル保存方式</label>
@@ -45,7 +45,7 @@
             </div>
             <div class="tenant-create-span-2">
                 <label for="file_upload_path">ローカル保存先</label>
-                <input id="file_upload_path" type="text" name="file_upload_path" value="{{ old('file_upload_path') }}" placeholder="例：\\server\share\astec">
+                <input id="file_upload_path" type="text" name="file_upload_path" value="{{ old('file_upload_path') }}" placeholder="例：/var/www/denshichobo-files/test">
             </div>
             <div class="tenant-create-span-2">
                 <label for="notes">運用メモ</label>

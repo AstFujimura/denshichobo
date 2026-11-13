@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン — Binder管理画面</title>
+    <title>ログイン — 電子帳簿管理画面</title>
     <link rel="stylesheet" href="{{ asset('css/platform.css') }}">
 </head>
 <body>
 <div class="platform-login-wrap">
     <div class="platform-login">
         <div class="platform-login-brand">
-            <span class="platform-brand-mark">B</span>
-            <h1>Binder管理画面</h1>
+            <img src="{{ asset('img/header/tameru_logo_only.svg') }}" alt="" class="platform-brand-mark">
+            <h1>電子帳簿管理画面</h1>
         </div>
         <p>管理者アカウントでログインしてください。</p>
 

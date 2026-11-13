@@ -44,9 +44,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'パスワードリセット時' => 'datetime',
     ];
-
-    protected $dates = ['created_at', 'updated_at', 'パスワードリセット時'];
 
     public function files() {
         return $this->hasMany(File::class);

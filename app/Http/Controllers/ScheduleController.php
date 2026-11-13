@@ -136,9 +136,9 @@ class ScheduleController extends Controller
                 if (Carbon::parse($long_event->開始) < Carbon::parse($base_date)) {
                     $start_day_num = 0;
                 } else {
-                    $start_day_num = Carbon::parse($long_event->開始)->diffInDays(Carbon::parse($base_date));
+                    $start_day_num = (int) Carbon::parse($long_event->開始)->diffInDays(Carbon::parse($base_date), true);
                 }
-                $end_day_num = Carbon::parse($long_event->終了)->diffInDays(Carbon::parse($base_date));
+                $end_day_num = (int) Carbon::parse($long_event->終了)->diffInDays(Carbon::parse($base_date), true);
                 $assigned = false;
 
                 foreach ($long_events_array as $key => $value) {
@@ -261,9 +261,9 @@ class ScheduleController extends Controller
                 if (Carbon::parse($long_event->開始) < Carbon::parse($cells->{$w}->{0}->ymd)) {
                     $start_day_num = 0;
                 } else {
-                    $start_day_num = Carbon::parse($long_event->開始)->diffInDays(Carbon::parse($cells->{$w}->{0}->ymd));
+                    $start_day_num = (int) Carbon::parse($long_event->開始)->diffInDays(Carbon::parse($cells->{$w}->{0}->ymd), true);
                 }
-                $end_day_num = Carbon::parse($long_event->終了)->diffInDays(Carbon::parse($cells->{$w}->{0}->ymd));
+                $end_day_num = (int) Carbon::parse($long_event->終了)->diffInDays(Carbon::parse($cells->{$w}->{0}->ymd), true);
                 $assigned = false;
 
                 foreach ($long_events_array as $key => $value) {

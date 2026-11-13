@@ -34,9 +34,8 @@ a:hover { text-decoration: underline; }
 }
 .platform-brand:hover { text-decoration: none; }
 .platform-brand-mark {
-  display: inline-grid; place-items: center; width: 34px; height: 34px;
-  border-radius: 9px; background: var(--accent); color: #fff;
-  font-size: 1rem; font-weight: 700;
+  display: block; width: 34px; height: 34px;
+  object-fit: contain;
 }
 .platform-nav { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 0.9rem; }
 .platform-nav > a { font-weight: 600; }
@@ -96,6 +95,8 @@ textarea { min-height: 90px; resize: vertical; }
 .platform-btn:hover { background: var(--accent-hover); text-decoration: none; }
 .platform-btn.secondary { background: #e5e7eb; color: var(--text); }
 .platform-btn.secondary:hover { background: #d1d5db; }
+.platform-btn.danger { background: var(--danger); color: #fff; }
+.platform-btn.danger:hover { background: #991b1b; }
 .platform-btn.block { width: 100%; }
 
 .platform-alert {
@@ -127,6 +128,7 @@ textarea { min-height: 90px; resize: vertical; }
   border-radius: 7px; font-weight: 600;
 }
 .table-action a:hover { background: var(--accent-soft); text-decoration: none; }
+.table-action form { display: inline; margin-left: 8px; }
 .platform-empty { padding: 32px !important; color: var(--muted); text-align: center !important; }
 .feature-tags { display: flex; flex-wrap: wrap; gap: 5px; min-width: 150px; }
 .feature-tags > span:not(.platform-muted) {

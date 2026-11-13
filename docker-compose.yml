@@ -1,0 +1,79 @@
+# 開発用。`docker compose up --build` で起動する。
+# PHP は 8.5。このサーバでは docker-compose.override.yml がホストの MySQL を使う。
+# 同梱 DB は --profile bundled のときだけ起動する。
+#
+# 未指定なら Web 12300。
+# 例: docker compose --env-file docker/dev.env up -d
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "${DENSHICHOBO_HTTP_PORT:-12300}:80"
+    volumes:
+      - .:/var/www/html
+      # ホストの .env はコンテナに見せない
+      - ./docker/env.local:/var/www/html/.env:ro
+      # ホストの vendor / storage / bootstrap/cache を上書きしない
+      - denshichobo_vendor:/var/www/html/vendor
+      - denshichobo_storage:/var/www/html/storage
+      - denshichobo_bootstrap_cache:/var/www/html/bootstrap/cache
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:${DENSHICHOBO_HTTP_PORT:-12300}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: denshichobo_control
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      CONTROL_DB_HOST: db
+      CONTROL_DB_PORT: "3306"
+      CONTROL_DB_DATABASE: denshichobo_control
+      CONTROL_DB_USERNAME: root
+      CONTROL_DB_PASSWORD: root
+      TENANT_DB_HOST: db
+      TENANT_DB_PORT: "3306"
+      TENANT_DB_USERNAME: root
+      TENANT_DB_PASSWORD: root
+      PROVISION_DB_HOST: db
+      PROVISION_DB_PORT: "3306"
+      PROVISION_DB_DATABASE: denshichobo_control
+      PROVISION_DB_USERNAME: root
+      PROVISION_DB_PASSWORD: root
+      GHOSTSCRIPT_PATH: /usr/bin/gs
+      MAIL_MAILER: log
+      RUN_CONTROL_MIGRATIONS: "true"
+      COMPOSER_ALLOW_SUPERUSER: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.11
+    ports:
+      - "${DENSHICHOBO_DB_PORT:-3310}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: denshichobo_control
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - denshichobo_dbdata:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/01-databases.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  denshichobo_dbdata:
+  denshichobo_vendor:
+  denshichobo_storage:
+  denshichobo_bootstrap_cache:

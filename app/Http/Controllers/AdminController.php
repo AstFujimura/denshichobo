@@ -213,7 +213,7 @@ class AdminController extends Controller
             return response()->json(['message' => 'ユーザーが見つかりません'], 404);
         }
         // 更新時にはパスワードをリセットしない
-        if ($user->パスワードリセット時->diffInMinutes(now()) > 1) {
+        if ((int) $user->パスワードリセット時->diffInMinutes(now(), true) > 1) {
             $password = $this->generateRandomStr(8);
             $user->password = Hash::make($password);
             $user->パスワードリセット時 = Carbon::now();

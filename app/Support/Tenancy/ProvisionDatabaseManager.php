@@ -107,6 +107,28 @@ class ProvisionDatabaseManager
     }
 
     /**
+     * Drop a database created for a cancelled provision.
+     * Refuses the control database, the default app database, and system schemas.
+     */
+    public function dropDatabase(string $database): void
+    {
+        $database = $this->assertSafeDatabaseName($database);
+        $this->assertDroppableDatabase($database);
+
+        try {
+            DB::connection(self::CONNECTION)->statement(
+                sprintf('DROP DATABASE IF EXISTS `%s`', $database)
+            );
+        } catch (\Throwable $e) {
+            throw new RuntimeException(
+                'DROP DATABASE failed via provision connection. The provision user needs the DROP privilege.',
+                0,
+                $e
+            );
+        }
+    }
+
+    /**
      * CREATE DATABASE IF NOT EXISTS. Does not DROP.
      */
     public function createDatabase(string $database, string $charset = 'utf8', string $collation = 'utf8_general_ci'): void
@@ -130,6 +152,22 @@ class ProvisionDatabaseManager
                 0,
                 $e
             );
+        }
+    }
+
+    protected function assertDroppableDatabase(string $database): void
+    {
+        $protected = [
+            (string) config('database.connections.control.database'),
+            (string) config('database.connections.mysql.database'),
+            'mysql',
+            'information_schema',
+            'performance_schema',
+            'sys',
+        ];
+
+        if (in_array($database, array_filter($protected), true)) {
+            throw new RuntimeException("Database [{$database}] cannot be dropped.");
         }
     }
 

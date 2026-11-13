@@ -1,0 +1,48 @@
+# 本番用。DB はアプリコンテナに入れず、外部の MySQL を指す。
+#
+#   1. docker/env.production.example を .env.production にコピーして値を入れる
+#   2. DENSHICHOBO_HTTP_PORT で待受ポートを決める
+#   3. docker compose -f docker-compose.prod.yml --env-file .env.production up --build -d
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    ports:
+      - "${DENSHICHOBO_HTTP_PORT:-12300}:80"
+    env_file:
+      - path: .env.production
+        required: false
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: ${DENSHICHOBO_APP_URL:?DENSHICHOBO_APP_URL が必要です}
+      APP_KEY: ${DENSHICHOBO_APP_KEY:?DENSHICHOBO_APP_KEY が必要です}
+      DB_CONNECTION: mysql
+      DB_HOST: ${DENSHICHOBO_DB_HOST:?DENSHICHOBO_DB_HOST が必要です}
+      DB_PORT: ${DENSHICHOBO_DB_PORT:-3306}
+      DB_DATABASE: ${DENSHICHOBO_DB_DATABASE:-denshichobo_control}
+      DB_USERNAME: ${DENSHICHOBO_DB_USERNAME:-denshichobo_app}
+      DB_PASSWORD: ${DENSHICHOBO_DB_PASSWORD:?DENSHICHOBO_DB_PASSWORD が必要です}
+      CONTROL_DB_HOST: ${DENSHICHOBO_DB_HOST:?DENSHICHOBO_DB_HOST が必要です}
+      CONTROL_DB_PORT: ${DENSHICHOBO_DB_PORT:-3306}
+      CONTROL_DB_DATABASE: ${DENSHICHOBO_CONTROL_DB_DATABASE:-denshichobo_control}
+      CONTROL_DB_USERNAME: ${DENSHICHOBO_DB_USERNAME:-denshichobo_app}
+      CONTROL_DB_PASSWORD: ${DENSHICHOBO_DB_PASSWORD:?DENSHICHOBO_DB_PASSWORD が必要です}
+      TENANT_DB_HOST: ${DENSHICHOBO_DB_HOST:?DENSHICHOBO_DB_HOST が必要です}
+      TENANT_DB_PORT: ${DENSHICHOBO_DB_PORT:-3306}
+      TENANT_DB_USERNAME: ${DENSHICHOBO_DB_USERNAME:-denshichobo_app}
+      TENANT_DB_PASSWORD: ${DENSHICHOBO_DB_PASSWORD:?DENSHICHOBO_DB_PASSWORD が必要です}
+      PROVISION_DB_HOST: ${DENSHICHOBO_DB_HOST:?DENSHICHOBO_DB_HOST が必要です}
+      PROVISION_DB_PORT: ${DENSHICHOBO_DB_PORT:-3306}
+      PROVISION_DB_DATABASE: ${DENSHICHOBO_CONTROL_DB_DATABASE:-denshichobo_control}
+      PROVISION_DB_USERNAME: ${DENSHICHOBO_PROVISION_DB_USERNAME:-denshichobo_provision}
+      PROVISION_DB_PASSWORD: ${DENSHICHOBO_PROVISION_DB_PASSWORD:?DENSHICHOBO_PROVISION_DB_PASSWORD が必要です}
+      GHOSTSCRIPT_PATH: /usr/bin/gs
+      RUN_CONTROL_MIGRATIONS: "true"
+      COMPOSER_ALLOW_SUPERUSER: "1"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

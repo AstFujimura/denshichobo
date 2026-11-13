@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Pdo\Mysql;
 
 return [
 
@@ -59,7 +60,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -77,7 +78,7 @@ return [
             'url' => env('CONTROL_DATABASE_URL'),
             'host' => env('CONTROL_DB_HOST', env('DB_HOST', '127.0.0.1')),
             'port' => env('CONTROL_DB_PORT', env('DB_PORT', '3306')),
-            'database' => env('CONTROL_DB_DATABASE', 'binder_control'),
+            'database' => env('CONTROL_DB_DATABASE', 'denshichobo_control'),
             'username' => env('CONTROL_DB_USERNAME', env('DB_USERNAME', 'forge')),
             'password' => env('CONTROL_DB_PASSWORD', env('DB_PASSWORD', '')),
             'unix_socket' => env('CONTROL_DB_SOCKET', env('DB_SOCKET', '')),
@@ -88,7 +89,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -116,7 +117,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -134,7 +135,7 @@ return [
             'url' => env('PROVISION_DATABASE_URL'),
             'host' => env('PROVISION_DB_HOST', env('CONTROL_DB_HOST', env('DB_HOST', '127.0.0.1'))),
             'port' => env('PROVISION_DB_PORT', env('CONTROL_DB_PORT', env('DB_PORT', '3306'))),
-            'database' => env('PROVISION_DB_DATABASE', env('CONTROL_DB_DATABASE', 'binder_control')),
+            'database' => env('PROVISION_DB_DATABASE', env('CONTROL_DB_DATABASE', 'denshichobo_control')),
             'username' => env('PROVISION_DB_USERNAME', env('CONTROL_DB_USERNAME', env('DB_USERNAME', 'forge'))),
             'password' => env('PROVISION_DB_PASSWORD', env('CONTROL_DB_PASSWORD', env('DB_PASSWORD', ''))),
             'unix_socket' => env('PROVISION_DB_SOCKET', env('CONTROL_DB_SOCKET', env('DB_SOCKET', ''))),
@@ -145,7 +146,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 

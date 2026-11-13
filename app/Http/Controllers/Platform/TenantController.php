@@ -7,6 +7,7 @@ use App\Jobs\ProvisionTenant;
 use App\Models\Control\Tenant;
 use App\Models\Control\TenantAiSetting;
 use App\Models\Control\TenantMigrationRun;
+use App\Support\Tenancy\ProvisionDatabaseManager;
 use App\Support\Tenancy\SupportEntryService;
 use App\Support\Tenancy\TenantFeatureSync;
 use App\Support\Tenancy\TenantResolver;
@@ -254,6 +255,47 @@ class TenantController extends Controller
         $resolver->forgetPrefix($tenant->prefix);
 
         return back()->with('success', 'テナント設定を保存しました。');
+    }
+
+    public function discard(
+        Request $request,
+        Tenant $tenant,
+        ProvisionDatabaseManager $provision,
+        TenantResolver $resolver,
+        SupportEntryService $support
+    ) {
+        $this->authorizeProvisioning();
+
+        if ($tenant->status !== Tenant::STATUS_PROVISIONING || $tenant->provisioned_at !== null) {
+            return back()->with('error', '取り消せるのは、作成が完了していない準備中のテナントだけです。');
+        }
+
+        $meta = [
+            'code' => $tenant->code,
+            'name' => $tenant->name,
+            'prefix' => $tenant->prefix,
+            'db_database' => $tenant->db_database,
+        ];
+        $prefix = $tenant->prefix;
+
+        if ($provision->databaseExists($tenant->db_database)) {
+            $provision->dropDatabase($tenant->db_database);
+        }
+
+        $tenant->delete();
+        $resolver->forgetPrefix($prefix);
+        $support->audit(
+            Auth::guard('platform')->user(),
+            null,
+            'tenant_provision_discard',
+            null,
+            $request,
+            $meta
+        );
+
+        return redirect()
+            ->route('platform.tenants.index')
+            ->with('success', '準備中のテナントを取り消しました。');
     }
 
     protected function authorizeProvisioning(): void

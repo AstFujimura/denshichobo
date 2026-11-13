@@ -23,6 +23,12 @@
             </div>
         </div>
         <div class="form-actions">
+            @if ($tenant->status === 'provisioning' && ! $tenant->provisioned_at && Auth::guard('platform')->user()->can_provision)
+                <form method="POST" action="{{ route('platform.tenants.discard', $tenant) }}" onsubmit="return confirm(@json('準備中の「'.$tenant->name.'」を取り消します。作成途中のデータベースがある場合は削除します。この操作は元に戻せません。'))">
+                    @csrf
+                    <button type="submit" class="platform-btn danger">作成を取り消す</button>
+                </form>
+            @endif
             <a href="{{ url('/'.$tenant->prefix.'/login') }}" class="platform-btn secondary" target="_blank" rel="noopener">通常ログインを開く</a>
             <a href="{{ route('platform.tenants.index') }}" class="platform-btn secondary">一覧へ戻る</a>
         </div>
@@ -68,7 +74,7 @@
             <div class="tenant-create-span-2 onpre-path-field">
                 <label for="file_upload_path">オンプレ保存先</label>
                 <div class="path-input-row">
-                    <input id="file_upload_path" type="text" name="file_upload_path" value="{{ old('file_upload_path', $tenant->file_upload_path) }}" placeholder="例：\\server\share\astec">
+                    <input id="file_upload_path" type="text" name="file_upload_path" value="{{ old('file_upload_path', $tenant->file_upload_path) }}" placeholder="例：/var/www/denshichobo-files/test">
                     <button type="button" class="platform-btn secondary" id="test-storage-access">接続テスト</button>
                 </div>
                 <div id="storage-test-result" class="storage-test-result" hidden></div>

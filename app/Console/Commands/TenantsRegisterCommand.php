@@ -14,7 +14,7 @@ class TenantsRegisterCommand extends Command
                             {--code= : Tenant code (default: prefix or local)}
                             {--name= : Display name}
                             {--prefix= : URL prefix (required unless config prefix is set)}
-                            {--db= : Existing tenant database name (default: DB_DATABASE)}
+                            {--db= : Existing tenant database name (required)}
                             {--storage= : cloud|onpre (default: config prefix.server)}
                             {--upload-path= : onpre file_upload_path}
                             {--features= : Comma-separated enabled feature keys}
@@ -37,7 +37,12 @@ class TenantsRegisterCommand extends Command
         }
 
         $code = $this->option('code') ?: $prefix;
-        $db = $this->option('db') ?: (string) config('database.connections.mysql.database');
+        $db = $this->option('db');
+        if ($db === null || $db === '') {
+            $this->error('--db is required. There is no default business database.');
+
+            return self::FAILURE;
+        }
         $storage = $this->option('storage') ?: (string) config('prefix.server', 'cloud');
         $name = $this->option('name') ?: $code;
         $uploadPath = $this->option('upload-path') ?: config('custom.file_upload_path');

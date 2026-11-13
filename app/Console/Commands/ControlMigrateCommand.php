@@ -10,7 +10,7 @@ class ControlMigrateCommand extends Command
                             {--fresh : Drop all control tables and re-run migrations}
                             {--force : Force the operation to run when in production}';
 
-    protected $description = 'Run migrations for the control database (binder_control)';
+    protected $description = 'Run migrations for the control database (denshichobo_control)';
 
     public function handle(): int
     {
