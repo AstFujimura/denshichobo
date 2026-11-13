@@ -148,7 +148,7 @@ class TenantMigrator
                 'error_message' => null,
             ])->save();
 
-            Log::info('Tenant migrate succeeded', [
+            $this->writeLog('info', 'Tenant migrate succeeded', [
                 'tenant_code' => $tenant->code,
                 'batch_id' => $batchId,
                 'from' => $from,
@@ -173,7 +173,7 @@ class TenantMigrator
                 ])->save();
             }
 
-            Log::error('Tenant migrate failed', [
+            $this->writeLog('error', 'Tenant migrate failed', [
                 'tenant_code' => $tenant->code,
                 'batch_id' => $batchId,
                 'error' => $e->getMessage(),
@@ -241,5 +241,17 @@ class TenantMigrator
     protected function tenantMigrationsTableExists(): bool
     {
         return DB::connection('tenant')->getSchemaBuilder()->hasTable('migrations');
+    }
+
+    /**
+     * @param  array<string, mixed>  $context
+     */
+    protected function writeLog(string $level, string $message, array $context = []): void
+    {
+        try {
+            Log::log($level, $message, $context);
+        } catch (Throwable $e) {
+            // ログへ書けなくても、マイグレーション結果は変えない。
+        }
     }
 }
