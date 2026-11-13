@@ -25,9 +25,6 @@ if [ ! -f bootstrap/cache/packages.php ]; then
   php artisan package:discover --ansi
 fi
 
-chown -R www-data:www-data storage bootstrap/cache
-chmod -R 775 storage bootstrap/cache
-
 db_ready() {
   php -r 'try { new PDO("mysql:host=".getenv("DB_HOST").";port=".(getenv("DB_PORT") ?: "3306"), getenv("DB_USERNAME") ?: "root", getenv("DB_PASSWORD") !== false ? getenv("DB_PASSWORD") : ""); exit(0); } catch (Throwable $e) { exit(1); }'
 }
@@ -55,5 +52,10 @@ if [ "${APP_ENV}" = "production" ]; then
 else
   php artisan config:clear
 fi
+
+# artisan は root で動く。その後に所有者を戻さないと、Web からログへ追記できない。
+touch storage/logs/laravel.log
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R ug+rwx storage bootstrap/cache
 
 exec apache2-foreground
