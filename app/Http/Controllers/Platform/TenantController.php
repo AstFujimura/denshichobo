@@ -120,31 +120,16 @@ class TenantController extends Controller
             'notes' => $data['notes'] ?? null,
         ]);
 
-        try {
-            ProvisionTenant::dispatch(
-                $tenant->id,
-                $featureMap,
-                $data['ledger_ocr_provider'],
-                $data['gemini_model'] ?: null
-            );
-        } catch (\Throwable $e) {
-            return redirect()
-                ->route('platform.tenants.show', $tenant)
-                ->with(
-                    'error',
-                    'テナントDBの作成処理に失敗しました。状態を「準備中」のまま保持しています: '
-                    . $e->getMessage()
-                );
-        }
-
-        $tenant->refresh();
-        $message = $tenant->status === Tenant::STATUS_ACTIVE
-            ? 'データベースを作成し、テナントを追加しました。'
-            : 'テナントの作成処理を開始しました。完了後に状態が「利用中」へ変わります。';
+        ProvisionTenant::dispatch(
+            $tenant->id,
+            $featureMap,
+            $data['ledger_ocr_provider'],
+            $data['gemini_model'] ?: null
+        )->afterResponse();
 
         return redirect()
             ->route('platform.tenants.show', $tenant)
-            ->with('success', $message);
+            ->with('success', 'テナントを追加しました。データベースの作成が終わると状態が「利用中」になります。反映されていない場合は、この画面を開き直してください。');
     }
 
     public function show(Tenant $tenant, SupportEntryService $support)

@@ -2,7 +2,7 @@
 
 対象は電子帳簿（denshichobo）の新しい本番サーバー。アプリは Docker、MySQL は同じサーバーのホストに置く。S3 バケットは既存のものをそのまま使う。
 
-公開する待受はアプリの 80 番だけにする。phpMyAdmin は `127.0.0.1:11000` とし、インターネットへは開けない。
+公開する待受はアプリの 80 番と、作業元 IP だけに限った phpMyAdmin の 11000 番にする。3306 番は開けない。
 
 ## 1. このサーバーに作るもの
 
@@ -34,7 +34,8 @@
 
 - 22 番は作業元の IP だけ
 - 80 番は公開する相手（ALB、または直接公開する範囲）
-- 3306 番と 11000 番は開けない
+- 11000 番は phpMyAdmin。送信元は作業元の IP（例: `203.0.113.10/32`）だけ。`0.0.0.0/0` にはしない
+- 3306 番は開けない
 
 IAM ロールをインスタンスに付ける。そのロールには、既存バケットへの取得・保存・削除を許可する。アクセスキーは使わない。
 
@@ -65,6 +66,7 @@ sudo usermod -aG docker ec2-user
 ```bash
 docker version
 docker compose version
+docker buildx version
 ```
 
 `docker compose` が無いときだけ、プラグインを追加する。
@@ -75,6 +77,16 @@ sudo curl -SL https://github.com/docker/compose/releases/download/v2.40.3/docker
   -o /usr/local/lib/docker/cli-plugins/docker-compose
 sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 docker compose version
+```
+
+`docker buildx version` が 0.17 未満、またはコマンド自体が無いときは、Buildx を入れ直す。OS 付属のものは古く、`compose build requires buildx 0.17 or later` でビルドが止まる。
+
+```bash
+sudo mkdir -p /usr/local/lib/docker/cli-plugins
+sudo curl -SL https://github.com/docker/buildx/releases/download/v0.39.0/buildx-v0.39.0.linux-amd64 \
+  -o /usr/local/lib/docker/cli-plugins/docker-buildx
+sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-buildx
+docker buildx version
 ```
 
 ## 4. MySQL 8.4
@@ -243,12 +255,12 @@ services:
     image: phpmyadmin:5.2.3
     restart: unless-stopped
     ports:
-      - "127.0.0.1:11000:80"
+      - "11000:80"
     environment:
       PMA_HOST: host.docker.internal
       PMA_PORT: "3306"
       UPLOAD_LIMIT: 64M
-      PMA_ABSOLUTE_URI: http://127.0.0.1:11000/
+      PMA_ABSOLUTE_URI: http://サーバーのホスト:11000/
     extra_hosts:
       - "host.docker.internal:host-gateway"
 ```
@@ -259,13 +271,7 @@ docker compose up -d
 docker compose ps
 ```
 
-作業用 PC から SSH トンネルを張って開く。
-
-```bash
-ssh -i "example.pem" -L 11000:127.0.0.1:11000 ec2-user@サーバーのホスト
-```
-
-ブラウザは `http://127.0.0.1:11000/`。ログインは MySQL のユーザー名とパスワード。
+ブラウザは `http://サーバーのホスト:11000/`。ログインは MySQL のユーザー名とパスワード。通信は HTTP なので、許可した IP からでもパスワードはその経路上では暗号化されない。
 
 画面からの SQL 取り込みは 64MB まで。それより大きい dump は phpMyAdmin を使わず、サーバー上で次のように入れる。データベースは先に空で作っておく。
 

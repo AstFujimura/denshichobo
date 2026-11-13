@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Control\Tenant;
 use App\Models\Control\TenantAiSetting;
+use App\Models\Control\TenantMigrationRun;
 use App\Support\Tenancy\ProvisionDatabaseManager;
 use App\Support\Tenancy\TenantFeatureSync;
 use App\Support\Tenancy\TenantMigrator;
@@ -13,7 +14,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use RuntimeException;
+use Throwable;
 
 class ProvisionTenant implements ShouldQueue
 {
@@ -38,6 +42,25 @@ class ProvisionTenant implements ShouldQueue
     }
 
     public function handle(
+        ProvisionDatabaseManager $provision,
+        TenantMigrator $migrator,
+        TenantFeatureSync $featureSync
+    ): void {
+        ignore_user_abort(true);
+        set_time_limit(0);
+
+        try {
+            $this->provision($provision, $migrator, $featureSync);
+        } catch (Throwable $e) {
+            Log::error('Tenant provision failed', [
+                'tenant_id' => $this->tenantId,
+                'error' => $e->getMessage(),
+            ]);
+            $this->recordFailure($e);
+        }
+    }
+
+    protected function provision(
         ProvisionDatabaseManager $provision,
         TenantMigrator $migrator,
         TenantFeatureSync $featureSync
@@ -79,5 +102,33 @@ class ProvisionTenant implements ShouldQueue
                 'provisioned_at' => now(),
             ])->save();
         });
+    }
+
+    protected function recordFailure(Throwable $e): void
+    {
+        $tenant = Tenant::query()->find($this->tenantId);
+        if (! $tenant) {
+            return;
+        }
+
+        $alreadyRecorded = TenantMigrationRun::query()
+            ->where('tenant_id', $tenant->id)
+            ->where('status', 'failed')
+            ->where('created_at', '>=', now()->subMinute())
+            ->exists();
+
+        if ($alreadyRecorded) {
+            return;
+        }
+
+        TenantMigrationRun::query()->create([
+            'tenant_id' => $tenant->id,
+            'batch_id' => (string) Str::uuid(),
+            'status' => 'failed',
+            'attempts' => 1,
+            'started_at' => now(),
+            'finished_at' => now(),
+            'error_message' => Str::limit($e->getMessage(), 2000),
+        ]);
     }
 }
