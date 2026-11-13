@@ -6,27 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
     <title>@yield('title')</title>
-    <link rel="icon" href="{{ asset(config('prefix.prefix').'/'.'icon/readbridge.ico') }}" id="favicon">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin01.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin001.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/cardstyle.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/card_view_redesign.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/card_bulk_upload_redesign.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/jquery-ui.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/cropper.css') }}">
+    <link rel="icon" href="{{ tenant_asset('icon/readbridge.ico') }}" id="favicon">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/admin01.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/admin001.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/cardstyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/card_view_redesign.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/card_bulk_upload_redesign.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/regist.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/jquery-ui.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/cropper.css') }}">
     <!-- Select2.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css"
         integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="{{ asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
-    <script src="{{ asset(config('prefix.prefix').'/'.'jquery/laravelui.js')}}"></script>
-    <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui.js')}}"></script>
-    <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui_ja.js')}}"></script>
-    <script src="{{asset(config('prefix.prefix').'/'.'jquery/pdf.js')}}"></script>
-    <script src="{{ asset(config('prefix.prefix').'/'.'jquery/cropper-1.6.2.min.js') }}"></script>
+    <script src="{{ tenant_asset('jquery/jquery-3.7.0.min.js')}}"></script>
+    <script src="{{ tenant_asset('jquery/laravelui.js')}}"></script>
+    <script src="{{tenant_asset('jquery/jquery-ui.js')}}"></script>
+    <script src="{{tenant_asset('jquery/jquery-ui_ja.js')}}"></script>
+    <script src="{{tenant_asset('jquery/pdf.js')}}"></script>
+    <script src="{{ tenant_asset('jquery/cropper-1.6.2.min.js') }}"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
     </noscript>
@@ -34,12 +34,13 @@
 
 
 </head>
+@include('partials.support_banner')
 
 <header class="header001">
     <div class="logo01">
         <a href="{{route('cardviewget')}}" class="logoelement01" id="cardtemplate">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge_logo_only.svg') }}" alt="Rapid" class="readbridge_logo">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge.svg') }}" alt="Rapid" class="readbridge_char">
+            <img src="{{ tenant_asset('img/header/readbridge_logo_only.svg') }}" alt="Rapid" class="readbridge_logo">
+            <img src="{{ tenant_asset('img/header/readbridge.svg') }}" alt="Rapid" class="readbridge_char">
         </a>
 
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
@@ -51,20 +52,20 @@
 <div class="menu001">
 
     <a class="headerIcon001 card_nav_item @if(request()->routeIs('cardviewget')) is_active @endif" href="{{route('cardviewget')}}" data-nav="home" @if(request()->routeIs('cardviewget')) aria-current="page" @endif>
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}" class="menuicon01" title="Top" alt="">
+        <img src="{{ tenant_asset('img/card/home_gray.svg') }}" class="menuicon01" title="Top" alt="">
         <span class="card_nav_label">ホーム</span>
     </a>
     <a class="headerIcon001 card_nav_item @if(request()->routeIs('cardregistget')) is_active @endif" href="{{route('cardregistget')}}" data-nav="regist" @if(request()->routeIs('cardregistget')) aria-current="page" @endif>
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}" class="menuicon01" title="名刺登録" alt="">
+        <img src="{{ tenant_asset('img/card/regist_gray.svg') }}" class="menuicon01" title="名刺登録" alt="">
         <span class="card_nav_label">名刺取込</span>
     </a>
     <a class="headerIcon001 card_nav_item @if(request()->routeIs('cardmultipleuploadget')) is_active @endif" href="{{route('cardmultipleuploadget')}}" data-nav="bulk" @if(request()->routeIs('cardmultipleuploadget')) aria-current="page" @endif>
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/folder_gray.svg') }}" class="menuicon01"
+        <img src="{{ tenant_asset('img/card/folder_gray.svg') }}" class="menuicon01"
             title="名刺一括登録" alt="">
         <span class="card_nav_label">一括取込</span>
     </a>
     <a class="headerIcon001 card_nav_item @if(request()->routeIs('cardtagsettingsget')) is_active @endif" href="{{route('cardtagsettingsget')}}" data-nav="tag" @if(request()->routeIs('cardtagsettingsget')) aria-current="page" @endif>
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/tag_gray.svg') }}" class="menuicon01" title="タグ設定" alt="">
+        <img src="{{ tenant_asset('img/card/tag_gray.svg') }}" class="menuicon01" title="タグ設定" alt="">
         <span class="card_nav_label">タグ管理</span>
     </a>
 
@@ -72,15 +73,15 @@
     <div class="headerIcon001 rightmenue001"
         onclick="location.href='{{route('usersettingGet', ['system_type' => 'card'])}}';">
         <div class="usermenu01">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span
+            <img src="{{ tenant_asset('img/user_edit_line.svg') }}" class="usermenuicon01"><span
                 class="topusername01" id="topusername01">{{Auth::user()->表示名}}</span>
         </div>
         <div class="iconmessage">ユーザー情報</div>
     </div>
     <div class="headerIcon001 menue001">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
+        <img src="{{ tenant_asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
         <div class="iconmessage">メニュー</div>
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/close_line.svg') }}"
+        <img src="{{ tenant_asset('img/close_line.svg') }}"
             class="menuicon01 hamburger01 hamburger01close">
         <div class="iconmessage">閉じる</div>
     </div>
@@ -95,7 +96,7 @@
             <div class="icon01">
                 <div class="user01" onclick="location.href='{{route('usersettingGet', ['system_type' => 'card'])}}';">
                     <div class="usericon01">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_1_line.svg') }}" class="usericon01">
+                        <img src="{{ tenant_asset('img/user_1_line.svg') }}" class="usericon01">
                     </div>
                     <div class="username01">
                         {{Auth::user()->表示名}}
@@ -109,7 +110,7 @@
                 <a href="{{route('cardviewget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/home_gray.svg') }}"
+                            <img src="{{ tenant_asset('img/card/home_gray.svg') }}"
                                 class="flow_right_icon">
                         </div>
                         <div class="button1name01">
@@ -122,7 +123,7 @@
                 <a href="{{route('cardregistget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/regist_gray.svg') }}"
+                            <img src="{{ tenant_asset('img/card/regist_gray.svg') }}"
                                 class="flow_right_icon">
                         </div>
                         <div class="button1name01">
@@ -135,7 +136,7 @@
                 <a href="{{route('cardtagsettingsget')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/tag_gray.svg') }}"
+                            <img src="{{ tenant_asset('img/card/tag_gray.svg') }}"
                                 class="flow_right_icon">
                         </div>
                         <div class="button1name01">
@@ -149,7 +150,7 @@
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}">
+                            <img src="{{ tenant_asset('img/edit_fill.svg') }}">
                         </div>
                         <div class="button1name01">
                             管理画面
@@ -163,7 +164,7 @@
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/open_door_line.svg') }}"
+                            <img src="{{ tenant_asset('img/open_door_line.svg') }}"
                                 class="flow_right_icon">
                         </div>
                         <div class="button1name01">
@@ -200,19 +201,15 @@
 <footer>
     @yield('footer')
 </footer>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/all.js') }}"></script>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/style.js') }}"></script>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/card.js') }}"></script>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/usersetting.js') }}"></script>
+<script src="{{ tenant_asset('js/all.js') }}"></script>
+<script src="{{ tenant_asset('js/style.js') }}"></script>
+<script src="{{ tenant_asset('js/card.js') }}"></script>
+<script src="{{ tenant_asset('js/usersetting.js') }}"></script>
 <!-- flatpickr JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <!-- flatpickr日本語ローカライズ -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
-@if ($server == 'onpre')
-<script src="{{ asset(config('prefix.prefix').'/'.'js/onpre.js') }}"></script>
-@else
-<script src="{{ asset(config('prefix.prefix').'/'.'js/cloud.js') }}"></script>
-@endif
+<script src="{{ tenant_asset('js/storage.js') }}"></script>
 </footer>
 
 

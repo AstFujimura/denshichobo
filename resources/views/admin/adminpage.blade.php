@@ -24,7 +24,7 @@
     <nav class="admin_console" aria-label="管理メニュー">
         <a href="{{ route('adminregistGet') }}" class="admin_console_card admin_console_card--users">
             <span class="admin_console_card__icon" aria-hidden="true">
-                <img src="{{ asset($prefix.'/img/user_add_2_fill.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/user_add_2_fill.svg') }}" alt="">
             </span>
             <span class="admin_console_card__body">
                 <span class="admin_console_card__title">ユーザー管理</span>
@@ -35,7 +35,7 @@
 
         <a href="{{ route('admingroupregistGet') }}" class="admin_console_card admin_console_card--groups">
             <span class="admin_console_card__icon" aria-hidden="true">
-                <img src="{{ asset($prefix.'/img/group.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/group.svg') }}" alt="">
             </span>
             <span class="admin_console_card__body">
                 <span class="admin_console_card__title">グループ管理</span>
@@ -47,7 +47,7 @@
         @if (App\Models\Version::where('tameru', true)->first())
         <a href="{{ route('admindocumentGet') }}" class="admin_console_card admin_console_card--documents">
             <span class="admin_console_card__icon" aria-hidden="true">
-                <img src="{{ asset($prefix.'/img/document_2_line.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/document_2_line.svg') }}" alt="">
             </span>
             <span class="admin_console_card__body">
                 <span class="admin_console_card__title">書類管理</span>
@@ -60,7 +60,7 @@
         @if (Auth::id() === 1)
         <a href="{{ route('versionGet') }}" class="admin_console_card admin_console_card--features">
             <span class="admin_console_card__icon" aria-hidden="true">
-                <img src="{{ asset($prefix.'/img/settings_4_line.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/settings_4_line.svg') }}" alt="">
             </span>
             <span class="admin_console_card__body">
                 <span class="admin_console_card__title">機能設定</span>

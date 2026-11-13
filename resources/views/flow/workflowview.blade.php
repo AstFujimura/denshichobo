@@ -10,11 +10,11 @@ Rapid ~電子承認システム
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application_view.svg') }}" alt="" class="title_icon">申請一覧</h2>
+    <h2 class="pagetitle"><img src="{{ tenant_asset('img/flow_title/application_view.svg') }}" alt="" class="title_icon">申請一覧</h2>
     <div class="flow_view_container">
         <div class="flow_application_button_content">
             <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                <img src="{{ tenant_asset('img/button/home_back.svg') }}" alt="" class="button_icon">
                 トップへもどる
             </a>
         </div>

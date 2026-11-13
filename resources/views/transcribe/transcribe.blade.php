@@ -9,7 +9,7 @@
 
 @section('main')
 <div class="MainElement" id="transcribe_title">
-    {{-- <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/transcribe_title/transcribe.svg') }}"
+    {{-- <h2 class="pagetitle"><img src="{{ tenant_asset('img/transcribe_title/transcribe.svg') }}"
             alt="" class="title_icon">文書抽出</h2> --}}
     <div class="transcribe_container">
         <form action="{{route('transcribepost')}}" method="post" enctype="multipart/form-data" id="transcribe_form" >

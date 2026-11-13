@@ -94,14 +94,14 @@
             <div class="cell_content" data-cell="status">{{$user->管理}}</div>
             <div class="cell_content icon_cell" data-cell="change">
                 <div class="user_edit_button">
-                    <img src="{{ asset($prefix.'/'.'img/edit.svg')}}" class="edit_icon">
+                    <img src="{{ tenant_asset('img/edit.svg')}}" class="edit_icon">
                     <span>編集</span>
                 </div>
 
             </div>
             <div class="cell_content icon_cell" data-cell="delete">
                 <div class="user_delete_button">
-                    <img src="{{ asset($prefix.'/'.'img/delete.svg')}}" class="delete_icon">
+                    <img src="{{ tenant_asset('img/delete.svg')}}" class="delete_icon">
                     <span>削除</span>
                 </div>
             </div>

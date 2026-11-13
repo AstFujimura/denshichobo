@@ -9,7 +9,7 @@ Rapid ~電子承認システム
 
 @section('main')
 <div class="MainElement">
-    <h2 class="pagetitle" id="workflow_title"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">ワークフロートップ</h2>
+    <h2 class="pagetitle" id="workflow_title"><img src="{{ tenant_asset('img/flow_title/home.svg') }}" alt="" class="title_icon">ワークフロートップ</h2>
    
     <div class="main_menu_container">
         <div class="main_general_container">
@@ -22,7 +22,7 @@ Rapid ~電子承認システム
             <div class="main_general_content">
                 <a href="{{route('workflowapplicationget')}}" class="main_general_button workflow-card">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/application.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         ワークフロー申請
@@ -32,7 +32,7 @@ Rapid ~電子承認システム
 
                 <a href="{{route('workflowapprovalview')}}" class="main_general_button workflow-card">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/approve.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/approve.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         承認
@@ -47,7 +47,7 @@ Rapid ~電子承認システム
 
                 <a href="{{route('workflowviewget')}}" class="main_general_button workflow-card">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application_view.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/application_view.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         申請一覧
@@ -62,7 +62,7 @@ Rapid ~電子承認システム
 
                 <a href="{{route('workflowcheckviewget')}}" class="main_general_button workflow-card">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/checkview.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/checkview.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         閲覧一覧
@@ -72,7 +72,7 @@ Rapid ~電子承認システム
 
                 <a href="{{route('workflowstampget')}}" class="main_general_button workflow-card">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/stamp.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         印鑑設定
@@ -82,7 +82,7 @@ Rapid ~電子承認システム
 
                 <a href="{{route('workflowfileget')}}" class="main_general_button workflow-card">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/file.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/file.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         ファイル管理
@@ -103,7 +103,7 @@ Rapid ~電子承認システム
             <div class="main_admin_content">
                 <a href="{{route('workflowmaster')}}" class="main_admin_button workflow-card workflow-card-admin">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/flow.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/flow.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         経路マスタ
@@ -113,7 +113,7 @@ Rapid ~電子承認システム
 
                 <a href="{{route('mailsettingget')}}" class="main_admin_button workflow-card workflow-card-admin">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/mail.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/mail.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         メール設定
@@ -123,7 +123,7 @@ Rapid ~電子承認システム
 
                 <a href="{{route('categoryget')}}" class="main_admin_button workflow-card workflow-card-admin">
                     <div class="workflow-card-icon-wrapper">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="flow_title_icon">
+                        <img src="{{ tenant_asset('img/flow_title/category.svg') }}" alt="" class="flow_title_icon">
                     </div>
                     <div class="main_button_title">
                         カテゴリ設定

@@ -10,13 +10,13 @@
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/mail.svg') }}" alt="" class="title_icon">メール設定</h2>
+    <h2 class="pagetitle"><img src="{{ tenant_asset('img/flow_title/mail.svg') }}" alt="" class="title_icon">メール設定</h2>
     <div class="mail_setting_container">
         <form action="{{route('mailsettingpost')}}" id="mail_setting_post" method="post">
             @csrf
             <div class="mail_setting_button_content">
                 <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                    <img src="{{ tenant_asset('img/button/home_back.svg') }}" alt="" class="button_icon">
                     トップへもどる
                 </a>
                 <button class="next_button flow_next_button" id="flow_next_button">

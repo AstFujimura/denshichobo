@@ -11,7 +11,7 @@ Rapid ~電子承認システム
 <div class="MainElement">
 
     <h2 id="tameru_setting" class="pagetitle">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="title_icon">
+        <img src="{{ tenant_asset('img/flow_title/category.svg') }}" alt="" class="title_icon">
         TAMERU設定-{{$m_category->カテゴリ名}}
     </h2>
     <div class="tameru_setting_container">

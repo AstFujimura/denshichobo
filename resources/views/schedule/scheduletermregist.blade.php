@@ -9,7 +9,7 @@ Skett ~スケジュールアプリ
 
 @section('main')
 <div class="MainElement">
-    <h2 id="schedule_term_regist" class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/regist.svg') }}" alt="" class="title_icon">スケジュール登録</h2>
+    <h2 id="schedule_term_regist" class="pagetitle"><img src="{{ tenant_asset('img/schedule_title/regist.svg') }}" alt="" class="title_icon">スケジュール登録</h2>
     <form id="schedule_term_regist_form" action="{{ route('scheduletermregistpost') }}" method="post">
         @csrf
         <input type="hidden" name="event_id" value="{{ $event_id }}">

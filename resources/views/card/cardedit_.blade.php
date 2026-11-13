@@ -11,7 +11,7 @@
 <div class="MainElement">
     <div class="loading_container">
         <div class="loading_content">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/loading.gif') }}" alt="">
+            <img src="{{ tenant_asset('img/card/loading.gif') }}" alt="">
         </div>
         <div class="loading_text">
             AI解析中です
@@ -21,17 +21,17 @@
         <div class="crop_controller_content">
             <img src="" class="croppable_image">
             <div class="crop_complete_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/complete.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/card/complete.svg') }}" alt="">
             </div>
             <div class="crop_cancel_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/cancel.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/card/cancel.svg') }}" alt="">
             </div>
             <div class="crop_rotate_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/rotate.svg')}}" alt="">
+                <img src="{{ tenant_asset('img/card/rotate.svg')}}" alt="">
             </div>
         </div>
     </div>
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">名刺登録</h2>
+    <h2 class="pagetitle"><img src="{{ tenant_asset('img/flow_title/home.svg') }}" alt="" class="title_icon">名刺登録</h2>
 
     <div class="card_regist_container">
         <form class="card_regist_form" action="{{ route('cardregistpost') }}" id="card_regist_form" method="post" enctype="multipart/form-data">
@@ -53,7 +53,7 @@
                         AI読み取り
                     </div>
                     <div class="crop_button">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/crop.svg') }}" alt="">
+                        <img src="{{ tenant_asset('img/card/crop.svg') }}" alt="">
                         切り取り
                     </div>
                 </div>
@@ -90,7 +90,7 @@
                             </div>
                         </td>
                         <td>
-                            <img class="company_search_button" src="{{ asset(config('prefix.prefix').'/'.'img/card/search.svg') }}" alt="">
+                            <img class="company_search_button" src="{{ tenant_asset('img/card/search.svg') }}" alt="">
                         </td>
                     </tr>
                     <tr>

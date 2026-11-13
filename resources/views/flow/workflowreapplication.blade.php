@@ -15,14 +15,14 @@ Rapid ~電子承認システム
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon" id="workflow_reapply_title">ワークフロー再申請</h2>
+    <h2 class="pagetitle"><img src="{{ tenant_asset('img/flow_title/application.svg') }}" alt="" class="title_icon" id="workflow_reapply_title">ワークフロー再申請</h2>
     <form action="{{route('workflowreapplypost')}}" method="post" id="flow_application_form" class="flow_application_form" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="t_flow_id" value="{{$t_flow->id}}">
         <div class="flow_application_container">
             <div class="flow_application_button_content">
                 <a href="{{route('workflowapplicationdetailget',['id'=>$t_flow->id])}}" class="back_button " id="flow_next_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                    <img src="{{ tenant_asset('img/button/home_back.svg') }}" alt="" class="button_icon">
                     もどる
                 </a>
                 <button class="next_button flow_next_button" id="flow_next_button">

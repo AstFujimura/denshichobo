@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>ログインページ</title>
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/login.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/login.css') }}">
 
 
 
@@ -16,7 +16,7 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
             <div class="card">
-                @if (App\Models\Version::where('tameru', false)->first())
+                @if (! feature_enabled('tameru'))
                 <div class="card-header readbridge_card_header">
                     <h2>名刺管理システム ReadBridge ログインページ</h2>
                 </div>
@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="form-group">
-                            @if (App\Models\Version::where('tameru', false)->first())
+                            @if (! feature_enabled('tameru'))
                             <button type="submit" class="btn btn-primary readbridge_btn">ログイン</button>
                             @else
                             <button type="submit" class="btn btn-primary">ログイン</button>
@@ -58,5 +58,5 @@
 <div class="produced_by">
     <span>Produced by <a href="https://ast-sys.co.jp/" target="_blank">astec</a></span>
 </div>
-<script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/login.js') }}"></script>
+<script src="{{tenant_asset('jquery/jquery-3.7.0.min.js')}}"></script>
+<script src="{{ tenant_asset('js/login.js') }}"></script>

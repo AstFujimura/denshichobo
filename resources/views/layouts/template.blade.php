@@ -6,18 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>@yield('title')</title>
-    <link rel="icon" href="{{ asset(config('prefix.prefix').'/'.'icon/tameru.ico') }}" id="favicon">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin01.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/admin001.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/regist.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset(config('prefix.prefix').'/'.'css/jquery-ui.css') }}">
+    <link rel="icon" href="{{ tenant_asset('icon/tameru.ico') }}" id="favicon">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/admin01.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/admin001.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/regist.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ tenant_asset('css/jquery-ui.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css"
         integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-3.7.0.min.js')}}"></script>
-    <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui.js')}}"></script>
-    <script src="{{asset(config('prefix.prefix').'/'.'jquery/jquery-ui_ja.js')}}"></script>
+    <script src="{{tenant_asset('jquery/jquery-3.7.0.min.js')}}"></script>
+    <script src="{{tenant_asset('jquery/jquery-ui.js')}}"></script>
+    <script src="{{tenant_asset('jquery/jquery-ui_ja.js')}}"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;URL=/jserror" />
     </noscript>
@@ -25,6 +25,7 @@
 
 
 </head>
+@include('partials.support_banner')
 
 @php
 $banbanLogo = false;
@@ -39,11 +40,11 @@ if (today()->isBefore('2026-06-15')) {
     <div class="logo01">
         <a href="{{route('topGet')}}" class="logoelement01">
 
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="TAMERU" class="tameru_logo">
+            <img src="{{ tenant_asset('img/header/tameru_logo_only.svg') }}" alt="TAMERU" class="tameru_logo">
             @if($banbanLogo)
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/header/banban_tameru.svg') }}" alt="TAMERU" class="tameru_char tameru_char--banban">
+                <img src="{{ tenant_asset('img/header/banban_tameru.svg') }}" alt="TAMERU" class="tameru_char tameru_char--banban">
             @else
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru.svg') }}" alt="TAMERU" class="tameru_char">
+                <img src="{{ tenant_asset('img/header/tameru.svg') }}" alt="TAMERU" class="tameru_char">
             @endif
         </a>
         <input type="hidden" id="server" value="{{config('prefix.server')}}">
@@ -57,28 +58,28 @@ if (today()->isBefore('2026-06-15')) {
 <div class="menu001">
 
     <a class="headerIcon001" href="{{route('topGet')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}" class="menuicon01">
+        <img src="{{ tenant_asset('img/home_3_line.svg') }}" class="menuicon01">
         <div class="iconmessage">Top</div>
     </a>
     <a class="headerIcon001" href="{{route('registGet')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/pencil_2_line_gray.svg') }}" class="menuicon01">
+        <img src="{{ tenant_asset('img/pencil_2_line_gray.svg') }}" class="menuicon01">
         <div class="iconmessage">帳簿保存</div>
     </a>    
     <a class="headerIcon001" href="{{route('question')}}">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/question_line.svg') }}" class="menuicon01">
+        <img src="{{ tenant_asset('img/question_line.svg') }}" class="menuicon01">
         <div class="iconmessage">ヘルプ</div>
     </a>
 
     <a class="headerIcon001 rightmenue001" href="{{route('usersettingGet')}}">
         <div class="usermenu01">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->表示名}}</span>
+            <img src="{{ tenant_asset('img/user_edit_line.svg') }}" class="usermenuicon01"><span class="topusername01" id="topusername01">{{Auth::user()->表示名}}</span>
         </div>
         <div class="iconmessage">ユーザー情報</div>
     </a>
     <a class="headerIcon001 menue001">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/menu_fill.svg') }}" class="menuicon01 hamburger01">
+        <img src="{{ tenant_asset('img/menu_fill.svg') }}" class="menuicon01 hamburger01">
         <div class="iconmessage">メニュー</div>
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
+        <img src="{{ tenant_asset('img/close_line.svg') }}" class="menuicon01 hamburger01 hamburger01close">
         <div class="iconmessage">閉じる</div>
     </a>
 
@@ -92,7 +93,7 @@ if (today()->isBefore('2026-06-15')) {
             <div class="icon01">
                 <div class="user01">
                     <div class="usericon01">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/user_1_line.svg') }}" class="usericon01">
+                        <img src="{{ tenant_asset('img/user_1_line.svg') }}" class="usericon01">
                     </div>
                     <div class="username01">
                         {{Auth::user()->表示名}}
@@ -105,7 +106,7 @@ if (today()->isBefore('2026-06-15')) {
                 <a href="{{route('topGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/home_3_line.svg') }}">
+                            <img src="{{ tenant_asset('img/home_3_line.svg') }}">
                         </div>
                         <div class="button1name01">
                             帳簿一覧
@@ -117,7 +118,7 @@ if (today()->isBefore('2026-06-15')) {
                 <a href="{{route('registGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/pencil_2_line.svg') }}">
+                            <img src="{{ tenant_asset('img/pencil_2_line.svg') }}">
                         </div>
                         <div class="button1name01">
                             帳簿保存
@@ -130,7 +131,7 @@ if (today()->isBefore('2026-06-15')) {
                 <a href="{{route('adminGet')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/edit_fill.svg') }}">
+                            <img src="{{ tenant_asset('img/edit_fill.svg') }}">
                         </div>
                         <div class="button1name01">
                             管理画面
@@ -143,7 +144,7 @@ if (today()->isBefore('2026-06-15')) {
                 <a href="{{route('logout')}}" class="button1_01">
                     <div class="button1element01">
                         <div class="button1logo01">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/open_door_line.svg') }}">
+                            <img src="{{ tenant_asset('img/open_door_line.svg') }}">
                         </div>
                         <div class="button1name01">
                             ログアウト
@@ -189,16 +190,12 @@ if (today()->isBefore('2026-06-15')) {
 <footer>
     @yield('footer')
 </footer>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/all.js') }}"></script>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/usersetting.js') }}"></script>
+<script src="{{ tenant_asset('js/all.js') }}"></script>
+<script src="{{ tenant_asset('js/usersetting.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
-<script src="{{ asset(config('prefix.prefix').'/'.'js/style.js') }}"></script>
-@if ($server == 'onpre')
-<script src="{{ asset(config('prefix.prefix').'/'.'js/onpre.js') }}"></script>
-@else
-<script src="{{ asset(config('prefix.prefix').'/'.'js/cloud.js') }}"></script>
-@endif
+<script src="{{ tenant_asset('js/style.js') }}"></script>
+<script src="{{ tenant_asset('js/storage.js') }}"></script>
 
 
 

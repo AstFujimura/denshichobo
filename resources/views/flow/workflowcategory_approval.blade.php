@@ -13,7 +13,7 @@ Rapid ~電子承認システム
 <div class="MainElement">
 
     <h2 class="pagetitle" id="approval_setting"><img
-            src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="title_icon">承認設定
+            src="{{ tenant_asset('img/flow_title/category.svg') }}" alt="" class="title_icon">承認設定
     </h2>
     <form action="{{route('categoryapprovalsettingpost')}}" method="post" id="category_approval_setting_form"
         enctype="multipart/form-data">
@@ -53,7 +53,7 @@ Rapid ~電子承認システム
                     </div>
                     <label class="approval_setting_change_file {{$m_category->発行 == 1 ? '' : 'display_none'}}"
                         for="approval_setting_file">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/button/change.svg') }}" alt=""
+                        <img src="{{ tenant_asset('img/button/change.svg') }}" alt=""
                             class="button_icon">
                         ファイルの変更
                     </label>

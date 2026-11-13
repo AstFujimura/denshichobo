@@ -9,7 +9,7 @@ Skett ~スケジュールアプリ
 
 @section('main')
 <div class="MainElement">
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/calendar.svg') }}" alt="" class="title_icon">スケジュール</h2>
+    <h2 class="pagetitle"><img src="{{ tenant_asset('img/schedule_title/calendar.svg') }}" alt="" class="title_icon">スケジュール</h2>
     <input type="hidden" id="selected_group_id" value="{{ $selected_group_id }}">
     <div class="schedule_controll_container">
         <div class="schedule_group_container">
@@ -73,7 +73,7 @@ Skett ~スケジュールアプリ
                     {{ $user->表示名 }}
                 </div>
                 <a class="schedule_cell_header_month" href="{{ route('schedulemonthget', ['user_id' => $user->id, 'month' => Carbon\Carbon::parse($base_date)->format('Y-m')]) }}">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/schedule/calendar_month.svg') }}" alt="" class="schedule_cell_header_month_icon">
+                    <img src="{{ tenant_asset('img/schedule/calendar_month.svg') }}" alt="" class="schedule_cell_header_month_icon">
                     月予定
                 </a>
             </div>
@@ -115,7 +115,7 @@ Skett ~スケジュールアプリ
 
                 </div>
                 <a href="{{ route('scheduleregistget', ['user_id' => $user->id, 'date' => $cells->{$i}->ymd]) }}" class="regist_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/schedule/regist.svg') }}" alt="" class="regist_icon">
+                    <img src="{{ tenant_asset('img/schedule/regist.svg') }}" alt="" class="regist_icon">
                 </a>
         </div>
         @endfor

@@ -6,12 +6,10 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use App\Models\Document;
 use App\Models\File as Filemodel;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 
 use App\Models\Group;
@@ -115,9 +113,8 @@ class EditController extends Controller
             'server' => $server,
             'groups' => $groups,
             'selectstatus' => $selectstatus,
-            'banbanEnabled' => Version::where('BANBAN', true)->exists(),
-            'ichifujiEnabled' => Schema::hasColumn('versions', 'ichifuji')
-                && Version::where('ichifuji', true)->exists(),
+            'banbanEnabled' => feature_enabled('banban'),
+            'ichifujiEnabled' => feature_enabled('ichifuji'),
         ];
 
 
@@ -215,21 +212,10 @@ class EditController extends Controller
         //ファイルに変更がある場合とない場合でわける
         if (!empty($request->file('file'))) {
             $file = $request->file('file');
-            //ファイル形式を取得
-            $extension = $file->getClientOriginalExtension();
-            //既定のフォルダのパスを取得
-            $filename = Config::get('custom.file_upload_path');
-            //拡張子を除くファイル名
+            $extension = (string) $file->getClientOriginalExtension();
             $filepath = $currentTime . '_' . $path;
 
-            //アップロードされたファイルに拡張子がない場合
-            if (!$extension) {
-                copy($file->getRealPath(), $filename . "\\" . $filepath);
-                $extension = "";
-            } else {
-                copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-            }
-
+            tenant_storage()->put($filepath, $extension, $file);
 
             $newfile->ファイル形式 = $extension;
             $newfile->ファイルパス = $filepath;

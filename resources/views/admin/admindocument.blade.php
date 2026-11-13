@@ -66,13 +66,13 @@
                 </div>
                 <div class="cell_content icon_cell" data-cell="change">
                     <div class="document_edit_button user_edit_button">
-                        <img src="{{ asset($prefix.'/img/edit.svg') }}" class="edit_icon" alt="">
+                        <img src="{{ tenant_asset('img/edit.svg') }}" class="edit_icon" alt="">
                         <span>編集</span>
                     </div>
                 </div>
                 <div class="cell_content icon_cell" data-cell="delete">
                     <div class="user_delete_button document_row_delete" id="{{ $document->id }}">
-                        <img src="{{ asset($prefix.'/img/delete.svg') }}" class="delete_icon" alt="">
+                        <img src="{{ tenant_asset('img/delete.svg') }}" class="delete_icon" alt="">
                         <span>削除</span>
                     </div>
                 </div>

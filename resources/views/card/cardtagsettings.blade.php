@@ -7,7 +7,7 @@
 @section('main')
 <div class="card_tag_settings_container MainElement">
     <h2 class="pagetitle" id="card_tag_settings_title">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/tag_gray.svg') }}" alt="" class="title_icon">
+        <img src="{{ tenant_asset('img/card/tag_gray.svg') }}" alt="" class="title_icon">
         タグ設定
     </h2>
 

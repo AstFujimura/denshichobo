@@ -15,12 +15,12 @@ Rapid ~電子承認システム
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle" id="stamp_setting"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/stamp.svg') }}" alt="" class="title_icon">印鑑設定</h2>
+    <h2 class="pagetitle" id="stamp_setting"><img src="{{ tenant_asset('img/flow_title/stamp.svg') }}" alt="" class="title_icon">印鑑設定</h2>
     <form action="{{route('workflowstamppost')}}" id="stamp_regist" class="stamp_regist" method="post" enctype="multipart/form-data">
         @csrf
         <div class="flow_stamp_button_content">
             <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                <img src="{{ tenant_asset('img/button/home_back.svg') }}" alt="" class="button_icon">
                 トップへもどる
             </a>
             <button class="stamp_regist_button" id="stamp_regist_button">
@@ -115,7 +115,7 @@ Rapid ~電子承認システム
             </div>
         </div>
         <input type="hidden" id="stamp_img" name="stamp_img" value="">
-        <input type="hidden" id="毛筆体" value="{{ asset(config('prefix.prefix').'/'.'font/毛筆体.ttf') }}">
+        <input type="hidden" id="毛筆体" value="{{ tenant_asset('font/毛筆体.ttf') }}">
         <input type="hidden" id="HG正楷書体" value='https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HG正楷書体.TTF'>
         <input type="hidden" id="HGゴシック体" value='https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HGゴシック体.TTC'>
         <input type="hidden" id="HGR明朝体" value='https://astdocs-public.s3.ap-northeast-1.amazonaws.com/font/HGR明朝体.TTC'>

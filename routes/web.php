@@ -16,29 +16,37 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TranscribeController;
 use App\Http\Controllers\AiOcrController;
-use App\Http\Middleware\CheckSessionTimeout;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Schema;
-
-use App\Models\Version;
+use App\Http\Controllers\SupportAccessController;
+use App\Models\Control\Tenant;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| Tenant routes are always registered under {tenant_prefix}.
+| Feature availability is enforced by tenant.feature middleware
+| (see docs/multi_tenant_control_db.md).
 |
 */
 
 Route::get('/', function () {
-    // ルート名が"topGet"のルートにリダイレクト
-    return redirect()->route('topGet');
+    $tenant = Tenant::query()
+        ->where('status', Tenant::STATUS_ACTIVE)
+        ->orderBy('id')
+        ->first();
+
+    if ($tenant) {
+        return redirect('/' . $tenant->prefix . '/login');
+    }
+
+    return response('No active tenant configured. Run php artisan tenants:register', 503);
 });
-$prefix = config('prefix.prefix');
-Route::prefix($prefix)->group(function () {
+
+Route::prefix('{tenant_prefix}')
+    ->where(['tenant_prefix' => '^(?!platform$)[A-Za-z0-9_\-]+'])
+    ->middleware(['tenant.resolve', 'tenant.session'])
+    ->group(function () {
 
     // CSSフォルダへのルーティング
     Route::get('/css/{file}', [AssetController::class, 'css'])->where('file', '.*css');
@@ -68,9 +76,13 @@ Route::prefix($prefix)->group(function () {
     // javascriptが無効の場合
     Route::get('/jserror', [ErrorController::class, 'jserrorGet'])->name('jserrorGet');
 
+    // platform サポート入場（ワンタイムトークン）
+    Route::get('/support/callback', [SupportAccessController::class, 'callback'])->name('support.callback');
+
     Route::group(['middleware' => 'auth'], function () {
         // ログアウト時（すぐにリダイレクトされる）
         Route::get('logout', [LogoutController::class, 'Logout'])->name('logout');
+        Route::post('/support/exit', [SupportAccessController::class, 'exit'])->name('support.exit');
 
 
 
@@ -104,9 +116,9 @@ Route::prefix($prefix)->group(function () {
         Route::get('/objectURL', [RegistController::class, 'registURL'])->name('registURl');
 
         // -------------------------------BANBAN: 一括取込（帳簿保存）----------------------------------------------------
-        if (Version::where('BANBAN', true)->first()) {
-            Route::post('/regist/bulk', [RegistController::class, 'registBulkPost'])->name('registBulkPost');
-        }
+        Route::post('/regist/bulk', [RegistController::class, 'registBulkPost'])
+            ->middleware('tenant.feature:banban')
+            ->name('registBulkPost');
 
 
         // 変更ページ
@@ -174,12 +186,12 @@ Route::prefix($prefix)->group(function () {
         Route::get('/question', [TopController::class, 'question'])->name('question');
 
         // -------------------------------一藤（ichifuji）: AI OCR（帳簿保存/変更）----------------------------------------------------
-        if (Schema::hasColumn('versions', 'ichifuji') && Version::where('ichifuji', true)->first()) {
-            Route::post('/ai/ocr/ledger', [AiOcrController::class, 'ledger'])->name('aiOcrLedger');
-        }
+        Route::post('/ai/ocr/ledger', [AiOcrController::class, 'ledger'])
+            ->middleware('tenant.feature:ichifuji')
+            ->name('aiOcrLedger');
 
         // -------------------------------承認機能----------------------------------------------------
-        if (Version::where('フロー', true)->first()) {
+        Route::middleware('tenant.feature:flow')->group(function () {
             // 機能選択画面
             Route::get('/start_choice', [LoginController::class, 'startchoiceGet'])->name('startchoiceGet');
             // ワークフロー登録
@@ -351,11 +363,11 @@ Route::prefix($prefix)->group(function () {
             // Route::get('/workflow/modify', [FlowController::class, 'workflowmodifyget'])->name('workflowmodifyget');
             // 二度目の修正
             Route::get('/workflow/modify2', [FlowController::class, 'workflowmodify2get'])->name('workflowmodify2get');
-        }
+        });
 
 
         // -----------------------------名刺管理--------------------------------
-        if (Version::where('名刺', true)->first()) {
+        Route::middleware('tenant.feature:card')->group(function () {
             // 名刺管理画面
             Route::get('/card/cardview', [CardController::class, 'cardviewget'])->name('cardviewget');
             // 名刺表示サイズ変更
@@ -433,10 +445,10 @@ Route::prefix($prefix)->group(function () {
 
             // 名刺複数アップロードテスト削除
             Route::get('/card/multiple/destroy', [CardController::class, 'cardmultipletestdestroy'])->name('cardmultipletestdestroy');
-        }
+        });
 
         // -----------------------------スケジュール--------------------------------
-        if (Version::where('スケジュール', true)->first()) {
+        Route::middleware('tenant.feature:schedule')->group(function () {
             Route::get('/schedule', [ScheduleController::class, 'scheduleget'])->name('scheduleget');
             Route::get('/schedule/week', [ScheduleController::class, 'scheduleweekget'])->name('scheduleweekget');
             Route::get('/schedule/month', [ScheduleController::class, 'schedulemonthget'])->name('schedulemonthget');
@@ -457,12 +469,12 @@ Route::prefix($prefix)->group(function () {
             Route::post('/schedule/master/regist', [ScheduleController::class, 'schedulemasterregistpost'])->name('schedulemasterregistpost');
             // Route::get('/schedule/csv', [ScheduleController::class, 'schedulecsvget'])->name('schedulecsvget');
             // Route::post('/schedule/csv', [ScheduleController::class, 'schedulecsvpost'])->name('schedulecsvpost');
-        }
+        });
 
         // -----------------------------文書抽出--------------------------------
-        if (Version::where('文書', true)->first()) {
+        Route::middleware('tenant.feature:transcribe')->group(function () {
             Route::get('/transcribe', [TranscribeController::class, 'transcribeget'])->name('transcribeget');
             Route::post('/transcribe', [TranscribeController::class, 'transcribepost'])->name('transcribepost');
-        }
+        });
     });
 });

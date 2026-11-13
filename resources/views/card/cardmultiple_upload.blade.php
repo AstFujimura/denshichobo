@@ -9,7 +9,7 @@
 
     <div class="bulk_upload_hero">
         <h2 class="bulk_upload_title" id="card_multiple_upload_title">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/title/folder_title.svg') }}" alt="" class="title_icon">
+            <img src="{{ tenant_asset('img/card/title/folder_title.svg') }}" alt="" class="title_icon">
             一括取込
         </h2>
         <p class="bulk_upload_lead">フォルダや画像から、名刺をまとめて取り込みます。</p>
@@ -25,7 +25,7 @@
                 <label for="folder_upload" class="upload_source_card folder_upload_label" data-upload-source="folder">
                     <div class="upload_source_card_inner">
                         <div class="upload_source_icon">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/folder_gray.svg') }}" alt="" class="upload_source_icon_img">
+                            <img src="{{ tenant_asset('img/card/folder_gray.svg') }}" alt="" class="upload_source_icon_img">
                         </div>
                         <div class="upload_source_text">
                             <div class="upload_source_title">フォルダから取込</div>
@@ -38,7 +38,7 @@
                 <label for="image_upload" class="upload_source_card image_upload_label" data-upload-source="images">
                     <div class="upload_source_card_inner">
                         <div class="upload_source_icon">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/image_gray.svg') }}" alt="" class="upload_source_icon_img">
+                            <img src="{{ tenant_asset('img/card/image_gray.svg') }}" alt="" class="upload_source_icon_img">
                         </div>
                         <div class="upload_source_text">
                             <div class="upload_source_title">画像から取込</div>
@@ -48,7 +48,7 @@
                 </label>
             </div>
             <div class="analyzing_text">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/analyzing.gif') }}" alt="" class="loading_icon">
+                <img src="{{ tenant_asset('img/card/analyzing.gif') }}" alt="" class="loading_icon">
                 解析中
             </div>
 

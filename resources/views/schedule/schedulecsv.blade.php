@@ -9,7 +9,7 @@ Skett ~スケジュールアプリ
 
 @section('main')
 <div class="MainElement">
-    <h2 id="schedulemaster_regist" class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/home.svg') }}" alt="" class="title_icon">予定マスタ登録</h2>
+    <h2 id="schedulemaster_regist" class="pagetitle"><img src="{{ tenant_asset('img/flow_title/home.svg') }}" alt="" class="title_icon">予定マスタ登録</h2>
     <div class="page_reload_container">
         <a class="page_back_button" href="{{ route('scheduleget')}}">
             トップへもどる

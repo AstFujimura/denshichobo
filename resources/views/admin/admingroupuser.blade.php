@@ -78,7 +78,7 @@
                 </div>
                 <div class="groupuser_delete">
                     <div class="groupuser_delete_button">
-                        <img src="{{ asset($prefix.'/'.'img/delete.svg')}}" class="delete_icon">
+                        <img src="{{ tenant_asset('img/delete.svg')}}" class="delete_icon">
                         <span>削除</span>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
         </div>
         <div class="groupuser_delete">
             <div class="groupuser_delete_button">
-                <img src="{{ asset($prefix.'/'.'img/delete.svg')}}" class="delete_icon">
+                <img src="{{ tenant_asset('img/delete.svg')}}" class="delete_icon">
                 <span>削除</span>
             </div>
         </div>

@@ -76,7 +76,7 @@
 
             <div class="downloadTd" data-row-action="stop">
 
-                <img src="{{ asset($prefix.'/img/download_2_line.svg') }}" id="{{ $prefix }}/download/{{ $file->id }}" class="download downloadbutton" alt="ダウンロード">
+                <img src="{{ tenant_asset('img/download_2_line.svg') }}" id="{{ $prefix }}/download/{{ $file->id }}" class="download downloadbutton" alt="ダウンロード">
 
             </div>
 
@@ -86,7 +86,7 @@
 
                 @if ($file->ファイル形式 == "png"||$file->ファイル形式 == "PNG"||$file->ファイル形式 == "jpg"||$file->ファイル形式 == "jpeg"||$file->ファイル形式 == "JPG"||$file->ファイル形式 == "jpe"||$file->ファイル形式 == "JPEG"||$file->ファイル形式 == "bmp"||$file->ファイル形式 == "gif"||$file->ファイル形式 == "pdf"||$file->ファイル形式 == "PDF")
 
-                <img src="{{ asset($prefix.'/img/file_search_line.svg') }}" class="download previewbutton" id="{{ $file->id }}" alt="プレビュー">
+                <img src="{{ tenant_asset('img/file_search_line.svg') }}" class="download previewbutton" id="{{ $file->id }}" alt="プレビュー">
 
                 @endif
 

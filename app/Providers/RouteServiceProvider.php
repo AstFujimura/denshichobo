@@ -33,6 +33,10 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
+            // Platform routes must be registered before tenant {tenant_prefix} catch-all.
+            Route::middleware('web')
+                ->group(base_path('routes/platform.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });

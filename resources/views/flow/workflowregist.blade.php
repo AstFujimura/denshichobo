@@ -20,7 +20,7 @@ Rapid ~電子承認システム
 
         </div> -->
         <div class="MainElement flow_master_element">
-            <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/flow.svg') }}" alt="" class="title_icon">経路マスタ登録</h2>
+            <h2 class="pagetitle"><img src="{{ tenant_asset('img/flow_title/flow.svg') }}" alt="" class="title_icon">経路マスタ登録</h2>
             <div class="element_input">
                 <input type="hidden" name="edit" class="regist" id="regist" value="regist">
                 @foreach ($positions as $position)
@@ -38,7 +38,7 @@ Rapid ~電子承認システム
 
             <div class="flow_master_button_container">
                 <a href="{{route('workflow')}}" class="back_button " id="flow_next_button">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                    <img src="{{ tenant_asset('img/button/home_back.svg') }}" alt="" class="button_icon">
                     トップへもどる
                 </a>
                 <button class="workflow_submit_button">
@@ -130,8 +130,8 @@ Rapid ~電子承認システム
                 <div class="grid_container">
                     <div class="zoom_in_out">
 
-                        <img src="{{ asset($prefix.'/'.'img/zoom_in.svg')}}" class="zoom" id="zoom_in">
-                        <img src="{{ asset($prefix.'/'.'img/zoom_out.svg')}}" class="zoom" id="zoom_out">
+                        <img src="{{ tenant_asset('img/zoom_in.svg')}}" class="zoom" id="zoom_in">
+                        <img src="{{ tenant_asset('img/zoom_out.svg')}}" class="zoom" id="zoom_out">
 
                     </div>
                     <div class="grid">

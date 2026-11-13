@@ -1,0 +1,858 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Binder マルチテナント構成</title>
+  <style>
+    :root {
+      --ink: #182230;
+      --muted: #5c6775;
+      --line: #cbd3dc;
+      --soft: #f5f7f9;
+      --navy: #16416f;
+      --blue: #eaf3fb;
+      --blue-line: #69a4d3;
+      --green: #edf7f1;
+      --green-line: #66a67d;
+      --amber: #fff6df;
+      --amber-line: #d7a943;
+      --red: #fff0ef;
+      --red-line: #d36d68;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: #e9edf1; }
+    body {
+      margin: 0;
+      background: #e9edf1;
+      color: var(--ink);
+      font: 9.5pt/1.42 "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      counter-reset: sheet;
+    }
+    .sheet {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      margin: 8mm auto;
+      padding: 12mm 14mm 17mm;
+      overflow: hidden;
+      background: #fff;
+      counter-increment: sheet;
+      break-after: page;
+      break-inside: avoid;
+    }
+    .sheet + .sheet { page-break-before: always; }
+    .sheet::after {
+      content: counter(sheet);
+      position: absolute;
+      right: 14mm;
+      bottom: 7mm;
+      color: var(--muted);
+      font-size: 7.5pt;
+    }
+    .kicker {
+      color: var(--navy);
+      font-size: 8.5pt;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 2mm 0 2mm;
+      font-size: 21pt;
+      line-height: 1.25;
+      letter-spacing: .01em;
+    }
+    .lead {
+      margin: 0 0 5mm;
+      color: var(--muted);
+      font-size: 10pt;
+    }
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+      margin: 0 0 4mm;
+      font-size: 14pt;
+      line-height: 1.3;
+    }
+    h2 .no {
+      display: inline-grid;
+      place-items: center;
+      width: 8mm;
+      height: 8mm;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      font-size: 9pt;
+    }
+    h3 { margin: 0 0 2mm; font-size: 11pt; }
+    p { margin: 0 0 3mm; }
+    .mono { font-family: Consolas, "Courier New", monospace; }
+    .legend {
+      display: flex;
+      gap: 5mm;
+      margin: 0 0 4mm;
+      color: var(--muted);
+      font-size: 8.5pt;
+    }
+    .legend span { display: flex; align-items: center; gap: 1.5mm; }
+    .dot { width: 3mm; height: 3mm; border-radius: 50%; border: 1px solid; }
+    .dot.shared { background: var(--blue); border-color: var(--blue-line); }
+    .dot.tenant { background: var(--green); border-color: var(--green-line); }
+    .dot.infra { background: var(--amber); border-color: var(--amber-line); }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 12mm 1fr;
+      align-items: stretch;
+      gap: 4mm;
+    }
+    .change-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--navy);
+      font-size: 24pt;
+      font-weight: 700;
+    }
+    .architecture {
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--line);
+      border-radius: 2mm;
+      padding: 3.5mm;
+      background: #fff;
+    }
+    .architecture.before { border-top-color: var(--red-line); }
+    .architecture.after { border-top-color: var(--navy); }
+    .arch-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 3mm;
+    }
+    .arch-label strong { font-size: 13pt; }
+    .arch-label small { color: var(--muted); }
+    .node {
+      position: relative;
+      padding: 3mm;
+      border: 1px solid var(--line);
+      border-radius: 2mm;
+      background: #fff;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+    .node strong { display: block; }
+    .node small { display: block; margin-top: .6mm; color: var(--muted); line-height: 1.35; }
+    .node.infra { background: var(--amber); border-color: var(--amber-line); }
+    .node.shared { background: var(--blue); border-color: var(--blue-line); }
+    .node.tenant { background: var(--green); border-color: var(--green-line); }
+    .node.old { background: var(--red); border-color: var(--red-line); }
+    .node.dark { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .node.dark small { color: #d9e8f5; }
+    .arrow-down {
+      position: relative;
+      height: 8mm;
+    }
+    .arrow-down::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      height: 5.5mm;
+      border-left: 1.5px solid #667382;
+    }
+    .arrow-down::after {
+      content: "";
+      position: absolute;
+      left: calc(50% - 1.5mm);
+      bottom: .5mm;
+      border: 1.5mm solid transparent;
+      border-top: 2mm solid #667382;
+    }
+    .branch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3mm;
+    }
+    .branch.three { grid-template-columns: repeat(3, 1fr); }
+    .rule-list {
+      display: grid;
+      gap: 2mm;
+      margin-top: 3mm;
+    }
+    .rule {
+      display: grid;
+      grid-template-columns: 24mm 1fr;
+      gap: 2mm;
+      padding: 2mm;
+      border-radius: 1.5mm;
+      background: var(--soft);
+      font-size: 8.5pt;
+    }
+    .rule code { color: var(--navy); font-weight: 700; }
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3mm;
+      margin-top: 4mm;
+    }
+    .summary-strip > div {
+      padding: 3mm;
+      border-left: 3px solid var(--navy);
+      background: var(--soft);
+      font-size: 9pt;
+    }
+    .summary-strip strong { display: block; margin-bottom: 1mm; }
+
+    .system-map {
+      padding: 4mm;
+      border: 1px solid var(--line);
+      border-radius: 2mm;
+      background: #fbfcfd;
+    }
+    .flow-row {
+      display: grid;
+      grid-template-columns: 36mm 8mm 1fr;
+      align-items: center;
+      gap: 2mm;
+    }
+    .flow-row .right-arrow { text-align: center; color: var(--navy); font-size: 18pt; }
+    .stack { display: grid; gap: 3mm; }
+    .db-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1.9fr;
+      gap: 5mm;
+      margin-top: 4mm;
+    }
+    .group {
+      padding: 4mm;
+      border: 1px solid var(--line);
+      border-radius: 2mm;
+      background: #fff;
+    }
+    .group.shared { border-top: 4px solid var(--blue-line); }
+    .group.tenant { border-top: 4px solid var(--green-line); }
+    .group-title { margin-bottom: 3mm; font-size: 12pt; font-weight: 700; }
+    .schema {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2mm;
+    }
+    .schema div {
+      padding: 2mm;
+      border: 1px solid var(--line);
+      border-radius: 1mm;
+      background: var(--soft);
+      font: 8.5pt Consolas, monospace;
+    }
+    .db-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+    .db {
+      padding: 3mm;
+      border: 1px solid var(--green-line);
+      border-radius: 2mm;
+      background: var(--green);
+    }
+    .db strong, .db span { display: block; }
+    .db span { margin-top: 2mm; color: var(--muted); font-size: 8.5pt; }
+    .boundary {
+      margin-top: 4mm;
+      padding: 3mm 4mm;
+      border: 1px solid var(--green-line);
+      border-radius: 2mm;
+      background: #f7fcf9;
+      font-size: 9.5pt;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: stretch;
+      gap: 2mm;
+      margin-bottom: 5mm;
+    }
+    .step {
+      position: relative;
+      min-height: 30mm;
+      padding: 3mm 2.5mm;
+      border: 1px solid var(--line);
+      border-radius: 2mm;
+      background: #fff;
+      text-align: center;
+    }
+    .step:not(:last-child)::after {
+      content: "›";
+      position: absolute;
+      z-index: 2;
+      right: -3.6mm;
+      top: 11mm;
+      width: 5mm;
+      color: var(--navy);
+      background: #fff;
+      font-size: 18pt;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .step b {
+      display: grid;
+      place-items: center;
+      width: 6mm;
+      height: 6mm;
+      margin: 0 auto 2mm;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      font-size: 8pt;
+    }
+    .step strong { display: block; margin-bottom: 1mm; font-size: 9.5pt; }
+    .step small { color: var(--muted); font-size: 8pt; line-height: 1.4; }
+    .storage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+    .storage-card {
+      padding: 4mm;
+      border: 1px solid var(--line);
+      border-radius: 2mm;
+      background: #fff;
+    }
+    .storage-route {
+      display: grid;
+      grid-template-columns: 1fr 6mm 1fr;
+      align-items: center;
+      gap: 2mm;
+      margin-top: 3mm;
+    }
+    .storage-route .right-arrow { color: var(--navy); text-align: center; }
+
+    .aws-frame {
+      padding: 4mm;
+      border: 1.5px solid var(--amber-line);
+      border-radius: 2mm;
+      background: #fffdfa;
+    }
+    .aws-title { margin-bottom: 3mm; color: #806119; font-size: 9pt; font-weight: 700; letter-spacing: .08em; }
+    .aws-flow {
+      display: grid;
+      grid-template-columns: 31mm 7mm 34mm 7mm 1fr;
+      align-items: center;
+      gap: 2mm;
+    }
+    .aws-flow .right-arrow { text-align: center; color: var(--navy); font-size: 18pt; }
+    .aws-backend { display: grid; gap: 3mm; }
+    .credential-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3mm;
+      margin: 6mm 0;
+    }
+    .credential {
+      padding: 3mm;
+      border: 1px solid var(--line);
+      border-radius: 2mm;
+      background: var(--soft);
+    }
+    .credential strong { display: block; color: var(--navy); }
+    .credential small { color: var(--muted); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+    }
+    th, td {
+      padding: 2.5mm 3mm;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--soft); }
+    .ops-grid { display: grid; grid-template-columns: 1fr 12mm 1fr; align-items: stretch; gap: 4mm; }
+    .ops-card {
+      padding: 4mm;
+      border: 1px solid var(--line);
+      border-radius: 2mm;
+    }
+    .ops-card.before { border-top: 4px solid var(--red-line); }
+    .ops-card.after { border-top: 4px solid var(--navy); }
+    .ops-card ul { margin: 3mm 0 0; padding-left: 5mm; }
+    .ops-card li { margin-bottom: 1.5mm; }
+    .server-list { display: grid; gap: 2mm; margin-top: 4mm; }
+    .server-row {
+      display: grid;
+      grid-template-columns: 25mm 1fr;
+      gap: 3mm;
+      align-items: center;
+      padding: 2.5mm;
+      border: 1px solid var(--line);
+      border-radius: 1.5mm;
+      background: var(--soft);
+      font-size: 8.5pt;
+    }
+    .server-row strong { color: var(--navy); }
+    .ops-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--navy);
+      font-size: 24pt;
+      font-weight: 700;
+    }
+    .result {
+      margin-top: 5mm;
+      padding: 3mm 4mm;
+      border-left: 4px solid var(--green-line);
+      background: var(--green);
+      font-size: 9.5pt;
+    }
+    .feature-panel {
+      margin-top: 4mm;
+      padding: 4mm;
+      border: 1px solid var(--blue-line);
+      border-radius: 2mm;
+      background: var(--blue);
+    }
+    .feature-panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3mm;
+      padding-bottom: 2mm;
+      border-bottom: 1px solid var(--blue-line);
+      font-weight: 700;
+    }
+    .feature-list { display: grid; gap: 2mm; }
+    .feature-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 2.5mm 3mm;
+      border: 1px solid var(--line);
+      border-radius: 1.5mm;
+      background: #fff;
+    }
+    .switch {
+      position: relative;
+      width: 10mm;
+      height: 5.5mm;
+      border-radius: 4mm;
+      background: #aab3bd;
+    }
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: .75mm;
+      left: .8mm;
+      width: 4mm;
+      height: 4mm;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .switch.on { background: var(--navy); }
+    .switch.on::after { left: 5.2mm; }
+    .service-flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+      gap: 5mm;
+      margin-top: 6mm;
+    }
+    .service-flow > div { position: relative; }
+    .service-flow > div:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -5mm;
+      top: 50%;
+      color: var(--navy);
+      font-size: 15pt;
+      transform: translate(50%, -50%);
+    }
+    .foot {
+      position: absolute;
+      right: 22mm;
+      bottom: 7mm;
+      left: 14mm;
+      margin: 0;
+      padding-top: 2mm;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 7.5pt;
+    }
+
+    @media screen and (max-width: 760px) {
+      html, body { background: #fff; }
+      .sheet { width: 100%; height: auto; min-height: 0; margin: 0; padding: 8mm; overflow: visible; }
+      .sheet::after, .foot { position: static; display: block; margin-top: 7mm; }
+      .comparison, .db-grid, .ops-grid { grid-template-columns: 1fr; }
+      .change-arrow, .ops-arrow { transform: rotate(90deg); }
+      .steps { grid-template-columns: 1fr; }
+      .step:not(:last-child)::after { display: none; }
+      .aws-flow { grid-template-columns: 1fr; }
+      .aws-flow .right-arrow { transform: rotate(90deg); }
+      .service-flow { grid-template-columns: 1fr; }
+      .service-flow > div:not(:last-child)::after { display: none; }
+    }
+    @media print {
+      @page { size: A4; margin: 0; }
+      body { background: #fff; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .sheet {
+        width: 210mm;
+        height: 297mm;
+        min-height: 297mm;
+        margin: 0;
+        padding: 12mm 14mm 17mm;
+        overflow: hidden;
+        box-shadow: none;
+        page-break-after: always;
+        break-after: page;
+      }
+      .sheet:last-child { page-break-after: auto; }
+      .architecture, .system-map, .db-grid, .ops-grid, .storage-grid,
+      .aws-frame, .credential-row, table, .steps, .service-flow {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="sheet">
+    <div class="kicker">システム構成</div>
+    <h1>Binder マルチテナント構成</h1>
+    <p class="lead">URLプレフィックスは維持し、振り分けの責務を ALB からアプリケーションへ移す。</p>
+
+    <h2><span class="no">1</span>ALB と EC2 の構成変更</h2>
+    <div class="comparison">
+      <article class="architecture before">
+        <div class="arch-label">
+          <strong>以前</strong>
+          <small>EC2を顧客ごとに分離</small>
+        </div>
+        <div class="node">利用者<small>/astec/...　/xxx/...</small></div>
+        <div class="arrow-down"></div>
+        <div class="node infra"><strong>ALB</strong><small>パスベースルーティング</small></div>
+        <div class="rule-list">
+          <div class="rule"><code>/astec/*</code><span>顧客Aターゲットへ</span></div>
+          <div class="rule"><code>/xxx/*</code><span>顧客Bターゲットへ</span></div>
+        </div>
+        <div class="arrow-down"></div>
+        <div class="branch">
+          <div class="node old"><strong>EC2 顧客A</strong><small>アプリA<br>顧客A設定</small></div>
+          <div class="node old"><strong>EC2 顧客B</strong><small>アプリB<br>顧客B設定</small></div>
+        </div>
+        <div class="arrow-down"></div>
+        <div class="branch">
+          <div class="node tenant"><strong>DB A</strong></div>
+          <div class="node tenant"><strong>DB B</strong></div>
+        </div>
+      </article>
+
+      <div class="change-arrow" aria-label="変更">→</div>
+
+      <article class="architecture after">
+        <div class="arch-label">
+          <strong>現在の構成</strong>
+          <small>共通アプリに集約</small>
+        </div>
+        <div class="node">利用者<small>/astec/...　/xxx/...</small></div>
+        <div class="arrow-down"></div>
+        <div class="node infra"><strong>ALB</strong><small>全プレフィックスを共通ターゲットへ</small></div>
+        <div class="arrow-down"></div>
+        <div class="node dark"><strong>共通 EC2 / Laravel</strong><small>URLプレフィックスからテナントを解決</small></div>
+        <div class="arrow-down"></div>
+        <div class="node shared"><strong>制御DB</strong><small>URLプレフィックス → 接続先DB名・設定</small></div>
+        <div class="arrow-down"></div>
+        <div class="branch">
+          <div class="node tenant"><strong>DB A</strong><small>binder_astec</small></div>
+          <div class="node tenant"><strong>DB B</strong><small>binder_xxx</small></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="summary-strip">
+      <div><strong>ALB</strong>顧客判定を行わず、共通アプリへ転送</div>
+      <div><strong>EC2</strong>顧客別から共通アプリ構成へ集約</div>
+      <div><strong>Laravel</strong>URLプレフィックスを解決し、顧客DBを動的に選択</div>
+    </div>
+    <div class="foot">詳細仕様: docs/multi_tenant_control_db.md</div>
+  </section>
+
+  <section class="sheet">
+    <h2><span class="no">2</span>共通アプリとデータベースの境界</h2>
+    <div class="legend">
+      <span><i class="dot shared"></i>全顧客で共通</span>
+      <span><i class="dot tenant"></i>顧客ごとに分離</span>
+      <span><i class="dot infra"></i>AWS・インフラ</span>
+    </div>
+
+    <div class="system-map">
+      <div class="flow-row">
+        <div class="node infra"><strong>ALB</strong><small>共通ターゲット</small></div>
+        <div class="right-arrow">→</div>
+        <div class="stack">
+          <div class="node dark"><strong>Laravel 共通アプリ</strong><small>ルート: /{tenant_prefix}/...</small></div>
+          <div class="branch three">
+            <div class="node shared"><strong>テナント情報</strong><small>現在の顧客</small></div>
+            <div class="node shared"><strong>機能制御</strong><small>サービスの有効・無効</small></div>
+            <div class="node shared"><strong>ファイル保存・AI</strong><small>顧客設定を適用</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="db-grid">
+      <article class="group shared">
+        <div class="group-title">制御DB <span class="mono">binder_control</span></div>
+        <p>全顧客を管理する共通の台帳。業務データは置かない。</p>
+        <div class="schema">
+          <div>tenants</div>
+          <div>tenant_features</div>
+          <div>tenant_ai_settings</div>
+          <div>tenant_settings</div>
+          <div>platform_admins</div>
+          <div>tenant_migration_runs</div>
+        </div>
+      </article>
+
+      <article class="group tenant">
+        <div class="group-title">テナントDB</div>
+        <p>顧客ごとの業務データ。顧客間で行を混在させない。</p>
+        <div class="db-pair">
+          <div class="db">
+            <strong class="mono">binder_astec</strong>
+            <span>users / cards / files / groups / …</span>
+          </div>
+          <div class="db">
+            <strong class="mono">binder_xxx</strong>
+            <span>users / cards / files / groups / …</span>
+          </div>
+        </div>
+        <div class="boundary"><strong>分離単位はDB。</strong>共有テーブルに <span class="mono">tenant_id</span> を追加する方式ではない。</div>
+      </article>
+    </div>
+
+    <h3 style="margin-top:7mm">制御DBのテナント台帳（tenants）が接続先を決める</h3>
+    <table>
+      <thead><tr><th>URLプレフィックス</th><th>接続先DB名</th><th>保存方式</th><th>状態</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">astec</td><td class="mono">binder_astec</td><td>クラウド</td><td>利用中</td></tr>
+        <tr><td class="mono">xxx</td><td class="mono">binder_xxx</td><td>ローカル</td><td>利用中</td></tr>
+      </tbody>
+    </table>
+    <div class="foot">青 = 共通管理情報　／　緑 = 顧客別の業務データ</div>
+  </section>
+
+  <section class="sheet">
+    <h2><span class="no">3</span>サービスの切り替え</h2>
+    <p class="lead">TAMERU・名刺管理・フローなどの利用可否を、顧客DBの直接操作ではなく管理画面から変更する。</p>
+
+    <div class="ops-grid">
+      <article class="ops-card before">
+        <h3>以前 — 顧客DBを直接変更</h3>
+        <div class="node"><strong>運用担当者</strong><small>切り替え依頼を確認</small></div>
+        <div class="arrow-down"></div>
+        <div class="node infra"><strong>顧客別EC2へ接続</strong><small>対象サーバーを確認</small></div>
+        <div class="arrow-down"></div>
+        <div class="node old"><strong>顧客DBを直接更新</strong><small>versionsテーブル等の値を変更</small></div>
+        <ul>
+          <li>顧客ごとに接続先を確認</li>
+          <li>DBの直接操作が必要</li>
+          <li>誤った顧客DBを変更する危険がある</li>
+        </ul>
+      </article>
+
+      <div class="ops-arrow" aria-label="変更">→</div>
+
+      <article class="ops-card after">
+        <h3>今後 — 管理画面から変更</h3>
+        <div class="feature-panel">
+          <div class="feature-panel-title"><span>顧客A / 機能設定</span><small>管理画面</small></div>
+          <div class="feature-list">
+            <div class="feature-item"><span>TAMERU</span><i class="switch on" aria-label="有効"></i></div>
+            <div class="feature-item"><span>TAMERU AI</span><i class="switch on" aria-label="有効"></i></div>
+            <div class="feature-item"><span>名刺管理</span><i class="switch on" aria-label="有効"></i></div>
+            <div class="feature-item"><span>フロー</span><i class="switch" aria-label="無効"></i></div>
+            <div class="feature-item"><span>スケジュール</span><i class="switch on" aria-label="有効"></i></div>
+          </div>
+        </div>
+        <ul>
+          <li>テナント一覧から対象顧客を選択</li>
+          <li>画面上でサービスを有効・無効化</li>
+          <li>顧客DBへ直接接続しない</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="service-flow">
+      <div class="node shared"><strong>管理画面</strong><small>サービスを選択</small></div>
+      <div class="node shared"><strong>制御DB</strong><small>tenant_featuresを更新</small></div>
+      <div class="node dark"><strong>共通アプリ</strong><small>設定を読み込む</small></div>
+      <div class="node tenant"><strong>顧客画面</strong><small>メニュー・機能へ反映</small></div>
+    </div>
+
+    <div class="result"><strong>変更点:</strong> サービス契約・利用機能の切り替え先を、各顧客DBから共通の制御DBへ移す。変更操作はプラットフォーム管理画面で行う。</div>
+    <div class="foot">管理画面: /platform/tenants/{tenant}　／　保存先: binder_control.tenant_features</div>
+  </section>
+
+  <section class="sheet">
+    <h2><span class="no">4</span>1リクエストの処理</h2>
+    <p class="lead"><span class="mono">/astec/card</span> へのアクセスを例にした接続切替。</p>
+    <div class="steps">
+      <div class="step"><b>1</b><strong>ALB</strong><small>共通EC2へ転送</small></div>
+      <div class="step"><b>2</b><strong>URLプレフィックス抽出</strong><small>astec を取得</small></div>
+      <div class="step"><b>3</b><strong>制御DB参照</strong><small>tenants を検索</small></div>
+      <div class="step"><b>4</b><strong>接続切替</strong><small>binder_astec を選択</small></div>
+      <div class="step"><b>5</b><strong>業務処理</strong><small>顧客Aのデータだけを参照</small></div>
+    </div>
+
+    <div class="system-map">
+      <div class="node dark"><strong>テナント解決処理</strong><small>URLプレフィックス → テナント取得 → DB接続切替 → 機能・AI・保存設定を反映</small></div>
+      <div class="arrow-down"></div>
+      <div class="branch three">
+        <div class="node shared"><strong>制御DB</strong><small>設定・機能フラグ</small></div>
+        <div class="node tenant"><strong>テナントDB</strong><small>業務データ</small></div>
+        <div class="node infra"><strong>保存先</strong><small>S3 / ローカル</small></div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:8mm"><span class="no">5</span>ファイル保存</h2>
+    <p>保存APIは共通。保存先と顧客別パスは制御DBの設定から決定する。</p>
+    <div class="storage-grid">
+      <article class="storage-card">
+        <h3>クラウド保存のテナント</h3>
+        <div class="storage-route">
+          <div class="node shared"><strong>tenants</strong><small>storage_mode=cloud<br>storage_prefix=astec</small></div>
+          <div class="right-arrow">→</div>
+          <div class="node infra"><strong>S3</strong><small>astec/...</small></div>
+        </div>
+      </article>
+      <article class="storage-card">
+        <h3>ローカル保存のテナント</h3>
+        <div class="storage-route">
+          <div class="node shared"><strong>tenants</strong><small>storage_mode=onpre<br>file_upload_path=...</small></div>
+          <div class="right-arrow">→</div>
+          <div class="node infra"><strong>ローカル保存</strong><small>顧客別ディレクトリ</small></div>
+        </div>
+      </article>
+    </div>
+    <div class="foot">サブドメインではなく、URLプレフィックス方式を使用する。</div>
+  </section>
+
+  <section class="sheet">
+    <h2><span class="no">6</span>AWS EC2 上の配置</h2>
+    <div class="aws-frame">
+      <div class="aws-title">AWS</div>
+      <div class="aws-flow">
+        <div class="node"><strong>利用者</strong><small>/astec/...<br>/xxx/...</small></div>
+        <div class="right-arrow">→</div>
+        <div class="node infra"><strong>ALB</strong><small>共通ターゲットグループ</small></div>
+        <div class="right-arrow">→</div>
+        <div class="aws-backend">
+          <div class="node dark"><strong>EC2 共通アプリ</strong><small>同じコード・同じ .env</small></div>
+          <div class="branch">
+            <div class="node shared"><strong>MySQL</strong><small>制御DB＋テナントDB群</small></div>
+            <div class="node infra"><strong>S3</strong><small>顧客別パスでファイル分離</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="credential-row">
+      <div class="credential"><strong>制御DB接続</strong><small>binder_control を参照</small></div>
+      <div class="credential"><strong>テナントDB接続</strong><small>業務DBを動的に切替</small></div>
+      <div class="credential"><strong>DB作成用接続</strong><small>データベース作成専用</small></div>
+    </div>
+
+    <table>
+      <thead><tr><th>要素</th><th>配置・役割</th></tr></thead>
+      <tbody>
+        <tr><td>ALB</td><td>プレフィックスごとのEC2振り分けを廃止し、共通ターゲットへ転送</td></tr>
+        <tr><td>EC2</td><td>顧客別アプリではなく、全テナントを処理する共通Laravelアプリ</td></tr>
+        <tr><td>MySQL</td><td>1インスタンス上に制御DBと複数のテナントDBを配置可能</td></tr>
+        <tr><td>MySQLユーザー</td><td>顧客ごとには作成せず、アプリ用とDB作成用を分離</td></tr>
+        <tr><td>既存顧客の取込</td><td>DBバックアップを顧客用DB名で復元し、制御DBのテナント台帳に登録</td></tr>
+      </tbody>
+    </table>
+    <div class="foot">アプリ・設定・運用対象を顧客別EC2から共通EC2へ集約する。</div>
+  </section>
+
+  <section class="sheet">
+    <h2><span class="no">7</span>デプロイ</h2>
+    <p class="lead">顧客ごとのEC2へ同じ変更を配布する運用から、共通アプリへの1回のデプロイへ変わる。</p>
+    <div class="ops-grid">
+      <article class="ops-card before">
+        <h3>以前 — 顧客別EC2へ配布</h3>
+        <div class="node old"><strong>開発環境の変更</strong><small>Gitへ反映</small></div>
+        <div class="arrow-down"></div>
+        <div class="node infra"><strong>AWS Systems Manager</strong><small>Run Command等でGitコマンドを一括実行</small></div>
+        <div class="server-list">
+          <div class="server-row"><strong>EC2 顧客A</strong><span>git pull / 更新作業</span></div>
+          <div class="server-row"><strong>EC2 顧客B</strong><span>git pull / 更新作業</span></div>
+          <div class="server-row"><strong>EC2 顧客C</strong><span>git pull / 更新作業</span></div>
+        </div>
+        <ul>
+          <li>EC2台数分の更新結果を確認</li>
+          <li>一部サーバーだけ失敗する可能性</li>
+          <li>顧客ごとにコード差分が生じる可能性</li>
+        </ul>
+      </article>
+
+      <div class="ops-arrow" aria-label="変更">→</div>
+
+      <article class="ops-card after">
+        <h3>今後 — 共通アプリへ1回</h3>
+        <div class="node shared"><strong>開発環境の変更</strong><small>Gitへ反映</small></div>
+        <div class="arrow-down"></div>
+        <div class="node dark"><strong>共通 EC2</strong><small>1系統のLaravelアプリを更新</small></div>
+        <div class="arrow-down"></div>
+        <div class="branch three">
+          <div class="node tenant"><strong>顧客A</strong><small>同じコード</small></div>
+          <div class="node tenant"><strong>顧客B</strong><small>同じコード</small></div>
+          <div class="node tenant"><strong>顧客C</strong><small>同じコード</small></div>
+        </div>
+        <ul>
+          <li>デプロイ対象は共通アプリの1系統</li>
+          <li>顧客別EC2へのGit一括実行は不要</li>
+          <li>全テナントが同一バージョンを利用</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="result"><strong>変更点:</strong> AWS Systems Manager（SSM）Run Command等を使って各EC2でGitコマンドを一括実行する運用は不要になる。</div>
+    <div class="foot">デプロイ対象は、顧客別EC2群から共通アプリ1系統へ変わる。</div>
+  </section>
+
+  <section class="sheet">
+    <h2><span class="no">8</span>バックアップ</h2>
+    <p class="lead">AWS Backupで取得するアプリサーバーのイメージを、顧客別から共通サーバー1系統へ集約する。</p>
+    <div class="ops-grid">
+      <article class="ops-card before">
+        <h3>以前 — EC2ごとのAMI</h3>
+        <div class="node infra"><strong>AWS Backup</strong><small>顧客別EC2をバックアップ</small></div>
+        <div class="arrow-down"></div>
+        <div class="branch three">
+          <div class="node old"><strong>AMI A</strong><small>顧客A</small></div>
+          <div class="node old"><strong>AMI B</strong><small>顧客B</small></div>
+          <div class="node old"><strong>AMI C</strong><small>顧客C</small></div>
+        </div>
+        <ul>
+          <li>EC2台数に応じてバックアップ対象が増加</li>
+          <li>復旧手順も顧客ごとに管理</li>
+        </ul>
+      </article>
+
+      <div class="ops-arrow" aria-label="変更">→</div>
+
+      <article class="ops-card after">
+        <h3>今後 — 共通EC2のAMI</h3>
+        <div class="node infra"><strong>AWS Backup</strong><small>共通EC2をバックアップ</small></div>
+        <div class="arrow-down"></div>
+        <div class="node dark"><strong>共通バックアップイメージ</strong><small>アプリサーバーは1系統</small></div>
+        <ul>
+          <li>AMIの取得対象を共通EC2へ集約</li>
+          <li>復旧するアプリ環境も1系統</li>
+          <li>バックアップ設定・監視を簡素化</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="result"><strong>注意:</strong> 共通EC2のAMIとは別に、制御DB・各テナントDB・S3等のデータバックアップは継続して管理する。</div>
+    <div class="foot">AWS Backup: アプリサーバーのバックアップ対象を顧客数分から共通EC2へ集約</div>
+  </section>
+</body>
+</html>

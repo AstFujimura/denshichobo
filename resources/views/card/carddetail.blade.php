@@ -72,10 +72,10 @@
                     <div class="history_card">
                         <img data-card_id="{{ $card->card_id }}"
                             class="new_card_check @if ($card->表示最新フラグ != 1) display_none @endif"
-                            src="{{asset(config('prefix.prefix').'/'.'img/card/new_card_check.svg')}}" alt="">
+                            src="{{tenant_asset('img/card/new_card_check.svg')}}" alt="">
                         <img data-card_id="{{ $card->card_id }}"
                             class="new_other_card_check @if ($card->表示最新フラグ != 2) display_none @endif"
-                            src="{{asset(config('prefix.prefix').'/'.'img/card/new_other_card_check.svg')}}" alt="">
+                            src="{{tenant_asset('img/card/new_other_card_check.svg')}}" alt="">
                         <img class="lazyload" data-card_id="{{ $card->card_id }}" data-front="front" alt="">
                     </div>
                     <div class="history_card_text">
@@ -130,9 +130,9 @@
                 <div class="card_info_content">
                     <div class="setting_container">
                         <img class="card_history_button"
-                            src="{{ asset(config('prefix.prefix').'/'.'img/card/history.svg')}}" alt="">
+                            src="{{ tenant_asset('img/card/history.svg')}}" alt="">
                         <img class="card_setting_button"
-                            src="{{ asset(config('prefix.prefix').'/'.'img/card/setting.svg')}}" alt="">
+                            src="{{ tenant_asset('img/card/setting.svg')}}" alt="">
                     </div>
                     <div class="card_detail_card">
                         <img class="lazyload popup_img_content" data-card_id="{{ $now_card->card_id }}" data-front="front" alt="" >

@@ -1,9 +1,14 @@
 $(document).ready(function () {
   var prefix = $('#prefix').val();
 
+
+  //管理画面のユーザー登録フォーム
   $('#myForm').submit(function (event) {
+    errorformreset(["name","email","password"]);
+    errorsentencereset(["required1","required2","required3","userformat","usercheck","emailformat","passwordformat"]);
     //値の入力時に不正なデータがある場合はalertがtrueになる
     var alert = false;
+    var form = this; // フォーム要素を保持
     event.preventDefault();
 
     // 必須項目が空欄の場合のエラーメッセージ
@@ -16,116 +21,60 @@ $(document).ready(function () {
     fourBytecheck("name", "userformat")
     fourBytecheck("email", "emailformat")
     passcheck("password", "passwordformat")
-    usercheck("name", "usercheck")
 
-
-
-    //登録画面におけるフォームの確認
-    if (!$('.errorsentence').length) {
-
-      var title = $('#registbutton').val();
-
-
-      if (confirm("本当に登録しますか？")) {
-        history.pushState(null, null, "/"+ prefix+'/error/K183623');
-        this.submit(); // フォームの送信を実行
-      }
-
+    // usercheck("name", "usercheck")
+    if ($("#password").val() != $("#newpassword").val()) {
+      $("#password").addClass('invalid')
+      $("#newpassword").addClass('invalid')
+      $("#newpasswordformat").addClass('errorsentence')
     }
-  });
-
-
-
-
-
-
-
-
-  //管理者画面の編集画面において一般ユーザーに変更する際に残りの管理者の数をカウントしてエラーを出すコード
-  $('#admin-myForm').on('submit', function (e) {
-    $("#changeerror").removeClass("errorsentence");
-    var id = $('#userid').val();
-    var admin = $('#admin').val();
-    var submitButton = this;
-
-
-
-    e.preventDefault(); // フォームの送信を中止
-
-    //値の入力時に不正なデータがある場合はalertがtrueになる
-    var alert = false;
-
-    // 必須項目が空欄の場合のエラーメッセージ
-
-    var requiredarray = ["name", "email"];
-
-    emptycheck(requiredarray);
-
-
-    fourBytecheck("name", "userformat")
-    fourBytecheck("email", "emailformat")
-    usercheck("name", "usercheck")
-
-    //変更画面におけるフォームの確認
-    if (!$('.errorsentence').length) {
-      if (admin == "一般") {
-        $.ajax({
-          url: "/"+ prefix + '/admincheck/' + id,
-          type: 'get',
-          processData: false,
-          contentType: false,
-          success: function (response) {
-            //残りの管理ユーザーが1人以上いる場合は続行する。
-            if (response > 0) {
-              if (confirm("本当に変更しますか")) {
-                history.pushState(null, null, "/"+ prefix+'/error/K183623');
-                submitButton.submit()
-              }
-            }
-            else {
-              $("#changeerror").addClass("errorsentence");
-            }
-          }
-        });
-      }
-      else if (admin == "管理") {
-        if (confirm("本当に変更しますか")) {
-          history.pushState(null, null, "/"+ prefix+'/error/K183623');
-          submitButton.submit()
-        }
-      }
+    else {
+      $("#newpassword").removeClass('invalid')
+      $("#newpasswordformat").removeClass('errorsentence')
     }
-  });
 
 
-
-
-
-  //管理画面に置いてユーザーを削除する時
-  $('#admindelete').on('submit', function (e) {
-    $("#deleteerror").removeClass("errorsentence");
-    e.preventDefault(); // フォームの送信を中止
-    var id = $('#userid').val();
-    var form = this; // フォーム要素を保持
+    var nameval = $('#name').val();
+    var change = ""
+    var id = $("#userID").val();
+    if ($("#admineditpage").length) {
+      change = "change"
+    }
+    //ユーザー名に重複がないかを非同期で問い合わせる
     $.ajax({
-      url: "/"+ prefix +'/admincheck/' + id,
+      url: prefix + '/usercheck',
       type: 'get',
-      processData: false,
-      contentType: false,
+      data: {
+        username: nameval,
+        change: change,
+        id: id
+      },
       success: function (response) {
-        //残りの管理ユーザーが1人以上いる場合は続行する。
-        if (response > 0) {
-          if (confirm("本当に削除しますか")) {
-            form.submit();
-          }
+        //ユーザー名が重複している場合
+        if (response == "重複") {
+          $("#usercheck").addClass('errorsentence')
+          $("#name").addClass('invalid')
         }
         else {
-          $("#deleteerror").addClass("errorsentence");
+          //登録画面におけるフォームの確認
+          if (!$('.errorsentence').length) {
+
+            var title = $('#registbutton').val();
+
+
+            if (confirm("本当に登録しますか？")) {
+              history.pushState(null, null, prefix + '/error/K183623');
+              form.submit(); // フォームの送信を実行
+            }
+
+          }
         }
       }
     });
 
   });
+
+
 
 
 
@@ -172,6 +121,12 @@ $(document).ready(function () {
   $('#endyear').blur(function () {
     datecheck_change("endyear");
   });
+  $('#starttourokubi').blur(function () {
+    datecheck_change("starttourokubi");
+  });
+  $('#endtourokubi').blur(function () {
+    datecheck_change("endtourokubi");
+  });
   $('#hiduke').blur(function () {
     datecheck_change("hiduke");
   });
@@ -192,71 +147,143 @@ $(document).ready(function () {
 
 
 
-
-
-
-  $("#torihikisaki").on("focus", function () {
-    $("#torihikisakiselect").show()
-    var searchText = $(this).val();
-    torihikiselect(searchText, "torihikisakiselect")
-  });
-  var isComposing = false; // 日本語入力などの変換中かどうかのフラグ
-
-  $("#torihikisaki").on('compositionstart', function () {
-    isComposing = true;
-  });
-
-  $("#torihikisaki").on('compositionend', function () {
-    var searchText = $(this).val();
-    isComposing = false;
-    torihikiselect(searchText, "torihikisakiselect")
-  });
-  $("#torihikisaki").on("input", function () {
-    var searchText = $(this).val();
-    if (!isComposing) {
-      // 入力操作の終了時に履歴を更新
-      torihikiselect(searchText, "torihikisakiselect")
+var torihikisaki_focus = false
+$(document).on('keydown', function(e){
+  if (e.key === 'ArrowDown' || e.keyCode === 40) { // 矢印下キー
+    if (torihikisaki_focus) {
+      e.preventDefault(); // デフォルトのスクロール動作を防ぐ
+      if ($('.torihikisakielement_select').length == 0) {
+        visibleTorihikisakiItems().first().addClass('torihikisakielement_select');
+      }
+      else {
+        var now_select = $('.torihikisakielement_select');
+        now_select.removeClass('torihikisakielement_select');
+        var $next = now_select.next('.torihikisakielement');
+        if ($next.length) {
+          $next.addClass('torihikisakielement_select');
+        }
+      }
     }
+  }
+  else if (e.key === 'ArrowUp' || e.keyCode === 38) { // 矢印上キー
+    if (torihikisaki_focus) {
+      e.preventDefault(); // デフォルトのスクロール動作を防ぐ
+      if ($('.torihikisakielement_select').length == 0) {
+        visibleTorihikisakiItems().last().addClass('torihikisakielement_select');
+      }
+      else {
+        var now_select = $('.torihikisakielement_select');
+        now_select.removeClass('torihikisakielement_select');
+        var $prev = now_select.prev('.torihikisakielement');
+        if ($prev.length) {
+          $prev.addClass('torihikisakielement_select');
+        }
+      }
+    }
+  }
+  else if (e.key === 'Enter' || e.keyCode === 13) { // Enterキー
+    if (torihikisaki_focus) {
+      e.preventDefault(); // デフォルトのスクロール動作を防ぐ
+      var now_select = $('.torihikisakielement_select');
+      now_select.click();
+    }
+  }
+  
+})
 
+  function torihikisakiSelectBox($input) {
+    return $input.closest('.torihikisakiinput').find('.registtorihikisakiselect').first();
+  }
+
+  function hideTorihikisakiSelectBoxes(except$box) {
+    $('.torihikisakielement_select').removeClass('torihikisakielement_select');
+    $('.registtorihikisakiselect').each(function () {
+      var $box = $(this);
+      if (except$box && except$box.length && $box.is(except$box)) {
+        return;
+      }
+      $box.hide().empty();
+    });
+  }
+
+  function visibleTorihikisakiItems() {
+    return $('.registtorihikisakiselect:visible .torihikisakielement');
+  }
+
+  var torihikisakiInputSelector = '#torihikisaki, #bulkDetailPanel [data-bulk-field="torihikisaki"]';
+  var torihikisakiComposing = false;
+
+  function showTorihikisakiCandidates($input) {
+    torihikisaki_focus = true;
+    var $box = torihikisakiSelectBox($input);
+    hideTorihikisakiSelectBoxes($box);
+    $box.show();
+    torihikiselect($input.val(), $box);
+  }
+
+  $(document).on('focus', torihikisakiInputSelector, function () {
+    showTorihikisakiCandidates($(this));
   });
-  $("#torihikisakiselect").on("click", ".torihikisakielement", function () {
+
+  $(document).on('compositionstart', torihikisakiInputSelector, function () {
+    torihikisakiComposing = true;
+  });
+
+  $(document).on('compositionend', torihikisakiInputSelector, function () {
+    torihikisakiComposing = false;
+    var $input = $(this);
+    torihikiselect($input.val(), torihikisakiSelectBox($input));
+  });
+
+  $(document).on('input', torihikisakiInputSelector, function () {
+    if (!torihikisakiComposing) {
+      var $input = $(this);
+      torihikiselect($input.val(), torihikisakiSelectBox($input));
+    }
+  });
+
+  $(document).on('click', '.registtorihikisakiselect .torihikisakielement', function () {
     var torihikisaki = $(this).text();
-    $('#torihikisaki').val(torihikisaki);
-    $("#torihikisakiselect").hide()
-    $('#torihikisaki').focus();
+    var $box = $(this).closest('.registtorihikisakiselect');
+    var $input = $box.closest('.torihikisakiinput').find('input[type="text"]').first();
+    $input.val(torihikisaki).trigger('change');
+    $box.hide().empty();
+    $input.focus();
   });
-  $(document).on("click", function (event) {
-    var target = $(event.target);
-    if (!target.is("#torihikisaki, #torihikisakiselect")) {
-      $("#torihikisakiselect").hide()
-    }
-  });
-  // torihikisakiのキーアップイベント（Enterキー）
-  $("#torihikisaki").keydown(function (e) {
-    if (e.keyCode === 13) { // Enterキー
-      $("#torihikisakiselect").hide();
+
+  $(document).on('click', function (event) {
+    if (!$(event.target).closest('.torihikisakiinput').length) {
+      hideTorihikisakiSelectBoxes();
+      torihikisaki_focus = false;
     }
   });
 
-
-
+  $(document).on('keydown', torihikisakiInputSelector, function (e) {
+    if (e.keyCode === 13) {
+      torihikisakiSelectBox($(this)).hide();
+    }
+  });
 
   //searchTextには取引先の検索ワード
-  //torihikisakiselectには表示するセレクトボックスのid
-  function torihikiselect(searchText, torihikisakiselect) {
+  // selectTarget … 候補を表示する .registtorihikisakiselect（jQuery）または id 文字列
+  function torihikiselect(searchText, selectTarget) {
+    var $box = typeof selectTarget === 'string' ? $('#' + selectTarget) : $(selectTarget);
+    if (!$box.length) {
+      return;
+    }
     $.ajax({
-      url: '/' + prefix + '/torihikisaki/',
+      url: prefix + '/torihikisaki/',
       method: 'GET',
       data: { search: searchText },
       success: function (response) {
-        $('#' + torihikisakiselect).empty();
+        $box.empty();
 
         if (response == "該当なし") {
-          $('#' + torihikisakiselect).append('<div class="gaitounashi">該当なし</div>');
+          $box.append('<div class="gaitounashi">該当なし</div>');
         }
         else {
           $.each(response, function (index, clients) {
-            $('#' + torihikisakiselect).append('<div class="torihikisakielement">' + clients.取引先 + '</div>');
+            $box.append('<div class="torihikisakielement">' + clients.取引先 + '</div>');
           });
         }
 
@@ -273,9 +300,12 @@ $(document).ready(function () {
     event.preventDefault();
     datecheck_change('startyear')
     datecheck_change('endyear')
+    datecheck_change('starttourokubi')
+    datecheck_change('endtourokubi')
     kinngakucheck_change("startkinngaku");
     kinngakucheck_change("endkinngaku");
     date_start_end('startyear', 'endyear');
+    date_start_end('starttourokubi', 'endtourokubi');
     kinngaku_start_end("startkinngaku", "endkinngaku");
 
     //金額や日付のフォーマットが誤っている場合はsearcherror値の対象
@@ -290,6 +320,15 @@ $(document).ready(function () {
     }
   });
 
+
+
+
+
+
+
+
+  //-----------------アップロード戦略（#server: cloud|onpre）---------------------------
+
   $('.form').submit(function (event) {
     //値の入力時に不正なデータがある場合はalertがtrueになる
     var alert = false;
@@ -303,14 +342,22 @@ $(document).ready(function () {
 
 
 
+    //ファイルが空欄の場合
     if ($('#file').val() == '') {
       //登録ページの場合は必須条件
       //ただし、編集ページは任意のため空白も許容する
       if ($('#regist').length) {
         $('#file').addClass("invalid")
+        $('.fileerrorelement').text('ファイルを選択してください。');
         $('.fileerrorelement').addClass("errorsentence");
         alert = true
       }
+    }
+    //ファイルサイズが大きい場合
+    else if($('#file')[0].files[0].size > 50 * 1024 * 1024){
+      $('.fileerrorelement').text('ファイルサイズが50MBを超えています。10MB以下のファイルを選択してください。');
+      $('#file').addClass("invalid")
+      $('.fileerrorelement').addClass("errorsentence");
     }
     else {
       $('#file').removeClass("invalid")
@@ -328,19 +375,82 @@ $(document).ready(function () {
     if (!$('.errorsentence').length) {
 
       var title = $('#registbutton').val();
+      var storageMode = ($('#server').val() || '').toLowerCase();
+      var formEl = this;
 
-      if (title.trim() == '登録') {
+      if (confirm("本当に" + title.trim() + "しますか？")) {
+        history.pushState(null, null,  prefix + '/error/K183623');
 
-        if (confirm("本当に登録しますか？")) {
-          history.pushState(null, null, "/" + prefix + '/error/K183623');
-          this.submit(); // フォームの送信を実行
+        // onpre またはファイル未変更 → 通常 multipart
+        if (storageMode !== 'cloud' || $('#file').val() == '') {
+          formEl.submit();
+          return;
         }
-      }
-      else {
-        if (confirm("本当に変更しますか？")) {
-          history.pushState(null, null, "/" + prefix + '/error/K183623');
-          this.submit(); // フォームの送信を実行
-        }
+
+        // cloud: 署名URLへ直接PUT → /regist/cloud
+        var file = $('#file')[0].files[0];
+        var fileExtension = getExtension(file.name);
+        var method = $('#regist').length ? 'post' : 'edit';
+        var pastID = method === 'edit' ? $('#id').val() : '';
+
+        $.ajax({
+          method: 'GET',
+          url: prefix + '/objectURL',
+          data: {
+            method: method,
+            extension: fileExtension,
+            pastID: pastID
+          },
+          success: function (data) {
+            if (!data.url || data.strategy === 'server') {
+              formEl.submit();
+              return;
+            }
+            $.ajax({
+              type: 'PUT',
+              url: data.url,
+              data: file,
+              contentType: file.type,
+              processData: false,
+              success: function () {
+                const formData = new FormData();
+                formData.append('hiduke', $("#hiduke").val());
+                formData.append('kinngaku', $("#kinngaku").val());
+                formData.append('torihikisaki', $("#torihikisaki").val());
+                formData.append('syorui', $("#syorui").val());
+                formData.append('teisyutu', $("#teisyutu").val());
+                formData.append('hozonn', $("#hozonn").val());
+                formData.append('kennsakuword', $("#kennsakuword").val());
+                formData.append('group', $("#group").val());
+                formData.append('filepass', data.filepass);
+                formData.append('pastID', data.pastID);
+                formData.append('extension', fileExtension);
+                $.ajax({
+                  url: prefix + '/regist/cloud',
+                  type: 'POST',
+                  data: formData,
+                  processData: false,
+                  contentType: false,
+                  headers: {
+                    'X-CSRF-TOKEN': $('input[name="_token"]').val(),
+                  },
+                  success: function (response) {
+                    window.location.href = response;
+                  },
+                  error: function () {
+                    console.error('laravelエラー');
+                  }
+                });
+              },
+              error: function () {
+                console.error('アップロードエラー');
+              }
+            });
+          },
+          error: function (error) {
+            console.error('Key generation error:', error);
+          }
+        });
       }
     }
   });
@@ -440,6 +550,17 @@ $(document).ready(function () {
 
   }
 
+  function errorformreset(errorform){
+    errorform.forEach(function(element){
+      $('#'+ element).removeClass("invalid");
+    })
+  }
+  function errorsentencereset(errorsentence){
+    errorsentence.forEach(function(element){
+      $('#'+ element).removeClass("errorsentence");
+    })
+  }
+
   //不正な形式だった場合はfalse
   //date:日付のinputタグのid
   //errordate:日付のエラーメッセージのid
@@ -517,37 +638,7 @@ $(document).ready(function () {
 
   }
 
-  //エラーメッセージを出して重複がなければtrue返す
-  function usercheck(namedata, errornamedata) {
-    var nameval = $("#" + namedata).val();
-    var change = ""
-    var id = $("#userID").val();
-    console.log(id);
-    if ($("#admineditpage").length) {
-      change = "change"
-    }
-    $.ajax({
-      url: "/"+ prefix +'/usercheck',
-      type: 'get',
-      data: {
-        username: nameval,
-        change: change,
-        id: id
-      },
-      success: function (response) {
-        //ユーザー名が重複している場合
-        if (response == "重複") {
-          $("#" + errornamedata).addClass('errorsentence')
-          $("#" + namedata).addClass('invalid')
-          return true
-        }
-        else {
-          $("#" + errornamedata).removeClass("errorsentence");
-          return false
-        }
-      }
-    });
-  }
+
 
 
 

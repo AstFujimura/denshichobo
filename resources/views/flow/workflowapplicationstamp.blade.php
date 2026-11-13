@@ -20,7 +20,7 @@ Rapid ~電子承認システム
         </div>
     </div>
     <h2 class="pagetitle" id="applicationstamp">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">
+        <img src="{{ tenant_asset('img/flow_title/application.svg') }}" alt="" class="title_icon">
         申請印
     </h2>
     <form action="{{route('workflowapplicationstamppost')}}" method="post" id="category_approval_setting_form" enctype="multipart/form-data">
@@ -39,7 +39,7 @@ Rapid ~電子承認システム
                     <div class="application_stamp_button_container">
                         <div class="application_stamp_button_content">
                             <a href="{{route('workflowchoiceget',['id' => $t_flow->id])}}" class="back_button application_stamp_back_button" id="flow_next_button">
-                                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                                <img src="{{ tenant_asset('img/button/home_back.svg') }}" alt="" class="button_icon">
                                 もどる
                             </a>
                             <button class="next_button application_stamp_submit_button" id="flow_next_button">

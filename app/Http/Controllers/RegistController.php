@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
 
 use App\Models\User;
@@ -18,7 +16,6 @@ use App\Models\T_flow;
 use App\Models\Document;
 use App\Models\Group;
 use App\Models\Group_User;
-use Aws\S3\S3Client;
 use App\Models\Version;
 
 class RegistController extends Controller
@@ -55,9 +52,8 @@ class RegistController extends Controller
         //該当するグループの情報を取得
         $groups = Group::whereIn("id", $grouparray)->get();
 
-        $banbanEnabled = Version::where('BANBAN', true)->exists();
-        $ichifujiEnabled = Schema::hasColumn('versions', 'ichifuji')
-            && Version::where('ichifuji', true)->exists();
+        $banbanEnabled = feature_enabled('banban');
+        $ichifujiEnabled = feature_enabled('ichifuji');
 
         $ledgerRegistMode = $request->query('mode') === 'bulk' ? 'bulk' : 'normal';
         if ($ledgerRegistMode === 'bulk' && !$banbanEnabled) {
@@ -72,57 +68,39 @@ class RegistController extends Controller
         $now = Carbon::now();
         $currentTime = $now->format('YmdHis');
 
+        $method = $request->input('method');
+        $extension = (string) $request->input('extension', '');
+        $ID = $request->input('pastID');
 
-        //s3バケットを扱うときはprefixに/は入れない
-        $prefix = config('prefix.prefix');
-        $server = config('prefix.server');
-
-        $method = $request->input("method");
-        $extension = $request->input("extension");
-        $ID = $request->input("pastID");
-
-        if ($method == "post") {
+        if ($method == 'post') {
             $pastID = $this->generateRandomCode();
-        } else if ($method == "edit") {
+        } elseif ($method == 'edit') {
             $pastID = $ID;
+        } else {
+            abort(400, 'Invalid method.');
         }
 
+        $logicalPath = $currentTime . '_' . $pastID;
+        $storage = tenant_storage();
+        $signedUrl = $storage->temporaryUploadUrl($logicalPath, $extension, 3600);
 
+        // storage.js (cloud) 互換: 当面 filepass は prefix 付きを維持（既存経路）。
+        // resolve は prefix 有無の両方を扱える。
+        $filepass = $logicalPath;
+        if ($storage->mode() === 'cloud') {
+            $prefix = trim((string) (tenant()?->storage_prefix ?: config('prefix.prefix', '')), '/');
+            if ($prefix !== '') {
+                $filepass = $prefix . '/' . $logicalPath;
+            }
+        }
 
-        // S3バケットの情報
-        $bucket = 'astdocs.com';
-        $key = $prefix . "/" . $currentTime . "_" . $pastID . "." . $extension; // S3オブジェクトのキー
-        $expiration = '+1 hour'; // 有効期限
-
-        $s3Client = new S3Client([
-            'region' => 'ap-northeast-1',
-            'version' => 'latest',
-        ]);
-
-
-        $command = $s3Client->getCommand('PutObject', [
-            'Bucket' => $bucket,
-            'Key' => $key,
-        ]);
-
-
-        $signedUrl = $s3Client->createPresignedRequest($command, $expiration)->getUri();
-
-
-        $data = [
+        return response()->json([
             'url' => $signedUrl,
             'pastID' => $pastID,
-            'filepass' => $prefix . "/" . $currentTime . "_" . $pastID,
-        ];
-        return response()->json($data);
-
-
-
-
-
-
-
-        return view('information.test', ['signedUrl' => $signedUrl]);
+            'filepass' => $filepass,
+            'logical_path' => $logicalPath,
+            'strategy' => $signedUrl ? 'direct_s3' : 'server',
+        ]);
     }
 
 
@@ -162,28 +140,13 @@ class RegistController extends Controller
         if (!$kennsaku) {
             $kennsaku = "";
         }
-        $extension = $file->getClientOriginalExtension();
-
-        $filename = Config::get('custom.file_upload_path');
+        $extension = (string) $file->getClientOriginalExtension();
         $filepath = $currentTime . '_' . $pastID;
-        //アップロードされたファイルに拡張子がない場合
-        if (!$extension) {
-            if (config('app.env') == 'production') {
-                // 本番環境用の設定
-            } else {
-                // 開発環境用の設定
-                copy($file->getRealPath(), $filename . "\\" . $filepath);
-            }
-            //extensionがnullになっているためエラー回避
-            $extension = "";
-        } else {
-            if (config('app.env') == 'production') {
-                // 本番環境用の設定
-            } else {
-                // 開発環境用の設定
-                copy($file->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-            }
+        if ($extension === '') {
+            $extension = '';
         }
+
+        tenant_storage()->put($filepath, $extension, $file);
 
         $file = new File();
         $file->日付 = $date;
@@ -211,7 +174,7 @@ class RegistController extends Controller
      */
     public function registBulkPost(Request $request)
     {
-        if (!Version::where('BANBAN', true)->exists()) {
+        if (! feature_enabled('banban')) {
             abort(404);
         }
 
@@ -263,38 +226,14 @@ class RegistController extends Controller
             $kennsaku = (string) ($request->input("kennsakuword.$i") ?? '');
             $group = $request->input("group.$i");
 
-            $extension = $fileUpload->getClientOriginalExtension();
+            $extension = (string) $fileUpload->getClientOriginalExtension();
 
             // 一括取込は重複判定せず、各行を新規登録する（通常取込と同様）
             $pastID = $this->generateRandomCode();
             $filepath = $currentTime . '_' . $pastID;
 
-            // ファイル保存（クラウド: S3 / オンプレ: ローカル）
             try {
-                if (config('prefix.server') === 'cloud') {
-                    // S3 は prefix 配下に保存する
-                    $prefix = (string) config('prefix.prefix', '');
-                    $keyBase = $prefix !== '' ? ($prefix . '/' . $filepath) : $filepath;
-
-                    if (!$extension) {
-                        Storage::disk('s3')->put($keyBase, fopen($fileUpload->getRealPath(), 'r'));
-                        $extension = '';
-                    } else {
-                        $key = $keyBase . '.' . $extension;
-                        Storage::disk('s3')->put($key, fopen($fileUpload->getRealPath(), 'r'));
-                    }
-
-                    // DBには（単体クラウド登録と同様に）prefix込みのパスを入れる
-                    $filepath = $keyBase;
-                } else {
-                    $filename = Config::get('custom.file_upload_path');
-                    if (!$extension) {
-                        copy($fileUpload->getRealPath(), $filename . "\\" . $filepath);
-                        $extension = "";
-                    } else {
-                        copy($fileUpload->getRealPath(), $filename . "\\" . $filepath . '.' . $extension);
-                    }
-                }
+                tenant_storage()->put($filepath, $extension, $fileUpload);
             } catch (\Throwable $e) {
                 return redirect()->back()->with('error', 'ファイルの保存に失敗しました: ' . $e->getMessage());
             }

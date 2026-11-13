@@ -2,6 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Contracts\TenantFileStorage;
+use App\Models\Control\Tenant;
+use App\Support\Tenancy\TenantAiConfigApplier;
+use App\Support\Tenancy\TenantContext;
+use App\Support\Tenancy\TenantDatabaseManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,7 +15,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\UploadedCard;
 use OpenAI\Laravel\Facades\OpenAI;
-use Illuminate\Support\Facades\Config;
 use App\Models\CardUser;
 use App\Models\Card;
 use App\Models\Company;
@@ -23,15 +27,30 @@ class ProcessUploadedCard implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $cardId;
+    protected $tenantId;
 
-    public function __construct($cardId)
+    public function __construct($cardId, ?int $tenantId = null)
     {
         $this->cardId = $cardId;
+        $this->tenantId = $tenantId;
     }
 
-    public function handle()
-    {
-        $server = config('prefix.server');
+    public function handle(
+        TenantContext $context,
+        TenantDatabaseManager $databaseManager,
+        TenantAiConfigApplier $aiConfigApplier
+    ) {
+        $tenant = $this->tenantId ? Tenant::find($this->tenantId) : null;
+        if (! $tenant) {
+            throw new \RuntimeException('Tenant could not be resolved for ProcessUploadedCard.');
+        }
+
+        $context->set($tenant);
+        $databaseManager->connect($tenant, true);
+        $databaseManager->applyCompatConfig($tenant);
+        $aiConfigApplier->apply($tenant);
+        $storage = app(TenantFileStorage::class);
+
         $card = UploadedCard::find($this->cardId);
         if (!$card || $card->status !== 'pending') {
             return;
@@ -67,32 +86,18 @@ class ProcessUploadedCard implements ShouldQueue
                 $card->save();
                 return;
             }
-            if ($server == 'onpre') {
-                $wasabiUrl = $card->front_url;
-                // クエリ部分（?以降）を除外
-                $parsedUrl = parse_url($wasabiUrl);
-                $path = $parsedUrl['path'] ?? '';
+            $imageUrl = $card->front_url;
+            $parsedUrl = parse_url($imageUrl);
+            $path = $parsedUrl['path'] ?? '';
+            $extension = pathinfo($path, PATHINFO_EXTENSION) ?: 'jpg';
+            $filename = $this->generateRandomCode() . "." . $extension;
 
-                // pathinfoで拡張子を取得
-                $extension = pathinfo($path, PATHINFO_EXTENSION);
-                $filename = $this->generateRandomCode() . "." . $extension;
-
-                $filepath = Config::get('custom.file_upload_path'); // 保存先パスを取得
-                if (!is_dir($filepath)) {
-                    mkdir($filepath, 0755, true); // フォルダがなければ作る
-                }
-                // 画像をダウンロード
-                $imageData = file_get_contents($wasabiUrl);
-                if ($imageData === false) {
-                    throw new \Exception('ファイルのダウンロードに失敗しました。');
-                }
-
-                // フルパス組み立て
-                $fullPath = rtrim($filepath, '/') . '/' . $filename;
-
-                // ファイルを保存
-                file_put_contents($fullPath, $imageData);
+            $imageData = file_get_contents($imageUrl);
+            if ($imageData === false) {
+                throw new \Exception('ファイルのダウンロードに失敗しました。');
             }
+            $storage->put($filename, '', $imageData);
+
             $carduser = CardUser::where('表示名', $structuredData['名前'])->first();
             if (!$carduser) {
                 $carduser = new CardUser();

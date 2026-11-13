@@ -15,10 +15,8 @@ use App\Models\Document;
 use App\Models\Group;
 use App\Models\Group_User;
 use App\Models\Version;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Pagination\Paginator;
@@ -185,7 +183,7 @@ class TopController extends Controller
             $this->excel($request, $files);
         }
 
-        $banbanEnabled = Version::where('BANBAN', true)->exists();
+        $banbanEnabled = feature_enabled('banban');
 
         // 取得したデータをビューに渡すなどの処理
         return view('information.toppage', compact('files', 'users', 'groups', 'documents', 'paginate', 'startdata', 'enddata', 'alldata', 'prefix', 'server', 'newsshow', 'banbanEnabled'));
@@ -600,60 +598,19 @@ class TopController extends Controller
     }
 
     public function download($id)
-
     {
         $file = File::where('id', $id)->first();
-        if (config('prefix.server') == "cloud") {
-
-            if ($file->ファイル形式 == "") {
-                $key = $file->ファイルパス;
-            } else {
-                $key = $file->ファイルパス . "." . $file->ファイル形式;
-            }
-            $parts = explode('/', $key);
-            $filename = end($parts); // 最後の要素を取得       
-
-
-            $headers = [
-                'Content-Type' => 'application/octet-stream',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-            ];
-
-            return \Response::make(Storage::disk('s3')->get($key), 200, $headers);
+        if (! $file) {
+            abort(404);
         }
 
+        $ext = (string) ($file->ファイル形式 ?? '');
+        $key = $ext === ''
+            ? (string) $file->ファイルパス
+            : ((string) $file->ファイルパス . '.' . $ext);
+        $filename = basename(str_replace('\\', '/', $key));
 
-
-        // $parts = explode('/', $key);
-        // $filename = end($parts); // 最後の要素を取得
-
-        // $file = Storage::disk('s3')->get($key);
-        // return response()->download(Storage::disk('s3')->url($key));
-
-        // // S3からファイルをダウンロード
-        // $filePath = $key;
-        // $headers = [
-        //     'Content-Type' => 'application/octet-stream',
-        //     'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        // ];
-
-        // try {
-        //     // ファイルをダウンロード
-        //     return response()->download(Storage::disk('s3')->url($filePath), $filename, $headers);
-        // } catch (\Exception $e) {
-        //     return back()->withErrors(['message' => 'ファイルをダウンロードできませんでした。']);
-        // }
-        else {
-            //拡張子がないファイルの場合分け
-            if ($file->ファイル形式 == "") {
-                $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス;
-            } else {
-                $filepath = Config::get('custom.file_upload_path') . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
-            }
-        }
-
-        // ファイルのダウンロード
-        return response()->download($filepath);
+        return tenant_storage()->downloadResponse((string) $file->ファイルパス, $ext, $filename);
     }
 
     private function fileDetailQuery()
@@ -715,45 +672,10 @@ class TopController extends Controller
             abort(404);
         }
 
-        $extension = $img->ファイル形式;
+        $extension = (string) ($img->ファイル形式 ?? '');
         $contentType = $this->resolveLedgerFileContentType($extension);
 
-        if (config('prefix.server') == "cloud") {
-            $key = $this->resolveLedgerFileS3Key($img);
-            if (!Storage::disk('s3')->exists($key)) {
-                abort(404);
-            }
-
-            return response(Storage::disk('s3')->get($key), 200, [
-                'Content-Type' => $contentType,
-            ]);
-        }
-
-        $path = $this->resolveLedgerFileLocalPath($img);
-        if (!file_exists($path)) {
-            abort(404);
-        }
-
-        return response()->file($path, ['Content-Type' => $contentType]);
-    }
-
-    private function resolveLedgerFileS3Key(File $file): string
-    {
-        if ($file->ファイル形式 == "") {
-            return $file->ファイルパス;
-        }
-
-        return $file->ファイルパス . "." . $file->ファイル形式;
-    }
-
-    private function resolveLedgerFileLocalPath(File $file): string
-    {
-        $base = Config::get('custom.file_upload_path');
-        if ($file->ファイル形式 == "") {
-            return $base . "\\" . $file->ファイルパス;
-        }
-
-        return $base . "\\" . $file->ファイルパス . '.' . $file->ファイル形式;
+        return tenant_storage()->inlineResponse((string) $img->ファイルパス, $extension, $contentType);
     }
 
     private function resolveLedgerFileContentType(?string $extension): string

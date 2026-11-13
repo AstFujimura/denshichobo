@@ -83,7 +83,7 @@
                             </select>
                             @if(!empty($ichifujiEnabled))
                             <button type="button" class="ledger-ocr-settings-detail-btn" data-ledger-ocr-settings-open data-ocr-syorui-source="normal" aria-label="AI OCR の読み取り設定">
-                                <img src="{{ asset($prefix.'/img/settings_4_line.svg') }}" class="ledger-ocr-settings-detail-btn__icon" alt="">
+                                <img src="{{ tenant_asset('img/settings_4_line.svg') }}" class="ledger-ocr-settings-detail-btn__icon" alt="">
                                 <span class="ledger-ocr-settings-detail-btn__text">詳細</span>
                             </button>
                             <span class="ledger-ocr-settings-chips" id="ledgerOcrSettingsChipNormal" aria-live="polite" aria-label="現在の AI OCR 設定"></span>
@@ -187,7 +187,7 @@
                             </select>
                             @if(!empty($ichifujiEnabled))
                             <button type="button" class="ledger-ocr-settings-detail-btn" data-ledger-ocr-settings-open data-ocr-syorui-source="bulk" aria-label="AI OCR の読み取り設定">
-                                <img src="{{ asset($prefix.'/img/settings_4_line.svg') }}" class="ledger-ocr-settings-detail-btn__icon" alt="">
+                                <img src="{{ tenant_asset('img/settings_4_line.svg') }}" class="ledger-ocr-settings-detail-btn__icon" alt="">
                                 <span class="ledger-ocr-settings-detail-btn__text">詳細</span>
                             </button>
                             <span class="ledger-ocr-settings-chips" id="ledgerOcrSettingsChipBulk" aria-live="polite" aria-label="現在の AI OCR 設定"></span>

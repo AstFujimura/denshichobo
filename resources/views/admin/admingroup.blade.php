@@ -55,27 +55,27 @@
                 </div>
                 <div class="admin_group_change">
                     <div class="gr_change_button">
-                        <img src="{{ asset($prefix.'/'.'img/edit.svg')}}" class="edit_icon">
+                        <img src="{{ tenant_asset('img/edit.svg')}}" class="edit_icon">
                         <span>変更</span>
                     </div>
                 </div>
                 @if ($version != 0)
                 <div class="admin_group_detail_change">
                     <a class="setting_link" href="{{$prefix}}/admin/groupuser/{{$group->id}}">
-                        <img src="{{ asset($prefix.'/'.'img/user_setting.svg')}}" class="setting_icon">
+                        <img src="{{ tenant_asset('img/user_setting.svg')}}" class="setting_icon">
                         <span>ユーザー設定</span>
                     </a>
                 </div>
                 <div class="admin_group_detail_change">
                     <a class="setting_link" href="{{$prefix}}/admin/groupposition/{{$group->id}}">
-                        <img src="{{ asset($prefix.'/'.'img/position.svg')}}" class="setting_icon">
+                        <img src="{{ tenant_asset('img/position.svg')}}" class="setting_icon">
                         <span>役職設定</span>
                     </a>
                 </div>
                 @endif
                 <div class="admin_group_delete">
                     <div class="gr_delete_button" id="{{$group->id}}">
-                        <img src="{{ asset($prefix.'/'.'img/delete.svg')}}" class="delete_icon">
+                        <img src="{{ tenant_asset('img/delete.svg')}}" class="delete_icon">
                         <span>削除</span>
                     </div>
                 </div>

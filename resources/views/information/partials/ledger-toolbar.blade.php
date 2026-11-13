@@ -15,7 +15,7 @@
 
         <div class="info__actions">
             <button type="button" class="excelbutton">
-                <img src="{{ asset($prefix.'/img/excel_export.svg') }}" alt="" class="excelbutton__icon" width="18" height="18">
+                <img src="{{ tenant_asset('img/excel_export.svg') }}" alt="" class="excelbutton__icon" width="18" height="18">
                 <span class="excelbutton__label">Excel出力</span>
             </button>
             <p class="excelerror" role="alert">表示件数を500件以下にしてください。</p>

@@ -35,19 +35,19 @@ TAMERU ~電子帳簿保存
     </div>
 </div>
 <div class="loader">
-    <img src="{{ asset($prefix.'/'.'img/loading.gif')}}">
+    <img src="{{ tenant_asset('img/loading.gif')}}">
     <div class="searchcomment">検索中です</div>
 </div>
 <h2 class="pagetitle">帳簿一覧</h2>
 
 <div class="ledger-top-actions">
     <a href="{{ route('registGet') }}" class="ledger-top-actions__btn ledger-top-actions__btn--single">
-        <img src="{{ asset($prefix.'/img/pencil_2_line.svg') }}" alt="" class="ledger-top-actions__icon" width="16" height="16">
+        <img src="{{ tenant_asset('img/pencil_2_line.svg') }}" alt="" class="ledger-top-actions__icon" width="16" height="16">
         <span class="ledger-top-actions__label">新規帳簿保存</span>
     </a>
     @if(!empty($banbanEnabled))
     <a href="{{ route('registGet', ['mode' => 'bulk']) }}" class="ledger-top-actions__btn ledger-top-actions__btn--bulk">
-        <img src="{{ asset($prefix.'/img/pencil_2_line.svg') }}" alt="" class="ledger-top-actions__icon" width="16" height="16">
+        <img src="{{ tenant_asset('img/pencil_2_line.svg') }}" alt="" class="ledger-top-actions__icon" width="16" height="16">
         <span class="ledger-top-actions__label">一括帳簿保存</span>
     </a>
     @endif

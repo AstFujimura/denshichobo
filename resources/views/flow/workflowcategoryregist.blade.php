@@ -11,7 +11,7 @@ Rapid ~電子承認システム
 <!-- <div class="category_setting_gray"></div> -->
 <div class="MainElement">
 
-    <h2 class="pagetitle" id="category_detail"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/category.svg') }}" alt="" class="title_icon">カテゴリ登録</h2>
+    <h2 class="pagetitle" id="category_detail"><img src="{{ tenant_asset('img/flow_title/category.svg') }}" alt="" class="title_icon">カテゴリ登録</h2>
     <form action="{{route('categoryregistpost')}}" method="post">
         @csrf
         <input type="hidden" name="order" id="order" value="50000">

@@ -25,7 +25,7 @@
     </script>
 
     <!-- メインJS -->
-    <script src="{{ asset(config('prefix.prefix').'/js/test.js') }}"></script>
+    <script src="{{ tenant_asset('js/test.js') }}"></script>
 </div>
 @endsection
 

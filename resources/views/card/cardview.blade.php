@@ -141,11 +141,11 @@
                 <div class="item_view_container card_view_result_view_toggle" aria-label="表示切替">
                     <input type="radio" name="view_type" id="large_view" value="large_view" @if(Auth::user()->名刺表示サイズ) checked @endif>
                     <label for="large_view" class="large_view" title="表示大">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/large_view.svg') }}" alt="">
+                        <img src="{{ tenant_asset('img/card/large_view.svg') }}" alt="">
                     </label>
                     <input type="radio" name="view_type" id="small_view" value="small_view" @if(!Auth::user()->名刺表示サイズ) checked @endif>
                     <label for="small_view" class="small_view" title="表示小">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/small_view.svg') }}" alt="">
+                        <img src="{{ tenant_asset('img/card/small_view.svg') }}" alt="">
                     </label>
                 </div>
             </div>

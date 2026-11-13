@@ -11,7 +11,7 @@
 <div class="MainElement">
     <div class="loading_container">
         <div class="loading_content">
-            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/loading.gif') }}" alt="">
+            <img src="{{ tenant_asset('img/card/loading.gif') }}" alt="">
         </div>
         <div class="loading_text">
             AI解析中です
@@ -25,27 +25,27 @@
         <div class="crop_controller_content display_none" data-card_type="front">
             <img src="" class="croppable_image" data-card_type="front">
             <div class="crop_complete_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/complete.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/card/complete.svg') }}" alt="">
             </div>
             <div class="crop_cancel_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/cancel.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/card/cancel.svg') }}" alt="">
             </div>
             <!-- <div class="crop_rotate_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/rotate.svg')}}" alt="">
+                <img src="{{ tenant_asset('img/card/rotate.svg')}}" alt="">
             </div> -->
         </div>
         <div class="crop_controller_content display_none" data-card_type="back">
             <img src="" class="croppable_image" data-card_type="back">
             <div class="crop_complete_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/complete.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/card/complete.svg') }}" alt="">
             </div>
             <div class="crop_cancel_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/card/cancel.svg') }}" alt="">
+                <img src="{{ tenant_asset('img/card/cancel.svg') }}" alt="">
             </div>
         </div>
     </div>
     <h2 class="pagetitle" id="card_regist_title">
-        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/title/regist_title.svg') }}" alt="" class="title_icon">
+        <img src="{{ tenant_asset('img/card/title/regist_title.svg') }}" alt="" class="title_icon">
         <span>
             @if ($edit == 'add')
             {{$carduser->表示名}}さん 名刺追加
@@ -75,7 +75,7 @@
                     </div>
                     <div id="card_switch_button" class="card_switch_button">
                         <span>
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/change.svg') }}" alt="">
+                            <img src="{{ tenant_asset('img/card/change.svg') }}" alt="">
                         </span>
                         切り替え
                     </div>
@@ -102,11 +102,11 @@
                         AI読み取り
                     </div>
                     <div class="crop_button">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/crop.svg') }}" alt="">
+                        <img src="{{ tenant_asset('img/card/crop.svg') }}" alt="">
                         切り取り
                     </div>
                     <div class="remove_button display_none" id="remove_button">
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/card/remove.svg') }}" alt="">
+                        <img src="{{ tenant_asset('img/card/remove.svg') }}" alt="">
                         解除
                     </div>
                 </div>
@@ -150,7 +150,7 @@
             <div class="form_container company_info">
                 <a href="@if($card) {{ route('cardcompanyeditget', ['company_id' => $card->会社ID]) }} @endif" class="company_edit_button @if(!$card) display_none @endif" target="_blank">
                     会社情報変更
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/card/external_link.svg') }}" alt="">
+                    <img src="{{ tenant_asset('img/card/external_link.svg') }}" alt="">
                 </a>
                 <table>
                     <tr>
@@ -162,7 +162,7 @@
                                 @endif>
                         </td>
                         <td>
-                            <img class="company_search_button" src="{{ asset(config('prefix.prefix').'/'.'img/card/search.svg') }}" alt="">
+                            <img class="company_search_button" src="{{ tenant_asset('img/card/search.svg') }}" alt="">
                         </td>
                     </tr>
                     <tr>

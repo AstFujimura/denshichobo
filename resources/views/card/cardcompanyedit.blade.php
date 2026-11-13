@@ -9,7 +9,7 @@
 
 @section('main')
 <h2 class="pagetitle" id="card_view_title"><img
-        src="{{ asset(config('prefix.prefix').'/'.'img/card/title/regist_title.svg') }}" alt="" class="title_icon">会社編集
+        src="{{ tenant_asset('img/card/title/regist_title.svg') }}" alt="" class="title_icon">会社編集
 </h2>
 <input type="hidden" id="card_company_edit_title">
 <div class="MainElement">
@@ -50,7 +50,7 @@
                     <div class="card_company_edit_department_item">
                         <input type="text" name="department_name[{{ $department->id }}]" value="{{ $department->部署名 }}">
                         <div class="card_company_edit_department_item_delete">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/delete.svg') }}" alt="">
+                            <img src="{{ tenant_asset('img/card/delete.svg') }}" alt="">
                         </div>
                     </div>
                     @endforeach
@@ -70,7 +70,7 @@
                     <div class="card_company_edit_branch_item">
                         <input type="text" name="branch[{{ $branch->id }}][branch_name]" value="{{ $branch->拠点名 }}">
                         <div class="card_company_edit_branch_item_delete">
-                            <img src="{{ asset(config('prefix.prefix').'/'.'img/card/delete.svg') }}" alt="">
+                            <img src="{{ tenant_asset('img/card/delete.svg') }}" alt="">
                         </div>
                         <div class="card_company_edit_branch_item_detail">
                             <div class="card_company_edit_branch_item_detail_content">

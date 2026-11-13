@@ -82,12 +82,12 @@
     <div class="file-detail-actions">
         @if ($file->削除フラグ != "済")
         <a href="{{ $prefix }}/edit/{{ $file->過去データID }}" class="file-detail-edit-button">
-            <img src="{{ asset($prefix.'/img/transfer_3_fill.svg') }}" alt="" class="file-detail-edit-button__icon" width="18" height="18">
+            <img src="{{ tenant_asset('img/transfer_3_fill.svg') }}" alt="" class="file-detail-edit-button__icon" width="18" height="18">
             <span>変更</span>
         </a>
         @endif
         <a href="{{ $prefix }}/download/{{ $file->id }}" class="file-detail-download-button">
-            <img src="{{ asset($prefix.'/img/download_2_line.svg') }}" alt="" class="file-detail-download-button__icon" width="18" height="18">
+            <img src="{{ tenant_asset('img/download_2_line.svg') }}" alt="" class="file-detail-download-button__icon" width="18" height="18">
             <span>ダウンロード</span>
         </a>
     </div>
@@ -139,12 +139,12 @@
                 <div class="bikou">{{ $historyFile->備考 }}</div>
                 <div class="filehennkou">{{ $historyFile->ファイル変更 }}</div>
                 <div class="downloadTd">
-                    <img src="{{ asset($prefix.'/img/download_2_line.svg') }}" id="{{ $prefix }}/download/{{ $historyFile->id }}" class="download downloadbutton" alt="ダウンロード">
+                    <img src="{{ tenant_asset('img/download_2_line.svg') }}" id="{{ $prefix }}/download/{{ $historyFile->id }}" class="download downloadbutton" alt="ダウンロード">
                 </div>
                 <div class="extension">{{ $historyFile->ファイル形式 }}</div>
                 <div class="preview">
                     @if ($historyFile->ファイル形式 == "png"||$historyFile->ファイル形式 == "PNG"||$historyFile->ファイル形式 == "jpg"||$historyFile->ファイル形式 == "jpeg"||$historyFile->ファイル形式 == "JPG"||$historyFile->ファイル形式 == "jpe"||$historyFile->ファイル形式 == "JPEG"||$historyFile->ファイル形式 == "bmp"||$historyFile->ファイル形式 == "gif"||$historyFile->ファイル形式 == "pdf"||$historyFile->ファイル形式 == "PDF")
-                    <img src="{{ asset($prefix.'/img/file_search_line.svg') }}" class="download previewbutton" id="{{ $historyFile->id }}" alt="プレビュー">
+                    <img src="{{ tenant_asset('img/file_search_line.svg') }}" class="download previewbutton" id="{{ $historyFile->id }}" alt="プレビュー">
                     @endif
                 </div>
                 <div class="koushinn">{{ $historyFile->created_at }}</div>

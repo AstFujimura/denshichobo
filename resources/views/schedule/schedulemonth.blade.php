@@ -9,7 +9,7 @@ Skett ~スケジュールアプリ
 
 @section('main')
 <div class="MainElement">
-    <h2 class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/calendar.svg') }}" alt="" class="title_icon">スケジュール</h2>
+    <h2 class="pagetitle"><img src="{{ tenant_asset('img/schedule_title/calendar.svg') }}" alt="" class="title_icon">スケジュール</h2>
     <div class="schedule_controll_container">
         <div class="schedule_group_container">
             <select class="month_user_select" name="" id="">
@@ -84,7 +84,7 @@ Skett ~スケジュールアプリ
 
             </div>
             <a href="{{ route('scheduleregistget', ['user_id' => $user->id, 'date' => $cells->{$w}->{$i}->ymd]) }}" class="regist_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/schedule/regist.svg') }}" alt="" class="regist_icon">
+                <img src="{{ tenant_asset('img/schedule/regist.svg') }}" alt="" class="regist_icon">
             </a>
     </div>
 

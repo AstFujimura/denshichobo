@@ -16,7 +16,7 @@ Rapid ~電子承認システム
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle" id="flow_confirm"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">確認画面</h2>
+    <h2 class="pagetitle" id="flow_confirm"><img src="{{ tenant_asset('img/flow_title/application.svg') }}" alt="" class="title_icon">確認画面</h2>
     <div class="flow_confirm_wrapper">
         <form action="{{route('workflowconfirmpost')}}" method="post" id="flow_application_choice_form" class="flow_confirm_form" enctype="multipart/form-data">
             @csrf
@@ -24,11 +24,11 @@ Rapid ~電子承認システム
             <input type="hidden" value="{{$t_flow->id}}" name="t_flow_id" id="t_flow_id">
 
             <a href="{{route('workflowchoiceget',['id' => $id])}}" class="back_button flow_application_back_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                <img src="{{ tenant_asset('img/button/home_back.svg') }}" alt="" class="button_icon">
                 もどる
             </a>
             <button class="dicision_button flow_application_button" id="flow_next_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/application.svg') }}" alt="" class="button_icon">
+                <img src="{{ tenant_asset('img/button/application.svg') }}" alt="" class="button_icon">
                 申請
             </button>
         </form>
@@ -45,7 +45,7 @@ Rapid ~電子承認システム
                     <div class="flow_confirm_element">
                         @if ($t_optional->値 == "file_regist_2545198")
                         <div class="approve_preview_button" data-id="{{$t_optional->id}}" data-type="t_optional">プレビュー</div>
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_optional->id}}?type=t_optional&timestamp={{time()}}">
+                        <img src="{{ tenant_asset('img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_optional->id}}?type=t_optional&timestamp={{time()}}">
                         @elseif ($t_optional->値 == "file_none_246851")
                         @else
                         {{$t_optional->値}}
@@ -63,7 +63,7 @@ Rapid ~電子承認システム
                     </div>
                     <div class="flow_confirm_element">
                         <div class="approve_preview_button" data-id="{{$t_flow->id}}" data-type="t_flow_after">プレビュー</div>
-                        <img src="{{ asset(config('prefix.prefix').'/'.'img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_flow->id}}?type=t_flow_after&timestamp={{time()}}">
+                        <img src="{{ tenant_asset('img/download_2_line.svg') }}" class="approve_download" data-url="{{$prefix}}/workflow/download/{{$t_flow->id}}?type=t_flow_after&timestamp={{time()}}">
                     </div>
                 </div>
                 @endif

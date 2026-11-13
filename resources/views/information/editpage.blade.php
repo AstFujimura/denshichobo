@@ -138,7 +138,7 @@
                         <div class="ledger-regist__preview-heading-row">
                             <p class="ledger-regist__preview-heading">変更前</p>
                             <button type="button" class="ledger-regist__preview-expand" data-preview-target="past" data-preview-title="変更前" aria-label="変更前を拡大表示">
-                                <img src="{{ asset($prefix.'/img/card/large_view.svg') }}" alt="" width="18" height="18">
+                                <img src="{{ tenant_asset('img/card/large_view.svg') }}" alt="" width="18" height="18">
                             </button>
                         </div>
                         <div class="pastpreview ledger-regist__preview-box">
@@ -150,7 +150,7 @@
                         <div class="ledger-regist__preview-heading-row">
                             <p class="ledger-regist__preview-heading">変更後</p>
                             <button type="button" class="ledger-regist__preview-expand" data-preview-target="new" data-preview-title="変更後" aria-label="変更後を拡大表示">
-                                <img src="{{ asset($prefix.'/img/card/large_view.svg') }}" alt="" width="18" height="18">
+                                <img src="{{ tenant_asset('img/card/large_view.svg') }}" alt="" width="18" height="18">
                             </button>
                         </div>
                         <div class="previewarea editpreviewarea ledger-regist__preview-box">

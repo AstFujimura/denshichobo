@@ -9,7 +9,7 @@ Skett ~スケジュールアプリ
 
 @section('main')
 <div class="MainElement">
-    <h2 id="schedule_regist" class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/regist.svg') }}" alt="" class="title_icon">スケジュール登録</h2>
+    <h2 id="schedule_regist" class="pagetitle"><img src="{{ tenant_asset('img/schedule_title/regist.svg') }}" alt="" class="title_icon">スケジュール登録</h2>
     <div class="page_reload_container">
         <a class="page_back_button" href="{{ route('scheduleget')}}">
             トップへもどる

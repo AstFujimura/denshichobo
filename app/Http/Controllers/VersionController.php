@@ -16,7 +16,7 @@ class VersionController extends Controller
     '名刺' => '名刺',
     '文書' => '文書',
     'BANBAN' => 'BANBAN',
-    'ichifuji' => 'いちふじ',
+    'ichifuji' => 'TAMERU AI',
   ];
 
   public function versionGet()

@@ -9,7 +9,7 @@ Skett ~スケジュールアプリ
 
 @section('main')
 <div class="MainElement">
-    <h2 id="schedule_group_regist" class="pagetitle"><img src="{{ asset(config('prefix.prefix').'/'.'img/schedule_title/regist_title.svg') }}" alt="" class="title_icon">個人グループ作成</h2>
+    <h2 id="schedule_group_regist" class="pagetitle"><img src="{{ tenant_asset('img/schedule_title/regist_title.svg') }}" alt="" class="title_icon">個人グループ作成</h2>
     <div class="page_reload_container">
         <a class="page_back_button" href="{{ route('scheduleget')}}">
             トップへもどる

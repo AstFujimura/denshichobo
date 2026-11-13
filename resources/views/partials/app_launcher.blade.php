@@ -15,36 +15,36 @@
     <div class="app_launcher_panel" id="app_launcher_panel" role="dialog" aria-label="アプリ一覧" hidden>
         <div class="app_launcher_panel_header">アプリを切り替える</div>
         <div class="app_launcher_grid">
-            @if (App\Models\Version::where('tameru', true)->first())
+            @if (feature_enabled('tameru'))
             <a href="{{ route('topGet') }}" class="app_launcher_item">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/header/tameru_logo_only.svg') }}" alt="" class="app_launcher_icon">
+                <img src="{{ tenant_asset('img/header/tameru_logo_only.svg') }}" alt="" class="app_launcher_icon">
                 <div class="app_launcher_text">
                     <div class="app_launcher_name">TAMERU</div>
                     <div class="app_launcher_desc">電子帳簿保存システム</div>
                 </div>
             </a>
             @endif
-            @if (App\Models\Version::where('フロー', true)->first())
+            @if (feature_enabled('flow'))
             <a href="{{ route('workflow') }}" class="app_launcher_item">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/header/rapid_logo_only.svg') }}" alt="" class="app_launcher_icon">
+                <img src="{{ tenant_asset('img/header/rapid_logo_only.svg') }}" alt="" class="app_launcher_icon">
                 <div class="app_launcher_text">
                     <div class="app_launcher_name">Rapid</div>
                     <div class="app_launcher_desc">電子申請システム</div>
                 </div>
             </a>
             @endif
-            @if (App\Models\Version::where('スケジュール', true)->first())
+            @if (feature_enabled('schedule'))
             <a href="{{ route('scheduleget') }}" class="app_launcher_item">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/header/skett_logo_only.svg') }}" alt="" class="app_launcher_icon">
+                <img src="{{ tenant_asset('img/header/skett_logo_only.svg') }}" alt="" class="app_launcher_icon">
                 <div class="app_launcher_text">
                     <div class="app_launcher_name">Skett</div>
                     <div class="app_launcher_desc">スケジュール管理システム</div>
                 </div>
             </a>
             @endif
-            @if (App\Models\Version::where('名刺', true)->first())
+            @if (feature_enabled('card'))
             <a href="{{ route('cardviewget') }}" class="app_launcher_item">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/header/readbridge_icon.svg') }}" alt="" class="app_launcher_icon">
+                <img src="{{ tenant_asset('img/header/readbridge_icon.svg') }}" alt="" class="app_launcher_icon">
                 <div class="app_launcher_text">
                     <div class="app_launcher_name">ReadBridge</div>
                     <div class="app_launcher_desc">名刺管理システム</div>

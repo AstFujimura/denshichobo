@@ -17,7 +17,7 @@ TAMERU ~電子帳簿保存
 @section('main')
 
 <div class="loader">
-    <img src="{{ asset($prefix.'/'.'img/loading.gif')}}">
+    <img src="{{ tenant_asset('img/loading.gif')}}">
     <div class="searchcomment">検索中です</div>
 </div>
 

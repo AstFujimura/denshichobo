@@ -15,12 +15,12 @@ Rapid ~電子承認システム
 @section('main')
 <div class="MainElement">
 
-    <h2 class="pagetitle" id="flow_choice"><img src="{{ asset(config('prefix.prefix').'/'.'img/flow_title/application.svg') }}" alt="" class="title_icon">経路選択</h2>
+    <h2 class="pagetitle" id="flow_choice"><img src="{{ tenant_asset('img/flow_title/application.svg') }}" alt="" class="title_icon">経路選択</h2>
     <form action="{{route('workflowchoicepost')}}" method="post" id="flow_application_choice_form" class="flow_application_choice_form" enctype="multipart/form-data">
         @csrf
         <div class="flow_choice_button_container">
             <a href="{{route('workflowapplicationget',['t_flow_id' => $id])}}" class="back_button flow_choice_back_button" id="flow_next_button">
-                <img src="{{ asset(config('prefix.prefix').'/'.'img/button/home_back.svg') }}" alt="" class="button_icon">
+                <img src="{{ tenant_asset('img/button/home_back.svg') }}" alt="" class="button_icon">
                 もどる
             </a>
             <button class="next_button flow_choice_next_button" id="flow_next_button">
@@ -39,11 +39,11 @@ Rapid ~電子承認システム
 
                 </select>
                 <div class="flow_choice_annotation unselected">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/exclamation.svg') }}" alt="" class="button_icon">
+                    <img src="{{ tenant_asset('img/button/exclamation.svg') }}" alt="" class="button_icon">
                     経路を選択してください
                 </div>
                 <div class="flow_choice_annotation selected">
-                    <img src="{{ asset(config('prefix.prefix').'/'.'img/button/check.svg') }}" alt="" class="button_icon">
+                    <img src="{{ tenant_asset('img/button/check.svg') }}" alt="" class="button_icon">
                     経路選択済み
                 </div>
 

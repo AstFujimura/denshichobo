@@ -48,12 +48,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \Blade::directive('server', function ($expression) {
-
-            return '<input type="hidden" id="server" value="' . config('prefix.server') . '">';
+            return '<?php echo \'<input type="hidden" id="server" value="\' . e(config(\'prefix.server\')) . \'">\'; ?>';
         });
         \Blade::directive('prefix', function ($expression) {
-
-            return '<input type="hidden" id="prefix" value="' . config('prefix.prefix') . '">';
+            return '<?php echo \'<input type="hidden" id="prefix" value="\' . e(config(\'prefix.prefix\')) . \'">\'; ?>';
         });
     }
 }
