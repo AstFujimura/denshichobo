@@ -74,6 +74,9 @@
                     </td>
                     <td class="table-action">
                         <a href="{{ route('platform.tenants.show', $tenant) }}">詳細</a>
+                        @if (Auth::guard('platform')->user()->can_provision)
+                            <a href="{{ route('platform.tenants.show', $tenant) }}#delete-tenant">削除</a>
+                        @endif
                         @if ($tenant->status === 'provisioning' && ! $tenant->provisioned_at && Auth::guard('platform')->user()->can_provision)
                             <form method="POST" action="{{ route('platform.tenants.discard', $tenant) }}" onsubmit="return confirm(@json('準備中の「'.$tenant->name.'」を取り消します。作成途中のデータベースがある場合は削除します。この操作は元に戻せません。'))">
                                 @csrf

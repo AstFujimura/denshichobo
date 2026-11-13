@@ -23,6 +23,7 @@ Route::prefix('platform')->name('platform.')->group(function () {
         Route::get('tenants/{tenant}', [TenantController::class, 'show'])->name('tenants.show');
         Route::post('tenants/{tenant}', [TenantController::class, 'update'])->name('tenants.update');
         Route::post('tenants/{tenant}/discard', [TenantController::class, 'discard'])->name('tenants.discard');
+        Route::post('tenants/{tenant}/destroy', [TenantController::class, 'destroy'])->name('tenants.destroy');
         Route::post('tenants/{tenant}/support/enter', [SupportController::class, 'enter'])->name('tenants.support.enter');
         Route::post('storage/test-access', [StorageAccessController::class, 'test'])->name('storage.test-access');
     });

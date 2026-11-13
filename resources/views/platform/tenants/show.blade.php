@@ -188,6 +188,19 @@
     @endif
 </div>
 
+@if (Auth::guard('platform')->user()->can_provision)
+<div class="platform-card" id="delete-tenant">
+    <h2>テナントの削除</h2>
+    <p class="platform-muted">テナント「{{ $tenant->name }}」とデータベース <code>{{ $tenant->db_database }}</code> を削除します。中のデータも消え、元に戻せません。</p>
+    <form method="POST" action="{{ route('platform.tenants.destroy', $tenant) }}" class="tenant-delete-form">
+        @csrf
+        <label for="confirm_code">確認のため、テナントコード <code>{{ $tenant->code }}</code> を入力</label>
+        <input id="confirm_code" type="text" name="confirm_code" value="{{ old('confirm_code') }}" autocomplete="off" required>
+        <button type="submit" class="platform-btn danger">テナントとデータベースを削除</button>
+    </form>
+</div>
+@endif
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const storageMode = document.getElementById('storage_mode');

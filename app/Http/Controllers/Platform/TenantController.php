@@ -283,6 +283,58 @@ class TenantController extends Controller
             ->with('success', '準備中のテナントを取り消しました。');
     }
 
+    public function destroy(
+        Request $request,
+        Tenant $tenant,
+        ProvisionDatabaseManager $provision,
+        TenantResolver $resolver,
+        SupportEntryService $support
+    ) {
+        $this->authorizeProvisioning();
+
+        $data = $request->validate([
+            'confirm_code' => ['required', 'string'],
+        ]);
+
+        if ($data['confirm_code'] !== $tenant->code) {
+            return back()
+                ->withInput()
+                ->withErrors(['confirm_code' => 'テナントコードが一致しません。']);
+        }
+
+        $meta = [
+            'code' => $tenant->code,
+            'name' => $tenant->name,
+            'prefix' => $tenant->prefix,
+            'db_database' => $tenant->db_database,
+        ];
+        $prefix = $tenant->prefix;
+        $database = $tenant->db_database;
+
+        try {
+            if ($provision->databaseExists($database)) {
+                $provision->dropDatabase($database);
+            }
+        } catch (\Throwable $e) {
+            return back()->with('error', 'データベースを削除できませんでした。テナントは残しています: ' . $e->getMessage());
+        }
+
+        $tenant->delete();
+        $resolver->forgetPrefix($prefix);
+        $support->audit(
+            Auth::guard('platform')->user(),
+            null,
+            'tenant_delete',
+            null,
+            $request,
+            $meta
+        );
+
+        return redirect()
+            ->route('platform.tenants.index')
+            ->with('success', 'テナントとデータベースを削除しました。');
+    }
+
     protected function authorizeProvisioning(): void
     {
         abort_unless(
