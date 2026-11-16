@@ -114,6 +114,7 @@ PROMPT,
     |
     */
     'gemini' => [
+        'model' => env('GEMINI_MODEL', 'gemini-3.5-flash'),
         'max_output_tokens' => 2048,
         'max_output_tokens_retry' => 8192,
         'thinking_budget' => 0,

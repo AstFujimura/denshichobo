@@ -30,8 +30,9 @@ class TenantAiConfigApplier
             Config::set('ai_ocr.provider', $ai->ledger_ocr_provider);
         }
 
+        // テナントのモデル指定は TAMERU の帳簿OCRだけに使う。名刺は共通の GEMINI_MODEL のまま。
         if (filled($ai->gemini_model)) {
-            Config::set('version.gemini_model', $ai->gemini_model);
+            Config::set('ai_ocr.gemini.model', $ai->gemini_model);
         }
     }
 }

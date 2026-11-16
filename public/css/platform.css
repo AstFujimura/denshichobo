@@ -242,6 +242,27 @@ textarea { min-height: 90px; resize: vertical; }
 .platform-pagination .disabled { color: #98a2b3; background: #f7f9fb; }
 .platform-pagination .ellipsis { border-color: transparent; }
 
+.platform-modal[hidden] { display: none; }
+.platform-modal {
+  position: fixed; inset: 0; z-index: 40;
+  display: grid; place-items: center; padding: 24px;
+}
+.platform-modal-backdrop { position: absolute; inset: 0; background: rgba(23, 33, 47, 0.48); }
+.platform-modal-panel {
+  position: relative; width: min(520px, 100%);
+  background: var(--card); border-radius: 12px; padding: 22px 22px 18px;
+  box-shadow: 0 18px 50px rgba(23, 33, 47, 0.22);
+}
+.platform-modal-panel h2 { margin: 0 0 12px; }
+.platform-modal-warning { margin: 0 0 16px; line-height: 1.7; }
+.platform-modal-panel label { display: block; margin-bottom: 6px; font-size: 0.9rem; }
+.platform-modal-panel input {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+}
+.platform-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.platform-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+body.platform-modal-open { overflow: hidden; }
+
 @media (max-width: 720px) {
   .platform-shell { padding: 12px 12px 36px; }
   .platform-top, .platform-page-heading { align-items: flex-start; }

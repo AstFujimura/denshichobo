@@ -191,13 +191,25 @@
 @if (Auth::guard('platform')->user()->can_provision)
 <div class="platform-card" id="delete-tenant">
     <h2>テナントの削除</h2>
-    <p class="platform-muted">テナント「{{ $tenant->name }}」とデータベース <code>{{ $tenant->db_database }}</code> を削除します。中のデータも消え、元に戻せません。</p>
-    <form method="POST" action="{{ route('platform.tenants.destroy', $tenant) }}" class="tenant-delete-form">
-        @csrf
-        <label for="confirm_code">確認のため、テナントコード <code>{{ $tenant->code }}</code> を入力</label>
-        <input id="confirm_code" type="text" name="confirm_code" value="{{ old('confirm_code') }}" autocomplete="off" required>
-        <button type="submit" class="platform-btn danger">テナントとデータベースを削除</button>
-    </form>
+    <p class="platform-muted">テナントとデータベースをまとめて削除します。</p>
+    <button type="button" class="platform-btn danger" id="open-delete-tenant">削除</button>
+</div>
+
+<div class="platform-modal" id="delete-tenant-modal" hidden>
+    <div class="platform-modal-backdrop" data-close-delete-modal></div>
+    <div class="platform-modal-panel" role="dialog" aria-modal="true" aria-labelledby="delete-tenant-title">
+        <h2 id="delete-tenant-title">テナントの削除</h2>
+        <p class="platform-modal-warning">非常に危険な動作です。本当に削除する場合は以下に <code>{{ $tenant->code }}</code> と書いてから削除ボタンを押してください。</p>
+        <form method="POST" action="{{ route('platform.tenants.destroy', $tenant) }}">
+            @csrf
+            <label for="confirm_code">テナントコード</label>
+            <input id="confirm_code" type="text" name="confirm_code" value="{{ old('confirm_code') }}" autocomplete="off" required>
+            <div class="platform-modal-actions">
+                <button type="button" class="platform-btn secondary" data-close-delete-modal>キャンセル</button>
+                <button type="submit" class="platform-btn danger" id="confirm-delete-tenant" disabled>削除</button>
+            </div>
+        </form>
+    </div>
 </div>
 @endif
 
@@ -258,6 +270,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     storageMode.addEventListener('change', updateStorageFields);
     updateStorageFields();
+
+    const deleteModal = document.getElementById('delete-tenant-modal');
+    const openDelete = document.getElementById('open-delete-tenant');
+    const confirmCode = document.getElementById('confirm_code');
+    const confirmDelete = document.getElementById('confirm-delete-tenant');
+    const expectedCode = @json($tenant->code);
+
+    function setDeleteModal(open) {
+        if (! deleteModal) {
+            return;
+        }
+        deleteModal.hidden = ! open;
+        document.body.classList.toggle('platform-modal-open', open);
+        if (open && confirmCode) {
+            confirmCode.focus();
+        }
+    }
+
+    if (openDelete && deleteModal && confirmCode && confirmDelete) {
+        openDelete.addEventListener('click', function () {
+            setDeleteModal(true);
+        });
+        deleteModal.querySelectorAll('[data-close-delete-modal]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                setDeleteModal(false);
+            });
+        });
+        confirmCode.addEventListener('input', function () {
+            confirmDelete.disabled = confirmCode.value !== expectedCode;
+        });
+        if (@json($errors->has('confirm_code'))) {
+            setDeleteModal(true);
+            confirmDelete.disabled = confirmCode.value !== expectedCode;
+        }
+    }
 });
 </script>
 @endsection

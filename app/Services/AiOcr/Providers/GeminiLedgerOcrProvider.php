@@ -133,7 +133,7 @@ class GeminiLedgerOcrProvider implements AiOcrLedgerProvider
             'generationConfig' => $this->buildGenerationConfig($maxOutputTokens, $sumAmounts),
         ];
 
-        $url = GeminiApi::generateContentUrl();
+        $url = GeminiApi::generateContentUrl(null, config('ai_ocr.gemini.model'));
 
         Log::info('ai_ocr.gemini.request', [
             'step' => 'gemini.requesting',
