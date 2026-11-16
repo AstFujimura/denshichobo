@@ -14,7 +14,6 @@ class VersionController extends Controller
     'フロー' => 'フロー',
     'スケジュール' => 'スケジュール',
     '名刺' => '名刺',
-    '文書' => '文書',
     'BANBAN' => 'BANBAN',
     'ichifuji' => 'TAMERU AI',
   ];

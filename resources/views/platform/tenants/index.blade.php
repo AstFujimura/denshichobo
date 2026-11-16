@@ -52,6 +52,7 @@
                     $featureConfig = config('tenancy.features', []);
                     $enabledFeatures = $tenant->features
                         ->where('enabled', true)
+                        ->reject(fn ($feature) => ! empty($featureConfig[$feature->feature_key]['hidden']))
                         ->map(fn ($feature) => $featureConfig[$feature->feature_key]['label'] ?? $feature->feature_key);
                 @endphp
                 <tr>

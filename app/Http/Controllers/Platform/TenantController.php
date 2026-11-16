@@ -7,6 +7,7 @@ use App\Jobs\ProvisionTenant;
 use App\Models\Control\Tenant;
 use App\Models\Control\TenantAiSetting;
 use App\Models\Control\TenantMigrationRun;
+use App\Support\Platform\TenantActionOtp;
 use App\Support\Tenancy\ProvisionDatabaseManager;
 use App\Support\Tenancy\SupportEntryService;
 use App\Support\Tenancy\TenantFeatureSync;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class TenantController extends Controller
 {
@@ -53,6 +55,14 @@ class TenantController extends Controller
         $this->authorizeProvisioning();
 
         $featureKeys = array_keys(config('tenancy.features', []));
+        $dbSuffix = trim((string) $request->input('db_database_suffix', ''));
+        if (str_starts_with($dbSuffix, 'denshichobo_')) {
+            $dbSuffix = substr($dbSuffix, strlen('denshichobo_'));
+        }
+        $request->merge([
+            'db_database' => $dbSuffix === '' ? '' : 'denshichobo_'.$dbSuffix,
+        ]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'code' => [
@@ -67,17 +77,18 @@ class TenantController extends Controller
                 'string',
                 'max:64',
                 'regex:/^[A-Za-z0-9_-]+$/',
+                Rule::notIn(['platform']),
                 Rule::unique('control.tenants', 'prefix'),
             ],
             'db_database' => [
                 'required',
                 'string',
-                'max:128',
-                'regex:/^[A-Za-z0-9_]+$/',
+                'max:64',
+                'regex:/^denshichobo_[A-Za-z0-9_]+$/',
                 Rule::unique('control.tenants', 'db_database'),
             ],
             'storage_mode' => ['required', Rule::in(['cloud', 'onpre'])],
-            'storage_prefix' => ['nullable', 'string', 'max:255'],
+            'storage_prefix' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9_-]+$/'],
             'file_upload_path' => ['nullable', 'required_if:storage_mode,onpre', 'string', 'max:1024'],
             'notes' => ['nullable', 'string'],
             'features' => ['nullable', 'array'],
@@ -87,7 +98,11 @@ class TenantController extends Controller
         ], [
             'code.regex' => 'テナントコードは半角小文字・数字・アンダースコアのみ使用できます。',
             'prefix.regex' => 'URLプレフィックスは半角英数字・ハイフン・アンダースコアのみ使用できます。',
-            'db_database.regex' => 'DB名は半角英数字・アンダースコアのみ使用できます。',
+            'prefix.not_in' => 'URLプレフィックスに platform は使えません。',
+            'db_database.required' => 'データベース名を入力してください。',
+            'db_database.regex' => 'データベース名は denshichobo_ に続く半角英数字・アンダースコアにしてください。ハイフンは使えません。',
+            'storage_prefix.regex' => '保存先プレフィックスは半角英数字・ハイフン・アンダースコアのみ使用できます。',
+            'db_database.unique' => 'このデータベース名は既に使われています。',
         ]);
 
         $databaseExists = DB::connection('control')->selectOne(
@@ -100,11 +115,17 @@ class TenantController extends Controller
                 ->withErrors(['db_database' => '指定したデータベースは既に存在します。新しいDB名を指定してください。']);
         }
 
+        $this->consumeTenantOtp($request, 'create');
+
         $selectedFeatures = (array) ($data['features'] ?? []);
         $featureMap = [];
         foreach ($featureKeys as $key) {
-            $featureMap[$key] = ! empty($selectedFeatures[$key]);
+            $meta = config("tenancy.features.{$key}", []);
+            $featureMap[$key] = ! empty($meta['hidden'])
+                ? (bool) ($meta['default'] ?? false)
+                : ! empty($selectedFeatures[$key]);
         }
+        $featureMap = $this->withoutOrphanCustomFeatures($featureMap);
 
         $tenant = Tenant::query()->create([
             'code' => $data['code'],
@@ -183,13 +204,15 @@ class TenantController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'status' => ['required', 'in:provisioning,active,suspended,archived'],
             'storage_mode' => ['required', 'in:cloud,onpre'],
-            'storage_prefix' => ['required', 'string', 'max:255'],
+            'storage_prefix' => ['required', 'string', 'max:64', 'regex:/^[A-Za-z0-9_-]+$/'],
             'file_upload_path' => ['nullable', 'required_if:storage_mode,onpre', 'string', 'max:1024'],
             'notes' => ['nullable', 'string'],
             'features' => ['nullable', 'array'],
             'features.*' => ['nullable', 'boolean'],
             'ledger_ocr_provider' => ['required', 'in:gemini,internal'],
             'gemini_model' => ['nullable', 'string', 'max:128'],
+        ], [
+            'storage_prefix.regex' => '保存先プレフィックスは半角英数字・ハイフン・アンダースコアのみ使用できます。',
         ]);
 
         if ($data['storage_mode'] === 'cloud') {
@@ -202,9 +225,14 @@ class TenantController extends Controller
 
         $featureMap = [];
         $selectedFeatures = (array) ($data['features'] ?? []);
-        foreach (array_keys(config('tenancy.features', [])) as $key) {
+        foreach (config('tenancy.features', []) as $key => $meta) {
+            if (! empty($meta['hidden'])) {
+                $featureMap[$key] = $tenant->featureEnabled($key);
+                continue;
+            }
             $featureMap[$key] = ! empty($selectedFeatures[$key]);
         }
+        $featureMap = $this->withoutOrphanCustomFeatures($featureMap);
         $oldPrefix = $tenant->prefix;
 
         DB::connection('control')->transaction(function () use ($data, $tenant, $featureMap, $featureSync) {
@@ -291,16 +319,7 @@ class TenantController extends Controller
         SupportEntryService $support
     ) {
         $this->authorizeProvisioning();
-
-        $data = $request->validate([
-            'confirm_code' => ['required', 'string'],
-        ]);
-
-        if ($data['confirm_code'] !== $tenant->code) {
-            return back()
-                ->withInput()
-                ->withErrors(['confirm_code' => 'テナントコードが一致しません。']);
-        }
+        $this->consumeTenantOtp($request, 'destroy', $tenant->id);
 
         $meta = [
             'code' => $tenant->code,
@@ -333,6 +352,90 @@ class TenantController extends Controller
         return redirect()
             ->route('platform.tenants.index')
             ->with('success', 'テナントとデータベースを削除しました。');
+    }
+
+    public function sendOtp(Request $request, TenantActionOtp $otp)
+    {
+        $data = $request->validate([
+            'local' => ['required', 'string', 'max:64', 'regex:/^[A-Za-z0-9._+-]+$/'],
+            'purpose' => ['required', Rule::in(['create', 'destroy', 'support'])],
+            'tenant_id' => ['nullable', 'integer'],
+        ], [
+            'local.required' => 'メールアドレスを入力してください。',
+            'local.regex' => 'メールアドレスは @ より前の半角英数字を入力してください。',
+        ]);
+
+        if ($data['purpose'] !== 'support') {
+            $this->authorizeProvisioning();
+        }
+
+        $tenant = null;
+        $tenantId = null;
+        if (in_array($data['purpose'], ['destroy', 'support'], true)) {
+            $tenant = Tenant::query()->find($data['tenant_id'] ?? 0);
+            if (! $tenant) {
+                return response()->json(['message' => 'テナントが見つかりません。'], 422);
+            }
+            $tenantId = $tenant->id;
+        }
+
+        $email = $data['local'].'@'.config('tenancy.otp.domain', 'ast-sys.co.jp');
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return response()->json(['message' => 'メールアドレスの形式が正しくありません。'], 422);
+        }
+
+        try {
+            $otp->send(
+                (int) Auth::guard('platform')->id(),
+                $email,
+                $data['purpose'],
+                $tenantId,
+                $tenant
+            );
+        } catch (ValidationException $e) {
+            $message = collect($e->errors())->flatten()->first() ?: '確認コードを送信できませんでした。';
+
+            return response()->json(['message' => $message], 422);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json(['message' => '確認コードを送信できませんでした。メール設定を確認してください。'], 500);
+        }
+
+        return response()->json(['message' => $email.' に確認コードを送信しました。']);
+    }
+
+    private function consumeTenantOtp(Request $request, string $purpose, ?int $tenantId = null): void
+    {
+        $request->validate([
+            'otp_code' => ['required', 'digits:6'],
+        ], [
+            'otp_code.required' => '確認コードを入力してください。',
+            'otp_code.digits' => '確認コードは6桁の数字です。',
+        ]);
+
+        app(TenantActionOtp::class)->consume(
+            (int) Auth::guard('platform')->id(),
+            (string) $request->input('otp_code'),
+            $purpose,
+            $tenantId
+        );
+    }
+
+    /**
+     * @param  array<string, bool>  $featureMap
+     * @return array<string, bool>
+     */
+    private function withoutOrphanCustomFeatures(array $featureMap): array
+    {
+        foreach (config('tenancy.features', []) as $key => $meta) {
+            $parent = $meta['parent'] ?? null;
+            if ($parent && empty($featureMap[$parent])) {
+                $featureMap[$key] = false;
+            }
+        }
+
+        return $featureMap;
     }
 
     protected function authorizeProvisioning(): void

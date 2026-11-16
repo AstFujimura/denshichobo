@@ -20,6 +20,7 @@ Route::prefix('platform')->name('platform.')->group(function () {
         Route::get('tenants', [TenantController::class, 'index'])->name('tenants.index');
         Route::get('tenants/create', [TenantController::class, 'create'])->name('tenants.create');
         Route::post('tenants', [TenantController::class, 'store'])->name('tenants.store');
+        Route::post('tenants/otp', [TenantController::class, 'sendOtp'])->name('tenants.otp');
         Route::get('tenants/{tenant}', [TenantController::class, 'show'])->name('tenants.show');
         Route::post('tenants/{tenant}', [TenantController::class, 'update'])->name('tenants.update');
         Route::post('tenants/{tenant}/discard', [TenantController::class, 'discard'])->name('tenants.discard');

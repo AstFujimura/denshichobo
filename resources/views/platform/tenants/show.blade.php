@@ -10,6 +10,10 @@
         'suspended' => '停止中',
         'archived' => '保管済み',
     ];
+    $aiProvider = old('ledger_ocr_provider', $ai?->ledger_ocr_provider ?? 'gemini');
+    $tameruAiOn = old('features') !== null
+        ? (bool) old('features.ichifuji')
+        : (bool) ($features['ichifuji']['enabled'] ?? false);
 @endphp
 
 <div class="platform-card">
@@ -38,7 +42,7 @@
 <nav class="settings-nav" aria-label="設定メニュー">
     <a href="#basic-settings">基本情報</a>
     <a href="#feature-settings">利用機能</a>
-    <a href="#ai-settings">AI設定</a>
+    <a href="#ai-settings" id="ai-settings-nav" @if (! $tameruAiOn) hidden @endif>AI設定</a>
     <a href="#support-access">サポート入場</a>
     <a href="#database-history">DB更新履歴</a>
 </nav>
@@ -68,10 +72,13 @@
                 </select>
             </div>
             <div>
-                <label for="storage_prefix">保存先プレフィックス</label>
-                <input id="storage_prefix" type="text" name="storage_prefix" value="{{ old('storage_prefix', $tenant->storage_prefix) }}" placeholder="例：astec" required>
+                <div class="label-with-info">
+                    <label for="storage_prefix">保存先プレフィックス</label>
+                    <button type="button" class="info-mark" id="open-storage-prefix-info" aria-label="保存先プレフィックスの説明">i</button>
+                </div>
+                <input id="storage_prefix" type="text" name="storage_prefix" value="{{ old('storage_prefix', $tenant->storage_prefix) }}" placeholder="例：astec" required pattern="[A-Za-z0-9_\-]+" title="半角英数字・ハイフン・アンダースコアのみ">
             </div>
-            <div class="tenant-create-span-2 onpre-path-field">
+            <div class="tenant-create-span-2 onpre-path-field" @if (old('storage_mode', $tenant->storage_mode) !== 'onpre') hidden @endif>
                 <label for="file_upload_path">オンプレ保存先</label>
                 <div class="path-input-row">
                     <input id="file_upload_path" type="text" name="file_upload_path" value="{{ old('file_upload_path', $tenant->file_upload_path) }}" placeholder="例：/var/www/denshichobo-files/test">
@@ -89,27 +96,21 @@
     <div class="tenant-create-lower tenant-manage-lower">
         <div class="platform-card" id="feature-settings">
             <h2>利用機能</h2>
-            <div class="feature-grid tenant-create-features">
-                @foreach ($features as $key => $feature)
-                    <label class="feature-item">
-                        <input type="checkbox" name="features[{{ $key }}]" value="1" @checked($feature['enabled'])>
-                        <span>{{ $feature['label'] }}</span>
-                    </label>
-                @endforeach
-            </div>
+            <p class="feature-catalog-lead">契約するサービスを選びます。</p>
+            @include('platform.tenants._features', ['featureMode' => 'edit', 'featureStates' => $features])
         </div>
 
-        <div class="platform-card" id="ai-settings">
+        <div class="platform-card" id="ai-settings" @if (! $tameruAiOn) hidden @endif>
             <h2>AI設定</h2>
             <div class="meta-grid">
                 <div>
                     <label for="ledger_ocr_provider">TAMERU AIの利用先</label>
                     <select id="ledger_ocr_provider" name="ledger_ocr_provider">
-                        <option value="gemini" @selected(old('ledger_ocr_provider', $ai->ledger_ocr_provider ?? 'gemini') === 'gemini')>Gemini</option>
-                        <option value="internal" @selected(old('ledger_ocr_provider', $ai->ledger_ocr_provider ?? 'gemini') === 'internal')>社内AI</option>
+                        <option value="gemini" @selected($aiProvider === 'gemini')>Gemini</option>
+                        <option value="internal" @selected($aiProvider === 'internal')>社内AI</option>
                     </select>
                 </div>
-                <div>
+                <div id="gemini-model-field" @if ($aiProvider !== 'gemini') hidden @endif>
                     <label for="gemini_model">Geminiモデル</label>
                     <input id="gemini_model" type="text" name="gemini_model" value="{{ old('gemini_model', $ai->gemini_model ?? '') }}" placeholder="未入力時は共通設定を使用">
                 </div>
@@ -124,11 +125,10 @@
 
 <div class="platform-card" id="support-access">
     <h2>サポート入場</h2>
-    <p class="platform-muted">パスワードを使わず顧客画面へ入り、表示や動作を確認します。操作は監査ログに記録されます。</p>
-    <form method="POST" action="{{ route('platform.tenants.support.enter', $tenant) }}" class="form-actions" style="margin-bottom:20px;">
-        @csrf
-        <button type="submit" class="platform-btn" @disabled($tenant->status !== 'active')>サポート担当者として開く</button>
-    </form>
+    <p class="platform-muted">パスワードを使わず顧客画面へ入り、表示や動作を確認します。開く前に確認コードが必要です。操作は監査ログに記録されます。</p>
+    <div class="form-actions" style="margin-bottom:20px;">
+        <button type="button" class="platform-btn" id="open-support-otp" data-user-id="" @disabled($tenant->status !== 'active')>サポート担当者として開く</button>
+    </div>
 
     <h3>顧客ユーザーとして確認</h3>
     @if (! $canImpersonate)
@@ -155,11 +155,7 @@
                         <td>{{ $user->表示名 }}</td>
                         <td>{{ $user->管理 }}</td>
                         <td class="table-action">
-                            <form method="POST" action="{{ route('platform.tenants.support.enter', $tenant) }}">
-                                @csrf
-                                <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                <button type="submit" class="platform-btn secondary" @disabled($tenant->status !== 'active')>このユーザーで開く</button>
-                            </form>
+                            <button type="button" class="platform-btn secondary" data-open-otp="support-enter-modal" data-user-id="{{ $user->id }}" @disabled($tenant->status !== 'active')>このユーザーで開く</button>
                         </td>
                     </tr>
                 @empty
@@ -170,6 +166,25 @@
         </div>
     @endif
 </div>
+
+<form method="POST" action="{{ route('platform.tenants.support.enter', $tenant) }}" id="support-enter-form">
+    @csrf
+    <input type="hidden" name="otp_code" value="">
+    <input type="hidden" name="user_id" value="{{ old('user_id', '') }}">
+</form>
+@include('platform.tenants._otp_modal', [
+    'modalId' => 'support-enter-modal',
+    'openButtonId' => 'open-support-otp',
+    'targetFormId' => 'support-enter-form',
+    'purpose' => 'support',
+    'tenantId' => $tenant->id,
+    'title' => 'サポート入場',
+    'warning' => 'メールに届いた6桁の確認コードを入力すると、顧客画面を開きます。',
+    'executeLabel' => '確認して開く',
+    'danger' => false,
+    'reopen' => session('otp_modal') === 'support',
+    'otpError' => session('otp_modal') === 'support' ? $errors->first('otp_code') : null,
+])
 
 <div class="platform-card" id="database-history">
     <h2>DB更新履歴</h2>
@@ -195,22 +210,23 @@
     <button type="button" class="platform-btn danger" id="open-delete-tenant">削除</button>
 </div>
 
-<div class="platform-modal" id="delete-tenant-modal" hidden>
-    <div class="platform-modal-backdrop" data-close-delete-modal></div>
-    <div class="platform-modal-panel" role="dialog" aria-modal="true" aria-labelledby="delete-tenant-title">
-        <h2 id="delete-tenant-title">テナントの削除</h2>
-        <p class="platform-modal-warning">非常に危険な動作です。本当に削除する場合は以下に <code>{{ $tenant->code }}</code> と書いてから削除ボタンを押してください。</p>
-        <form method="POST" action="{{ route('platform.tenants.destroy', $tenant) }}">
-            @csrf
-            <label for="confirm_code">テナントコード</label>
-            <input id="confirm_code" type="text" name="confirm_code" value="{{ old('confirm_code') }}" autocomplete="off" required>
-            <div class="platform-modal-actions">
-                <button type="button" class="platform-btn secondary" data-close-delete-modal>キャンセル</button>
-                <button type="submit" class="platform-btn danger" id="confirm-delete-tenant" disabled>削除</button>
-            </div>
-        </form>
-    </div>
-</div>
+<form method="POST" action="{{ route('platform.tenants.destroy', $tenant) }}" id="delete-tenant-form">
+    @csrf
+    <input type="hidden" name="otp_code" value="">
+</form>
+@include('platform.tenants._otp_modal', [
+    'modalId' => 'delete-tenant-modal',
+    'openButtonId' => 'open-delete-tenant',
+    'targetFormId' => 'delete-tenant-form',
+    'purpose' => 'destroy',
+    'tenantId' => $tenant->id,
+    'title' => 'テナントの削除',
+    'warning' => '非常に危険な動作です。メールに届いた6桁の確認コードを入力すると、テナントとデータベースを削除します。',
+    'executeLabel' => '確認して削除する',
+    'danger' => true,
+    'reopen' => $errors->has('otp_code') && session('otp_modal') !== 'support',
+    'otpError' => $errors->first('otp_code'),
+])
 @endif
 
 <script>
@@ -270,41 +286,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     storageMode.addEventListener('change', updateStorageFields);
     updateStorageFields();
-
-    const deleteModal = document.getElementById('delete-tenant-modal');
-    const openDelete = document.getElementById('open-delete-tenant');
-    const confirmCode = document.getElementById('confirm_code');
-    const confirmDelete = document.getElementById('confirm-delete-tenant');
-    const expectedCode = @json($tenant->code);
-
-    function setDeleteModal(open) {
-        if (! deleteModal) {
-            return;
-        }
-        deleteModal.hidden = ! open;
-        document.body.classList.toggle('platform-modal-open', open);
-        if (open && confirmCode) {
-            confirmCode.focus();
-        }
-    }
-
-    if (openDelete && deleteModal && confirmCode && confirmDelete) {
-        openDelete.addEventListener('click', function () {
-            setDeleteModal(true);
-        });
-        deleteModal.querySelectorAll('[data-close-delete-modal]').forEach(function (button) {
-            button.addEventListener('click', function () {
-                setDeleteModal(false);
-            });
-        });
-        confirmCode.addEventListener('input', function () {
-            confirmDelete.disabled = confirmCode.value !== expectedCode;
-        });
-        if (@json($errors->has('confirm_code'))) {
-            setDeleteModal(true);
-            confirmDelete.disabled = confirmCode.value !== expectedCode;
-        }
-    }
-});
 </script>
+@include('platform.tenants._form_behavior')
 @endsection

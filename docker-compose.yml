@@ -46,7 +46,7 @@ services:
       PROVISION_DB_USERNAME: root
       PROVISION_DB_PASSWORD: root
       GHOSTSCRIPT_PATH: /usr/bin/gs
-      MAIL_MAILER: log
+      MAIL_MAILER: smtp
       RUN_CONTROL_MIGRATIONS: "true"
       COMPOSER_ALLOW_SUPERUSER: "1"
     depends_on:
