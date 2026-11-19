@@ -56,7 +56,7 @@
                     <label for="storage_prefix">保存先プレフィックス</label>
                     <button type="button" class="info-mark" id="open-storage-prefix-info" aria-label="保存先プレフィックスの説明">i</button>
                 </div>
-                <input id="storage_prefix" type="text" name="storage_prefix" value="{{ old('storage_prefix') }}" placeholder="例：astec" autocomplete="off" pattern="[A-Za-z0-9_\-]*" title="半角英数字・ハイフン・アンダースコアのみ">
+                <input id="storage_prefix" type="text" name="storage_prefix" value="{{ old('storage_prefix') }}" placeholder="例：astec" autocomplete="off" pattern="[A-Za-z0-9][A-Za-z0-9._\-]*" title="半角英数字・ハイフン・アンダースコア・ドットのみ">
             </div>
             <div class="tenant-create-span-2 onpre-path-field" @if (old('storage_mode', 'cloud') !== 'onpre') hidden @endif>
                 <label for="file_upload_path">ローカル保存先</label>

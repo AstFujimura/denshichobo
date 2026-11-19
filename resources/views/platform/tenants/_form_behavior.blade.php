@@ -15,6 +15,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     var codePattern = /^[a-z0-9_]+$/;
     var prefixPattern = /^[A-Za-z0-9_-]+$/;
+    var storagePrefixPattern = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
     var dbPattern = /^[A-Za-z0-9_]+$/;
 
     function toHalfWidth(value) {
@@ -89,8 +90,8 @@ document.addEventListener('DOMContentLoaded', function () {
     );
     bindRule(
         document.getElementById('storage_prefix'),
-        prefixPattern,
-        '保存先プレフィックスは半角英数字・ハイフン・アンダースコアのみ使用できます。',
+        storagePrefixPattern,
+        '保存先プレフィックスは半角英数字・ハイフン・アンダースコア・ドットのみ使用できます。',
         !document.getElementById('storage_prefix') || !document.getElementById('storage_prefix').required
     );
 

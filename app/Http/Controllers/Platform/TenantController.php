@@ -88,7 +88,7 @@ class TenantController extends Controller
                 Rule::unique('control.tenants', 'db_database'),
             ],
             'storage_mode' => ['required', Rule::in(['cloud', 'onpre'])],
-            'storage_prefix' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9_-]+$/'],
+            'storage_prefix' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9][A-Za-z0-9._-]*$/'],
             'file_upload_path' => ['nullable', 'required_if:storage_mode,onpre', 'string', 'max:1024'],
             'notes' => ['nullable', 'string'],
             'features' => ['nullable', 'array'],
@@ -101,7 +101,7 @@ class TenantController extends Controller
             'prefix.not_in' => 'URLプレフィックスに platform は使えません。',
             'db_database.required' => 'データベース名を入力してください。',
             'db_database.regex' => 'データベース名は denshichobo_ に続く半角英数字・アンダースコアにしてください。ハイフンは使えません。',
-            'storage_prefix.regex' => '保存先プレフィックスは半角英数字・ハイフン・アンダースコアのみ使用できます。',
+            'storage_prefix.regex' => '保存先プレフィックスは半角英数字・ハイフン・アンダースコア・ドットのみ使用できます。',
             'db_database.unique' => 'このデータベース名は既に使われています。',
         ]);
 
@@ -204,7 +204,7 @@ class TenantController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'status' => ['required', 'in:provisioning,active,suspended,archived'],
             'storage_mode' => ['required', 'in:cloud,onpre'],
-            'storage_prefix' => ['required', 'string', 'max:64', 'regex:/^[A-Za-z0-9_-]+$/'],
+            'storage_prefix' => ['required', 'string', 'max:64', 'regex:/^[A-Za-z0-9][A-Za-z0-9._-]*$/'],
             'file_upload_path' => ['nullable', 'required_if:storage_mode,onpre', 'string', 'max:1024'],
             'notes' => ['nullable', 'string'],
             'features' => ['nullable', 'array'],
@@ -212,7 +212,7 @@ class TenantController extends Controller
             'ledger_ocr_provider' => ['required', 'in:gemini,internal'],
             'gemini_model' => ['nullable', 'string', 'max:128'],
         ], [
-            'storage_prefix.regex' => '保存先プレフィックスは半角英数字・ハイフン・アンダースコアのみ使用できます。',
+            'storage_prefix.regex' => '保存先プレフィックスは半角英数字・ハイフン・アンダースコア・ドットのみ使用できます。',
         ]);
 
         if ($data['storage_mode'] === 'cloud') {
