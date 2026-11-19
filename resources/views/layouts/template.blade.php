@@ -28,10 +28,7 @@
 @include('partials.support_banner')
 
 @php
-$banbanLogo = false;
-if (\App\Models\Version::where('BANBAN', true)->exists()) {
-    $banbanLogo = true;
-}
+$banbanLogo = feature_enabled('banban');
 if (today()->isBefore('2026-06-15')) {
     $banbanLogo = false;
 }
