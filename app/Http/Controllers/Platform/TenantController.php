@@ -76,7 +76,7 @@ class TenantController extends Controller
                 'required',
                 'string',
                 'max:64',
-                'regex:/^[A-Za-z0-9_-]+$/',
+                'regex:/^[A-Za-z0-9][A-Za-z0-9._-]*$/',
                 Rule::notIn(['platform']),
                 Rule::unique('control.tenants', 'prefix'),
             ],
@@ -97,7 +97,7 @@ class TenantController extends Controller
             'gemini_model' => ['nullable', 'string', 'max:128'],
         ], [
             'code.regex' => 'テナントコードは半角小文字・数字・アンダースコアのみ使用できます。',
-            'prefix.regex' => 'URLプレフィックスは半角英数字・ハイフン・アンダースコアのみ使用できます。',
+            'prefix.regex' => 'URLプレフィックスは半角英数字・ハイフン・アンダースコア・ドットのみ使用できます。',
             'prefix.not_in' => 'URLプレフィックスに platform は使えません。',
             'db_database.required' => 'データベース名を入力してください。',
             'db_database.regex' => 'データベース名は denshichobo_ に続く半角英数字・アンダースコアにしてください。ハイフンは使えません。',

@@ -27,7 +27,7 @@
             </div>
             <div>
                 <label for="prefix">URLプレフィックス</label>
-                <input id="prefix" type="text" name="prefix" value="{{ old('prefix') }}" placeholder="例：astec" autocomplete="off" required pattern="[A-Za-z0-9_\-]+" title="半角英数字・ハイフン・アンダースコアのみ">
+                <input id="prefix" type="text" name="prefix" value="{{ old('prefix') }}" placeholder="例：astec" autocomplete="off" required pattern="[A-Za-z0-9][A-Za-z0-9._\-]*" title="半角英数字・ハイフン・アンダースコア・ドットのみ">
             </div>
             @php
                 $dbSuffix = old('db_database_suffix');

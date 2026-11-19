@@ -14,7 +14,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var codePattern = /^[a-z0-9_]+$/;
-    var prefixPattern = /^[A-Za-z0-9_-]+$/;
+    var prefixPattern = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
     var storagePrefixPattern = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
     var dbPattern = /^[A-Za-z0-9_]+$/;
 
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
     bindRule(
         document.getElementById('prefix'),
         prefixPattern,
-        'URLプレフィックスは半角英数字・ハイフン・アンダースコアのみ使用できます。',
+        'URLプレフィックスは半角英数字・ハイフン・アンダースコア・ドットのみ使用できます。',
         false
     );
     bindRule(

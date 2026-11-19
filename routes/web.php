@@ -44,7 +44,7 @@ Route::get('/', function () {
 });
 
 Route::prefix('{tenant_prefix}')
-    ->where(['tenant_prefix' => '^(?!platform$)[A-Za-z0-9_\-]+'])
+    ->where(['tenant_prefix' => '^(?!platform$)[A-Za-z0-9][A-Za-z0-9._-]*'])
     ->middleware(['tenant.resolve', 'tenant.session'])
     ->group(function () {
 
